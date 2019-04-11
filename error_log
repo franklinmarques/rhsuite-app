@@ -1,0 +1,402 @@
+[16-Jan-2017 09:36:27 UTC] PHP Parse error:  syntax error, unexpected ';' in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/avaliacao/cargos.php on line 42
+[16-Jan-2017 16:19:41 UTC] PHP Parse error:  syntax error, unexpected ''retorno' (T_ENCAPSED_AND_WHITESPACE), expecting ')' in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/home.php on line 396
+[19-Jan-2017 00:29:12 UTC] PHP Parse error:  syntax error, unexpected end of file in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/avaliacao/relatorios.php on line 385
+[19-Jan-2017 14:31:42 UTC] PHP Parse error:  syntax error, unexpected 'public' (T_PUBLIC) in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/avaliacao/realizaravaliacao.php on line 93
+[23-Jan-2017 21:53:11 UTC] PHP Fatal error:  Call to undefined function _encode() in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/home.php on line 2316
+[25-Jan-2017 07:30:35 UTC] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/home.php on line 1516
+[25-Jan-2017 18:20:44 UTC] PHP Fatal error:  Call to undefined function boolval() in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/funcionario.php on line 129
+[25-Jan-2017 18:23:42 UTC] PHP Fatal error:  Call to undefined function boolval() in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/funcionario.php on line 129
+[25-Jan-2017 18:32:53 UTC] PHP Fatal error:  Call to undefined function boolval() in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/funcionario.php on line 129
+[25-Jan-2017 18:36:27 UTC] PHP Fatal error:  Call to undefined function boolval() in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/funcionario.php on line 129
+[26-Jan-2017 03:27:36 UTC] PHP Fatal error:  Can't use method return value in write context in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/home.php on line 1484
+[26-Jan-2017 20:31:41 UTC] PHP Parse error:  syntax error, unexpected ':' in /home/peoplenetcorp/public_html/uat-TESTE/application/views/avaliacao/relatorios_view.php on line 157
+[26-Jan-2017 20:54:35 UTC] PHP Parse error:  syntax error, unexpected '>' in /home/peoplenetcorp/public_html/uat-TESTE/application/views/avaliacao/relatorios_view.php on line 111
+[30-Jan-2017 12:54:25 UTC] PHP Fatal error:  Call to undefined function boolval() in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/funcionario.php on line 129
+[30-Jan-2017 18:03:31 UTC] PHP Fatal error:  Call to undefined function boolval() in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/funcionario.php on line 129
+[02-Feb-2017 23:32:36 UTC] PHP Parse error:  syntax error, unexpected ')' in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/curso.php on line 436
+[03-Feb-2017 00:21:37 UTC] PHP Parse error:  syntax error, unexpected end of file, expecting variable (T_VARIABLE) or ${ (T_DOLLAR_OPEN_CURLY_BRACES) or {$ (T_CURLY_OPEN) in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/curso.php on line 380
+[03-Feb-2017 11:41:29 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'application/libraries/dompdf/dompdf_config.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/certificado.php on line 3
+[03-Feb-2017 11:48:33 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'application/libraries/dompdf/dompdf_config.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/certificado.php on line 3
+[03-Feb-2017 12:36:00 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'application/libraries/dompdf/dompdf_config.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/certificado.php on line 3
+[03-Feb-2017 16:30:35 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'application/libraries/dompdf/dompdf_config.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/certificado.php on line 3
+[03-Feb-2017 16:31:24 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'application/libraries/dompdf/dompdf_config.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/certificado.php on line 3
+[03-Feb-2017 22:35:00 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'application/libraries/dompdf/dompdf_config.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/certificado.php on line 3
+[04-Feb-2017 22:30:05 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'application/libraries/dompdf/dompdf_config.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/certificado.php on line 3
+[05-Feb-2017 20:00:02 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'application/libraries/dompdf/dompdf_config.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/certificado.php on line 3
+[06-Feb-2017 14:21:13 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'application/libraries/dompdf/dompdf_config.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/certificado.php on line 3
+[06-Feb-2017 16:43:55 UTC] PHP Parse error:  syntax error, unexpected '}' in /home/peoplenetcorp/public_html/uat-TESTE/application/views/getmeuscursos.php on line 23
+[06-Feb-2017 14:48:06 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'application/libraries/dompdf/dompdf_config.inc.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/certificado.php on line 3
+[24-Feb-2017 17:16:03 UTC] PHP Fatal error:  Call to a member function save() on a non-object in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/avaliacaoexp_perguntas.php on line 144
+[24-Feb-2017 17:16:13 UTC] PHP Fatal error:  Call to a member function save() on a non-object in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/avaliacaoexp_perguntas.php on line 144
+[24-Feb-2017 17:17:34 UTC] PHP Fatal error:  Call to a member function save() on a non-object in /home/peoplenetcorp/public_html/uat-TESTE/application/controllers/avaliacaoexp_perguntas.php on line 144
+[26-Feb-2017 19:36:17 America/Sao_Paulo] PHP Fatal error:  require_once(): Failed opening required 'menu.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat-TESTE/application/views/header.php on line 47
+[16-Mar-2017 23:28:42 UTC] PHP Fatal error:  Cannot redeclare class Avaliacaoexp in /home/peoplenetcorp/public_html/uat-TESTE/application/views/avaliacaoexp.php on line 545
+[16-Mar-2017 23:28:50 UTC] PHP Fatal error:  Cannot redeclare class Avaliacaoexp in /home/peoplenetcorp/public_html/uat-TESTE/application/views/avaliacaoexp.php on line 545
+[16-Mar-2017 23:29:07 UTC] PHP Fatal error:  Cannot redeclare class Avaliacaoexp in /home/peoplenetcorp/public_html/uat-TESTE/application/views/avaliacaoexp.php on line 545
+[16-Mar-2017 23:33:44 UTC] PHP Fatal error:  Cannot redeclare class Avaliacaoexp in /home/peoplenetcorp/public_html/uat-TESTE/application/views/avaliacaoexp.php on line 545
+[28-Mar-2017 21:36:57 UTC] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat/application/controllers/avaliacaoexp_modelos.php on line 2
+[28-Mar-2017 22:24:31 UTC] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat/application/controllers/avaliacaoexp_modelos.php on line 2
+[28-Mar-2017 22:25:23 UTC] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat/application/controllers/avaliacaoexp_modelos.php on line 2
+[28-Mar-2017 22:25:58 UTC] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat/application/controllers/avaliacaoexp_modelos.php on line 2
+[28-Mar-2017 22:27:03 UTC] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat/application/controllers/avaliacaoexp_modelos.php on line 2
+[28-Mar-2017 22:27:14 UTC] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat/application/controllers/avaliacaoexp_modelos.php on line 2
+[28-Mar-2017 22:27:24 UTC] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat/application/controllers/avaliacaoexp_modelos.php on line 2
+[28-Mar-2017 22:27:49 UTC] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/peoplenetcorp/public_html/uat/application/controllers/avaliacaoexp_modelos.php on line 2
+[29-May-2017 16:46:35 America/Sao_Paulo] PHP Fatal error:  Call to a member function result() on a non-object in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/acessarcurso.php on line 159
+[29-May-2017 16:46:42 America/Sao_Paulo] PHP Fatal error:  Call to a member function result() on a non-object in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/acessarcurso.php on line 159
+[29-May-2017 16:46:48 America/Sao_Paulo] PHP Fatal error:  Call to a member function result() on a non-object in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/acessarcurso.php on line 159
+[30-Jun-2017 22:16:47 America/Sao_Paulo] PHP Fatal error:  Call to undefined method Usuarios_model::getCargos() in /home/abcbr304/public_html/rhsuite.com.br/ame1/application/controllers/competencias/cargos.php on line 18
+[03-Jul-2017 15:52:08 America/Sao_Paulo] PHP Fatal error:  Unsupported operand types in /home/abcbr304/public_html/rhsuite.com.br/ame1/application/controllers/competencias/relatorios.php on line 358
+[04-Jul-2017 17:23:06 America/Sao_Paulo] PHP Parse error:  syntax error, unexpected ''table' (T_ENCAPSED_AND_WHITESPACE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/competencias/relatorios.php on line 676
+[04-Jul-2017 17:36:42 America/Sao_Paulo] PHP Parse error:  syntax error, unexpected ''competencias/avaliado_avaliad' (T_ENCAPSED_AND_WHITESPACE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/competencias/relatorios.php on line 378
+[05-Jul-2017 13:13:49 America/Sao_Paulo] PHP Fatal error:  Unsupported operand types in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/competencias/relatorios.php on line 184
+[05-Jul-2017 14:52:25 America/Sao_Paulo] PHP Fatal error:  Unsupported operand types in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/competencias/relatorios.php on line 232
+[07-Jul-2017 14:31:18 America/Sao_Paulo] PHP Fatal error:  Cannot redeclare class PDI in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/pdi.php on line 299
+[07-Jul-2017 14:32:44 America/Sao_Paulo] PHP Fatal error:  Cannot redeclare class PDI in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/pdi.php on line 299
+[07-Jul-2017 14:32:54 America/Sao_Paulo] PHP Fatal error:  Cannot redeclare class PDI in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/pdi.php on line 299
+[27-Jul-2017 12:35:17 America/Sao_Paulo] PHP Fatal error:  Function name must be a string in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/home.php on line 1689
+[01-Aug-2017 10:25:44 America/Sao_Paulo] PHP Parse error:  syntax error, unexpected end of file in /home/abcbr304/public_html/rhsuite.com.br/ame3/application/controllers/ead/pagina_curso.php on line 732
+[01-Aug-2017 14:08:42 America/Sao_Paulo] PHP Fatal error:  Call to undefined function form_dropfown() in /home/abcbr304/public_html/rhsuite.com.br/ame3/application/views/ead/editarpaginacurso.php on line 191
+[01-Aug-2017 14:08:54 America/Sao_Paulo] PHP Fatal error:  Call to undefined function form_dropfown() in /home/abcbr304/public_html/rhsuite.com.br/ame3/application/views/ead/editarpaginacurso.php on line 191
+[01-Aug-2017 14:15:32 America/Sao_Paulo] PHP Fatal error:  Call to undefined function form_dropfown() in /home/abcbr304/public_html/rhsuite.com.br/ame3/application/views/ead/editarpaginacurso.php on line 191
+[04-Aug-2017 14:08:10 America/Sao_Paulo] PHP Fatal error:  Call to undefined method Cursos::url_exists() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/ead/cursos.php on line 664
+[08-Aug-2017 04:05:41 America/Sao_Paulo] PHP Parse error:  syntax error, unexpected end of file in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/ead/pagina_curso.php on line 402
+[11-Aug-2017 14:45:13 America/Chicago] PHP Parse error:  syntax error, unexpected end of file, expecting variable (T_VARIABLE) or ${ (T_DOLLAR_OPEN_CURLY_BRACES) or {$ (T_CURLY_OPEN) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/avaliacaoexp_avaliados.php on line 415
+[18-Aug-2017 13:35:44 America/Chicago] PHP Parse error:  syntax error, unexpected end of file in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/menu.php on line 237
+[08-Sep-2017 13:57:51 America/Chicago] PHP Fatal error:  Cannot use object of type stdClass as array in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/papd/atendimento.php on line 195
+[08-Sep-2017 13:58:00 America/Chicago] PHP Fatal error:  Cannot use object of type stdClass as array in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/papd/atendimento.php on line 195
+[22-Sep-2017 12:07:40 America/Chicago] PHP Parse error:  syntax error, unexpected '->' (T_OBJECT_OPERATOR), expecting ',' or ';' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/funcionarios_pdf.php on line 90
+[06-Oct-2017 14:24:19 America/Chicago] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/opt/php70/lib/php') in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 2
+[06-Oct-2017 14:24:24 America/Chicago] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/opt/php70/lib/php') in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 2
+[09-Oct-2017 10:14:54 America/Chicago] PHP Parse error:  syntax error, unexpected '?' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/papd/atividades_deficiencias.php on line 21
+[09-Oct-2017 10:16:10 America/Chicago] PHP Parse error:  syntax error, unexpected '?' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/papd/atividades_deficiencias.php on line 22
+[18-Oct-2017 16:23:45 America/Chicago] PHP Parse error:  syntax error, unexpected end of file in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 374
+[26-Oct-2017 13:44:06 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function array_sort() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php:386
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(834): include()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(420): CI_Loader->_ci_load(Array)
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php(165): CI_Loader->view('apontamento', Array)
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento->index()
+#4 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#5 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php on line 386
+[26-Oct-2017 13:44:56 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function array_sort() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php:386
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(834): include()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(420): CI_Loader->_ci_load(Array)
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php(165): CI_Loader->view('apontamento', Array)
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento->index()
+#4 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#5 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php on line 386
+[26-Oct-2017 15:21:56 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function array_sort() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php:386
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(834): include()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(420): CI_Loader->_ci_load(Array)
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php(165): CI_Loader->view('apontamento', Array)
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento->index()
+#4 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#5 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php on line 386
+[26-Oct-2017 15:22:28 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function array_sort() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php:386
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(834): include()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(420): CI_Loader->_ci_load(Array)
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php(165): CI_Loader->view('apontamento', Array)
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento->index()
+#4 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#5 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php on line 386
+[26-Oct-2017 15:22:48 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function array_sort() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php:386
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(834): include()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(420): CI_Loader->_ci_load(Array)
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php(165): CI_Loader->view('apontamento', Array)
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento->index()
+#4 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#5 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php on line 386
+[26-Oct-2017 15:22:52 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function array_sort() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php:386
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(834): include()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(420): CI_Loader->_ci_load(Array)
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php(165): CI_Loader->view('apontamento', Array)
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento->index()
+#4 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#5 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php on line 386
+[26-Oct-2017 15:23:37 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function array_sort() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php:386
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(834): include()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(420): CI_Loader->_ci_load(Array)
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php(165): CI_Loader->view('apontamento', Array)
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento->index()
+#4 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#5 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php on line 386
+[26-Oct-2017 15:23:45 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function array_sort() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php:386
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(834): include()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(420): CI_Loader->_ci_load(Array)
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php(165): CI_Loader->view('apontamento', Array)
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento->index()
+#4 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#5 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php on line 386
+[26-Oct-2017 15:23:58 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function array_sort() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php:386
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(834): include()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/Loader.php(420): CI_Loader->_ci_load(Array)
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php(165): CI_Loader->view('apontamento', Array)
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento->index()
+#4 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#5 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/apontamento.php on line 386
+[07-Nov-2017 07:37:37 America/Chicago] PHP Fatal error:  require_once(): Failed opening required 'end_js.php' (include_path='.:/opt/php70/lib/php') in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/apontamento.php on line 864
+[07-Nov-2017 07:38:15 America/Chicago] PHP Fatal error:  require_once(): Failed opening required 'end_js.php' (include_path='.:/opt/php70/lib/php') in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/apontamento.php on line 864
+[20-Nov-2017 08:16:13 America/Chicago] PHP Fatal error:  require_once(): Failed opening required 'application/viewsend_js.php' (include_path='.:/opt/php70/lib/php') in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/eventos.php on line 110
+[01-Dec-2017 22:19:44 America/Chicago] PHP Parse error:  syntax error, unexpected ''observacoes'' (T_CONSTANT_ENCAPSED_STRING), expecting ',' or ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 849
+[01-Dec-2017 22:20:19 America/Chicago] PHP Parse error:  syntax error, unexpected ''observacoes'' (T_CONSTANT_ENCAPSED_STRING), expecting ',' or ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 849
+[06-Dec-2017 16:21:16 America/Sao_Paulo] PHP Fatal error:  Uncaught Error: Cannot access empty property in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/ead/treinamento.php:614
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Treinamento->certificado('185')
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#2 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/ead/treinamento.php on line 614
+[06-Dec-2017 16:21:26 America/Sao_Paulo] PHP Fatal error:  Uncaught Error: Cannot access empty property in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/ead/treinamento.php:614
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Treinamento->certificado('185')
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#2 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/ead/treinamento.php on line 614
+[12-Dec-2017 07:31:51 America/Chicago] PHP Parse error:  syntax error, unexpected end of file, expecting variable (T_VARIABLE) or ${ (T_DOLLAR_OPEN_CURLY_BRACES) or {$ (T_CURLY_OPEN) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/avaliacaoexp_avaliados.php on line 415
+[14-Dec-2017 18:07:04 America/Chicago] PHP Fatal error:  require_once(): Failed opening required 'application/header.php' (include_path='.:/opt/php70/lib/php') in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/documentovisualizar.php on line 2
+[19-Dec-2017 15:17:15 America/Chicago] PHP Parse error:  syntax error, unexpected '$diretoria' (T_VARIABLE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cuidadores/apontamento.php on line 89
+[19-Dec-2017 15:17:41 America/Chicago] PHP Parse error:  syntax error, unexpected '$diretoria' (T_VARIABLE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cuidadores/apontamento.php on line 89
+[19-Dec-2017 15:17:45 America/Chicago] PHP Parse error:  syntax error, unexpected '$diretoria' (T_VARIABLE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cuidadores/apontamento.php on line 89
+[19-Dec-2017 15:18:15 America/Chicago] PHP Parse error:  syntax error, unexpected '}' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cuidadores/apontamento.php on line 93
+[20-Dec-2017 07:40:17 America/Chicago] PHP Fatal error:  Uncaught Error: Function name must be a string in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/ead/treinamento.php:346
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Treinamento->avaliar_atividade()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#2 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/ead/treinamento.php on line 346
+[03-Jan-2018 18:01:01 America/Chicago] PHP Fatal error:  require_once(): Failed opening required 'header.php' (include_path='.:/opt/php70/lib/php') in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/coladorador.php on line 2
+[10-Jan-2018 18:47:59 America/Chicago] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 12288 bytes) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/third_party/classes/otl.php on line 2025
+[17-Jan-2018 21:26:04 America/Sao_Paulo] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/relatorios.php on line 322
+[17-Jan-2018 21:27:23 America/Sao_Paulo] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/relatorios.php on line 322
+[17-Jan-2018 21:27:52 America/Sao_Paulo] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/relatorios.php on line 322
+[17-Jan-2018 21:30:29 America/Sao_Paulo] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/relatorios.php on line 323
+[17-Jan-2018 21:31:44 America/Sao_Paulo] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/relatorios.php on line 322
+[17-Jan-2018 21:32:13 America/Sao_Paulo] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/relatorios.php on line 322
+[17-Jan-2018 21:32:21 America/Sao_Paulo] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/relatorios.php on line 322
+[17-Jan-2018 21:32:39 America/Sao_Paulo] PHP Fatal error:  Allowed memory size of 268435456 bytes exhausted (tried to allocate 20480 bytes) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/relatorios.php on line 323
+[17-Jan-2018 18:23:03 America/Chicago] PHP Parse error:  syntax error, unexpected ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/relatorios.php on line 326
+[18-Jan-2018 12:58:53 America/Chicago] PHP Fatal error:  Cannot declare class Alunos, because the name is already in use in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/alunos.php on line 510
+[18-Jan-2018 12:59:11 America/Chicago] PHP Fatal error:  Cannot declare class Alunos, because the name is already in use in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/alunos.php on line 510
+[18-Jan-2018 13:01:55 America/Chicago] PHP Fatal error:  Cannot declare class Alunos, because the name is already in use in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/alunos.php on line 510
+[18-Jan-2018 13:02:05 America/Chicago] PHP Fatal error:  Cannot declare class Alunos, because the name is already in use in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/alunos.php on line 510
+[18-Jan-2018 13:02:33 America/Chicago] PHP Fatal error:  Cannot declare class Alunos, because the name is already in use in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/alunos.php on line 510
+[22-Jan-2018 07:35:23 America/Chicago] PHP Fatal error:  Cannot declare class Apontamento, because the name is already in use in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/apontamento.php on line 1482
+[22-Jan-2018 07:36:03 America/Chicago] PHP Fatal error:  Cannot declare class Apontamento, because the name is already in use in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/cd/apontamento.php on line 1482
+[25-Jan-2018 12:39:28 America/Chicago] PHP Parse error:  syntax error, unexpected 'çexitç' (T_STRING) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/relatorios.php on line 633
+[30-Jan-2018 16:51:28 America/Chicago] PHP Parse error:  syntax error, unexpected '$this' (T_VARIABLE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php on line 1612
+[30-Jan-2018 16:51:49 America/Chicago] PHP Parse error:  syntax error, unexpected '$this' (T_VARIABLE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php on line 1612
+[30-Jan-2018 18:22:49 America/Chicago] PHP Parse error:  syntax error, unexpected 'foreach' (T_FOREACH) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php on line 1272
+[30-Jan-2018 18:23:30 America/Chicago] PHP Parse error:  syntax error, unexpected 'foreach' (T_FOREACH) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php on line 1289
+[01-Feb-2018 18:30:51 America/Sao_Paulo] PHP Fatal error:  Uncaught Error: Call to undefined function r() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_financas.php:230
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_financas.php(290): Apontamento_financas->ajax_list()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento_financas->ajax_faltas()
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_financas.php on line 230
+[01-Feb-2018 18:30:51 America/Sao_Paulo] PHP Fatal error:  Uncaught Error: Call to undefined function r() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_financas.php:230
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_financas.php(341): Apontamento_financas->ajax_list()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento_financas->ajax_valores()
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_financas.php on line 230
+[05-Feb-2018 06:34:52 America/Chicago] PHP Fatal error:  Uncaught Error: Class 'CI_Form_validation' not found in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/escolas.php:393
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/escolas.php(354): Escolas->validaCsv(Array)
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Escolas->importarCsv()
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/escolas.php on line 393
+[05-Feb-2018 06:36:24 America/Chicago] PHP Fatal error:  Uncaught Error: Class 'CI_Form_validation' not found in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/alunos.php:449
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/alunos.php(408): Alunos->validaCsv(Array)
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Alunos->importarCsv()
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/alunos.php on line 449
+[05-Feb-2018 06:40:48 America/Chicago] PHP Fatal error:  Uncaught Error: Class 'CI_Form_validation' not found in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/escolas.php:393
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/escolas.php(354): Escolas->validaCsv(Array)
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Escolas->importarCsv()
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/escolas.php on line 393
+[05-Feb-2018 06:54:22 America/Chicago] PHP Parse error:  syntax error, unexpected ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/escolas.php on line 302
+[05-Feb-2018 07:09:50 America/Chicago] PHP Parse error:  syntax error, unexpected 'çexitç' (T_STRING) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/escolas.php on line 367
+[05-Feb-2018 07:59:33 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function convert_to_latin1() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/escolas.php:381
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Escolas->importarCsv()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#2 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/escolas.php on line 381
+[06-Feb-2018 07:59:20 America/Chicago] PHP Parse error:  syntax error, unexpected '$this' (T_VARIABLE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 964
+[06-Feb-2018 07:59:20 America/Chicago] PHP Parse error:  syntax error, unexpected '$this' (T_VARIABLE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 964
+[06-Feb-2018 07:59:48 America/Chicago] PHP Parse error:  syntax error, unexpected '$this' (T_VARIABLE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 964
+[06-Feb-2018 08:01:17 America/Chicago] PHP Parse error:  syntax error, unexpected '$this' (T_VARIABLE) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 965
+[06-Feb-2018 12:24:36 America/Chicago] PHP Parse error:  syntax error, unexpected ';', expecting ',' or ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 966
+[07-Feb-2018 08:51:38 America/Chicago] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_colaboradores.php on line 613
+[07-Feb-2018 08:52:29 America/Chicago] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_colaboradores.php on line 613
+[07-Feb-2018 08:54:16 America/Chicago] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_colaboradores.php on line 613
+[07-Feb-2018 08:54:23 America/Chicago] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_colaboradores.php on line 613
+[07-Feb-2018 08:54:37 America/Chicago] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_colaboradores.php on line 613
+[07-Feb-2018 08:55:11 America/Chicago] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_colaboradores.php on line 613
+[07-Feb-2018 08:55:22 America/Chicago] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_colaboradores.php on line 613
+[07-Feb-2018 12:37:51 America/Chicago] PHP Parse error:  syntax error, unexpected '-', expecting :: (T_PAAMAYIM_NEKUDOTAYIM) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 955
+[07-Feb-2018 19:23:19 America/Chicago] PHP Parse error:  syntax error, unexpected '$apontamento' (T_VARIABLE), expecting ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 639
+[07-Feb-2018 19:23:34 America/Chicago] PHP Parse error:  syntax error, unexpected '$apontamento' (T_VARIABLE), expecting ')' in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 639
+[08-Feb-2018 23:50:03 America/Sao_Paulo] PHP Fatal error:  Uncaught Error: Call to undefined method Apontamento_relatorios::where() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_relatorios.php:373
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_relatorios.php(89): Apontamento_relatorios->ajax_reajuste('2')
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_relatorios.php(17): Apontamento_relatorios->gerenciar()
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento_relatorios->index('q')
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#4 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_relatorios.php on line 373
+[08-Feb-2018 23:51:22 America/Sao_Paulo] PHP Fatal error:  Uncaught Error: Call to undefined method Apontamento_relatorios::where() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_relatorios.php:373
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_relatorios.php(89): Apontamento_relatorios->ajax_reajuste('2')
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_relatorios.php(17): Apontamento_relatorios->gerenciar()
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Apontamento_relatorios->index('q')
+#3 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#4 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento_relatorios.php on line 373
+[19-Feb-2018 08:05:31 America/Chicago] PHP Parse error:  syntax error, unexpected end of file, expecting variable (T_VARIABLE) or ${ (T_DOLLAR_OPEN_CURLY_BRACES) or {$ (T_CURLY_OPEN) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 620
+[19-Feb-2018 08:05:31 America/Chicago] PHP Parse error:  syntax error, unexpected end of file, expecting variable (T_VARIABLE) or ${ (T_DOLLAR_OPEN_CURLY_BRACES) or {$ (T_CURLY_OPEN) in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 620
+[19-Feb-2018 08:21:21 America/Chicago] PHP Parse error:  syntax error, unexpected end of file in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 987
+[19-Feb-2018 08:21:21 America/Chicago] PHP Parse error:  syntax error, unexpected end of file in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/apontamento.php on line 987
+[23-Feb-2018 12:56:27 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[23-Feb-2018 12:56:30 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[23-Feb-2018 12:56:35 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[23-Feb-2018 12:56:42 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[23-Feb-2018 12:57:17 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[23-Feb-2018 12:57:31 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[23-Feb-2018 20:04:18 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[23-Feb-2018 20:11:14 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[24-Feb-2018 00:23:59 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[24-Feb-2018 00:24:21 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[24-Feb-2018 07:57:36 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[24-Feb-2018 07:59:15 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[24-Feb-2018 08:02:14 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[24-Feb-2018 08:02:27 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[24-Feb-2018 08:05:16 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[24-Feb-2018 10:57:41 America/Chicago] PHP Fatal error:  Uncaught Error: Call to undefined function base_url() in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php:9
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/cd/apontamento.php(2): require_once()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(251): include('/home/abcbr304/...')
+#2 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#3 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/views/header.php on line 9
+[27-Feb-2018 23:13:28 America/Sao_Paulo] PHP Fatal error:  Uncaught Error: Function name must be a string in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/avaliacaoexp_avaliados.php:1148
+Stack trace:
+#0 /home/abcbr304/public_html/rhsuite.com.br/ame/system/core/CodeIgniter.php(360): Avaliacaoexp_avaliados->status_notificar()
+#1 /home/abcbr304/public_html/rhsuite.com.br/ame/index.php(202): require_once('/home/abcbr304/...')
+#2 {main}
+  thrown in /home/abcbr304/public_html/rhsuite.com.br/ame/application/controllers/avaliacaoexp_avaliados.php on line 1148
