@@ -106,7 +106,7 @@ class OrdensServico extends MY_Controller
                 $row->descricao_problema,
                 '<button class="btn btn-sm btn-info" onclick="edit_os(' . $row->numero_os . ');" title="Editar ordem de serviço"><i class="glyphicon glyphicon-pencil"></i></button>
                  <button class="btn btn-sm btn-danger" onclick="delete_os(' . $row->numero_os . ');" title="Excluir ordem de serviço"><i class="glyphicon glyphicon-trash"></i></button>
-                 <a class="btn btn-sm btn-primary" href="' . site_url('facilities/ordensServico/relatorio/' . $row->numero_os) . '" target="_blank" title="Imprimir ordem de serviço"><i class="glyphicon glyphicon-print"></i></a>',
+                 <a class="btn btn-sm btn-primary" href="' . site_url('facilities/ordensServico/relatorio/' . $row->numero_os) . '" title="Imprimir ordem de serviço"><i class="glyphicon glyphicon-print"></i></a>',
                 $row->prioridade,
                 $row->status
             );
@@ -439,7 +439,8 @@ class OrdensServico extends MY_Controller
         $this->db->select(["DATE_FORMAT(a.data_resolucao_problema, '%d/%m/%Y') AS data_resolucao_problema"], false);
         $this->db->select(["CONCAT_WS('/', c.nome, d.nome, e.nome) AS estrutura"], false);
         $this->db->select('a.descricao_problema, a.observacoes');
-        $this->db->select(["(CASE a.resolucao_satisfatoria WHEN 'S' THEN 'Sim'  WHEN 'N' THEN 'Não'  WHEN 'P' THEN 'Parcialmente' END) AS resolucao_satisfatoria"], false);
+        $this->db->select(["(CASE a.resolucao_satisfatoria WHEN 'S' THEN 'Satisfatória'  WHEN 'N' THEN 'Não satisfatória'  WHEN 'P' THEN 'Parcialmente satisfatória' ELSE 'Não definida' END) AS resolucao_satisfatoria"], false);
+        $this->db->select(["(CASE a.resolucao_satisfatoria WHEN 'S' THEN 'text-success'  WHEN 'N' THEN 'text-danger'  WHEN 'P' THEN 'text-warning' ELSE 'text-muted'END) AS classe_resolucao_satisfatoria"], false);
         $this->db->select('a.observacoes_positivas, a.observacoes_negativas');
         $this->db->join('usuarios b', 'b.id = a.id_usuario');
         $this->db->join('empresa_departamentos c', 'c.id = a.id_depto', 'left');
@@ -458,7 +459,7 @@ class OrdensServico extends MY_Controller
 
 
         if ($data['is_pdf']) {
-            return $this->load->view('facilities/relatorio_ordem_servico', $data, true);
+            return $this->load->view('facilities/relatorio_ordem_servico_pdf', $data, true);
         }
 
 
@@ -471,13 +472,18 @@ class OrdensServico extends MY_Controller
         $this->load->library('m_pdf');
 
 
-        $stylesheet = '#table thead tr th { border-top: 4px solid #ddd; padding-top: 8px; } ';
-        $stylesheet .= 'table.campos { border: 1px solid #444; margin-bottom: 0px; } ';
+        $stylesheet = 'table.ordem_servico thead th { font-size: 12px; padding: 5px; text-align: center; font-weight: normal; } ';
+        $stylesheet .= 'table.ordem_servico tbody tr { border-width: 5px; border-color: #ddd; } ';
+        $stylesheet .= 'table.ordem_servico tbody tr th { font-size: 11px; padding: 2px; } ';
+        $stylesheet .= 'table.ordem_servico tbody td { font-size: 12px; padding: 1px; border-top: 1px solid #ddd;} ';
+        $stylesheet .= 'table.ordem_servico tbody td strong { font-weight: bold; } ';
 
-        $stylesheet .= 'table.campos thead th { font-size: 12px; padding: 4px; background-color: #f5f5f5; border: 1px solid #444; } ';
-        $stylesheet .= 'table.campos tbody td { font-size: 10px; padding: 4px; vertical-align: top; border: 1px solid #444; } ';
+        $stylesheet .= 'table.dados thead th { font-size: 12px; padding: 5px; border-bottom: 2px solid #ddd; } ';
+        $stylesheet .= 'table.dados thead tr.active td { background-color: #e5e5e5; }';
+        $stylesheet .= 'table.dados tbody td { font-size: 12px; padding: 5px; border-top: 1px solid #ddd; word-wrap: break-word;} ';
 
 
+        $this->m_pdf->pdf->AddPage('L');
         $this->m_pdf->pdf->writeHTML($stylesheet, 1);
         $this->m_pdf->pdf->writeHTML($this->relatorio(true));
 
