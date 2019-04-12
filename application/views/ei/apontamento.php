@@ -233,7 +233,7 @@
                                                 Rel. Mapa de Carregamento de O.S.</a></li>
                                         <li><a href="javascript:void(0)" onclick="medicao();"><i
                                                         class="glyphicon glyphicon-list text-info"></i> Relatório de
-                                                Medição</a></li>
+                                                Medição Mensal</a></li>
                                         <li><a href="javascript:void(0)" onclick="pagamentoPrestadores();"><i
                                                         class="glyphicon glyphicon-list text-info"></i> Relatório
                                                 consolidado de Pagamento</a></li>
@@ -1104,7 +1104,11 @@
                         <div class="modal-body form">
                             <form action="#" id="form_faturamento_consolidado" class="form-horizontal">
                                 <div class="row form-group">
-                                    <div class="col-md-12 text-right">
+                                    <label class="control-label col-md-1">Supervisor</label>
+                                    <div class="col-md-5">
+                                        <?php echo form_dropdown('id_supervisor', $supervisor, '', 'class="form-control input-sm" onchange="filtrar_faturamento_consolidado(this)"'); ?>
+                                    </div>
+                                    <div class="col-md-6 text-right">
                                         <button type="button" id="btnSaveFaturamentoConsolidado"
                                                 onclick="save_faturamento_consolidado()"
                                                 class="btn btn-success">Salvar
@@ -3074,6 +3078,7 @@
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
                 'success': function (json) {
+                    $('#form_faturamento_consolidado [name="id_supervisor"]').val('');
                     $('#planilha_faturamento_consolidado').html(json.planilha_faturamento_consolidado);
 
                     $('#modal_faturamento_consolidado').modal('show');
@@ -3512,20 +3517,45 @@
             });
         }
 
+
+        function filtrar_faturamento_consolidado(elem) {
+            $(elem).attr('disabled', true);
+            $.ajax({
+                'url': '<?php echo site_url('ei/apontamento/faturamentoConsolidado') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize() + '&supervisor_filtrado=' + elem.value,
+                'success': function (json) {
+                    $('#planilha_faturamento_consolidado').html(json.planilha_faturamento_consolidado);
+                    $(elem).attr('disabled', false);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                    $(elem).attr('disabled', false);
+                }
+            });
+        }
+
+
         function recuperar_faturamento_consolidado() {
             $('#btnRecuperarFaturamentoConsolidado').text('Recuperando e validando base...').attr('disabled', true);
+            var id_supervisor = $('#form_faturamento_consolidado [name="id_supervisor"]').val();
+            $('#form_faturamento_consolidado [name="id_supervisor"]').attr('disabled', true);
+
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/recuperarFaturamentoConsolidado') ?>',
                 'type': 'POST',
                 'dataType': 'json',
-                'data': $('#busca').serialize(),
+                'data': $('#busca').serialize() + '&supervisor_filtrado=' + id_supervisor,
                 'success': function (json) {
                     $('#planilha_faturamento_consolidado').html(json.planilha_faturamento_consolidado);
                     $('#btnRecuperarFaturamentoConsolidado').text('Recuperar e validar base').attr('disabled', false);
+                    $('#form_faturamento_consolidado [name="id_supervisor"]').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                     $('#btnRecuperarFaturamentoConsolidado').text('Recuperar e validar base').attr('disabled', false);
+                    $('#form_faturamento_consolidado [name="id_supervisor"]').attr('disabled', false);
                 }
             });
         }
@@ -3956,11 +3986,17 @@
 
 
         function medicao() {
-            if ($('#busca [name="depto"]').val() === '' || $('#busca [name="diretoria"]').val() === '' || $('#busca [name="supervisor"]').val() === '') {
-                alert('Para gerar o relatório, ajuste os filtros de Departamento, Cliente e Supervisor.');
+            if ($('#busca [name="mes"]').val() === '' || $('#busca [name="ano"]').val() === '' || $('#busca [name="semestre"]').val() === '') {
+                alert('Para gerar o relatório, ajuste os filtros de Mês, Ano e Semestre.');
                 return false;
             }
-            window.open('<?php echo site_url('ei/relatorios/medicao'); ?>/q?' + $('#busca').serialize(), '_blank');
+
+            var q = new Array();
+            q.push("mes=" + $('#busca [name="mes"]').val());
+            q.push("ano=" + $('#busca [name="ano"]').val());
+            q.push("semestre=" + $('#busca [name="semestre"]').val());
+
+            window.open('<?php echo site_url('ei/relatorios/medicao'); ?>/q?' + q.join('&'), '_blank');
         }
 
 

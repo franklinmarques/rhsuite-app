@@ -700,7 +700,7 @@ class Apontamento extends MY_Controller
         $this->db->select('a.dia_semana, a.periodo, a.horario_inicio, a.horario_termino');
         $this->db->select(['TIMEDIFF(a.horario_termino, a.horario_inicio) AS total_horas'], false);
         $this->db->select(['a.data_inicio_contrato, a.data_termino_contrato, a.valor_hora_operacional, a.horas_mensais_custo, l.valor AS valor_hora_funcao'], false);
-        $this->db->select(['IFNULL(a.valor_hora_operacional, l.valor_pagamento) AS valor_hora_operacional'], false);
+        $this->db->select(['IF(a.valor_hora_operacional > 0, a.valor_hora_operacional, l.valor_pagamento) AS valor_hora_operacional'], false);
         $this->db->select(["IF({$mes1} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)), WEEK(DATE_SUB(IF(MONTH(MAX(h.data_termino)) = {$mes1}, MAX(h.data_termino), '{$diaFimMes1}'), INTERVAL ((7 + DATE_FORMAT(IF(MONTH(MAX(h.data_termino)) = {$mes1}, MAX(h.data_termino), '$diaFimMes1'), '%w') - dia_semana) % 7) DAY)) - WEEK(DATE_ADD(IF(MONTH(MIN(h.data_inicio)) = {$mes1}, MIN(h.data_inicio), '{$diaIniMes1}'), INTERVAL (((7 - DATE_FORMAT(IF(MONTH(MIN(h.data_inicio)) = {$mes1}, MIN(h.data_inicio), '{$diaIniMes1}'), '%w')) + dia_semana) % 7) DAY)) + 1, 0) AS total_semanas_mes1"], false);
         $this->db->select(["IF({$mes2} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)), WEEK(DATE_SUB(IF(MONTH(MAX(h.data_termino)) = {$mes2}, MAX(h.data_termino), '{$diaFimMes2}'), INTERVAL ((7 + DATE_FORMAT(IF(MONTH(MAX(h.data_termino)) = {$mes2}, MAX(h.data_termino), '$diaFimMes2'), '%w') - dia_semana) % 7) DAY)) - WEEK(DATE_ADD(IF(MONTH(MIN(h.data_inicio)) = {$mes2}, MIN(h.data_inicio), '{$diaIniMes2}'), INTERVAL (((7 - DATE_FORMAT(IF(MONTH(MIN(h.data_inicio)) = {$mes2}, MIN(h.data_inicio), '{$diaIniMes2}'), '%w')) + dia_semana) % 7) DAY)) + 1, 0) AS total_semanas_mes2"], false);
         $this->db->select(["IF({$mes3} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)), WEEK(DATE_SUB(IF(MONTH(MAX(h.data_termino)) = {$mes3}, MAX(h.data_termino), '{$diaFimMes3}'), INTERVAL ((7 + DATE_FORMAT(IF(MONTH(MAX(h.data_termino)) = {$mes3}, MAX(h.data_termino), '$diaFimMes3'), '%w') - dia_semana) % 7) DAY)) - WEEK(DATE_ADD(IF(MONTH(MIN(h.data_inicio)) = {$mes3}, MIN(h.data_inicio), '{$diaIniMes3}'), INTERVAL (((7 - DATE_FORMAT(IF(MONTH(MIN(h.data_inicio)) = {$mes3}, MIN(h.data_inicio), '{$diaIniMes3}'), '%w')) + dia_semana) % 7) DAY)) + 1, 0) AS total_semanas_mes3"], false);
@@ -724,7 +724,7 @@ class Apontamento extends MY_Controller
         $this->db->join('ei_ordem_servico_escolas i', 'i.id = b.id_ordem_servico_escola', 'left');
         $this->db->join('ei_ordem_servico j', 'j.id = i.id_ordem_servico', 'left');
         $this->db->join('ei_contratos k', 'k.id = j.id_contrato', 'left');
-        $this->db->join('ei_valores_faturamento l', 'l.id_contrato = k.id AND l.ano = j.ano AND l.semestre = j.semestre AND l.id_cargo = e.id AND l.id_funcao = f.id', 'left');
+        $this->db->join('ei_valores_faturamento l', 'l.id_contrato = k.id AND l.ano = j.ano AND l.semestre = j.semestre AND l.id_cargo = f.id AND l.id_funcao = e.id', 'left');
         $this->db->where('d.id_alocacao', $idAlocacao);
         $this->db->where_in('d.id_os_escola', array_column($alocacaoEscolas, 'id_os_escola'));
         $this->db->where_in('b.id', array_column($cuidadores, 'id_os_profissional'));
@@ -3025,16 +3025,6 @@ class Apontamento extends MY_Controller
     {
         $mes = intval($this->input->post('mes'));
 
-
-        $this->db->select('id');
-        $this->db->where('depto', $this->input->post('depto'));
-        $this->db->where('id_diretoria', $this->input->post('diretoria'));
-        $this->db->where('id_supervisor', $this->input->post('supervisor'));
-        $this->db->where('ano', $this->input->post('ano'));
-        $this->db->where('semestre', $this->input->post('semestre'));
-        $alocacao = $this->db->get('ei_alocacao')->row();
-
-
         $rows = array_map(null,
             $this->input->post('id'),
             $this->input->post('id_alocacao'),
@@ -3064,7 +3054,6 @@ class Apontamento extends MY_Controller
             $data[4] = str_replace(['.', ','], ['', '.'], $data[4]);
             $data[6] = str_replace(['.', ','], ['', '.'], $data[6]);
             $data = array_combine($campos, $data);
-            $data['id_alocacao'] = $alocacao->id;
             if ($data['id']) {
                 $this->db->update('ei_faturamento_consolidado', $data, ['id' => $data['id']]);
             } else {
@@ -3205,6 +3194,8 @@ class Apontamento extends MY_Controller
         $this->db->join('ei_faturamento d', "d.id_alocacao = a.id_alocacao AND d.id = '{$id}'", 'left');
         $this->db->where('a.id_alocacao', $idAlocacao);
         $this->db->where('a.id_escola', $idEscola);
+        $this->db->where('c.cargo IS NOT NULL', null, false);
+        $this->db->where('c.funcao IS NOT NULL', null, false);
         $this->db->group_by(['a.id_escola', 'c.cargo', 'c.funcao']);
         $faturamentos = $this->db->get('ei_alocacao_escolas a')->result();
 
@@ -3759,6 +3750,7 @@ class Apontamento extends MY_Controller
 
         $this->db->select('(SELECT b.id FROM ei_alocados_totalizacao b WHERE b.id_alocado = a.id_alocado AND b.periodo = a.periodo) AS id', false);
         $this->db->select('a.id_alocado, a.periodo');
+//        $this->db->select(["SUM((SELECT MAX(w.total_semanas_mes{$mes}) - MAX(w.desconto_mes{$mes}) FROM ei_alocados_horarios w WHERE w.id_alocado = b.id AND w.periodo = a.periodo AND w.dia_semana = a.dia_semana)) AS total_dias_mes{$mes}"], false);
         $this->db->select("SUM(a.total_semanas_mes{$mes} - a.desconto_mes{$mes}) AS total_dias_mes{$mes}", false);
         $this->db->select('SUM(a.total_semanas_sub1 - a.desconto_sub1) AS total_dias_sub1', false);
         $this->db->select('SUM(a.total_semanas_sub2 - a.desconto_sub2) AS total_dias_sub2', false);
@@ -3991,11 +3983,12 @@ class Apontamento extends MY_Controller
         }
 
         $depto = $this->input->get_post('depto');
-        $idSupervisor = $this->input->get_post('supervisor');
+        $idSupervisor = $this->input->get_post('supervisor_filtrado');
         $semestre = $this->input->get_post('semestre');
 
 
-        $this->db->select('a.id, a.diretoria, null AS valor_hora', false);
+        $this->db->select("GROUP_CONCAT(DISTINCT a.id ORDER BY a.id SEPARATOR ', ') AS id", false);
+        $this->db->select('a.diretoria, null AS valor_hora', false);
         $this->db->select(["GROUP_CONCAT(DISTINCT b.contrato ORDER BY b.contrato SEPARATOR ', ') AS contratos"], false);
         $this->db->select(["GROUP_CONCAT(DISTINCT b.ordem_servico ORDER BY b.ordem_servico SEPARATOR ', ') AS ordens_servico"], false);
         $this->db->join('ei_alocacao_escolas b', 'b.id_alocacao = a.id');
@@ -4004,20 +3997,27 @@ class Apontamento extends MY_Controller
         $this->db->where('a.id_empresa', $this->session->userdata('empresa'));
         $this->db->where('a.depto', $depto);
         $this->db->where('a.id_diretoria', $idDiretoria);
-        $this->db->where('a.id_supervisor', $idSupervisor);
+        if ($idSupervisor) {
+            $this->db->where('a.id_supervisor', $idSupervisor);
+        }
         $this->db->where('a.ano', $ano);
         $this->db->where('a.semestre', $semestre);
         $this->db->where('d.funcao IS NOT NULL', null, false);
-        $this->db->group_by('a.id');
+        $this->db->group_by(['a.id_empresa', 'a.depto', 'a.diretoria', 'a.ano', 'a.semestre']);
         $data = $this->db->get('ei_alocacao a')->row();
 
 
-        $subquery = "SELECT c.id_alocacao, a.total_horas_mes{$idMes}, d.cargo, d.funcao, d.valor_hora_funcao
+        $subquery = "SELECT c.id_alocacao, 
+                            IF(e.data_aprovacao_mes{$idMes}, a.total_horas_mes{$idMes}, NULL) AS total_horas_mes{$idMes}, 
+                            d.cargo, d.funcao, d.valor_hora_funcao
                      FROM ei_alocados_totalizacao a
                      INNER JOIN ei_alocados b ON b.id = a.id_alocado
                      INNER JOIN ei_alocacao_escolas c ON c.id = b.id_alocacao_escola
                      LEFT JOIN ei_alocados_horarios d ON d.id_alocado = b.id AND d.periodo = a.periodo
-                     WHERE c.id_alocacao = 52
+                     LEFT JOIN ei_faturamento e ON e.id_alocacao = c.id_alocacao AND e.id_escola = c.id_escola
+                     WHERE c.id_alocacao IN ({$data->id})
+                     AND d.cargo IS NOT NULL 
+                     AND d.funcao IS NOT NULL
                      GROUP BY b.id, a.periodo, d.cargo, d.funcao";
 
 
@@ -4033,7 +4033,7 @@ class Apontamento extends MY_Controller
                        s.valor_hora_funcao * (SUM(TIME_TO_SEC(s.total_horas_mes{$idMes})) / 3600) AS valor_total_individual
                 FROM ({$subquery}) s
                 LEFT JOIN ei_faturamento_consolidado t ON
-                          t.id_alocacao = s.id_alocacao
+                          t.id_alocacao = s.id_alocacao AND t.cargo = s.cargo AND t.funcao = s.funcao
                 GROUP BY s.cargo, s.funcao";
         } else {
             $sql = "SELECT t.id, 
@@ -4047,7 +4047,7 @@ class Apontamento extends MY_Controller
                        s.valor_hora_funcao * (SUM(TIME_TO_SEC(s.total_horas_mes{$idMes})) / 3600) AS valor_total_individual
                 FROM ({$subquery}) s
                 LEFT JOIN ei_faturamento_consolidado t ON
-                          t.id_alocacao = s.id_alocacao
+                          t.id_alocacao = s.id_alocacao AND t.cargo = s.cargo AND t.funcao = s.funcao
                 GROUP BY s.cargo, s.funcao";
         }
         $alocados = $this->db->query($sql)->result();
@@ -4071,7 +4071,6 @@ class Apontamento extends MY_Controller
             'mesAtual' => $this->calendar->get_month_name(date('m')),
             'query_string' => "depto={$depto}&diretoria={$idDiretoria}&supervisor={$idSupervisor}&mes={$mes}&ano={$ano}",
             'is_pdf' => $is_pdf,
-            'idAlocacao' => $data->id,
             'diretoria' => $data->diretoria,
             'contratos' => $data->contratos,
             'ordensServico' => $data->ordens_servico,
@@ -4154,18 +4153,23 @@ class Apontamento extends MY_Controller
         } else {
             if ($recuperar) {
                 $this->db->select(["TIME_FORMAT(SEC_TO_TIME(TIME_TO_SEC(e.horas_mensais_custo) + IFNULL(TIME_TO_SEC(d.horas_descontadas_mes{$idMes}), 0)), '%H:%i') AS total_horas_mes"], false);
-                $this->db->select(["FORMAT(e.valor_hora_operacional, 2, 'de_DE') AS valor_hora_operacional"], false);
-                $this->db->select(["FORMAT(e.valor_hora_operacional * ((IFNULL(TIME_TO_SEC(e.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(d.horas_descontadas_mes{$idMes}), 0)) / 3600), 2, 'de_DE') AS valor_total"], false);
+                $this->db->select(["FORMAT(IF(e.valor_hora_operacional > 0, e.valor_hora_operacional, j.valor_pagamento), 2, 'de_DE') AS valor_hora_operacional"], false);
+                $this->db->select(["FORMAT(IF(e.valor_hora_operacional > 0, e.valor_hora_operacional, j.valor_pagamento) * ((IFNULL(TIME_TO_SEC(e.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(d.horas_descontadas_mes{$idMes}), 0)) / 3600), 2, 'de_DE') AS valor_total"], false);
             } else {
                 $this->db->select(["TIME_FORMAT(IFNULL(d.total_horas_faturadas_mes{$idMes}, SEC_TO_TIME(TIME_TO_SEC(e.horas_mensais_custo) + IFNULL(TIME_TO_SEC(d.horas_descontadas_mes{$idMes}), 0))), '%H:%i') AS total_horas_mes"], false);
-                $this->db->select(["FORMAT(IFNULL(d.valor_pagamento_mes{$idMes}, e.valor_hora_operacional), 2, 'de_DE') AS valor_hora_operacional"], false);
-                $this->db->select(["FORMAT(IFNULL(d.valor_total_mes{$idMes}, e.valor_hora_operacional * ((IFNULL(TIME_TO_SEC(e.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(d.horas_descontadas_mes{$idMes}), 0)) / 3600)), 2, 'de_DE') AS valor_total"], false);
+                $this->db->select(["FORMAT(IFNULL(d.valor_pagamento_mes{$idMes}, IF(e.valor_hora_operacional > 0, e.valor_hora_operacional, j.valor_pagamento)), 2, 'de_DE') AS valor_hora_operacional"], false);
+                $this->db->select(["FORMAT(IFNULL(d.valor_total_mes{$idMes}, IF(e.valor_hora_operacional > 0, e.valor_hora_operacional, j.valor_pagamento) * ((IFNULL(TIME_TO_SEC(e.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(d.horas_descontadas_mes{$idMes}), 0)) / 3600)), 2, 'de_DE') AS valor_total"], false);
             }
         }
         $this->db->join('ei_alocados b', 'b.id = a.id_alocado');
         $this->db->join('ei_alocacao_escolas c', 'c.id = b.id_alocacao_escola');
         $this->db->join('ei_alocados_totalizacao d', 'd.id_alocado = b.id AND d.periodo = a.periodo');
         $this->db->join('ei_ordem_servico_horarios e', 'e.id = a.id_os_horario');
+        $this->db->join('ei_ordem_servico_profissionais f', 'f.id = e.id_os_profissional');
+        $this->db->join('ei_ordem_servico_escolas g', 'g.id = f.id_ordem_servico_escola');
+        $this->db->join('ei_ordem_servico h', 'h.id = g.id_ordem_servico');
+        $this->db->join('ei_contratos i', 'i.id = h.id_contrato');
+        $this->db->join('ei_valores_faturamento j', 'j.id_contrato = i.id AND j.ano = h.ano AND j.semestre = h.semestre AND j.id_funcao = e.id_funcao', 'left');
         $this->db->where('b.id_cuidador', $alocacao->id_cuidador);
         $this->db->group_by(['c.id_escola', 'a.periodo']);
         $totalizacoes = $this->db->get('ei_alocados_horarios a')->result();

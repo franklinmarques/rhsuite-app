@@ -82,7 +82,7 @@
             </td>
             <?php if ($is_pdf == false): ?>
                 <td nowrap>
-                    <a id="pdf" class="btn btn-sm btn-danger"
+                    <a id="pdf" class="btn btn-sm btn-info"
                        href="<?= site_url('ei/apontamento/pdfPagamentoPrestador/?' . $query_string); ?>"
                        title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar PDF</a>
                 </td>
@@ -106,7 +106,9 @@
         <tr>
             <td width="60%">
                 <p>
-                    <strong>Nome prestador de serviço:</strong> <?= implode(', ', array_filter([$prestador, $prestador_sub1, $prestador_sub2])); ?><br>
+                    <strong>Nome prestador de
+                        serviço:</strong> <?= implode(', ', array_filter([$prestador, $prestador_sub1, $prestador_sub2])); ?>
+                    <br>
                     <strong>CNPJ:</strong> <?= $cnpj; ?><br>
                     <strong>Centro de custo:</strong> <?= $centroCusto; ?><br>
                     <strong>Agência:</strong> <?= $agencia; ?>&emsp;

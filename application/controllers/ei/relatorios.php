@@ -891,15 +891,14 @@ class Relatorios extends MY_Controller
     }
 
 
-    public function medicao()
+    public function medicao($isPdf = false)
     {
         $this->db->select('foto, foto_descricao');
         $this->db->where('id', $this->session->userdata('empresa'));
         $data['empresa'] = $this->db->get('usuarios')->row();
-        $data['is_pdf'] = false;
+        $data['is_pdf'] = $isPdf === true;
 
         $mes = $this->input->get('mes');
-        $idMes = intval($mes);
         if (strlen($mes) == 0) {
             $mes = date('m');
         }
@@ -916,17 +915,17 @@ class Relatorios extends MY_Controller
         $data['mes_nome'] = $this->calendar->get_month_name($mes);
         $data['mes'] = $mes;
         $data['ano'] = $ano;
-        $data['query_string'] = '';
+        $data['semestre'] = $this->input->get('semestre');
+        $idMes = intval($mes) - ($data['semestre'] > 1 ? 6 : 0);
+        $data['query_string'] = http_build_query($this->input->get());
 
 
-        $this->db->select('a.id, COUNT(DISTINCT(escola)) AS total_escolas', false);
+        $this->db->select(["GROUP_CONCAT(DISTINCT a.id ORDER BY a.id ASC SEPARATOR ', ') AS id"], false);
+        $this->db->select('COUNT(DISTINCT(escola)) AS total_escolas', false);
         $this->db->select('COUNT(DISTINCT(aluno)) AS total_alunos', false);
         $this->db->join('ei_alocacao_escolas b', 'b.id_alocacao = a.id');
         $this->db->join('ei_matriculados c', 'c.id_alocacao_escola = b.id', 'left');
         $this->db->where('a.id_empresa', $this->session->userdata('empresa'));
-        $this->db->where('a.depto', $this->input->get('depto'));
-        $this->db->where('a.id_diretoria', $this->input->get('diretoria'));
-        $this->db->where('a.id_supervisor', $this->input->get('supervisor'));
         $this->db->where('a.ano', $this->input->get('ano'));
         $this->db->where('a.semestre', $this->input->get('semestre'));
         $data['alocacao'] = $this->db->get('ei_alocacao a')->row();
@@ -934,10 +933,13 @@ class Relatorios extends MY_Controller
 
         $this->db->select('a.funcao AS nome');
         $this->db->select('COUNT(DISTINCT(b.cuidador)) AS total_pessoas', false);
-        $this->db->select("TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(a.total_mes{$idMes}))), '%H:%i') AS total_horas_projetadas", false);
-        $this->db->select("TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(e.total_horas_mes{$idMes}))), '%H:%i') AS total_horas_realizadas", false);
+        $this->db->select("SUM(TIME_TO_SEC(e.total_horas_mes{$idMes})) AS total_secs_projetados", false);
+        $this->db->select("SUM(TIME_TO_SEC(a.total_mes{$idMes})) AS total_secs_realizados", false);
+        $this->db->select("TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(e.total_horas_mes{$idMes}))), '%H:%i') AS total_horas_projetadas", false);
+        $this->db->select("TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(a.total_mes{$idMes}))), '%H:%i') AS total_horas_realizadas", false);
         $this->db->select("FORMAT(SUM(e.valor_pagamento_mes{$idMes}), 2, 'de_DE') AS receita_projetada", false);
-        $this->db->select("FORMAT(SUM(e.valor_total_mes{$idMes}), 2, 'de_DE') AS receita_efetuada", false);
+//        $this->db->select("FORMAT(SUM(IFNULL(e.valor_total_mes{$idMes}, IF(g.data_aprovacao_mes{$idMes}, a.valor_hora_funcao, 1) * (TIME_TO_SEC(a.total_mes{$idMes}) / 3600))), 2, 'de_DE') AS receita_efetuada", false);
+        $this->db->select("FORMAT(a.valor_hora_funcao * SUM(TIME_TO_SEC(a.total_mes{$idMes}) / 3600), 2, 'de_DE') AS receita_efetuada", false);
         $this->db->select("COUNT(f.id) AS pagamentos_efetuados", false);
         $this->db->select('NULL AS resultado', false);
         $this->db->select('NULL AS resultado_percentual', false);
@@ -946,12 +948,18 @@ class Relatorios extends MY_Controller
         $this->db->join('ei_alocacao d', 'd.id = c.id_alocacao');
         $this->db->join('ei_alocados_totalizacao e', 'e.id_alocado = b.id AND e.periodo = a.periodo', 'left');
         $this->db->join('ei_pagamento_prestador f', 'f.id_alocacao = d.id AND f.cuidador = b.cuidador', 'left');
+        $this->db->join('ei_faturamento g', 'g.id_alocacao = d.id AND g.id_escola = c.id_escola AND g.cargo = a.cargo AND g.funcao = a.funcao', 'left');
         $this->db->group_by('a.funcao');
         $this->db->order_by('a.funcao', 'asc');
-        $this->db->where('d.id', $data['alocacao']->id);
+        $this->db->where_in('d.id', !empty($data['alocacao']->id) ? explode(',', $data['alocacao']->id) : [0]);
         $this->db->where('a.funcao IS NOT NULL', null, false);
         $data['funcoes'] = $this->db->get('ei_alocados_horarios a')->result();
 
+        $this->load->helper('time');
+
+        if ($data['is_pdf']) {
+            return $this->load->view('ei/relatorio_medicao', $data, true);
+        }
 
         $this->load->view('ei/relatorio_medicao', $data);
     }
@@ -985,6 +993,31 @@ class Relatorios extends MY_Controller
         $this->load->library('Calendar');
         $this->calendar->month_type = 'short';
         $nome = 'Medição de Funcionários - ' . $this->calendar->get_month_name($data['mes']) . '_' . $data['ano'];
+
+        $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
+    }
+
+
+    public function pdfMedicao()
+    {
+        $this->load->library('m_pdf');
+
+        $stylesheet = '#table thead tr th { border-top: 4px solid #ddd; padding-top: 8px; } ';
+        $stylesheet .= 'table.medicao {  border: 1px solid #333; margin-bottom: 0px; } ';
+        $stylesheet .= 'table.medicao thead tr th { font-size: 13px; padding: 4px; background-color: #f5f5f5; border: 1px solid #333;  } ';
+        $stylesheet .= 'table.medicao tbody tr td { font-size: 12px; padding: 4px; vertical-align: top; border: 1px solid #333;  } ';
+
+
+        $this->m_pdf->pdf->setTopMargin(52);
+        $this->m_pdf->pdf->AddPage('L');
+        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
+        $this->m_pdf->pdf->writeHTML($this->medicao(true));
+
+        $data = $this->input->get();
+
+        $this->load->library('Calendar');
+        $this->calendar->month_type = 'short';
+        $nome = 'Relatório Consolidado Educação Inclusiva - ' . $this->calendar->get_month_name($data['mes']) . '_' . $data['ano'];
 
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }

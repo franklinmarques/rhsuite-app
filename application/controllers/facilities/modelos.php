@@ -84,6 +84,7 @@ class Modelos extends MY_Controller
     public function ajaxListInspecao()
     {
         $post = $this->input->post();
+//        print_r($post['item']);exit;
 
         $sql = "SELECT t.*
                 FROM (SELECT b.nome AS unidade,
@@ -291,28 +292,34 @@ class Modelos extends MY_Controller
 
     // -------------------------------------------------------------------------
 
-    public function ajaxSaveInspecoes($idVistoria)
+    public function ajaxSaveInspecoes($idModelo)
     {
         $status = true;
 
-        $dataVistoria = $this->setDataInspecoes($idVistoria, 'V');
+        $dataVistoria = $this->setDataInspecoes($idModelo, 'V');
 
-        if ($dataVistoria) {
-            $this->db->where('id_modelo', $idVistoria);
-            $this->db->where_not_in('id_vistoria', array_column($dataVistoria, 'id_vistoria'));
+        if ($dataVistoria['update']) {
+            $this->db->where('id_modelo', $idModelo);
+            $this->db->where_not_in('id_vistoria', array_column($dataVistoria['update'], 'id_vistoria'));
             $this->db->delete('facilities_modelos_vistorias');
-
-            $status = $this->db->insert_batch('facilities_modelos_vistorias', $dataVistoria);
         }
 
-        $dataManutencao = $this->setDataInspecoes($idVistoria, 'M');
+        if ($dataVistoria['insert']) {
+            $status = $this->db->insert_batch('facilities_modelos_vistorias', $dataVistoria['insert']);
+        }
 
-        if ($dataManutencao and $status) {
-            $this->db->where('id_modelo', $idVistoria);
-            $this->db->where_not_in('id_manutencao', array_column($dataManutencao, 'id_manutencao'));
-            $this->db->delete('facilities_modelos_manutencoes');
+        $dataManutencao = $this->setDataInspecoes($idModelo, 'M');
 
-            $status = $this->db->insert_batch('facilities_modelos_manutencoes', $dataManutencao);
+        if ($status) {
+            if ($dataManutencao['update']) {
+                $this->db->where('id_modelo', $idModelo);
+                $this->db->where_not_in('id_manutencao', array_column($dataManutencao['update'], 'id_manutencao'));
+                $this->db->delete('facilities_modelos_manutencoes');
+            }
+
+            if ($dataManutencao['insert']) {
+                $status = $this->db->insert_batch('facilities_modelos_manutencoes', $dataManutencao['insert']);
+            }
         }
 
         return $status;
@@ -480,7 +487,7 @@ class Modelos extends MY_Controller
 
     // -------------------------------------------------------------------------
 
-    protected function setDataInspecoes($idVistoria, $tipo)
+    protected function setDataInspecoes($idModelo, $tipo)
     {
         if ($tipo === 'V') {
             $nomeColunaItem = 'id_vistoria';
@@ -492,12 +499,18 @@ class Modelos extends MY_Controller
 
         $itens = $this->input->post('item')[$tipo] ?? [];
 
-        $data = array();
+        $data = ['insert' => null, 'update' => null];
 
-        foreach ($itens as $item => $possuiCadastro) {
-            if (!$possuiCadastro) {
-                $data[] = array(
-                    'id_modelo' => $idVistoria,
+        foreach ($itens as $item => $id) {
+            if ($id) {
+                $data['update'][] = array(
+                    'id' => $id,
+                    'id_modelo' => $idModelo,
+                    $nomeColunaItem => $item
+                );
+            } else {
+                $data['insert'][] = array(
+                    'id_modelo' => $idModelo,
                     $nomeColunaItem => $item
                 );
             }

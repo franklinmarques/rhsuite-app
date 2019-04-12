@@ -186,6 +186,12 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                             <span>Gestão de Facilities</span>
                         </a>
                         <ul class="sub">
+                            <?php if ($this->session->userdata('nivel') == 17): ?>
+                                <li>
+                                    <a href="<?php echo site_url('facilities/empresas'); ?>">Itens de
+                                        Vistoria/Manutenção</a>
+                                </li>
+                            <?php endif; ?>
                             <?php if (in_array($this->session->userdata('nivel'), array(7, 8, 17, 18))): ?>
                                 <li>
                                     <a href="<?php echo site_url('facilities/estruturas'); ?>">Cadastro Estrutural</a>

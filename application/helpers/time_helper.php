@@ -8,13 +8,17 @@
  * Converte segundos em horas
  *
  * @access    public
- * @param    string    timestamp
- * @param    string    segundos
+ * @param string    timestamp
+ * @param string    segundos
  * @return    string
  */
 if (!function_exists('secToTime')) {
     function secToTime($timestamp = '', $mostrarSecs = true)
     {
+        if (strlen($timestamp) == 0) {
+            return $timestamp;
+        }
+
         $seconds = intval($timestamp); //Converte para inteiro
         $negative = $seconds < 0 ? '-' : ''; //Verifica se é um valor negativo
 
@@ -42,12 +46,16 @@ if (!function_exists('secToTime')) {
  * Converte horas em segundos
  *
  * @access    public
- * @param    string    time
+ * @param string    time
  * @return    string
  */
 if (!function_exists('timeToSec')) {
     function timeToSec($time = '')
     {
+        if (strlen($time) == 0) {
+            return $time;
+        }
+
         $arrTime = explode(':', $time);
 
         $horas = ($arrTime[0] ?? 0) * 3600;

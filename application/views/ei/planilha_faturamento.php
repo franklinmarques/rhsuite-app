@@ -82,7 +82,7 @@
             </td>
             <?php if ($is_pdf == false): ?>
                 <td nowrap>
-                    <a id="pdf_faturamento" class="btn btn-sm btn-danger"
+                    <a id="pdf_faturamento" class="btn btn-sm btn-info"
                        href="<?= site_url('ei/apontamento/pdfTotalizacao/?' . $query_string); ?>"
                        title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar PDF</a>
                 </td>

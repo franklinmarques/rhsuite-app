@@ -82,7 +82,7 @@
             </td>
             <?php if ($is_pdf == false): ?>
                 <td nowrap>
-                    <a id="pdf" class="btn btn-sm btn-danger"
+                    <a id="pdf" class="btn btn-sm btn-info"
                        href="<?= site_url('ei/apontamento/pdfTotalizacaoConsolidada/?' . $query_string); ?>"
                        title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar PDF</a>
                 </td>
@@ -140,7 +140,7 @@
                         </td>
                         <td class="text-center" style="width: 130px;">
                             <input name="total_horas[]" class="form-control hora text-center" type="text"
-                                   value="<?= $alocado->total_horas ?>"
+                                   value="<?= secToTime(preg_match('/^\d{2,}:\d{2}:\d{2}$/', $alocado->total_segundos) ? timeToSec($alocado->total_segundos) : $alocado->total_segundos, false); ?>"
                                    placeholder="hh:mm"
                                    style="width: 130px;">
                         </td>
@@ -155,7 +155,7 @@
                     <tr>
                         <td><?= $alocado->funcao ?></td>
                         <td class="text-center"><?= $alocado->valor_hora ?></td>
-                        <td class="text-center"><?= $alocado->total_horas ?></td>
+                        <td class="text-center"><?= secToTime(preg_match('/^\d{2,}:\d{2}:\d{2}$/', $alocado->total_segundos) ? timeToSec($alocado->total_segundos) : $alocado->total_segundos, false); ?></td>
                         <td class="text-center"><?= $alocado->valor_faturado ?></td>
                     </tr>
                 <?php endforeach; ?>

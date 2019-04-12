@@ -93,7 +93,7 @@
                         <button onclick="salvar()" class="btn btn-sm btn-success" id="salvar" title="Salvar">Salvar
                         </button>
                         <a id="pdf" class="btn btn-sm btn-info"
-                           href="<?= site_url('ei/relatorios/pdfMedicao/' . $query_string); ?>"
+                           href="<?= site_url('ei/relatorios/pdfMedicao/q?' . $query_string); ?>"
                            title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar PDF</a>
                         <!--<button class="btn btn-sm btn-default" onclick="javascript:history.back()"><i class="glyphicon glyphicon-circle-arrow-left"></i> Voltar</button>-->
                     </td>
@@ -105,8 +105,8 @@
                         <h3 class="text-center" style="font-weight: bold;">RELATÓRIO CONSOLIDADO - EDUCAÇÃO
                             INCLUSIVA<br><?= mb_strtoupper($mes_nome) ?> DE <?= $ano ?></h3>
                     <?php else: ?>
-                        <h4 class="text-center" style="font-weight: bold;">ELATÓRIO CONSOLIDADO - EDUCAÇÃO
-                            INCLUSIVA<br><?= mb_strtoupper($mes_nome) ?> DE <?= $ano ?></h4>
+                        <h2 class="text-center" style="font-weight: bold;">RELATÓRIO CONSOLIDADO - EDUCAÇÃO
+                            INCLUSIVA<br><?= mb_strtoupper($mes_nome) ?> DE <?= $ano ?></h2>
                     <?php endif; ?>
                 </th>
             </tr>
@@ -116,75 +116,101 @@
     <sethtmlpageheader name="myHeader" value="on" show-this-page="1"></sethtmlpageheader>
 
     <div>
-        <table id="quantitativo_recursos_humanos" class="table table-bordered table-condensed">
+        <table id="quantitativo_recursos_humanos" class="table medicao table-bordered table-condensed">
             <thead>
             <tr class="success">
                 <th colspan="4" class="text-center"><h3><strong>Quantitativo de Recursos Humanos</strong></h3></th>
             </tr>
             <tr class="active">
                 <th>Colaborador(a)</th>
-                <th>Qtde. pessoas</th>
-                <th>Qtde horas projetadas</th>
-                <th>Qtde horas realizadas</th>
+                <th class="text-center">Qtde. pessoas</th>
+                <th class="text-center">Qtde horas projetadas</th>
+                <th class="text-center">Qtde horas realizadas</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td>Quantidade de Escolas</td>
-                <th><input name="total_pessoas[]" type="text" class="form-control text-center total"
-                           value="<?= $alocacao->total_escolas; ?>"></th>
-                <th></th>
-                <th></th>
+                <?php if ($is_pdf): ?>
+                    <td class="text-center"><?= $alocacao->total_escolas; ?></td>
+                <?php else: ?>
+                    <th><input name="total_pessoas[]" type="text" class="form-control text-center total"
+                               value="<?= $alocacao->total_escolas; ?>"></th>
+                <?php endif; ?>
+                <td></td>
+                <td></td>
             </tr>
             <tr>
                 <td>Quantidade de Alunos</td>
-                <th><input name="total_pessoas[]" type="text" class="form-control text-center total"
-                           value="<?= $alocacao->total_alunos; ?>"></th>
-                <th></th>
-                <th></th>
+                <?php if ($is_pdf): ?>
+                    <td class="text-center"><?= $alocacao->total_alunos; ?></td>
+                <?php else: ?>
+                    <th><input name="total_pessoas[]" type="text" class="form-control text-center total"
+                               value="<?= $alocacao->total_alunos; ?>"></th>
+                <?php endif; ?>
+                <td></td>
+                <td></td>
             </tr>
             <?php foreach ($funcoes as $funcao): ?>
                 <tr>
                     <td><?= $funcao->nome; ?></td>
-                    <th><input name="total_pessoas[]" value="<?= $funcao->total_pessoas; ?>" type="text"
-                               class="form-control text-center total"></th>
-                    <th><input name="total_horas_projetadas[]" value="<?= $funcao->total_horas_projetadas; ?>"
-                               type="text" class="form-control text-center horas"></th>
-                    <th><input name="total_horas_realizadas[]" value="<?= $funcao->total_horas_realizadas; ?>"
-                               type="text" class="form-control text-center horas"></th>
+                    <?php if ($is_pdf): ?>
+                        <td class="text-center"><?= $funcao->total_pessoas; ?></td>
+                        <td class="text-center"><?= secToTime($funcao->total_secs_projetados, false); ?></td>
+                        <td class="text-center"><?= secToTime($funcao->total_secs_realizados, false); ?></td>
+                    <?php else: ?>
+                        <th><input name="total_pessoas[]" value="<?= $funcao->total_pessoas; ?>" type="text"
+                                   class="form-control text-center total"></th>
+                        <th><input name="total_horas_projetadas[]"
+                                   value="<?= secToTime($funcao->total_secs_projetados, false); ?>"
+                                   type="text" class="form-control text-center horas"></th>
+                        <th><input name="total_horas_realizadas[]"
+                                   value="<?= secToTime($funcao->total_secs_realizados, false); ?>"
+                                   type="text" class="form-control text-center horas"></th>
+                    <?php endif; ?>
                 </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
         <pagebreak odd-header-name="myHeader"></pagebreak>
-        <table id="balanco_financeiro" class="table table-bordered table-condensed">
+        <table id="balanco_financeiro" class="table medicao table-bordered table-condensed">
             <thead>
             <tr class="success">
                 <th colspan="6" class="text-center"><h3><strong>Balanço Financeiro</strong></h3></th>
             </tr>
             <tr class="active">
                 <th>Colaborador(a)</th>
-                <th>Receita Projetada</th>
-                <th>Receita Efetuada</th>
-                <th>Pagamentos Efetuados</th>
-                <th>Resultado (R$)</th>
-                <th>Resultado (%)</th>
+                <th class="text-center">Receita Projetada</th>
+                <th class="text-center">Receita Efetuada</th>
+                <th class="text-center">Pagamentos Efetuados</th>
+                <th class="text-center">Resultado (R$)</th>
+                <th class="text-center">Resultado (%)</th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($funcoes as $funcao): ?>
                 <tr>
                     <td><?= $funcao->nome; ?></td>
-                    <th><input name="receita_projetada[]" value="<?= $funcao->receita_projetada; ?>" type="text"
-                               class="form-control text-center valor"></th>
-                    <th><input name="receita_efetuada[]" value="<?= $funcao->receita_efetuada; ?>" type="text"
-                               class="form-control text-center valor"></th>
-                    <th><input name="pagamentos_efetuados[]" value="<?= $funcao->pagamentos_efetuados; ?>" type="text"
-                               class="form-control text-center valor"></th>
-                    <th><input name="resultado[]" type="text" value="<?= $funcao->resultado; ?>"
-                               class="form-control text-center valor"></th>
-                    <th><input name="resultado_percentual[]" value="<?= $funcao->resultado_percentual; ?>" type="text"
-                               class="form-control text-center porcentagem"></th>
+                    <?php if ($is_pdf): ?>
+                        <td class="text-center"><?= $funcao->receita_projetada; ?></td>
+                        <td class="text-center"><?= $funcao->receita_efetuada; ?></td>
+                        <td class="text-center"><?= $funcao->pagamentos_efetuados; ?></td>
+                        <td class="text-center"><?= $funcao->resultado; ?></td>
+                        <td class="text-center"><?= $funcao->resultado_percentual; ?></td>
+                    <?php else: ?>
+                        <th><input name="receita_projetada[]" value="<?= $funcao->receita_projetada; ?>" type="text"
+                                   class="form-control text-center valor"></th>
+                        <th><input name="receita_efetuada[]" value="<?= $funcao->receita_efetuada; ?>" type="text"
+                                   class="form-control text-center valor"></th>
+                        <th><input name="pagamentos_efetuados[]" value="<?= $funcao->pagamentos_efetuados; ?>"
+                                   type="text"
+                                   class="form-control text-center valor"></th>
+                        <th><input name="resultado[]" type="text" value="<?= $funcao->resultado; ?>"
+                                   class="form-control text-center valor"></th>
+                        <th><input name="resultado_percentual[]" value="<?= $funcao->resultado_percentual; ?>"
+                                   type="text"
+                                   class="form-control text-center porcentagem"></th>
+                    <?php endif; ?>
                 </tr>
             <?php endforeach; ?>
             </tbody>
@@ -230,14 +256,34 @@
     });
 
     function mes_anterior() {
-        var mes_ano = moment('<?= $ano; ?>-<?= $mes; ?>-01').subtract(1, 'month');
-        var search = 'mes=' + mes_ano.format('MM') + '&ano=' + mes_ano.format('YYYY');
+        var semestre = parseInt('<?= $semestre ?>');
+        var mes_ano = moment('<?= $ano; ?>-<?= $mes; ?>-01');
+
+        if (mes_ano.format('MM') === '07' && semestre === 2) {
+            semestre = 1;
+        } else {
+            mes_ano = mes_ano.subtract(1, 'month');
+            semestre = Math.ceil(mes_ano.format('Q') / 2);
+        }
+
+        var search = 'mes=' + mes_ano.format('MM') + '&ano=' + mes_ano.format('YYYY') + '&semestre=' + semestre;
         window.location.href = '<?= site_url('ei/relatorios/medicao'); ?>/q?' + search;
     }
 
     function mes_seguinte() {
-        var mes_ano = moment('<?= $ano; ?>-<?= $mes; ?>-01').add(1, 'month');
-        var search = 'mes=' + mes_ano.format('MM') + '&ano=' + mes_ano.format('YYYY');
+        var semestre = parseInt('<?= $semestre ?>');
+        var mes_ano = moment('<?= $ano; ?>-<?= $mes; ?>-01');
+
+        if (mes_ano.format('MM') === '06') {
+            mes_ano = mes_ano.add(1, 'month');
+        } else if (mes_ano.format('MM') === '07' && semestre === 1) {
+            semestre = 2;
+        } else {
+            mes_ano = mes_ano.add(1, 'month');
+            semestre = Math.ceil(mes_ano.format('Q') / 2);
+        }
+
+        var search = 'mes=' + mes_ano.format('MM') + '&ano=' + mes_ano.format('YYYY') + '&semestre=' + semestre;
         window.location.href = '<?= site_url('ei/relatorios/medicao'); ?>/q?' + search;
     }
 
@@ -245,11 +291,11 @@
         $('#fechar_mes').prop('disabled', true);
 
         $.ajax({
-            url: "<?php echo site_url('apontamento_totalizacao/fecharMes') ?>",
-            type: "POST",
-            data: query_string.replace('q?', ''),
-            dataType: "JSON",
-            success: function (data) {
+            'url': '<?php echo site_url('apontamento_totalizacao/fecharMes') ?>',
+            'type': 'POST',
+            'data': query_string.replace('q?', ''),
+            'dataType': 'json',
+            'success': function (data) {
                 if (data.status === true) {
                     alert('Mês fechado com sucesso!');
                 } else {
@@ -258,7 +304,7 @@
 
                 $('#fechar_mes').prop('disabled', false);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Não foi possível fechar o mês');
                 $('#fechar_mes').prop('disabled', false);
             }
