@@ -86,6 +86,7 @@ class Avaliacaoexp extends MY_Controller
         }
         $post = $this->input->post();
 
+
         $sql = "SELECT s.id, 
                        s.nome, 
                        s.modelo,
@@ -99,7 +100,11 @@ class Avaliacaoexp extends MY_Controller
                       FROM avaliacaoexp a
                       INNER JOIN avaliacaoexp_modelos b ON 
                                  b.id = a.id_modelo
-                      WHERE b.id_usuario_EMPRESA = {$id}) s";
+                      WHERE b.id_usuario_EMPRESA = {$id}";
+        if ($post['ativo']) {
+            $sql .= ' AND a.ativo = 1';
+        }
+        $sql .= ') s';
         $recordsTotal = $this->db->query($sql)->num_rows();
 
         $columns = array('s.id', 's.nome', 's.modelo', 's.tipo', 's.data_inicio', 's.data_termino');
@@ -124,8 +129,11 @@ class Avaliacaoexp extends MY_Controller
             $sql .= ' 
                     ORDER BY ' . implode(', ', $orderBy);
         }
-        $sql .= " 
+
+        if ($post['length'] > 0) {
+            $sql .= " 
                 LIMIT {$post['start']}, {$post['length']}";
+        }
         $list = $this->db->query($sql)->result();
 
         $data = array();
@@ -137,9 +145,9 @@ class Avaliacaoexp extends MY_Controller
             $row[] = $avaliacaoexp->data_termino ? date("d/m/Y", strtotime(str_replace('-', '/', $avaliacaoexp->data_termino))) : '';
 
             $row[] = '
-                      <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_avaliacao(' . "'" . $avaliacaoexp->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_avaliacao(' . "'" . $avaliacaoexp->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_avaliacao(' . "'" . $avaliacaoexp->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                      <a class="btn btn-sm btn-success" href="' . site_url('avaliacaoexp_avaliados/gerenciar/' . $avaliacaoexp->id) . '" title="Avaliadores X Avaliados"><i class="glyphicon glyphicon-plus"></i> Avaliadores X Avaliados</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('avaliacaoexp_avaliados/gerenciar/' . $avaliacaoexp->id) . '" title="Avaliadores X Avaliados"><i class="glyphicon glyphicon-plus"></i> Avaliadores X Avaliados</a>
                      ';
 
             $data[] = $row;
@@ -232,9 +240,9 @@ class Avaliacaoexp extends MY_Controller
                      ';
             $row[] = $avaliacaoExp->data_realizada ? date("d/m/Y", strtotime(str_replace('-', '/', $avaliacaoExp->data_realizada))) : '';
             $row[] = '
-                      <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Gerenciar avaliadores" onclick="edit_avaliado(' . "'" . $avaliacaoExp->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i> Gerenciar</a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Gerenciar avaliadores" onclick="edit_avaliado(' . "'" . $avaliacaoExp->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i> Gerenciar</a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_avaliado(' . "'" . $avaliacaoExp->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                      <a class="btn btn-sm btn-info" href="' . site_url('avaliacaoexp_avaliados/relatorio/' . $avaliacaoExp->id) . '" title="Relatório de avaliação"><i class="glyphicon glyphicon-list-alt"> </i> Relatório</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('avaliacaoexp_avaliados/relatorio/' . $avaliacaoExp->id) . '" title="Relatório de avaliação"><i class="glyphicon glyphicon-list-alt"> </i> Relatório</a>
                      ';
 
             $data[] = $row;
@@ -269,6 +277,10 @@ class Avaliacaoexp extends MY_Controller
         $data['data_inicio'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_inicio'])));
         $data['data_termino'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_termino'])));
 
+        if (!isset($data['ativo'])) {
+            $data['ativo'] = 0;
+        }
+
         $status = $this->db->insert('avaliacaoexp', $data);
         echo json_encode(array("status" => $status !== false));
     }
@@ -281,6 +293,10 @@ class Avaliacaoexp extends MY_Controller
         }
         $data['data_inicio'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_inicio'])));
         $data['data_termino'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_termino'])));
+
+        if (!isset($data['ativo'])) {
+            $data['ativo'] = 0;
+        }
 
         $where = array('id' => $data['id']);
         unset($data['id']);

@@ -24,6 +24,7 @@ class Avaliacaoexp_avaliados extends MY_Controller
                        b.nome,
                        (case b.tipo 
                         when 'A' then '1' 
+                        when 'D' then '3' 
                         when 'P' then '2'
                         else '' end) AS tipo,
                         DATE_FORMAT(a.data_inicio, '%d/%m/%Y') AS data_inicio, 
@@ -69,7 +70,7 @@ class Avaliacaoexp_avaliados extends MY_Controller
         $this->db->where('status', 1);
         $this->db->order_by('nome', 'ASC');
         $avaliadores = $this->db->get('usuarios')->result();
-        $data['modelos'] = $this->db->get_where('avaliacaoexp_modelos', array('tipo' => 'A'))->result();
+        $data['modelos'] = $this->db->get_where('avaliacaoexp_modelos', array('tipo' => $data['tipo']))->result();
 
         $data['colaboradores'] = array('' => 'selecione...');
         $data['colaboradoresBatch'] = array();
@@ -103,7 +104,7 @@ class Avaliacaoexp_avaliados extends MY_Controller
                                  c.id = a.id_avaliacao
                       INNER JOIN avaliacaoexp_modelos d ON 
                                  d.id = c.id_modelo AND 
-                                 d.tipo = 'A'
+                                 (d.tipo = 'A' OR d.tipo = 'D')
                       WHERE a.id_avaliacao = {$id}) s";
         $recordsTotal = $this->db->query($sql)->num_rows();
 
@@ -140,9 +141,9 @@ class Avaliacaoexp_avaliados extends MY_Controller
             $row[] = $avaliacaoexp->cargo;
             $row[] = $avaliacaoexp->depto;
             $row[] = '
-                      <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Gerenciar avaliadores" onclick="edit_avaliado(' . "'" . $avaliacaoexp->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i> Gerenciar avaliadores</a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Gerenciar avaliadores" onclick="edit_avaliado(' . "'" . $avaliacaoexp->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i> Gerenciar avaliadores</a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_avaliado(' . "'" . $avaliacaoexp->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                      <a class="btn btn-sm btn-info" href="' . site_url('avaliacaoexp_avaliados/relatorio/' . $avaliacaoexp->id) . '" title="Relatório de avaliação"><i class="glyphicon glyphicon-list-alt"></i> Relatório</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('avaliacaoexp_avaliados/relatorio/' . $avaliacaoexp->id) . '" title="Relatório de avaliação"><i class="glyphicon glyphicon-list-alt"></i> Relatório</a>
                      ';
 
             $data[] = $row;

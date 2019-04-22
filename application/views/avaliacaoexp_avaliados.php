@@ -48,8 +48,8 @@ require_once "header.php";
                         <?php if ($id_avaliado): ?>
                             <li><a href="<?= site_url('home/funcionarios') ?>">Gerenciar funcionários</a></li>
                         <?php else: ?>
-                            <?php if ($tipo == '1'): ?>
-                                <li><a href="<?= site_url('avaliacaoexp/desempenho') ?>">Avaliação Periódica de
+                            <?php if ($tipo == '1' or $tipo == '3'): ?>
+                                <li><a href="<?= site_url('avaliacaoexp') ?>">Avaliação Periódica de
                                         Desempenho</a></li>
                             <?php elseif ($tipo == '2'): ?>
                                 <li><a href="<?= site_url('avaliacaoexp/periodo') ?>">Avaliação por Período de
@@ -61,14 +61,14 @@ require_once "header.php";
                         <?php endif; ?>
                         <li class="active"><?= $titulo; ?></li>
                     </ol>
-                    <button class="btn btn-success" onclick="add_avaliado()"><i class="glyphicon glyphicon-plus"></i>
+                    <button class="btn btn-info" onclick="add_avaliado()"><i class="glyphicon glyphicon-plus"></i>
                         Adicionar avaliados x avaliadores
                     </button>
-                    <button class="btn btn-success" onclick="add_grupo_avaliados()"><i
+                    <button class="btn btn-info" onclick="add_grupo_avaliados()"><i
                                 class="glyphicon glyphicon-plus"></i> Avaliação periódica em batch
                     </button>
                     <?php if ($id_avaliado): ?>
-                        <button class="btn btn-success" onclick="ver_modelos()"><i
+                        <button class="btn btn-primary" onclick="ver_modelos()"><i
                                     class="glyphicon glyphicon-list-alt"></i> Ver modelos de avaliação
                         </button>
                     <?php endif; ?>
@@ -158,7 +158,7 @@ require_once "header.php";
                             </div>
                             <form action="#" id="form" class="form-horizontal">
                                 <div class="form-body">
-                                    <?php if ($tipo == '1'): ?>
+                                    <?php if ($tipo == '1' or $tipo == '3'): ?>
                                         <div class="row form-group">
                                             <div class="col-xs-9 alert alert-info" style="padding: 7px 12px;">
                                                 <div class="row">
@@ -171,9 +171,9 @@ require_once "header.php";
                                             <div class="col col-xs-3" style="padding-right: 0;">
                                                 <p class="text-right">
                                                     <button type="button" id="btnSave" onclick="save()"
-                                                            class="btn btn-primary">Salvar
+                                                            class="btn btn-success">Salvar
                                                     </button>
-                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
                                                         Cancelar
                                                     </button>
                                                 </p>
@@ -184,9 +184,9 @@ require_once "header.php";
                                             <div class="col col-xs-3 col-xs-offset-9" style="padding-right: 0;">
                                                 <p class="text-right">
                                                     <button type="button" id="btnSave" onclick="save()"
-                                                            class="btn btn-primary">Salvar
+                                                            class="btn btn-success">Salvar
                                                     </button>
-                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
                                                         Cancelar
                                                     </button>
                                                 </p>
@@ -241,7 +241,7 @@ require_once "header.php";
                                         <label class="control-label col-md-2">Data de início de atividades</label>
                                         <div class="col-md-2">
                                             <input name="data_atividades" id="data_atividades" placeholder="dd/mm/aaaa"
-                                                   class="form-control" type="text">
+                                                   class="form-control text-center" type="text">
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
@@ -255,7 +255,7 @@ require_once "header.php";
                                     <label class="control-label col-md-2">Data 1&ordf; avaliação</label>
                                     <div class="col-md-2">
                                         <input name="data_avaliacao[]" placeholder="dd/mm/aaaa"
-                                               class="form-control data_avaliacao" type="text">
+                                               class="form-control text-center data_avaliacao" type="text">
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
@@ -268,7 +268,7 @@ require_once "header.php";
                                     <label class="control-label col-md-2">Data 2&ordf; avaliação</label>
                                     <div class="col-md-2">
                                         <input name="data_avaliacao[]" placeholder="dd/mm/aaaa"
-                                               class="form-control data_avaliacao" type="text">
+                                               class="form-control text-center data_avaliacao" type="text">
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
@@ -281,7 +281,7 @@ require_once "header.php";
                                     <label class="control-label col-md-2">Data 3&ordf; avaliação</label>
                                     <div class="col-md-2">
                                         <input name="data_avaliacao[]" placeholder="dd/mm/aaaa"
-                                               class="form-control data_avaliacao" type="text">
+                                               class="form-control text-center data_avaliacao" type="text">
                                         <span class="help-block"></span>
                                     </div>
                                 </div>

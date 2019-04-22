@@ -49,10 +49,10 @@ require_once "header.php";
                 </ol>
                 <div class="row">
                     <div class="col-md-6">
-                        <button class="btn btn-success" onclick="add_pergunta()"><i class="glyphicon glyphicon-plus"></i> Adicionar pergunta</button>
+                        <button class="btn btn-info" onclick="add_pergunta()"><i class="glyphicon glyphicon-plus"></i> Adicionar pergunta</button>
                     </div>
                     <div class="col-md-6 text-right">
-                        <button class="btn btn-info text-right"><i class="glyphicon glyphicon-comment"></i> Ver modelo de avaliação</button>
+                        <button class="btn btn-primary text-right"><i class="glyphicon glyphicon-comment"></i> Ver modelo de avaliação</button>
                     </div>
                 </div>
                 <br />
@@ -70,7 +70,7 @@ require_once "header.php";
                         </table>
                     </div>
                     <div class="col-md-6">
-                        <button id="buu" class="btn btn-primary" onclick="editar_resposta()" style="margin:15px 0;"><i class="glyphicon glyphicon-pencil"></i> Editar respostas</button>
+                        <button id="buu" class="btn btn-info" onclick="editar_resposta()" style="margin:15px 0;"><i class="glyphicon glyphicon-pencil"></i> Editar respostas</button>
                         <table id="table2" class="table table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
@@ -111,8 +111,8 @@ require_once "header.php";
                         </form>                        
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Salvar</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -207,8 +207,8 @@ require_once "header.php";
                         </form>                        
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="btnSave2" onclick="salvar_resposta()" class="btn btn-primary">Salvar</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btnSave2" onclick="salvar_resposta()" class="btn btn-success">Salvar</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->

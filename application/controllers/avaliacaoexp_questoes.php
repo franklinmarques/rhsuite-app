@@ -104,7 +104,7 @@ class Avaliacaoexp_questoes extends MY_Controller {
         foreach ($list as $avaliacaoExp) {
             $row = array();
             $row[] = $avaliacaoExp->pergunta;
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_pergunta(' . "'" . $avaliacaoExp->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+            $row[] = '<a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_pergunta(' . "'" . $avaliacaoExp->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_pergunta(' . "'" . $avaliacaoExp->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>';
             $data[] = $row;
         }

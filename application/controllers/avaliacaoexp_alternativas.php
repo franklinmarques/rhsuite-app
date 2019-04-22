@@ -94,7 +94,7 @@ class Avaliacaoexp_alternativas extends MY_Controller
             $row[] = $avaliacao->peso;
 
             $row[] = '
-                      <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_pergunta(' . "'" . $avaliacao->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_pergunta(' . "'" . $avaliacao->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_pergunta(' . "'" . $avaliacao->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
                      ';
 

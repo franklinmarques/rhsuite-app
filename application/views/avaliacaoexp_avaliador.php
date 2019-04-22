@@ -59,7 +59,7 @@ require_once "header.php";
                         <li class="active"><?= $titulo; ?></li>
                     </ol>
                     <?php if ($this->session->userdata('tipo') === 'empresa'): ?>
-                        <button class="btn btn-success" onclick="add_pergunta()"><i
+                        <button class="btn btn-info" onclick="add_pergunta()"><i
                                     class="glyphicon glyphicon-plus"></i> Adicionar pergunta
                         </button>
                     <?php endif; ?>
@@ -140,7 +140,7 @@ require_once "header.php";
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="salvar_avaliacao" onclick="save()" class="btn btn-primary">
+                            <button type="button" id="salvar_avaliacao" onclick="save()" class="btn btn-success">
                                 Salvar
                             </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -184,7 +184,7 @@ require_once "header.php";
                         </div>
                         <div class="modal-footer">
                             <button type="button" id="salvar_desempenho" onclick="save_desempenho()"
-                                    class="btn btn-primary">Salvar
+                                    class="btn btn-success">Salvar
                             </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
@@ -285,7 +285,7 @@ require_once "header.php";
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="salvar_periodo" onclick="save_periodo()" class="btn btn-primary">
+                            <button type="button" id="salvar_periodo" onclick="save_periodo()" class="btn btn-success">
                                 Salvar
                             </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>

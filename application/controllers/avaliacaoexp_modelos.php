@@ -44,6 +44,7 @@ class Avaliacaoexp_modelos extends MY_Controller
                              a.id_usuario_EMPRESA AS empresa,
                              (case tipo 
                               when 'A' then 'Avaliação periódica' 
+                              when 'D' then 'Avaliação de desempenho' 
                               when 'P' then 'Período de experiência'
                               else '' end) AS tipo,
                              a.observacao
@@ -94,10 +95,9 @@ class Avaliacaoexp_modelos extends MY_Controller
             $uri = $avaliacaoExp->tipo === 'Período de experiência' ? 'avaliacaoexp_questoes' : 'avaliacaoexp_alternativas';
 
             $row[] = '
-			<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_avaliacao(' . "'" . $avaliacaoExp->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+			<a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_avaliacao(' . "'" . $avaliacaoExp->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
 			<a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_avaliacao(' . "'" . $avaliacaoExp->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-			<a class="btn btn-sm btn-success" href="' . site_url($uri . '/gerenciar/' . $avaliacaoExp->id) . '" title="Editar questões" ><i class="glyphicon glyphicon-list"></i> Editar questões</a>
-			
+			<a class="btn btn-sm btn-primary" href="' . site_url($uri . '/gerenciar/' . $avaliacaoExp->id) . '" title="Editar questões" ><i class="glyphicon glyphicon-list"></i> Editar questões</a>
 			';
 
             $data[] = $row;

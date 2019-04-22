@@ -49,10 +49,10 @@ require_once "header.php";
                 </ol>
                 <div class="row">
                     <div class="col-md-6">
-                        <button class="btn btn-success" onclick="add_pergunta()"><i class="glyphicon glyphicon-plus"></i> Adicionar pergunta</button>
+                        <button class="btn btn-info" onclick="add_pergunta()"><i class="glyphicon glyphicon-plus"></i> Adicionar pergunta</button>
                     </div>
                     <div class="col-md-6 text-right">
-                        <button class="btn btn-info text-right"><i class="glyphicon glyphicon-comment"></i> Ver modelo de avaliação</button>
+                        <button class="btn btn-primary text-right"><i class="glyphicon glyphicon-comment"></i> Ver modelo de avaliação</button>
                     </div>
                 </div>
                 <br />
@@ -168,8 +168,8 @@ require_once "header.php";
                         </form>                        
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Salvar</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->

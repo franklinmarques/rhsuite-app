@@ -13,16 +13,24 @@ class Avaliacaoexp_avaliador extends MY_Controller
     public function index()
     {
         $data['id_usuario'] = $this->session->userdata('id');
-        $data['titulo'] = 'Avaliações de Desempenho e Experiência';
+        $data['titulo'] = 'Avaliações de Experiência';
         $data['tipo_modelo'] = '';
+        $this->load->view('avaliacaoexp_avaliador', $data);
+    }
+
+    public function avaliacoesPeriodicas()
+    {
+        $data['id_usuario'] = $this->session->userdata('id');
+        $data['titulo'] = 'Avaliações Periódicas';
+        $data['tipo_modelo'] = '1';
         $this->load->view('avaliacaoexp_avaliador', $data);
     }
 
     public function desempenho()
     {
         $data['id_usuario'] = $this->session->userdata('id');
-        $data['titulo'] = 'Avaliações Periódicas de Desempenho';
-        $data['tipo_modelo'] = '1';
+        $data['titulo'] = 'Avaliações de Desempenho';
+        $data['tipo_modelo'] = '3';
         $this->load->view('avaliacaoexp_avaliador', $data);
     }
 
@@ -63,7 +71,7 @@ class Avaliacaoexp_avaliador extends MY_Controller
                               FROM avaliacaoexp_resultado i
                               WHERE i.id_avaliador = d.id) AS data_realizacao,
                               IF(COUNT(h.id) > 0, 1, 0) AS resultado,
-                              IF(b.tipo = 'A' AND COUNT(k.id_avaliador) > 0, 1, 0) AS desempenho,
+                              IF((b.tipo = 'A' OR b.tipo = 'D') AND COUNT(k.id_avaliador) > 0, 1, 0) AS desempenho,
                               IF(b.tipo = 'P' AND COUNT(j.id_avaliado) > 0, 0, 0) AS periodo
                       FROM avaliacaoexp_avaliados a
                       INNER JOIN avaliacaoexp_modelos b ON
@@ -91,6 +99,8 @@ class Avaliacaoexp_avaliador extends MY_Controller
                 $tipo = 'A';
             } elseif ($tipo == '2') {
                 $tipo = 'P';
+            } elseif ($tipo == '3') {
+                $tipo = 'D';
             }
             $sql .= " AND b.tipo = '{$tipo}'";
         }
@@ -147,34 +157,39 @@ class Avaliacaoexp_avaliador extends MY_Controller
             $btn = '';
             if ($tipo === 'P') {
                 if ($avaliacaoExp->resultado) {
-                    $btn .= '<button class="btn btn-sm btn-success disabled" title="Avaliação parte 1"><i class="glyphicon glyphicon-ok"></i>' . $avaliacao_parte1 . '</button>';
+                    $btn .= '<button class="btn btn-sm btn-info disabled" title="Avaliação parte 1"><i class="glyphicon glyphicon-ok"></i>' . $avaliacao_parte1 . '</button>';
                 } else {
-                    $btn .= '<button class="btn btn-sm btn-success" onclick="edit_avaliacao(' . $avaliacaoExp->avaliador . ')" title="Avaliação parte 1"><i class="glyphicon glyphicon-plus"></i>' . $avaliacao_parte1 . '</button>';
+                    $btn .= '<button class="btn btn-sm btn-info" onclick="edit_avaliacao(' . $avaliacaoExp->avaliador . ')" title="Avaliação parte 1"><i class="glyphicon glyphicon-plus"></i>' . $avaliacao_parte1 . '</button>';
                 }
                 if ($avaliacaoExp->periodo) {
                     $btn .= '
-                            <button class="btn btn-sm btn-success disabled" title="Avaliação parte 2"><i class="glyphicon glyphicon-ok"></i>' . $avaliacao_parte2 . '</button>';
+                            <button class="btn btn-sm btn-info disabled" title="Avaliação parte 2"><i class="glyphicon glyphicon-ok"></i>' . $avaliacao_parte2 . '</button>';
                 } else {
                     $btn .= '
-                            <button class="btn btn-sm btn-success" onclick="edit_periodo(' . $avaliacaoExp->id . ')" title="Avaliação parte 2"><i class="glyphicon glyphicon-plus"></i>' . $avaliacao_parte2 . '</button>';
+                            <button class="btn btn-sm btn-info" onclick="edit_periodo(' . $avaliacaoExp->id . ')" title="Avaliação parte 2"><i class="glyphicon glyphicon-plus"></i>' . $avaliacao_parte2 . '</button>';
                 }
                 $row[] = $btn . '
-                                <a class="btn btn-sm btn-info" href="' . site_url('avaliacaoexp_avaliados/relatorio/' . $avaliacaoExp->id) . '" title="Relatório de avaliação"><i class="glyphicon glyphicon-list-alt"></i> ' . $relatorio . '</a>';
+                                <a class="btn btn-sm btn-primary" href="' . site_url('avaliacaoexp_avaliados/relatorio/' . $avaliacaoExp->id) . '" title="Relatório de avaliação"><i class="glyphicon glyphicon-list-alt"></i> ' . $relatorio . '</a>';
             } else {
                 if ($avaliacaoExp->resultado) {
-                    $btn .= '<button class="btn btn-sm btn-success disabled" title="Avaliação parte 1"><i class="glyphicon glyphicon-ok"></i>' . $avaliacao_parte1 . '</button>';
+                    $btn .= '<button class="btn btn-sm btn-info disabled" title="Avaliação parte 1"><i class="glyphicon glyphicon-ok"></i>' . $avaliacao_parte1 . '</button>';
                 } else {
-                    $btn .= '<button class="btn btn-sm btn-success" onclick="edit_avaliacao(' . $avaliacaoExp->avaliador . ')" title="Avaliação parte 1"><i class="glyphicon glyphicon-plus"></i>' . $avaliacao_parte1 . '</button>';
+                    $btn .= '<button class="btn btn-sm btn-info" onclick="edit_avaliacao(' . $avaliacaoExp->avaliador . ')" title="Avaliação parte 1"><i class="glyphicon glyphicon-plus"></i>' . $avaliacao_parte1 . '</button>';
                 }
                 if ($avaliacaoExp->desempenho) {
                     $btn .= '
-                            <button class="btn btn-sm btn-success disabled" title="Avaliação parte 2"><i class="glyphicon glyphicon-ok"></i>' . $avaliacao_parte2 . '</button>';
+                            <button class="btn btn-sm btn-info disabled" title="Avaliação parte 2"><i class="glyphicon glyphicon-ok"></i>' . $avaliacao_parte2 . '</button>';
                 } else {
                     $btn .= '
-                            <button class="btn btn-sm btn-success" onclick="edit_desempenho(' . $avaliacaoExp->avaliador . ')" title="Avaliação parte 2"><i class="glyphicon glyphicon-plus"></i>' . $avaliacao_parte2 . '</button>';
+                            <button class="btn btn-sm btn-info" onclick="edit_desempenho(' . $avaliacaoExp->avaliador . ')" title="Avaliação parte 2"><i class="glyphicon glyphicon-plus"></i>' . $avaliacao_parte2 . '</button>';
                 }
-                $row[] = $btn . '
-                                <a class="btn btn-sm btn-info" href="' . site_url('avaliacaoexp_avaliados/relatorio/' . $avaliacaoExp->id) . '" title="Relatório de avaliação"><i class="glyphicon glyphicon-list-alt"></i> ' . $relatorio . '</a>';
+
+                if ($tipo === 'A') {
+                    $btn . '
+                            <a class="btn btn-sm btn-primary" href="' . site_url('avaliacaoexp_avaliados/relatorio/' . $avaliacaoExp->id) . '" title="Relatório de avaliação"><i class="glyphicon glyphicon-list-alt"></i> ' . $relatorio . '</a>';
+                }
+
+                $row[] = $btn;
             }
             $data[] = $row;
         }
@@ -220,10 +235,12 @@ class Avaliacaoexp_avaliador extends MY_Controller
                               a.alternativa,
                               a.peso
                        FROM avaliacaoexp_alternativas a
-                       INNER JOIN avaliacaoexp_perguntas b ON
-                                  b.id_modelo = a.id_modelo AND 
-                                  (b.id = a.id_pergunta OR a.id_pergunta IS NULL)
-                       WHERE b.id = {$pergunta->id} 
+                       INNER JOIN avaliacaoexp_modelos b ON
+                                  b.id = a.id_modelo
+                       INNER JOIN avaliacaoexp_perguntas c ON
+                                  c.id_modelo = b.id
+                       WHERE c.id = {$pergunta->id} AND 
+                                  (a.id_pergunta = c.id OR a.id_pergunta IS NULL)
                        ORDER BY a.id ASC, 
                                 a.peso ASC";
 

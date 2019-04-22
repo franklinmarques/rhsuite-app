@@ -152,7 +152,7 @@ require_once "header.php";
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Salvar</button>
+                            <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div><!-- /.modal-content -->

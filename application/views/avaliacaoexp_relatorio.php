@@ -86,13 +86,13 @@ require_once "header.php";
                     <td class="text-right">
                         <?php if ($this->agent->is_mobile() == false): ?>
                             <?php if ($dadosAvaliacao->tipo == 'P'): ?>
-                                <a class="btn btn-sm btn-success"
+                                <a class="btn btn-sm btn-primary"
                                    href="<?= site_url('pdi/gerenciar/' . $dadosAvaliacao->id_colaborador); ?>"><i
                                             class="fa fa-briefcase"></i> Ir para o PDI - Plano de Desenvolvimento
                                     Individual</a>
                             <?php endif; ?>
                             <?php if ($is_pdf == false): ?>
-                                <a class="btn btn-sm btn-danger"
+                                <a class="btn btn-sm btn-info"
                                    href="<?= site_url('avaliacaoexp_avaliados/pdfRelatorio/' . $this->uri->rsegment(3)); ?>"
                                    title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar
                                     PDF</a>
