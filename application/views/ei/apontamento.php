@@ -1509,8 +1509,7 @@
                         </div>
                         <div class="modal-body form">
                             <form action="#" id="form_visitas" class="form-horizontal">
-                                <input type="hidden" value="" name="id_alocacao_escola"/>
-                                <input type="hidden" value="" id="id_mapa_visitacao"/>
+                                <input type="hidden" value="" name="id_mapa_unidade"/>
                                 <input type="hidden" value="" id="visita_mes"/>
                                 <div class="row form-group">
                                     <label class="control-label col-md-2">Lista de visitas</label>
@@ -1549,7 +1548,7 @@
                                     <label class="control-label col-md-2">Supervisor visitante<span
                                                 class="text-danger text-nowrap"> *</span></label>
                                     <div class="col-md-4">
-                                        <?php echo form_dropdown('supervisor_visitante', $supervisorVisitante, $supervisor_atual, 'class="form-control"'); ?>
+                                        <?php echo form_dropdown('id_supervisor_visitante', $supervisorVisitante, $supervisor_atual, 'class="form-control"'); ?>
                                     </div>
                                     <label class="control-label col-md-1">Cliente<span class="text-danger text-nowrap"> *</span></label>
                                     <div class="col-md-4">
@@ -1864,6 +1863,7 @@
                                 'cursor': 'pointer',
                                 'vertical-align': 'middle'
                             }).on('click', function () {
+                                $(td).popover('hide');
                                 edit_evento(rowData[0], table.column(col).header().dataset.dia, rowData[35]);
                             });
                             $(td).html(rowData[col]['status']);
@@ -2286,6 +2286,7 @@
                                 'cursor': 'pointer',
                                 'vertical-align': 'middle'
                             }).on('click', function () {
+                                $(td).popover('hide');
                                 edit_controle_materiais(rowData[33], col);
                             });
                             $(td).html(rowData[col]['status']);
@@ -3211,7 +3212,7 @@
         }
 
 
-        function gerenciar_visitas(id_alocacao_escola, id_mes) {
+        function gerenciar_visitas(id_mapa_unidade, id_mes) {
             $('#form_visitas')[0].reset();
             $('#form_visitas input[type="hidden"]').val('');
             $('.form-group').removeClass('has-error');
@@ -3223,17 +3224,16 @@
                 'dataType': 'json',
                 'async': false,
                 'data': {
-                    'id_alocacao_escola': id_alocacao_escola,
+                    'id_mapa_unidade': id_mapa_unidade,
                     'id_mes': id_mes
                 },
                 'success': function (json) {
                     $('#form_visitas [name="id"]').html($(json.id).html());
-                    $('#id_mapa_visitacao').val(id_alocacao_escola);
                     $('#visita_mes').val(id_mes);
-                    $('#form_visitas [name="id_alocacao_escola"]').val(json.id_alocacao_escola);
+                    $('#form_visitas [name="id_mapa_unidade"]').val(json.id_mapa_unidade);
                     $('#form_visitas [name="data_visita"]').val(json.data_visita);
                     $('#form_visitas [name="data_visita_anterior"]').val(json.data_visita_anterior);
-                    $('#form_visitas [name="supervisor_visitante"]').html($(json.supervisor_visitante).html());
+                    $('#form_visitas [name="id_supervisor_visitante"]').html($(json.supervisor_visitante).html());
                     $('#form_visitas [name="cliente"]').html($(json.cliente).html());
                     $('#form_visitas [name="municipio"]').html($(json.municipio).html());
                     $('#form_visitas [name="unidade_visitada"]').html($(json.unidade_visitada).html());
@@ -3275,14 +3275,12 @@
                 'data': {
                     'id': id,
                     'id_mes': $('#visita_mes').val(),
-                    'id_alocacao_escola': $('#id_mapa_visitacao').val()
+                    'id_mapa_unidade': $('#form_visitas [name="id_mapa_unidade"]').val()
                 },
                 'success': function (json) {
-                    $('#form_visitas [name="id"]').val(json.id);
-                    $('#form_visitas [name="id_alocacao_escola"]').val(json.id_alocacao_escola);
                     $('#form_visitas [name="data_visita"]').val(json.data_visita);
                     $('#form_visitas [name="data_visita_anterior"]').val(json.data_visita_anterior);
-                    $('#form_visitas [name="supervisor_visitante"]').html($(json.supervisor_visitante).html());
+                    $('#form_visitas [name="id_supervisor_visitante"]').html($(json.supervisor_visitante).html());
                     $('#form_visitas [name="cliente"]').html($(json.cliente).html());
                     $('#form_visitas [name="municipio"]').html($(json.municipio).html());
                     $('#form_visitas [name="unidade_visitada"]').html($(json.unidade_visitada).html());

@@ -140,7 +140,7 @@
                         </td>
                         <td class="text-center" style="width: 130px;">
                             <input name="total_horas[]" class="form-control hora text-center" type="text"
-                                   value="<?= secToTime(preg_match('/^\d{2,}:\d{2}:\d{2}$/', $alocado->total_segundos) ? timeToSec($alocado->total_segundos) : $alocado->total_segundos, false); ?>"
+                                   value="<?= secToTime($alocado->total_horas_mes ? timeToSec($alocado->total_horas_mes) : $alocado->total_segundos, false); ?>"
                                    placeholder="hh:mm"
                                    style="width: 130px;">
                         </td>
@@ -155,7 +155,7 @@
                     <tr>
                         <td><?= $alocado->funcao ?></td>
                         <td class="text-center"><?= $alocado->valor_hora ?></td>
-                        <td class="text-center"><?= secToTime(preg_match('/^\d{2,}:\d{2}:\d{2}$/', $alocado->total_segundos) ? timeToSec($alocado->total_segundos) : $alocado->total_segundos, false); ?></td>
+                        <td class="text-center"><?= secToTime($alocado->total_horas_mes ? timeToSec($alocado->total_horas_mes) : $alocado->total_segundos, false); ?></td>
                         <td class="text-center"><?= $alocado->valor_faturado ?></td>
                     </tr>
                 <?php endforeach; ?>

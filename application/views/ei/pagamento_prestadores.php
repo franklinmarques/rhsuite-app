@@ -112,9 +112,10 @@
         <table id="pagamento_prestadores" class="table table-condensed table-bordered">
             <thead>
             <tr class="active">
-                <th width="30%">Nome prestador(a)</th>
+                <th width="20%">Nome prestador(a)</th>
+                <th width="20%">Função</th>
                 <th>CNPJ</th>
-                <th width="30%">Unidade Ensino</th>
+                <th width="20%">Unidade Ensino</th>
                 <th class="text-nowrap">Liberação pagamento</th>
                 <th class="text-center">Horas</th>
                 <th class="text-center text-nowrap">Valor (R$)</th>
@@ -124,6 +125,7 @@
             <?php foreach ($rows as $row): ?>
                 <tr>
                     <td><?= $row->cuidador ?></td>
+                    <td><?= $row->funcao ?></td>
                     <td><?= $row->cnpj ?></td>
                     <td><?= $row->escola ?></td>
                     <td class="text-center"><?= $row->data_liberacao_pagto ?></td>

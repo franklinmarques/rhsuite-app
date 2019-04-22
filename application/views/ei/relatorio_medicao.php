@@ -102,10 +102,10 @@
             <tr style='border-top: 5px solid #ddd;'>
                 <th colspan="<?= $is_pdf == false ? '3' : '2' ?>" style="padding-bottom: 8px; text-align: center;">
                     <?php if ($is_pdf == false): ?>
-                        <h3 class="text-center" style="font-weight: bold;">RELATÓRIO CONSOLIDADO - EDUCAÇÃO
+                        <h3 class="text-center" style="font-weight: bold;">RELATÓRIO DE MEDIÇÃO MENSAL - EDUCAÇÃO
                             INCLUSIVA<br><?= mb_strtoupper($mes_nome) ?> DE <?= $ano ?></h3>
                     <?php else: ?>
-                        <h2 class="text-center" style="font-weight: bold;">RELATÓRIO CONSOLIDADO - EDUCAÇÃO
+                        <h2 class="text-center" style="font-weight: bold;">RELATÓRIO DE MEDIÇÃO MENSAL - EDUCAÇÃO
                             INCLUSIVA<br><?= mb_strtoupper($mes_nome) ?> DE <?= $ano ?></h2>
                     <?php endif; ?>
                 </th>
@@ -116,106 +116,121 @@
     <sethtmlpageheader name="myHeader" value="on" show-this-page="1"></sethtmlpageheader>
 
     <div>
-        <table id="quantitativo_recursos_humanos" class="table medicao table-bordered table-condensed">
-            <thead>
-            <tr class="success">
-                <th colspan="4" class="text-center"><h3><strong>Quantitativo de Recursos Humanos</strong></h3></th>
-            </tr>
-            <tr class="active">
-                <th>Colaborador(a)</th>
-                <th class="text-center">Qtde. pessoas</th>
-                <th class="text-center">Qtde horas projetadas</th>
-                <th class="text-center">Qtde horas realizadas</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>Quantidade de Escolas</td>
-                <?php if ($is_pdf): ?>
-                    <td class="text-center"><?= $alocacao->total_escolas; ?></td>
-                <?php else: ?>
-                    <th><input name="total_pessoas[]" type="text" class="form-control text-center total"
-                               value="<?= $alocacao->total_escolas; ?>"></th>
-                <?php endif; ?>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Quantidade de Alunos</td>
-                <?php if ($is_pdf): ?>
-                    <td class="text-center"><?= $alocacao->total_alunos; ?></td>
-                <?php else: ?>
-                    <th><input name="total_pessoas[]" type="text" class="form-control text-center total"
-                               value="<?= $alocacao->total_alunos; ?>"></th>
-                <?php endif; ?>
-                <td></td>
-                <td></td>
-            </tr>
-            <?php foreach ($funcoes as $funcao): ?>
-                <tr>
-                    <td><?= $funcao->nome; ?></td>
-                    <?php if ($is_pdf): ?>
-                        <td class="text-center"><?= $funcao->total_pessoas; ?></td>
-                        <td class="text-center"><?= secToTime($funcao->total_secs_projetados, false); ?></td>
-                        <td class="text-center"><?= secToTime($funcao->total_secs_realizados, false); ?></td>
-                    <?php else: ?>
-                        <th><input name="total_pessoas[]" value="<?= $funcao->total_pessoas; ?>" type="text"
-                                   class="form-control text-center total"></th>
-                        <th><input name="total_horas_projetadas[]"
-                                   value="<?= secToTime($funcao->total_secs_projetados, false); ?>"
-                                   type="text" class="form-control text-center horas"></th>
-                        <th><input name="total_horas_realizadas[]"
-                                   value="<?= secToTime($funcao->total_secs_realizados, false); ?>"
-                                   type="text" class="form-control text-center horas"></th>
-                    <?php endif; ?>
+        <?php if ($is_pdf == false): ?>
+        <form action="#" id="form" class="form-horizontal" autocomplete="off">
+            <?php endif; ?>
+
+            <table id="quantitativo_recursos_humanos" class="table medicao table-bordered table-condensed">
+                <thead>
+                <tr class="success">
+                    <th colspan="4" class="text-center"><h3><strong>Quantitativo de Recursos Humanos</strong></h3></th>
                 </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-        <pagebreak odd-header-name="myHeader"></pagebreak>
-        <table id="balanco_financeiro" class="table medicao table-bordered table-condensed">
-            <thead>
-            <tr class="success">
-                <th colspan="6" class="text-center"><h3><strong>Balanço Financeiro</strong></h3></th>
-            </tr>
-            <tr class="active">
-                <th>Colaborador(a)</th>
-                <th class="text-center">Receita Projetada</th>
-                <th class="text-center">Receita Efetuada</th>
-                <th class="text-center">Pagamentos Efetuados</th>
-                <th class="text-center">Resultado (R$)</th>
-                <th class="text-center">Resultado (%)</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($funcoes as $funcao): ?>
-                <tr>
-                    <td><?= $funcao->nome; ?></td>
-                    <?php if ($is_pdf): ?>
-                        <td class="text-center"><?= $funcao->receita_projetada; ?></td>
-                        <td class="text-center"><?= $funcao->receita_efetuada; ?></td>
-                        <td class="text-center"><?= $funcao->pagamentos_efetuados; ?></td>
-                        <td class="text-center"><?= $funcao->resultado; ?></td>
-                        <td class="text-center"><?= $funcao->resultado_percentual; ?></td>
-                    <?php else: ?>
-                        <th><input name="receita_projetada[]" value="<?= $funcao->receita_projetada; ?>" type="text"
-                                   class="form-control text-center valor"></th>
-                        <th><input name="receita_efetuada[]" value="<?= $funcao->receita_efetuada; ?>" type="text"
-                                   class="form-control text-center valor"></th>
-                        <th><input name="pagamentos_efetuados[]" value="<?= $funcao->pagamentos_efetuados; ?>"
-                                   type="text"
-                                   class="form-control text-center valor"></th>
-                        <th><input name="resultado[]" type="text" value="<?= $funcao->resultado; ?>"
-                                   class="form-control text-center valor"></th>
-                        <th><input name="resultado_percentual[]" value="<?= $funcao->resultado_percentual; ?>"
-                                   type="text"
-                                   class="form-control text-center porcentagem"></th>
-                    <?php endif; ?>
+                <tr class="active">
+                    <th>Colaborador(a)</th>
+                    <th class="text-center">Quantidades</th>
+                    <th class="text-center">Qtde horas projetadas</th>
+                    <th class="text-center">Qtde horas realizadas</th>
                 </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Quantidade de Escolas</td>
+                    <?php if ($is_pdf): ?>
+                        <td class="text-center"><?= $alocacao->total_escolas; ?></td>
+                    <?php else: ?>
+                        <th><input name="total_escolas[]" type="text" class="form-control text-center total"
+                                   value="<?= $alocacao->total_escolas; ?>" autocomplete="off"></th>
+                    <?php endif; ?>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Quantidade de Alunos</td>
+                    <?php if ($is_pdf): ?>
+                        <td class="text-center"><?= $alocacao->total_alunos; ?></td>
+                    <?php else: ?>
+                        <th><input name="total_alunos[]" type="text" class="form-control text-center total"
+                                   value="<?= $alocacao->total_alunos; ?>" autocomplete="off"></th>
+                    <?php endif; ?>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <?php foreach ($funcoes as $funcao): ?>
+                    <tr>
+                        <td><?= $funcao->nome; ?></td>
+                        <?php if ($is_pdf): ?>
+                            <td class="text-center"><?= $funcao->total_pessoas; ?></td>
+                            <td class="text-center"><?= secToTime($funcao->total_secs_projetados, false); ?></td>
+                            <td class="text-center"><?= $funcao->total_horas_mes ? $funcao->total_horas_mes : secToTime($funcao->total_secs_realizados, false); ?></td>
+                        <?php else: ?>
+                            <th><input name="total_cuidadores[]" value="<?= $funcao->total_pessoas; ?>" type="text"
+                                       class="form-control text-center total" autocomplete="off"></th>
+                            <th><input name="total_horas_projetadas[]"
+                                       value="<?= secToTime($funcao->total_secs_projetados, false); ?>"
+                                       type="text" class="form-control text-center horas" autocomplete="off"></th>
+                            <th><input name="total_horas_realizadas[]"
+                                       value="<?= $funcao->total_horas_mes ? $funcao->total_horas_mes : secToTime($funcao->total_secs_realizados, false); ?>"
+                                       type="text" class="form-control text-center horas" autocomplete="off"></th>
+                        <?php endif; ?>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            <pagebreak odd-header-name="myHeader"></pagebreak>
+            <table id="balanco_financeiro" class="table medicao table-bordered table-condensed">
+                <thead>
+                <tr class="success">
+                    <th colspan="6" class="text-center"><h3><strong>Balanço Financeiro</strong></h3></th>
+                </tr>
+                <tr class="active">
+                    <th>Colaborador(a)</th>
+                    <th class="text-center">Receita Projetada</th>
+                    <th class="text-center">Receita Efetuada</th>
+                    <th class="text-center">Pagamentos Efetuados</th>
+                    <th class="text-center">Resultado (R$)</th>
+                    <th class="text-center">Resultado (%)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($funcoes as $funcao): ?>
+                    <tr>
+                        <td><?= $funcao->nome; ?></td>
+                        <?php if ($is_pdf): ?>
+                            <td class="text-center"><?= $funcao->receita_projetada; ?></td>
+                            <td class="text-center"><?= $funcao->receita_efetuada; ?></td>
+                            <td class="text-center"><?= $funcao->pagamentos_efetuados; ?></td>
+                            <td class="text-center"><?= $funcao->resultado; ?></td>
+                            <td class="text-center"><?= $funcao->resultado_percentual; ?></td>
+                        <?php else: ?>
+                            <th><input name="receita_projetada[]"
+                                       value="<?= number_format($funcao->valor_hora * ($funcao->total_secs_projetados / 3600), 2, ',', '.'); ?>"
+                                       type="text"
+                                       class="form-control text-center valor" autocomplete="off"></th>
+                            <th><input name="receita_efetuada[]" value="<?= $funcao->receita_efetuada; ?>" type="text"
+                                       class="form-control text-center valor" autocomplete="off"></th>
+                            <th><input name="pagamentos_efetuados[]"
+                                       value="<?= number_format($funcao->pagamentos_efetuados, 2, ',', '.'); ?>"
+                                       type="text"
+                                       class="form-control text-center valor" autocomplete="off"></th>
+                            <th><input name="resultado[]" type="text" value="<?= $funcao->resultado; ?>"
+                                       class="form-control text-center valor" autocomplete="off"></th>
+                            <th><input name="resultado_percentual[]"
+                                       value="<?= number_format($funcao->pagamentos_efetuados / ($funcao->valor_hora * ($funcao->total_secs_projetados / 3600)) * 100, 1, ',', ''); ?>"
+                                       type="text"
+                                       class="form-control text-center porcentagem" autocomplete="off"></th>
+                        <?php endif; ?>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+
+
+            <?php if ($is_pdf == false): ?>
+        </form>
+    <?php endif; ?>
+
     </div>
+
 
 </div>
 
@@ -227,7 +242,7 @@
 
     $('.horas').mask('###00:00', {'reverse': true});
     $('.valor').mask('##.###.##0,00', {'reverse': true});
-    $('.porcentagem').mask('000, 0', {'reverse': true});
+    $('.porcentagem').mask('000,0', {'reverse': true});
     $('.total').mask('00000000000');
 
     $('[name="calculo_totalizacao"]').on('change', function () {
@@ -291,9 +306,9 @@
         $('#fechar_mes').prop('disabled', true);
 
         $.ajax({
-            'url': '<?php echo site_url('apontamento_totalizacao/fecharMes') ?>',
+            'url': '<?php echo site_url('ei/relatorios/ajaxSaveMedicao') ?>',
             'type': 'POST',
-            'data': query_string.replace('q?', ''),
+            'data': $('form').serialize(),
             'dataType': 'json',
             'success': function (data) {
                 if (data.status === true) {

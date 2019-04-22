@@ -222,7 +222,7 @@
                 'busca': $('.filtro').serialize()
             },
             'success': function (json) {
-                $('#aluno_curso').html($(json.aluno_curso).html());
+                $('#aluno_curso').html($(json.aluno_cursos).html());
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
