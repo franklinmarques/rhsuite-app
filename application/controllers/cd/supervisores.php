@@ -200,7 +200,7 @@ class Supervisores extends MY_Controller
         if (in_array($this->session->userdata('nivel'), array(4, 10, 11))) {
             $this->db->where('id', $id_usuario);
         }
-        $this->db->where('area', 'supervisao');
+        $this->db->where_in('nivel_acesso', [9, 10]);
         $this->db->order_by('nome', 'asc');
         $rows = $this->db->get('usuarios')->result();
         $supervisores = array('' => 'selecione...');

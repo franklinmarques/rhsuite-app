@@ -19,8 +19,10 @@
                     <!--                    <a class="btn btn-primary" href="-->
                     <? //= site_url('requisicaoPessoal_vagas'); ?><!--">Relatório - RPs x-->
                     <!--                        Status</a>-->
-                    <a class="btn btn-primary" href="<?= site_url('requisicaoPessoal_consolidado'); ?>">Consolidado
-                        geral</a>
+                    <?php if (!($id_depto === '5' or $depto === 'Cuidadores')): ?>
+                        <a class="btn btn-primary" href="<?= site_url('requisicaoPessoal_consolidado'); ?>">Consolidado
+                            geral</a>
+                    <?php endif ?>
                     <br/>
                     <br/>
                     <div class="row">
@@ -279,7 +281,7 @@
                                         <label class="control-label col-md-2">Departamento <span
                                                     class="text-danger">*</span></label>
                                         <div class="col-md-9">
-                                            <?php echo form_dropdown('id_depto', $deptos, '', 'id="depto" class="form-control estrutura"'); ?>
+                                            <?php echo form_dropdown('id_depto', $deptos, "$id_depto", 'id="depto" class="form-control estrutura"'); ?>
                                         </div>
                                     </div>
                                     <div class="row form-group">

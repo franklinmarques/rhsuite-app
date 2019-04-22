@@ -59,6 +59,8 @@ class RequisicaoPessoal extends MY_Controller
         $data = array(
             'tipo' => $tipo,
             'nivel' => $nivelAcesso,
+            'depto' => '',
+            'id_depto' => '',
             'usuario' => $this->db->select('depto')->where('id', $id)->get('usuarios')->row_array(),
             'deptos' => array(),
             'areas' => array(),
@@ -73,10 +75,14 @@ class RequisicaoPessoal extends MY_Controller
         $this->db->where('id', $id);
         $usuario = $this->db->get('usuarios')->row();
 
-        if ($tipo != 'funcionario') {
+        if ($tipo != 'empresa') {
             $data['depto'] = $usuario->depto;
             $data['id_depto'] = $usuario->id_depto;
-            $data['deptos'] = array('' => 'Todos');
+        }
+
+
+        $data['deptos'] = array('' => 'Todos');
+        if ($tipo != 'funcionario') {
             $data['areas'] = array('' => 'Todas');
             $data['setores'] = array('' => 'Todos');
         }
@@ -203,6 +209,7 @@ class RequisicaoPessoal extends MY_Controller
         $id = $this->session->userdata('id');
         $empresa = $this->session->userdata('empresa');
         $tipo = $this->session->userdata('tipo');
+
 
         $idDepto = $this->input->post('id_depto');
         $idArea = $this->input->post('id_area');
@@ -1357,6 +1364,7 @@ PIS (2)';
                 FROM requisicoes_pessoal_emails a
                 LEFT JOIN usuarios b ON b.email = a.email
                 WHERE a.id = '{$this->input->post('emails')}' AND 
+                    
                       a.tipo_email IN (2, 3, 4)";
 
         $destinatarios = $this->db->query($sql)->result();

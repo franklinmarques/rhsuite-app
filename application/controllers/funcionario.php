@@ -223,6 +223,12 @@ class Funcionario extends MY_Controller
         $idCargo = $this->input->post('cargo');
         $idFuncao = $this->input->post('funcao');
 
+        $data['id_depto'] = strlen($idDepto) ? $idDepto : null;
+        $data['id_area'] = strlen($idArea) ? $idArea : null;
+        $data['id_setor'] = strlen($idSetor) ? $idSetor : null;
+        $data['id_cargo'] = strlen($idCargo) ? $idCargo : null;
+        $data['id_funcao'] = strlen($idFuncao) ? $idFuncao : null;
+
 
         $data['depto'] = $this->db->select('nome')->where('id', $idDepto)->get('empresa_departamentos')->row()->nome ?? null;
         $data['area'] = $this->db->select('nome')->where('id', $idArea)->get('empresa_areas')->row()->nome ?? null;
@@ -570,6 +576,12 @@ class Funcionario extends MY_Controller
         $idSetor = $this->input->post('setor');
         $idCargo = $this->input->post('cargo');
         $idFuncao = $this->input->post('funcao');
+
+        $data['id_depto'] = strlen($idDepto) ? $idDepto : null;
+        $data['id_area'] = strlen($idArea) ? $idArea : null;
+        $data['id_setor'] = strlen($idSetor) ? $idSetor : null;
+        $data['id_cargo'] = strlen($idCargo) ? $idCargo : null;
+        $data['id_funcao'] = strlen($idFuncao) ? $idFuncao : null;
 
         $data['nome'] = $_POST['funcionario'];
         $data['sexo'] = $_POST['sexo'];
@@ -1155,15 +1167,13 @@ class Funcionario extends MY_Controller
         $this->load->helper(array('date'));
 
         if ($_FILES['arquivo']['error'] == 0) {
-            // $config['upload_path'] = './arquivos/csv/';
-            // $config['file_name'] = utf8_decode($_FILES['arquivo']['name']);
-            // $config['allowed_types'] = '*';
-            $config['upload_path'] = './arquivos/ssd/';
-            // $config['overwrite'] = TRUE;
-$this->config->upload->config['buu'] = 30;
+            $config['upload_path'] = './arquivos/csv/';
+            $config['file_name'] = utf8_decode($_FILES['arquivo']['name']);
+            $config['allowed_types'] = '*';
+            $config['overwrite'] = TRUE;
+
             //Upload do csv
-            $this->load->library('upload');
-            print_r($_FILES['arquivo']);exit;
+            $this->load->library('upload', $config);
             if ($this->upload->do_upload('arquivo')) {
                 $csv = $this->upload->data();
 

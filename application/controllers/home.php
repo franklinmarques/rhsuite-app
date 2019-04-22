@@ -3306,7 +3306,8 @@ class Home extends MY_Controller
             '3' => 'Gestores',
             '2' => 'Multiplicadores',
             '6' => 'Selecionadores',
-            '5' => 'Clientes'
+            '5' => 'Clientes',
+            '17' => 'Vistoriadores'
         ];
         $data['nivel_acesso'] = array_intersect_key($nivelAcesso, $data['nivel_acesso']);
 

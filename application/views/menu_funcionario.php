@@ -143,7 +143,11 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                     </ul>
                     <ul class="sub">
                         <li>
-                            <a href="<?php echo site_url('avaliacaoexp_avaliador/desempenho'); ?>">Avaliações Periódicas
+                            <a href="<?php echo site_url('avaliacaoexp_avaliador/avaliacoesPeriodicas'); ?>">Avaliações
+                                Periódicas</a>
+                        </li>
+                        <li>
+                            <a href="<?php echo site_url('avaliacaoexp_avaliador/desempenho'); ?>">Avaliações de
                                 Desempenho</a>
                         </li>
                         <?php if (in_array($this->session->userdata('nivel'), array(7, 8, 9, 10, 11))): ?>
@@ -206,6 +210,12 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                                 <li>
                                     <a href="<?php echo site_url('facilities/manutencoes'); ?>">Gerenciar
                                         Manutenções</a>
+                                </li>
+                            <?php endif; ?>
+                            <?php if ($this->session->userdata('nivel') == 17): ?>
+                                <li>
+                                    <a href="<?php echo site_url('facilities/contasMensais'); ?>">Contas Mensais
+                                        Facilities</a>
                                 </li>
                             <?php endif; ?>
                             <li>

@@ -137,6 +137,7 @@ class Login extends CI_Controller
 
         # Insere a data e hora da login
         $dados['usuario'] = $this->session->userdata('id');
+        $dados['tipo'] = $this->session->userdata('tipo');
         $dados['data_acesso'] = mdate("%Y-%m-%d %H:%i:%s");
         $dados['endereco_ip'] = $this->input->ip_address();
         $dados['agente_usuario'] = $this->input->user_agent();
