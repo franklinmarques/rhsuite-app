@@ -82,7 +82,7 @@
                 <td nowrap>
                     <?php if ($is_pdf == false): ?>
                         <a id="pdf" class="btn btn-sm btn-info"
-                           href="<?= site_url('facilities/modelosManutencoes/pdf/' . $query_string); ?>"
+                           href="<?= site_url('facilities/manutencoes/pdf/' . $query_string); ?>"
                            title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar PDF</a>
                     <?php endif; ?>
                 </td>
@@ -120,35 +120,36 @@
 
     <br>
 
-    <table id="no_itens"
-           class="table table-bordered table-condensed" <?= !empty($manutencoes) ? 'style="display: none;"' : '' ?>>
-        <thead>
-        <tr class="active">
-            <th rowspan="2">Ativo/facility</th>
-            <th rowspan="2">Item</th>
-            <th colspan="3" class="text-center">Manutenção realizada</th>
-            <th colspan="2" class="text-center">Apresenta problemas</th>
-            <th rowspan="2" class="text-center">Problema/solicitação</th>
-            <th rowspan="2" class="text-center">O. S.</th>
-            <th rowspan="2" class="text-center">Observações</th>
-            <th colspan="2" class="text-center">Realização</th>
-        </tr>
-        <tr class="active">
-            <th class="text-center">Sim</th>
-            <th class="text-center">Não</th>
-            <th class="text-center">Não se aplica</th>
-            <th class="text-center">Sim</th>
-            <th class="text-center">Não</th>
-            <th class="text-center">Data</th>
-            <th class="text-center">CAT.</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td colspan="12" class="text-center text-muted">Nenhum item encontrado.</td>
-        </tr>
-        </tbody>
-    </table>
+    <?php if (empty($manutencoes)): ?>
+        <table id="no_itens" class="table table-bordered table-condensed">
+            <thead>
+            <tr class="active">
+                <th rowspan="2">Ativo/facility</th>
+                <th rowspan="2">Item</th>
+                <th colspan="3" class="text-center">Manutenção realizada</th>
+                <th colspan="2" class="text-center">Apresenta problemas</th>
+                <th rowspan="2" class="text-center">Problema/solicitação</th>
+                <th rowspan="2" class="text-center text-nowrap">O. S.</th>
+                <th rowspan="2" class="text-center">Observações</th>
+                <th colspan="2" class="text-center">Realização</th>
+            </tr>
+            <tr class="active">
+                <th class="text-center">Sim</th>
+                <th class="text-center">Não</th>
+                <th class="text-center">Não se aplica</th>
+                <th class="text-center">Sim</th>
+                <th class="text-center">Não</th>
+                <th class="text-center">Data</th>
+                <th class="text-center">CAT.</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td colspan="12" class="text-center text-muted">Nenhum item encontrado.</td>
+            </tr>
+            </tbody>
+        </table>
+    <?php endif; ?>
 
     <?php foreach ($manutencoes as $manutencao): ?>
         <table class="table table-bordered table-condensed itens">
@@ -171,7 +172,7 @@
                 <th colspan="3" class="text-center">Manutenção realizada</th>
                 <th colspan="2" class="text-center">Apresenta problemas</th>
                 <th rowspan="2" class="text-center">Problema/solicitação</th>
-                <th rowspan="2" class="text-center">O. S.</th>
+                <th rowspan="2" class="text-center text-nowrap">O. S.</th>
                 <th rowspan="2" class="text-center">Observações</th>
                 <th colspan="2" class="text-center">Realização</th>
             </tr>

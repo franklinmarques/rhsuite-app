@@ -127,11 +127,15 @@ class Vistorias extends MY_Controller
     {
         $idVistoria = $this->uri->rsegment(3);
 
-        $this->db->select('id_empresa');
+        $this->db->select('id_empresa, mes, ano');
         $this->db->where('id', $this->uri->rsegment(3));
         $row = $this->db->get('facilities_realizacoes')->row();
 
         $data = $this->dadosRelatorio($idVistoria);
+
+        $data['query_string'] = '?id=' . $idVistoria . '&mes=' . $row->mes . '&ano=' . $row->ano;
+        $data['idUsuario'] = $this->session->userdata('id');
+        $data['is_pdf'] = false;
 
 
         $this->db->select('MAX(numero_os) + 1 AS numero_os', false);
@@ -179,9 +183,8 @@ class Vistorias extends MY_Controller
         $this->db->select('foto, foto_descricao');
         $this->db->where('id', $this->session->userdata('empresa'));
         $data['empresa'] = $this->db->get('usuarios')->row();
-        $data['query_string'] = '?id=' . $idVistoria;
 
-        $this->db->select(["b.nome, a.id_modelo, c.nome AS empresa, CONCAT(a.mes, '/', a.ano) AS mes_ano"], false);
+        $this->db->select(["b.nome, a.id_modelo, c.nome AS empresa, a.mes, a.ano, CONCAT(a.mes, '/', a.ano) AS mes_ano"], false);
         $this->db->join('facilities_modelos b', 'b.id = a.id_modelo');
         $this->db->join('facilities_empresas c', 'c.id = b.id_facility_empresa');
         $this->db->where('a.id', $idVistoria);
@@ -190,6 +193,7 @@ class Vistorias extends MY_Controller
         $data['nomeVistoria'] = $vistoria->nome;
         $data['empresaFacilities'] = $vistoria->empresa;
         $data['mesAno'] = $vistoria->mes_ano;
+        $data['query_string'] = '?id=' . $idVistoria . '&mes=' . $vistoria->mes . '&ano=' . $vistoria->ano;
 
 
         $sql = "SELECT e.id AS id_item,
@@ -247,34 +251,45 @@ class Vistorias extends MY_Controller
 
     public function salvarOS()
     {
-        $post = $this->input->post();
+        $numeroOS = $this->input->post('numero_os');
 
-        $data = array(
-            'id_realizacao' => $post['id_realizacao'],
-            'id_modelo_vistoria' => $post['id_modelo_vistoria'],
-            'numero_os' => $post['numero_os']
-        );
+        $dataOS = $this->setDataOS();
+
+
+        $this->db->trans_start();
+
 
         $this->db->select('numero_os');
-        $this->db->where('numero_os', $post['numero_os']);
+        $this->db->where('numero_os', $numeroOS);
         $os = $this->db->get('facilities_ordens_servico')->row();
 
-        if (empty($os)) {
-            unset($post['id_realizacao'], $post['id_modelo_vistoria']);
-
-            $this->db->insert('facilities_ordens_servico', $post);
+        if ($os) {
+            $this->db->update('facilities_ordens_servico', $dataOS, ['numero_os' => $numeroOS]);
+        } else {
+            $this->db->insert('facilities_ordens_servico', $dataOS);
         }
+
+
+        $data = array(
+            'id_realizacao' => $this->input->post('id_realizacao'),
+            'id_modelo_vistoria' => $this->input->post('id_modelo_vistoria'),
+            'numero_os' => $numeroOS
+        );
 
         $this->db->where('id_realizacao', $data['id_realizacao']);
         $this->db->where('id_modelo_vistoria', $data['id_modelo_vistoria']);
         $item = $this->db->get('facilities_realizacoes_vistorias')->row();
 
         if ($item) {
-            $status = $this->db->update('facilities_realizacoes_vistorias', $data, ['id' => $item->id]);
+            $this->db->update('facilities_realizacoes_vistorias', $data, ['id' => $item->id]);
         } else {
-            $status = $this->db->insert('facilities_realizacoes_vistorias', $data);
+            $this->db->insert('facilities_realizacoes_vistorias', $data);
         }
 
+
+        $this->db->trans_complete();
+
+        $status = $this->db->trans_status();
 
         echo json_encode(array("status" => $status !== false));
     }
@@ -346,7 +361,7 @@ class Vistorias extends MY_Controller
 
         $this->load->library('Calendar');
         $this->calendar->month_type = 'short';
-        $nome = 'Apontamento de Insumos - ' . $this->calendar->get_month_name($data['mes']) . '_' . $data['ano'];
+        $nome = 'Programa de Vistoria Periódica - ' . $this->calendar->get_month_name($data['mes']) . '_' . $data['ano'];
 
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
@@ -435,6 +450,64 @@ class Vistorias extends MY_Controller
         }
 
         unset($data['id']);
+
+        return $data;
+    }
+
+    // -------------------------------------------------------------------------
+
+    protected function setDataOS()
+    {
+        $data = $this->input->post();
+
+        if (strlen($data['data_abertura']) > 0) {
+
+            $dataAbertura = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_abertura'])));
+            if ($data['data_abertura'] != preg_replace('/(\d+)-(\d+)-(\d+)/', '$3/$2/$1', $dataAbertura)) {
+                exit(json_encode(['erro' => 'A data de abertura é inválida.']));
+            }
+
+            $data['data_abertura'] = $dataAbertura;
+        } else {
+            exit(json_encode(['erro' => 'A data de abertura é obrigatória.']));
+        }
+
+        if (strlen($data['data_fechamento']) > 0) {
+
+            $dataFechamento = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_fechamento'])));
+            if ($data['data_fechamento'] != preg_replace('/(\d+)-(\d+)-(\d+)/', '$3/$2/$1', $dataFechamento)) {
+                exit(json_encode(['erro' => 'A data de fechamento é inválida.']));
+            }
+
+            if (strtotime($dataFechamento) < strtotime($data['data_abertura'])) {
+                exit(json_encode(['erro' => 'A data de fechamento deve ser maior ou igual à data de abertura.']));
+            }
+
+            $data['data_fechamento'] = $dataFechamento;
+        } else {
+            $data['data_fechamento'] = null;
+        }
+
+        if (strlen($data['id_depto']) == 0) {
+            $data['id_depto'] = null;
+        }
+        if (strlen($data['id_area']) == 0) {
+            $data['id_area'] = null;
+        }
+        if (strlen($data['id_setor']) == 0) {
+            $data['id_setor'] = null;
+        }
+
+        if (strlen($data['descricao_problema']) == 0) {
+            $data['descricao_problema'] = null;
+        }
+
+        if (strlen($data['observacoes']) == 0) {
+            $data['observacoes'] = null;
+        }
+
+
+        unset($data['numero_os'], $data['id_realizacao'], $data['id_modelo_vistoria']);
 
         return $data;
     }

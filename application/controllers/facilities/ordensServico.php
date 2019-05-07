@@ -67,10 +67,10 @@ class OrdensServico extends MY_Controller
                              WHEN 4 THEN 'Urgente' END) AS descricao_prioridade,
                        a.status
                 FROM facilities_ordens_servico a
-                INNER JOIN usuarios b ON 
-                           b.id = a.id_usuario
                 INNER JOIN usuarios c ON 
-                           c.id = a.id_requisitante";
+                           c.id = a.id_requisitante
+                LEFT JOIN usuarios b ON 
+                           b.id = a.id_usuario";
         if ($this->session->userdata('tipo') == 'empresa') {
             $sql .= " WHERE (b.id = '{$idUsuario}' OR b.empresa = '{$idUsuario}')";
         } elseif (in_array($this->session->userdata('nivel'), [7, 8, 17, 18])) {
@@ -166,6 +166,7 @@ class OrdensServico extends MY_Controller
         $output['data'] = $data;
 
         $estruturas = $this->getEstruturas($data->id_requisitante ?? null);
+
         $output['input'] = array(
             'depto' => form_dropdown('', $estruturas['deptos'], $data->id_depto),
             'area' => form_dropdown('', $estruturas['areas'], $data->id_area),
@@ -367,9 +368,7 @@ class OrdensServico extends MY_Controller
 
     private function getAreas($idDepto = '')
     {
-        if ($idDepto and $this->session->userdata('tipo') != 'empresa') {
-            $this->db->where('id_departamento', $idDepto);
-        }
+        $this->db->where('id_departamento', $idDepto);
         $this->db->order_by('nome', 'asc');
         $rows = $this->db->get('empresa_areas')->result();
         $data = ['' => 'selecione...'] + array_column($rows, 'nome', 'id');
@@ -382,14 +381,8 @@ class OrdensServico extends MY_Controller
     {
         $this->db->select('a.id, a.nome');
         $this->db->join('empresa_areas b', 'b.id = a.id_area');
-        if ($this->session->userdata('tipo') != 'empresa') {
-            if ($idDepto) {
-                $this->db->where('b.id_departamento', $idDepto);
-            }
-            if ($idArea) {
-                $this->db->where('a.id_area', $idArea);
-            }
-        }
+        $this->db->where('b.id_departamento', $idDepto);
+        $this->db->where('a.id_area', $idArea);
         $this->db->order_by('a.nome', 'asc');
         $rows = $this->db->get('empresa_setores a')->result();
         $data = ['' => 'selecione...'] + array_column($rows, 'nome', 'id');
@@ -406,18 +399,10 @@ class OrdensServico extends MY_Controller
         $this->db->join('empresa_setores d', 'd.id = a.id_setor');
         $this->db->where('a.empresa', $this->session->userdata('empresa'));
         $this->db->where('a.tipo', 'funcionario');
-        $this->db->where_in('a.nivel_acesso', [3, 7, 8, 9, 10, 17]);
-        if ($this->session->userdata('tipo') != 'empresa') {
-            if ($idDepto) {
-                $this->db->where('b.id', $idDepto);
-            }
-            if ($idArea) {
-                $this->db->where('c.id', $idArea);
-            }
-            if ($idSetor) {
-                $this->db->where('d.id', $idSetor);
-            }
-        }
+//        $this->db->where_in('a.nivel_acesso', [3, 7, 8, 9, 10, 17]);
+        $this->db->where('b.id', $idDepto);
+        $this->db->where('c.id', $idArea);
+        $this->db->where('d.id', $idSetor);
         $this->db->order_by('a.nome', 'asc');
         $rows = $this->db->get('usuarios a')->result();
 

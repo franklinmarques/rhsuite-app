@@ -83,7 +83,7 @@
                             <i class="glyphicon glyphicon-floppy-disk"></i> Salvar
                         </button>
                         <a id="pdf" class="btn btn-info"
-                           href="<?= site_url('facilities/modelosVistorias/pdf/' . $query_string); ?>"
+                           href="<?= site_url('facilities/vistorias/pdf/' . $query_string); ?>"
                            title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar PDF</a>
                         <button class="btn btn-default" onclick="javascript:window.close()"><i
                                     class="glyphicon glyphicon-remove"></i> Fechar
@@ -124,32 +124,32 @@
 
     <br>
 
-    <table id="no_itens" class="table table-bordered table-condensed"
-           style="display: <?= empty($vistorias) ? 'block' : 'none' ?>">
-        <thead>
-        <tr class="active">
-            <th rowspan="2">Item</th>
-            <th rowspan="2">Vistoria</th>
-            <th colspan="4" class="text-center">Apresenta problemas</th>
-            <th rowspan="2" class="text-center">Problema observado</th>
-            <th rowspan="2" class="text-center">Providências a serem tomadas</th>
-            <th colspan="2" class="text-center">Realização</th>
-        </tr>
-        <tr class="active">
-            <th>Sim</th>
-            <th>Não</th>
-            <th>Vistoriado</th>
-            <th>Não se aplica</th>
-            <th>Data</th>
-            <th>CAT.</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td colspan="10" class="text-center text-muted">Nenhum item encontrado.</td>
-        </tr>
-        </tbody>
-    </table>
+    <?php if (empty($vistorias)): ?>
+        <table id="no_itens" class="table table-bordered table-condensed">
+            <thead>
+            <tr class="active">
+                <th rowspan="2" style="display: none;">ID</th>
+                <th rowspan="2">Ativo/facility</th>
+                <th rowspan="2">Item</th>
+                <th rowspan="2" class="text-center">Vistoria realizada</th>
+                <th rowspan="2" class="text-center">Apresenta problemas</th>
+                <th rowspan="2" class="text-center">Problema/solicitação</th>
+                <th rowspan="2" class="text-center text-nowrao">O. S.</th>
+                <th rowspan="2" class="text-center">Observações</th>
+                <th colspan="2" class="text-center">Realização</th>
+            </tr>
+            <tr class="active">
+                <th class="text-center">Data</th>
+                <th class="text-center">CAT.</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td colspan="10" class="text-center text-muted">Nenhum item encontrado.</td>
+            </tr>
+            </tbody>
+        </table>
+    <?php endif; ?>
 
     <div id="alert"></div>
 
@@ -175,7 +175,7 @@
                 <th rowspan="2" class="text-center">Vistoria realizada</th>
                 <th rowspan="2" class="text-center">Apresenta problemas</th>
                 <th rowspan="2" class="text-center">Problema/solicitação</th>
-                <th rowspan="2" class="text-center">O. S.</th>
+                <th rowspan="2" class="text-center text-nowrap">O. S.</th>
                 <th rowspan="2" class="text-center">Observações</th>
                 <th colspan="2" class="text-center">Realização</th>
             </tr>
@@ -273,6 +273,7 @@
                     <form action="#" id="form_os" class="form-horizontal" autocomplete="off">
                         <input type="hidden" value="<?= $this->uri->rsegment(3); ?>" name="id_realizacao">
                         <input type="hidden" value="" name="id_modelo_vistoria">
+                        <input type="hidden" value="<?= $idUsuario ?>" name="id_usuario">
                         <div class="form-body">
                             <div class="form-group">
                                 <label class="col-md-2 control-label">Número da O. S.</label>
@@ -374,6 +375,38 @@
     });
 
 
+    function montar_estrutura() {
+        var depto = $('#depto').val();
+        var area = $('#area').val();
+        var setor = $('#setor').val();
+        var requisitante = $('#requisitante').val();
+        $('#depto,#area, #setor').prop('disabled', true);
+
+        $.ajax({
+            'url': '<?php echo site_url('facilities/ordensServico/montarEstrutura') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'depto': depto,
+                'area': area,
+                'setor': setor,
+                'requisitante': requisitante
+            },
+            'success': function (json) {
+                $('#depto,#area, #setor').prop('disabled', false);
+
+                $('#area').html($(json.area).html());
+                $('#setor').html($(json.setor).html());
+                $('#requisitante').html($(json.requisitante).html());
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Error get data from ajax');
+                $('#depto,#area, #setor').prop('disabled', false);
+            }
+        });
+    }
+
+
     function add_os(id_modelo_vistoria, numero_os) {
         $('.form-group').removeClass('has-error'); // clear error class
         $('.help-block').empty(); // clear error string
@@ -395,6 +428,7 @@
         }
     });
 
+
     function filtrar_os(numero_os) {
         $.ajax({
             'url': "<?php echo site_url('facilities/ordensServico/ajaxEdit') ?>",
@@ -402,7 +436,7 @@
             'dataType': 'json',
             'data': {'numero_os': numero_os},
             'success': function (json) {
-                $('#form_os select:not([name="numero_os"]), #form_os input:not([type="hidden"]), #form_os textarea').prop('disabled', true);
+                $('#form_os select:not([name="numero_os"]), #form_os input:not([type="hidden"]), #form_os textarea').prop('disabled', json.data.id_usuario !== '<?= $idUsuario ?>');
                 $.each(json.input, function (key, value) {
                     $('#' + key).html($(value).html());
                 });

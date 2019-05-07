@@ -123,32 +123,36 @@
 
     <br>
 
-    <table id="no_itens" class="table table-bordered table-condensed"
-           style="display: <?= empty($vistorias) ? 'block' : 'none' ?>">
-        <thead>
-        <tr class="active">
-            <th rowspan="2">Item</th>
-            <th rowspan="2">Vistoria</th>
-            <th colspan="4" class="text-center">Apresenta problemas</th>
-            <th rowspan="2" class="text-center">Problema observado</th>
-            <th rowspan="2" class="text-center">Providências a serem tomadas</th>
-            <th colspan="2" class="text-center">Realização</th>
-        </tr>
-        <tr class="active">
-            <th>Sim</th>
-            <th>Não</th>
-            <th>Vistoriado</th>
-            <th>Não se aplica</th>
-            <th>Data</th>
-            <th>CAT.</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td colspan="10" class="text-center text-muted">Nenhum item encontrado.</td>
-        </tr>
-        </tbody>
-    </table>
+    <?php if (empty($vistorias)): ?>
+        <table id="no_itens" class="table table-bordered table-condensed">
+            <thead>
+            <tr class="active">
+                <th rowspan="2">Ativo/facility</th>
+                <th rowspan="2">Item</th>
+                <th colspan="3" class="text-center">Vistoria/manutenção realizada</th>
+                <th colspan="2" class="text-center">Apresenta problemas</th>
+                <th rowspan="2" class="text-center">Problema/solicitação</th>
+                <th rowspan="2" class="text-center text-nowrap">O. S.</th>
+                <th rowspan="2" class="text-center">Observações</th>
+                <th colspan="2" class="text-center">Realização</th>
+            </tr>
+            <tr class="active">
+                <th class="text-center">Sim</th>
+                <th class="text-center">Não</th>
+                <th class="text-center">Não se aplica</th>
+                <th class="text-center">Sim</th>
+                <th class="text-center">Não</th>
+                <th class="text-center">Data</th>
+                <th class="text-center">CAT.</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td colspan="12" class="text-center text-muted">Nenhum item encontrado.</td>
+            </tr>
+            </tbody>
+        </table>
+    <?php endif; ?>
 
     <?php foreach ($vistorias as $vistoria): ?>
         <table class="table table-bordered table-condensed itens">
@@ -171,7 +175,7 @@
                 <th colspan="3" class="text-center">Vistoria/manutenção realizada</th>
                 <th colspan="2" class="text-center">Apresenta problemas</th>
                 <th rowspan="2" class="text-center">Problema/solicitação</th>
-                <th rowspan="2" class="text-center">O. S.</th>
+                <th rowspan="2" class="text-center text-nowrap">O. S.</th>
                 <th rowspan="2" class="text-center">Observações</th>
                 <th colspan="2" class="text-center">Realização</th>
             </tr>

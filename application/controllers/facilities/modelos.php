@@ -431,7 +431,7 @@ class Modelos extends MY_Controller
 
         $this->load->library('Calendar');
         $this->calendar->month_type = 'short';
-        $nome = 'Apontamento de Insumos - ' . $this->calendar->get_month_name($data['mes']) . '_' . $data['ano'];
+        $nome = 'Programa de Vistoria/Manutenção Periódica - ' . $this->calendar->get_month_name($data['mes']) . '_' . $data['ano'];
 
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
@@ -515,6 +515,81 @@ class Modelos extends MY_Controller
                 );
             }
         }
+
+        return $data;
+    }
+
+
+    // -------------------------------------------------------------------------
+
+    private function getDepartamentos()
+    {
+        $this->db->where('id_empresa', $this->session->userdata('empresa'));
+        $this->db->order_by('nome', 'asc');
+        $rows = $this->db->get('empresa_departamentos')->result();
+        $data = ['' => 'selecione...'] + array_column($rows, 'nome', 'id');
+        return $data;
+    }
+
+    // -------------------------------------------------------------------------
+
+    private function getAreas($idDepto = '')
+    {
+        if ($idDepto and $this->session->userdata('tipo') != 'empresa') {
+            $this->db->where('id_departamento', $idDepto);
+        }
+        $this->db->order_by('nome', 'asc');
+        $rows = $this->db->get('empresa_areas')->result();
+        $data = ['' => 'selecione...'] + array_column($rows, 'nome', 'id');
+        return $data;
+    }
+
+    // -------------------------------------------------------------------------
+
+    private function getSetores($idDepto = '', $idArea = '')
+    {
+        $this->db->select('a.id, a.nome');
+        $this->db->join('empresa_areas b', 'b.id = a.id_area');
+        if ($this->session->userdata('tipo') != 'empresa') {
+            if ($idDepto) {
+                $this->db->where('b.id_departamento', $idDepto);
+            }
+            if ($idArea) {
+                $this->db->where('a.id_area', $idArea);
+            }
+        }
+        $this->db->order_by('a.nome', 'asc');
+        $rows = $this->db->get('empresa_setores a')->result();
+        $data = ['' => 'selecione...'] + array_column($rows, 'nome', 'id');
+        return $data;
+    }
+
+    // -------------------------------------------------------------------------
+
+    private function getRequisitantes($idDepto = '', $idArea = '', $idSetor = '')
+    {
+        $this->db->select('a.id, a.nome');
+        $this->db->join('empresa_departamentos b', 'b.id = a.id_depto');
+        $this->db->join('empresa_areas c', 'c.id = a.id_area');
+        $this->db->join('empresa_setores d', 'd.id = a.id_setor');
+        $this->db->where('a.empresa', $this->session->userdata('empresa'));
+        $this->db->where('a.tipo', 'funcionario');
+        $this->db->where_in('a.nivel_acesso', [3, 7, 8, 9, 10, 17]);
+        if ($this->session->userdata('tipo') != 'empresa') {
+            if ($idDepto) {
+                $this->db->where('b.id', $idDepto);
+            }
+            if ($idArea) {
+                $this->db->where('c.id', $idArea);
+            }
+            if ($idSetor) {
+                $this->db->where('d.id', $idSetor);
+            }
+        }
+        $this->db->order_by('a.nome', 'asc');
+        $rows = $this->db->get('usuarios a')->result();
+
+        $data = ['' => 'selecione...'] + array_column($rows, 'nome', 'id');
 
         return $data;
     }

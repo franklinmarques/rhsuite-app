@@ -480,14 +480,10 @@ require_once APPPATH . 'views/end_js.php';
                     $('#setor').html($(json.setores).html());
                     $('#requisitante').html($(json.requisitantes).html());
 
-                    $('#status li').removeClass('active');
-                    if ('<?= $vistoriador; ?>' === '1') {
-                        $('#status li a[data-value="A"]').parent('li').addClass('active');
-                        $('#status_atual, #form [name="status"]').val('A');
-                    } else {
-                        $('#status li a[data-value="F"]').parent('li').addClass('active');
-                        $('#status_atual, #form [name="status"]').val('F');
-                    }
+                    $('#status li').removeClass('active').addClass('disable');
+                    $('#status li').first().removeClass('disable');
+                    $('#status li a[data-value="A"]').parent('li').addClass('active');
+                    $('#status_atual, #form [name="status"]').val('A');
 
                     $('[name="data_abertura"]').val(moment().format('DD/MM/YYYY'));
                     $('#modal_form').modal('show');
@@ -527,7 +523,17 @@ require_once APPPATH . 'views/end_js.php';
                         }
                     });
 
-                    $('#status li').removeClass('active');
+
+                    $('#status li').removeClass('active').addClass('disable');
+                    if ('<?= $vistoriador; ?>' === '1') {
+                        $('#status li').eq(0).removeClass('disable');
+                        $('#status li').eq(1).removeClass('disable');
+                        $('#status li').eq(2).removeClass('disable');
+                    } else {
+                        $('#status li').eq(3).removeClass('disable');
+                        $('#status li').eq(4).removeClass('disable');
+                    }
+
                     $('#status li a[data-value="' + json.data.status + '"]').parent('li').addClass('active');
                     $('#status_atual').val(json.data.status);
 
