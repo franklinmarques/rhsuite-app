@@ -413,7 +413,7 @@ class Treinamento extends MY_Controller
         $tipo = $this->input->post('tipo');
         $data = array();
         foreach ($biblioteca as $id_questao => $resposta) {
-            $this->db->select('a.id as id_questao, b.id AS id_alternativa');
+            $this->db->select('a.id as id_questao, b.id AS id_alternativa, b.peso');
             $this->db->join('cursos_alternativas b', 'b.id_questao = a.id', 'left');
             $this->db->where('a.id', $id_questao);
             $this->db->where('b.id', $tipo[$id_questao] == 2 ? null : $resposta);
@@ -429,6 +429,7 @@ class Treinamento extends MY_Controller
                     'id_questao' => $questoes->id_questao,
                     'id_alternativa' => null,
                     'resposta' => $resposta,
+                    'nota' => null,
                     'data_avaliacao' => mdate("%Y-%m-%d %H:%i:%s")
                 );
             } else {
@@ -437,6 +438,7 @@ class Treinamento extends MY_Controller
                     'id_questao' => $questoes->id_questao,
                     'id_alternativa' => $questoes->id_alternativa,
                     'resposta' => null,
+                    'nota' => $questoes->peso,
                     'data_avaliacao' => mdate("%Y-%m-%d %H:%i:%s")
                 );
             }

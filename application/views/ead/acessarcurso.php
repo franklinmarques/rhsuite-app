@@ -96,7 +96,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-10" style="padding-left: 10px;">
+                <div class="col-xs-12 col-md-10" style="padding-left: 10px;">
                     <section class="panel">
                         <header class="panel-heading">
                             <i class="fa fa-file-text-o"></i><span
@@ -155,21 +155,21 @@
                                                 style="padding: 1px 6px; font-size: 16px;"
                                                 onclick="modalInformacao();">
                                             <i class="fa fa-check"></i><span
-                                                    class="hidden-xs hidden-sm">Finalizar aula</span>
+                                                    class="hidden-xs hidden-sm">Finalizar tópico</span>
                                         </button>
                                     <?php else: ?>
                                         <button id="finalizarAula" class="btn btn-success btn-sm"
                                                 style="padding: 1px 6px; font-size: 16px;"
                                                 onclick="finalizaPagina(<?= $paginaatual->id_curso . "," . $paginaatual->id; ?>)">
                                             <i class="fa fa-check"></i><span
-                                                    class="hidden-xs hidden-sm">Finalizar aula</span>
+                                                    class="hidden-xs hidden-sm">Finalizar tópico</span>
                                         </button>
                                     <?php endif; ?>
                                 <?php else: ?>
                                     <button class="btn btn-success btn-sm" style="padding: 1px 6px; font-size: 16px;"
                                             disabled>
                                         <i class="fa fa-check"></i><span
-                                                class="hidden-xs hidden-sm"> Finalizar aula</span>
+                                                class="hidden-xs hidden-sm"> Finalizar tópico</span>
                                     </button>
                                 <?php endif; ?>&nbsp;
                                 <?php if ($this->agent->is_mobile()): ?>
@@ -197,9 +197,10 @@
                             <?php case 'pdf': ?>
                                 <?php if ($paginaatual->pdf): ?>
                                     <iframe src="https://docs.google.com/gview?embedded=true&url=<?php echo base_url('arquivos/pdf/' . $paginaatual->pdf); ?>"
-                                            style="width:100%; height:450px;" frameborder="0" allowfullscreen></iframe>
+                                            style="width:100%; height:calc(100vh - 86px);" frameborder="0"
+                                            allowfullscreen></iframe>
                                 <?php else: ?>
-                                    <iframe src="" style="width:100%; height:450px;" frameborder="0"
+                                    <iframe src="" style="width:100%; height:calc(100vh - 86px);" frameborder="0"
                                             allowfullscreen></iframe>
                                 <?php endif; ?>
                                 <?php break; ?>
@@ -276,7 +277,8 @@
                                 <?php if (!empty($paginaatual->url)): ?>
                                     <div class="col-md-12" style="margin: 0; padding: 0;">
                                         <div class="col-md-8" style="margin: 0; padding: 0;">
-                                            <iframe type="text/html" allowfullscreen style="width: 100%; height: 450px;"
+                                            <iframe type="text/html" allowfullscreen
+                                                    style="width: 100%; height: calc(100vh - 86px);"
                                                     src="<?php echo $url_final; ?>" frameborder="0"></iframe>
                                         </div>
                                         <div class="col-md-4">
@@ -308,7 +310,7 @@
                             <?php case 'multimidia': ?>
                             <?php case 'links-externos': ?>
 
-                                <iframe width="100%" height="500" frameborder="0" allowfullscreen
+                                <iframe style="width: 100%; height: calc(100vh - 86px);" frameborder="0" allowfullscreen
                                         src="<?php echo $biblioteca->link; ?>"
                                         onload="javascript:resizeIframe(this);"></iframe>
 
@@ -318,46 +320,46 @@
                 </div>
             </div>
 
-            <?php if ($this->agent->is_mobile()): ?>
-                <div class="col-xs-12 hidden-md hidden-lg">
-                    <div class="panel" style="border-color: #111343">
-                        <div class="panel-heading text-center" style="background: #111343 !important;">
-                            <h3 class="panel-title">Plano de Aprendizagem</h3>
-                        </div>
-                        <div class="panel-body" style="overflow-y: auto; max-height: 600px; font-size: 12px;">
-                            <?php foreach ($paginas as $k => $pagina): ?>
-                                <p style="margin: 0 0 5px; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;<?= $pagina->id === $paginaatual->id ? 'background: #758FB0; color: #fff' : '' ?>">
-                                    <?php if ($curso->progressao_linear && $pagina->acesso == 0): ?>
+            <!--            --><?php //if ($this->agent->is_mobile()): ?>
+            <div class="col-xs-12 hidden-md hidden-lg">
+                <div class="panel" style="border-color: #111343">
+                    <div class="panel-heading text-center" style="background: #111343 !important;">
+                        <h3 class="panel-title">Plano de Aprendizagem</h3>
+                    </div>
+                    <div class="panel-body" style="overflow-y: auto; max-height: 600px; font-size: 12px;">
+                        <?php foreach ($paginas as $k => $pagina): ?>
+                            <p style="margin: 0 0 5px; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;<?= $pagina->id === $paginaatual->id ? 'background: #758FB0; color: #fff' : '' ?>">
+                                <?php if ($curso->progressao_linear && $pagina->acesso == 0): ?>
 
-                                        <span class="glyphicon glyphicon-ok" style="color: rgba(255,255,255,0);"></span>
-                                        <a style="cursor: default;">
-                                            <span style="color: #555;"><?= $pagina->titulo; ?></span>
-                                        </a>
+                                    <span class="glyphicon glyphicon-ok" style="color: rgba(255,255,255,0);"></span>
+                                    <a style="cursor: default;">
+                                        <span style="color: #555;"><?= $pagina->titulo; ?></span>
+                                    </a>
 
+                                <?php else: ?>
+
+                                    <?php if ($pagina->status || $pagina->ordem == 0): ?>
+                                        <span class="glyphicon glyphicon-ok text-success"></span>
                                     <?php else: ?>
-
-                                        <?php if ($pagina->status || $pagina->ordem == 0): ?>
-                                            <span class="glyphicon glyphicon-ok text-success"></span>
-                                        <?php else: ?>
-                                            <span class="glyphicon glyphicon-ok"
-                                                  style="color: rgba(255,255,255,0);"></span>
-                                        <?php endif; ?>
-                                        <a href="<?php echo site_url('ead/treinamento/acessar/' . $curso->id_curso_usuario . '/' . $pagina->ordem); ?>"
-                                           title="<?= $pagina->titulo; ?>">
-                                            <?php if ($pagina->id === $paginaatual->id): ?>
-                                                <strong style="color: #fff;"><?= $pagina->titulo; ?></strong>
-                                            <?php else: ?>
-                                                <span style="color: #000080;"><?= $pagina->titulo; ?></span>
-                                            <?php endif; ?>
-                                        </a>
-
+                                        <span class="glyphicon glyphicon-ok"
+                                              style="color: rgba(255,255,255,0);"></span>
                                     <?php endif; ?>
-                                </p>
-                            <?php endforeach; ?>
-                        </div>
+                                    <a href="<?php echo site_url('ead/treinamento/acessar/' . $curso->id_curso_usuario . '/' . $pagina->ordem); ?>"
+                                       title="<?= $pagina->titulo; ?>">
+                                        <?php if ($pagina->id === $paginaatual->id): ?>
+                                            <strong style="color: #fff;"><?= $pagina->titulo; ?></strong>
+                                        <?php else: ?>
+                                            <span style="color: #000080;"><?= $pagina->titulo; ?></span>
+                                        <?php endif; ?>
+                                    </a>
+
+                                <?php endif; ?>
+                            </p>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-            <?php endif; ?>
+            </div>
+            <!--            --><?php //endif; ?>
 
             <div class="col-md-6 hidden-xs hidden-sm">
                 <?php if ($paginaatual->anterior > $curso->pagina_inicial): ?>
@@ -400,7 +402,7 @@
                 </div>
                 <div class='modal-body'>
                     <p>
-                        Para finalizar a aula, por favor responda todas as questões e clique em
+                        Para finalizar o tópico, por favor responda todas as questões e clique em
                         <strong><?= count($perguntas) > 1 ? '"Enviar respostas"' : '"Enviar resposta"' ?></strong>
                     </p>
                 </div>

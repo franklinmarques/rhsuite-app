@@ -19,21 +19,77 @@ class Clientes_treinamentos extends MY_Controller
     }
 
 
+    public function avaliacao($isPdf = false)
+    {
+        $idCliente = $this->uri->rsegment(3, $this->input->get('id_cliente'));
+        $idTreinamento = $this->uri->rsegment(4, $this->input->get('id'));
+
+        $this->db->select('a.id, b.nome AS treinamento, c.id AS id_cliente, c.nome AS usuario, c.cliente', false);
+        $this->db->select("DATE_FORMAT(a.data_inicio, '%d/%m/%Y') AS data_inicio", false);
+        $this->db->select("DATE_FORMAT(a.data_maxima, '%d/%m/%Y') AS data_maxima", false);
+        $this->db->select("DATE_FORMAT(MAX(d.data_finalizacao), '%d/%m/%Y') AS data_finalizacao", false);
+        $this->db->select("TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(d.tempo_estudo))), '%H:%i:%s') AS tempo_estudo", false);
+        $this->db->select('ROUND(AVG(e.nota)) AS avaliacao_final', false);
+        $this->db->join('cursos b', 'b.id = a.id_curso');
+        $this->db->join('cursos_clientes c', 'c.id = a.id_usuario');
+        $this->db->join('cursos_clientes_acessos d', 'd.id_curso_usuario = a.id', 'left');
+        $this->db->join('cursos_clientes_resultado e', 'e.id_acesso = d.id', 'left');
+        $this->db->where('a.id', $idTreinamento);
+        $this->db->where('c.id_empresa', $this->session->userdata('empresa'));
+        $this->db->group_by('a.id');
+        $data = $this->db->get('cursos_clientes_treinamentos a')->row();
+
+        if (empty($data)) {
+            redirect(site_url('ead/clientes_treinamentos/gerenciar/' . $idCliente));
+        }
+
+
+        $this->db->select('g.id, d.conteudo, g.nota, f.data_finalizacao');
+        $this->db->select('IF(g.id_alternativa, e.alternativa, g.resposta) AS resposta', false);
+        $this->db->join('cursos b', 'b.id = a.id_curso');
+        $this->db->join('cursos_paginas c', 'c.id_curso = b.id');
+        $this->db->join('cursos_questoes d', 'd.id_pagina = c.id');
+        $this->db->join('cursos_alternativas e', 'e.id_questao = d.id', 'left');
+        $this->db->join('cursos_clientes_acessos f', 'f.id_curso_usuario = a.id AND f.id_pagina = c.id', 'left');
+        $this->db->join('cursos_clientes_resultado g', 'g.id_acesso = f.id AND g.id_questao = d.id AND (g.id_alternativa = e.id OR g.id_alternativa IS NULL)', 'left');
+        $this->db->where('a.id', $idTreinamento);
+        $this->db->group_by('d.id, e.id');
+        $data->resultados = $this->db->get('cursos_clientes_treinamentos a')->result();
+
+        $data->is_pdf = $isPdf === true;
+        $data->query_string = 'id_cliente=' . $idCliente . '&id=' . $idTreinamento;
+
+        if ($data->is_pdf) {
+            $this->db->select('foto, foto_descricao');
+            $this->db->where('id', $this->session->userdata('empresa'));
+            $data->empresa = $this->db->get('usuarios')->row();
+
+            return $this->load->view('ead/clientes_avaliacao_pdf', $data, true);
+        }
+
+
+        $this->load->view('ead/clientes_avaliacao', $data);
+    }
+
+
     public function ajaxList()
     {
         $idCliente = $this->input->post('id_cliente');
 
 
         $this->db->select('IFNULL(c.nome, a.nome) AS nome', false);
-        $this->db->select('a.data_inicio, a.data_maxima, NULL AS avaliacao_final, a.id', false);
+        $this->db->select('a.data_inicio, a.data_maxima, ROUND(AVG(e.nota), 1) AS avaliacao_final, a.id', false);
         $this->db->select(["DATE_FORMAT(a.data_inicio, '%d/%m/%Y') AS data_inicio_de"], false);
         $this->db->select(["DATE_FORMAT(a.data_maxima, '%d/%m/%Y') AS data_maxima_de"], false);
         $this->db->join('cursos_clientes b', 'b.id = a.id_usuario');
         $this->db->join('cursos c', 'c.id = a.id_curso', 'left');
+        $this->db->join('cursos_clientes_acessos d', 'd.id_curso_usuario = a.id', 'left');
+        $this->db->join('cursos_clientes_resultado e', 'e.id_acesso = d.id', 'left');
         $this->db->where('b.id_empresa', $this->session->userdata('empresa'));
         if ($idCliente) {
             $this->db->where('a.id_usuario', $idCliente);
         }
+        $this->db->group_by('a.id');
         $query = $this->db->get('cursos_clientes_treinamentos a');
 
 
@@ -47,9 +103,10 @@ class Clientes_treinamentos extends MY_Controller
                 $row->nome,
                 $row->data_inicio_de,
                 $row->data_maxima_de,
-                $row->avaliacao_final,
-                '<button class="btn btn-sm btn-info" onclick="edit_treinamento(' . $row->id . ');" title="Editar cliente"><i class="glyphicon glyphicon-pencil"></i></button>
-                 <button class="btn btn-sm btn-danger" onclick="delete_treinamento(' . $row->id . ');" title="Excluir cliente"><i class="glyphicon glyphicon-trash"></i></button>'
+                str_replace('.', ',', $row->avaliacao_final),
+                '<button class="btn btn-sm btn-info" onclick="edit_treinamento(' . $row->id . ');" title="Editar treinamento"><i class="glyphicon glyphicon-pencil"></i></button>
+                 <button class="btn btn-sm btn-danger" onclick="delete_treinamento(' . $row->id . ');" title="Excluir treinamento"><i class="glyphicon glyphicon-trash"></i></button>
+                 <a class="btn btn-sm btn-primary" href="' . site_url('ead/clientes_treinamentos/avaliacao/' . $idCliente . '/' . $row->id) . '" title="Gerenciar avaliação do treinamento cliente"><i class="glyphicon glyphicon-list-alt"></i> Ver avaliação</a>'
             );
         }
 
@@ -170,64 +227,32 @@ class Clientes_treinamentos extends MY_Controller
     }
 
 
-    /*public function enviarEmail()
+    public function ajaxSaveAvaliacao()
     {
-        $id_usuario = $this->input->post('id');
-        $mensagem = $this->input->post('mensagem');
+        $idCliente = $this->uri->rsegment(3);
+        $idTreinamento = $this->uri->rsegment(4);
+        $data = $this->input->post('nota');
 
-        $this->load->helper(array('date'));
-
-        $email['titulo'] = 'E-mail de convocação para Treinamento';
-        $email['remetente'] = $this->session->userdata('id');
-        $email['datacadastro'] = mdate("%Y-%m-%d %H:%i:%s");
-
-        $status = true;
-
-        $this->db->select('a.id_usuario, b.nome, b.email');
-        $this->db->select("DATE_FORMAT(MIN(a.data_inicio), '%d/%m/%Y') AS data_inicio", false);
-        $this->db->join('usuarios b', 'b.id = a.id_usuario');
-        if ($id_usuario) {
-            $this->db->where('a.id_usuario', $id_usuario);
-        }
-        $this->db->where('a.data_maxima <= NOW()');
-        $this->db->group_by('a.id_usuario');
-        $destinatarios = $this->db->get('cursos_clientes a')->result();
-
-        $this->db->select("a.nome, a.email, IFNULL(b.email, a.email) AS email_empresa", false);
-        $this->db->join('usuarios b', 'b.id = a.empresa', 'left');
-        $this->db->where('a.id', $this->session->userdata('id'));
-        $remetente = $this->db->get('usuarios a')->row();
-
-        $this->load->library('email');
-
-        foreach ($destinatarios as $destinatario) {
-            if ($mensagem) {
-                $email['mensagem'] = $mensagem;
-            } else {
-                $email['mensagem'] = "Caro colaborador, você está convocado para realizar treinamento na data de: {$destinatario->data_programada}. Favor verificar com o Departamento de Gestão de Pessoas";
-            }
-
-            $this->email->from($remetente->email, $remetente->nome);
-            $this->email->to($destinatario->email);
-            $this->email->cc($remetente->email_empresa);
-            $this->email->bcc('contato@rhsuite.com.br');
-
-            $this->email->subject($email['titulo']);
-            $this->email->message($email['mensagem']);
-
-            if ($this->email->send()) {
-                $email['destinatario'] = $destinatario->id_usuario;
-                $this->db->query($this->db->insert_string('mensagensrecebidas', $email));
-                $this->db->query($this->db->insert_string('mensagensenviadas', $email));
-            } else {
-                $status = false;
-            }
-
-            $this->email->clear();
+        if (empty($data)) {
+            exit(json_encode(['retorno' => 2, 'aviso' => 'Nenhum questionário finalizado encontrado.']));
         }
 
-        echo json_encode(array('status' => $status));
-    }*/
+        $this->db->trans_start();
+
+        foreach ($data as $id => $nota) {
+            $this->db->set('nota', strlen($nota) ? $nota : null);
+            $this->db->where('id', $id);
+            $this->db->update('cursos_clientes_resultado');
+        }
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() == false) {
+            exit(json_encode(['retorno' => 0, 'aviso' => 'Erro ao salvar a avaliação']));
+        }
+
+        echo json_encode(['retorno' => 1, 'aviso' => 'Avaliação realizada com sucesso', 'redireciona' => 1, 'pagina' => site_url('ead/clientes_treinamentos/avaliacao/' . $idCliente . '/' . $idTreinamento)]);
+    }
 
 
     private function setData($data = [])
@@ -242,5 +267,36 @@ class Clientes_treinamentos extends MY_Controller
 
         return $data;
     }
+
+
+    public function pdf()
+    {
+        $this->load->library('m_pdf');
+
+        $stylesheet = 'table.avaliacao thead th { font-size: 14px; padding: 5px; text-align: center; font-weight: normal; } ';
+        $stylesheet .= 'table.avaliacao tbody tr { border-width: 5px; border-color: #ddd; } ';
+        $stylesheet .= 'table.avaliacao tbody tr.avaliador { border-width: 1px; border-color: #ddd; } ';
+        $stylesheet .= 'table.avaliacao tbody td { font-size: 14px; padding: 5px; } ';
+        $stylesheet .= 'table.avaliacao tbody tr.avaliador td { width: 50%; border-width: 1px; border-color: #ddd; } ';
+
+        $stylesheet .= '#table thead th { font-size: 13px; padding: 5px; background-color: #f5f5f5; } ';
+//        $stylesheet .= '#table thead tr:nth-child(1) th { background-color: #dff0d8; } ';
+        $stylesheet .= '#table tbody td { font-size: 13px; padding: 5px; text-align: left; } ';
+        $stylesheet .= '#table tbody td:nth-child(3) { text-align: right; }';
+
+
+        $this->m_pdf->pdf->AddPage('L');
+        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
+        $this->m_pdf->pdf->writeHTML($this->avaliacao(true));
+
+        $this->db->select("CONCAT(c.nome, ' - ', b.nome) AS nome", false);
+        $this->db->join('cursos_clientes b', 'b.id = a.id_usuario');
+        $this->db->join('cursos c', 'c.id = a.id_curso');
+        $this->db->where('a.id', $this->input->get('id'));
+        $row = $this->db->get('cursos_clientes_treinamentos a')->row();
+
+        $this->m_pdf->pdf->Output("Avaliação de Treinamento de Clientes - {$row->nome}.pdf", 'D');
+    }
+
 
 }

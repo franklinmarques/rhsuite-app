@@ -151,6 +151,22 @@ class Ead_clientes_model extends CI_Model
     }
 
 
+    public function insertID($data)
+    {
+        $this->db->trans_begin();
+        $this->db->insert(self::$table, $data);
+        $uploaded = $this->uploadFile();
+        if ($this->db->trans_status() === false and $uploaded !== true) {
+            $this->db->trans_rollback();
+            return $this->db->display_error() . $uploaded;
+        }
+
+        $this->db->trans_commit();
+
+        return $this->db->insert_id();
+    }
+
+
     public function update($data, $where)
     {
         $this->db->trans_begin();

@@ -139,9 +139,35 @@ class Clientes extends MY_Controller
         $data['token'] = uniqid();
         unset($data['id'], $data['confirmar_senha']);
 
-        if ($this->cliente->insert($data) == false) {
+        $this->db->trans_start();
+
+        $id = $this->cliente->insertID($data);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
             exit(json_encode(['erro' => 'Erro ao cadastrar dados']));
         }
+
+        if (isset($_FILES['foto'])) {
+            $config = array(
+                'upload_path' => './imagens/usuarios/',
+                'allowed_types' => 'gif|jpg|png',
+                'file_name' => utf8_decode($_FILES['foto']['name']),
+            );
+
+            $this->load->library('upload', $config);
+
+            if ($this->upload->do_upload('foto') == false) {
+                $this->db->trans_rollback();
+                exit(json_encode(['erro' => $this->upload->display_errors()]));
+            }
+
+            $foto = $this->upload->data();
+
+            $this->cliente->update(['foto' => utf8_encode($foto['file_name'])], ['id' => $id]);
+        }
+
+        $this->db->trans_commit();
 
         echo json_encode(['status' => true]);
     }
@@ -166,9 +192,34 @@ class Clientes extends MY_Controller
         $id = $this->input->post('id');
         unset($data['id'], $data['token'], $data['confirmar_senha']);
 
-        if ($this->cliente->update($data, ['id' => $id]) == false) {
+        $this->db->trans_begin();
+
+        $this->cliente->update($data, ['id' => $id]);
+
+        if ($this->db->trans_rollback() == false) {
             exit(json_encode(['erro' => 'Erro ao alterar dados']));
         }
+
+        if (isset($_FILES['foto'])) {
+            $config = array(
+                'upload_path' => './imagens/usuarios/',
+                'allowed_types' => 'gif|jpg|png',
+                'file_name' => utf8_decode($_FILES['foto']['name']),
+            );
+
+            $this->load->library('upload', $config);
+
+            if ($this->upload->do_upload('foto') == false) {
+                $this->db->trans_rollback();
+                exit(json_encode(['erro' => $this->upload->display_errors()]));
+            }
+
+            $foto = $this->upload->data();
+
+            $this->cliente->update(['foto' => utf8_encode($foto['file_name'])], ['id' => $id]);
+        }
+
+        $this->db->trans_commit();
 
         echo json_encode(['status' => true]);
     }
