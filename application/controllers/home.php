@@ -71,6 +71,10 @@ class Home extends MY_Controller
             $usuarios = $this->db->query('SELECT * FROM recrutamento_usuarios WHERE empresa = ? ORDER BY nome ASC', $this->session->userdata('empresa'))->result();
             //$view = 'index_candidato';
             redirect(site_url('recrutamento/testes'));
+        } else if ($this->session->userdata('tipo') == "candidato_externo") {
+            $usuarios = $this->db->query('SELECT * FROM candidatos WHERE empresa = ? ORDER BY nome ASC', $this->session->userdata('empresa'))->result();
+            //$view = 'index_candidato';
+            redirect(site_url('candidatoVagas'));
         }
 
         $data['usuarios'] = array('' => 'selecione...');

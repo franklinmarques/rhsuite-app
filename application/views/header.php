@@ -69,6 +69,7 @@ switch ($this->session->userdata('tipo')) {
         require_once "menu_funcionario.php";
         break;
     case 'cliente':
+    case 'candidato_externo':
 //        require_once "menu_cliente.php";
         break;
     case 'candidato':

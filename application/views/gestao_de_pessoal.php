@@ -121,8 +121,8 @@ require_once "header.php";
                                     <a href="#treinamentos" aria-controls="treinamentos" role="tab" data-toggle="tab">Treinamentos</a>
                                 </li>
                                 <li role="presentation">
-                                    <a href="#entrevistas_desligamento" aria-controls="entrevistas_desligamento"
-                                       role="tab" data-toggle="tab">Entrevistas desligamento</a>
+                                    <a href="#demissoes_desligamentos" aria-controls="demissoes_desligamentos"
+                                       role="tab" data-toggle="tab">Demissões/desligamentos</a>
                                 </li>
                             </ul>
 
@@ -146,11 +146,10 @@ require_once "header.php";
                                             </h4>
                                         </div>
                                         <div class="col-md-7 text-right">
-                                            <button type="button" class="btn btn-default"
+                                            <!--<button type="button" class="btn btn-default"
                                                     onclick="ler_estrutura_atual()"><i
-                                                        class="glyphicon glyphicon-refresh"></i> Ler estrutura
-                                                organizacional atual
-                                            </button>
+                                                        class="glyphicon glyphicon-refresh"></i> Ler estrutura + quadro
+                                            </button>-->
                                             <button type="button" id="ler_quadro" class="btn btn-info"
                                                     onclick="ler_quadro_atual()">Ler
                                                 quadro
@@ -664,22 +663,251 @@ require_once "header.php";
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="periodo_experiencia">
 
-                                    <!--                                    --><?php //$this->load->view('funcionario_periodo1', $data_avaliado1); ?>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <h4 style="color: #111343;"><strong>Consolidado de Período de
+                                                    Experiência</strong></h4>
+                                        </div>
+                                        <div class="col-md-7 text-right">
+                                            <button type="button" id="ler_experiencia" class="btn btn-info"
+                                                    onclick="ler_experiencia_atual()">Ler dados
+                                            </button>
+                                            <button type="button" id="salvar_experiencia" class="btn btn-success"
+                                                    onclick="salvar_experiencia()"> Salvar
+                                            </button>
+                                            <button type="button" id="limpar_experiencia" class="btn btn-danger"
+                                                    onclick="limpar_experiencia()"> Limpar
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <table id="table_periodo_experiencia" class="table table-bordered table-condensed"
+                                           cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr class="active">
+                                            <th>Departamento (unidade de negócios)</th>
+                                            <th class="text-center meses_periodo_experiencia">Jan</th>
+                                            <th class="text-center meses_periodo_experiencia">Fev</th>
+                                            <th class="text-center meses_periodo_experiencia">Mar</th>
+                                            <th class="text-center meses_periodo_experiencia">Abr</th>
+                                            <th class="text-center meses_periodo_experiencia">Mai</th>
+                                            <th class="text-center meses_periodo_experiencia">Jun</th>
+                                            <th class="text-center meses_periodo_experiencia">Jul</th>
+                                            <th class="text-center meses_periodo_experiencia">Ago</th>
+                                            <th class="text-center meses_periodo_experiencia">Set</th>
+                                            <th class="text-center meses_periodo_experiencia">Out</th>
+                                            <th class="text-center meses_periodo_experiencia">Nov</th>
+                                            <th class="text-center meses_periodo_experiencia">Dez</th>
+                                            <th>Média anual</th>
+                                        </tr>
+                                        <tr class="active">
+                                            <th>Total</th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                            <th class="text-center total_periodo_experiencia"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
 
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="exames_periodicos">
 
-                                    <!--                                    --><?php //$this->load->view('funcionario_exame1', $data_exame1); ?>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <h4 style="color: #111343;"><strong>Consolidado de Exame Periódico</strong>
+                                            </h4>
+                                        </div>
+                                        <div class="col-md-7 text-right">
+                                            <button type="button" id="ler_exame_periodico" class="btn btn-info"
+                                                    onclick="ler_exame_periodico_atual()">Ler dados
+                                            </button>
+                                            <button type="button" id="salvar_exame_periodico" class="btn btn-success"
+                                                    onclick="salvar_exame_periodico()"> Salvar
+                                            </button>
+                                            <button type="button" id="limpar_exame_periodico" class="btn btn-danger"
+                                                    onclick="limpar_exame_periodico()"> Limpar
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <table id="table_exame_periodico" class="table table-bordered table-condensed"
+                                           cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr class="active">
+                                            <th>Departamento (unidade de negócios)</th>
+                                            <th class="text-center meses_exame_periodico">Jan</th>
+                                            <th class="text-center meses_exame_periodico">Fev</th>
+                                            <th class="text-center meses_exame_periodico">Mar</th>
+                                            <th class="text-center meses_exame_periodico">Abr</th>
+                                            <th class="text-center meses_exame_periodico">Mai</th>
+                                            <th class="text-center meses_exame_periodico">Jun</th>
+                                            <th class="text-center meses_exame_periodico">Jul</th>
+                                            <th class="text-center meses_exame_periodico">Ago</th>
+                                            <th class="text-center meses_exame_periodico">Set</th>
+                                            <th class="text-center meses_exame_periodico">Out</th>
+                                            <th class="text-center meses_exame_periodico">Nov</th>
+                                            <th class="text-center meses_exame_periodico">Dez</th>
+                                            <th>Média anual</th>
+                                        </tr>
+                                        <tr class="active">
+                                            <th>Total</th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                            <th class="text-center total_exame_periodico"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
 
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="treinamentos">
 
-                                    <!--                                    --><?php //$this->load->view('funcionario_treinamento1', $data_avaliado1); ?>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <h4 style="color: #111343;"><strong>Consolidado de Quadro de
+                                                    Treinamentos</strong></h4>
+                                        </div>
+                                        <div class="col-md-7 text-right">
+                                            <button type="button" id="ler_treinamentos" class="btn btn-info"
+                                                    onclick="ler_treinamentos_atual()">Ler dados
+                                            </button>
+                                            <button type="button" id="salvar_treinamentos" class="btn btn-success"
+                                                    onclick="salvar_treinamentos()"> Salvar
+                                            </button>
+                                            <button type="button" id="limpar_treinamentos" class="btn btn-danger"
+                                                    onclick="limpar_treinamentos()"> Limpar
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <table id="table_treinamentos" class="table table-bordered table-condensed"
+                                           cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr class="active">
+                                            <th>Departamento (unidade de negócios)</th>
+                                            <th class="text-center meses_treinamentos">Jan</th>
+                                            <th class="text-center meses_treinamentos">Fev</th>
+                                            <th class="text-center meses_treinamentos">Mar</th>
+                                            <th class="text-center meses_treinamentos">Abr</th>
+                                            <th class="text-center meses_treinamentos">Mai</th>
+                                            <th class="text-center meses_treinamentos">Jun</th>
+                                            <th class="text-center meses_treinamentos">Jul</th>
+                                            <th class="text-center meses_treinamentos">Ago</th>
+                                            <th class="text-center meses_treinamentos">Set</th>
+                                            <th class="text-center meses_treinamentos">Out</th>
+                                            <th class="text-center meses_treinamentos">Nov</th>
+                                            <th class="text-center meses_treinamentos">Dez</th>
+                                            <th>Média anual</th>
+                                        </tr>
+                                        <tr class="active">
+                                            <th>Total</th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                            <th class="text-center total_treinamentos"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
 
                                 </div>
-                                <div role="tabpanel" class="tab-pane" id="entrevistas_desligamento">
+                                <div role="tabpanel" class="tab-pane" id="demissoes_desligamentos">
 
-                                    <!--                                    --><?php //echo $this->load->view('funcionario_pdi1', $data_pdi1); ?>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <h4 style="color: #111343;"><strong>Consolidado de Entrevistas de
+                                                    Demissões</strong></h4>
+                                        </div>
+                                        <div class="col-md-7 text-right">
+                                            <button type="button" id="ler_demissoes" class="btn btn-info"
+                                                    onclick="ler_demissoes_atual()">Ler dados
+                                            </button>
+                                            <button type="button" id="salvar_demissoes" class="btn btn-success"
+                                                    onclick="salvar_demissoes()"> Salvar
+                                            </button>
+                                            <button type="button" id="limpar_demissoes" class="btn btn-danger"
+                                                    onclick="limpar_demissoes()"> Limpar
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <table id="table_demissoes_desligamentos"
+                                           class="table table-bordered table-condensed"
+                                           cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr class="active">
+                                            <th>Departamento (unidade de negócios)</th>
+                                            <th class="text-center meses_demissoes">Jan</th>
+                                            <th class="text-center meses_demissoes">Fev</th>
+                                            <th class="text-center meses_demissoes">Mar</th>
+                                            <th class="text-center meses_demissoes">Abr</th>
+                                            <th class="text-center meses_demissoes">Mai</th>
+                                            <th class="text-center meses_demissoes">Jun</th>
+                                            <th class="text-center meses_demissoes">Jul</th>
+                                            <th class="text-center meses_demissoes">Ago</th>
+                                            <th class="text-center meses_demissoes">Set</th>
+                                            <th class="text-center meses_demissoes">Out</th>
+                                            <th class="text-center meses_demissoes">Nov</th>
+                                            <th class="text-center meses_demissoes">Dez</th>
+                                            <th>Média anual</th>
+                                        </tr>
+                                        <tr class="active">
+                                            <th>Total</th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                            <th class="text-center total_demissoes"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
 
                                 </div>
                             </div>
@@ -708,12 +936,17 @@ require_once "end_js.php";
     <script>
         var save_method;
         var table_quadro_colaboradores, table_requisicoes_pessoal, table_turnover, table_afastamentos,
-            table_faltas_atrasos;
+            table_faltas_atrasos, table_periodo_experiencia, table_exame_periodico, table_treinamentos,
+            table_demissoes_desligamentos;
 
         var quadro_atual = false;
         var turnover_atual = false;
         var afastamentos_atual = false;
         var falta_atraso_atual = false;
+        var experiencia_atual = false;
+        var exame_periodico_atual = false;
+        var treinamentos_atual = false;
+        var demissoes_atual = false;
 
 
         $(document).ready(function () {
@@ -1039,6 +1272,266 @@ require_once "end_js.php";
                 ]
             });
 
+            table_periodo_experiencia = $('#table_periodo_experiencia').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'lengthChange': false,
+                'iDisplayLength': -1,
+                'searching': false,
+                'ordering': false,
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('gestaoDePessoal/ajaxListPeriodoExperiencia/') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
+                        d.busca = $('.filtro').serialize();
+                        d.experiencia_atual = experiencia_atual === true ? 1 : 0;
+                        return d;
+                    },
+                    'dataSrc': function (json) {
+                        $.each(json.total, function (index, value) {
+                            $(table_periodo_experiencia.columns(index + 1).header(2)).html(value).removeClass('info text-info success text-success');
+                        });
+                        var coluna = $(table_periodo_experiencia.columns(parseInt($('#mes').val())).header(2));
+                        if (experiencia_atual) {
+                            coluna.addClass('info text-info');
+                        } else {
+                            coluna.addClass('success text-success');
+                        }
+
+                        return json.data;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'width': '100%',
+                        'targets': [0]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (parseInt($('#mes').val()) === col) {
+                                if (experiencia_atual) {
+                                    $(td).addClass('info text-info');
+                                } else {
+                                    $(td).addClass('success text-success');
+                                }
+                            }
+                            if (rowData[col] !== null) {
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            }
+                        },
+                        'className': 'text-center',
+                        'targets': 'total_periodo_experiencia'
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (rowData[col] !== null) {
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            }
+                        },
+                        'className': 'text-center',
+                        'targets': [-1]
+                    }
+                ]
+            });
+
+            table_exame_periodico = $('#table_exame_periodico').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'lengthChange': false,
+                'iDisplayLength': -1,
+                'searching': false,
+                'ordering': false,
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('gestaoDePessoal/ajaxListExamePeriodico/') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
+                        d.busca = $('.filtro').serialize();
+                        d.exame_periodico_atual = exame_periodico_atual === true ? 1 : 0;
+                        return d;
+                    },
+                    'dataSrc': function (json) {
+                        $.each(json.total, function (index, value) {
+                            $(table_exame_periodico.columns(index + 1).header(2)).html(value).removeClass('info text-info success text-success');
+                        });
+                        var coluna = $(table_exame_periodico.columns(parseInt($('#mes').val())).header(2));
+                        if (exame_periodico_atual) {
+                            coluna.addClass('info text-info');
+                        } else {
+                            coluna.addClass('success text-success');
+                        }
+
+                        return json.data;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'width': '100%',
+                        'targets': [0]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (parseInt($('#mes').val()) === col) {
+                                if (exame_periodico_atual) {
+                                    $(td).addClass('info text-info');
+                                } else {
+                                    $(td).addClass('success text-success');
+                                }
+                            }
+                            if (rowData[col] !== null) {
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            }
+                        },
+                        'className': 'text-center',
+                        'targets': 'total_exame_periodico'
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (rowData[col] !== null) {
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            }
+                        },
+                        'className': 'text-center',
+                        'targets': [-1]
+                    }
+                ]
+            });
+
+            table_treinamentos = $('#table_treinamentos').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'lengthChange': false,
+                'iDisplayLength': -1,
+                'searching': false,
+                'ordering': false,
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('gestaoDePessoal/ajaxListTreinamentos/') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
+                        d.busca = $('.filtro').serialize();
+                        d.treinamentos_atual = treinamentos_atual === true ? 1 : 0;
+                        return d;
+                    },
+                    'dataSrc': function (json) {
+                        $.each(json.total, function (index, value) {
+                            $(table_treinamentos.columns(index + 1).header(2)).html(value).removeClass('info text-info success text-success');
+                        });
+                        var coluna = $(table_treinamentos.columns(parseInt($('#mes').val())).header(2));
+                        if (treinamentos_atual) {
+                            coluna.addClass('info text-info');
+                        } else {
+                            coluna.addClass('success text-success');
+                        }
+
+                        return json.data;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'width': '100%',
+                        'targets': [0]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (parseInt($('#mes').val()) === col) {
+                                if (treinamentos_atual) {
+                                    $(td).addClass('info text-info');
+                                } else {
+                                    $(td).addClass('success text-success');
+                                }
+                            }
+                            if (rowData[col] !== null) {
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            }
+                        },
+                        'className': 'text-center',
+                        'targets': 'total_treinamentos'
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (rowData[col] !== null) {
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            }
+                        },
+                        'className': 'text-center',
+                        'targets': [-1]
+                    }
+                ]
+            });
+
+            table_demissoes_desligamentos = $('#table_demissoes_desligamentos').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'lengthChange': false,
+                'iDisplayLength': -1,
+                'searching': false,
+                'ordering': false,
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('gestaoDePessoal/ajaxListDemissoes/') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
+                        d.busca = $('.filtro').serialize();
+                        d.demissoes_atual = demissoes_atual === true ? 1 : 0;
+                        return d;
+                    },
+                    'dataSrc': function (json) {
+                        $.each(json.total, function (index, value) {
+                            $(table_demissoes_desligamentos.columns(index + 1).header(2)).html(value).removeClass('info text-info success text-success');
+                        });
+                        var coluna = $(table_demissoes_desligamentos.columns(parseInt($('#mes').val())).header(2));
+                        if (demissoes_atual) {
+                            coluna.addClass('info text-info');
+                        } else {
+                            coluna.addClass('success text-success');
+                        }
+
+                        return json.data;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'width': '100%',
+                        'targets': [0]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (parseInt($('#mes').val()) === col) {
+                                if (demissoes_atual) {
+                                    $(td).addClass('info text-info');
+                                } else {
+                                    $(td).addClass('success text-success');
+                                }
+                            }
+                            if (rowData[col] !== null) {
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            }
+                        },
+                        'className': 'text-center',
+                        'targets': 'total_demissoes'
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (rowData[col] !== null) {
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            }
+                        },
+                        'className': 'text-center',
+                        'targets': [-1]
+                    }
+                ]
+            });
+
             setPdf_atributes();
         });
 
@@ -1050,11 +1543,15 @@ require_once "end_js.php";
         });
 
         function reload_table() {
-            table_quadro_colaboradores.ajax.reload(null, false);
+            ler_estrutura_atual();
             table_requisicoes_pessoal.ajax.reload(null, false);
-            table_turnover.ajax.reload(null, false);
-            table_afastamentos.ajax.reload(null, false);
-            table_faltas_atrasos.ajax.reload(null, false);
+            ler_faltas_atrasos();
+            ler_turnover();
+            ler_afastamentos();
+            ler_experiencia();
+            ler_exame_periodico();
+            ler_treinamentos();
+            ler_demissoes();
             setPdf_atributes();
         }
 
@@ -1106,15 +1603,71 @@ require_once "end_js.php";
             table_afastamentos.ajax.reload(null, false);
         }
 
+        function ler_experiencia() {
+            experiencia_atual = false;
+            $('#salvar_experiencia').prop('disabled', true);
+            table_periodo_experiencia.ajax.reload(null, false);
+        }
+
+        function ler_experiencia_atual() {
+            experiencia_atual = true;
+            $('#salvar_experiencia').prop('disabled', false);
+            table_periodo_experiencia.ajax.reload(null, false);
+        }
+
+        function ler_exame_periodico() {
+            exame_periodico_atual = false;
+            $('#salvar_exame_periodico').prop('disabled', true);
+            table_exame_periodico.ajax.reload(null, false);
+        }
+
+        function ler_exame_periodico_atual() {
+            exame_periodico_atual = true;
+            $('#salvar_exame_periodico').prop('disabled', false);
+            table_exame_periodico.ajax.reload(null, false);
+        }
+
+        function ler_treinamentos() {
+            treinamentos_atual = false;
+            $('#salvar_treinamentos').prop('disabled', true);
+            table_treinamentos.ajax.reload(null, false);
+        }
+
+        function ler_treinamentos_atual() {
+            treinamentos_atual = true;
+            $('#salvar_treinamentos').prop('disabled', false);
+            table_treinamentos.ajax.reload(null, false);
+        }
+
+        function ler_demissoes() {
+            demissoes_atual = false;
+            $('#salvar_demissoes').prop('disabled', true);
+            table_demissoes_desligamentos.ajax.reload(null, false);
+        }
+
+        function ler_demissoes_atual() {
+            demissoes_atual = true;
+            $('#salvar_demissoes').prop('disabled', false);
+            table_demissoes_desligamentos.ajax.reload(null, false);
+        }
+
         $('#mes').on('change', function () {
             $('#ler_quadro').prop('disabled', this.value.length === 0);
             $('#ler_turnover').prop('disabled', this.value.length === 0);
             $('#ler_afastamentos').prop('disabled', this.value.length === 0);
             $('#ler_faltas_atrasos').prop('disabled', this.value.length === 0);
+            $('#ler_experiencia').prop('disabled', this.value.length === 0);
+            $('#ler_exame_periodico').prop('disabled', this.value.length === 0);
+            $('#ler_treinamentos').prop('disabled', this.value.length === 0);
+            $('#ler_demissoes').prop('disabled', this.value.length === 0);
             ler_estrutura_atual();
             ler_turnover();
             ler_afastamentos();
             ler_faltas_atrasos();
+            ler_experiencia();
+            ler_exame_periodico();
+            ler_treinamentos();
+            ler_demissoes();
         });
 
         // -------------------------------------------------------------------------
@@ -1281,6 +1834,94 @@ require_once "end_js.php";
             });
         }
 
+        function salvar_experiencia() {
+            $('#salvar_experiencia').text('Salvando...').prop('disabled', true);
+            $.ajax({
+                'url': "<?php echo site_url('gestaoDePessoal/salvarPeriodoExperiencia/') ?>",
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('.filtro').serialize(),
+                'success': function (json) {
+                    if (json.status) {
+                        reload_table();
+                    } else {
+                        alert('Error get data from ajax');
+                    }
+                    $('#salvar_experiencia').text('Salvar').prop('disabled', false);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                    $('#salvar_experiencia').text('Salvar').prop('disabled', false);
+                }
+            });
+        }
+
+        function salvar_exame_periodico() {
+            $('#salvar_exame_periodico').text('Salvando...').prop('disabled', true);
+            $.ajax({
+                'url': "<?php echo site_url('gestaoDePessoal/salvarExamePeriodico/') ?>",
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('.filtro').serialize(),
+                'success': function (json) {
+                    if (json.status) {
+                        reload_table();
+                    } else {
+                        alert('Error get data from ajax');
+                    }
+                    $('#salvar_exame_periodico').text('Salvar').prop('disabled', false);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                    $('#salvar_exame_periodico').text('Salvar').prop('disabled', false);
+                }
+            });
+        }
+
+        function salvar_treinamentos() {
+            $('#salvar_treinamentos').text('Salvando...').prop('disabled', true);
+            $.ajax({
+                'url': "<?php echo site_url('gestaoDePessoal/salvarTreinamentos/') ?>",
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('.filtro').serialize(),
+                'success': function (json) {
+                    if (json.status) {
+                        reload_table();
+                    } else {
+                        alert('Error get data from ajax');
+                    }
+                    $('#salvar_treinamentos').text('Salvar').prop('disabled', false);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                    $('#salvar_treinamentos').text('Salvar').prop('disabled', false);
+                }
+            });
+        }
+
+        function salvar_demissoes() {
+            $('#salvar_demissoes').text('Salvando...').prop('disabled', true);
+            $.ajax({
+                'url': "<?php echo site_url('gestaoDePessoal/salvarDemissoes/') ?>",
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('.filtro').serialize(),
+                'success': function (json) {
+                    if (json.status) {
+                        reload_table();
+                    } else {
+                        alert('Error get data from ajax');
+                    }
+                    $('#salvar_demissoes').text('Salvar').prop('disabled', false);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                    $('#salvar_demissoes').text('Salvar').prop('disabled', false);
+                }
+            });
+        }
+
 
         function save_quadro_colaboradores() {
             $('#btnSaveQuadroColaboradores').text('Salvando...').prop('disabled', true);
@@ -1427,6 +2068,106 @@ require_once "end_js.php";
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error get data from ajax');
                         $('#limpar_afastamentos').text('Limpar').prop('disabled', false);
+                    }
+                });
+            }
+        }
+
+        function limpar_experiencia() {
+            if (confirm('Deseja limpar o Quadro de Período de Experiência no mês em destaque?')) {
+                $('#limpar_experiencia').text('Limpando...').prop('disabled', true);
+
+                $.ajax({
+                    'url': '<?php echo site_url('gestaoDePessoal/limparPeriodoExperiencia/') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': $('.filtro').serialize(),
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else {
+                            alert('Error get data from ajax');
+                        }
+                        $('#limpar_experiencia').text('Limpar').prop('disabled', false);
+                    },
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert('Error get data from ajax');
+                        $('#limpar_experiencia').text('Limpar').prop('disabled', false);
+                    }
+                });
+            }
+        }
+
+        function limpar_exame_periodico() {
+            if (confirm('Deseja limpar o Quadro de Exame Periódico no mês em destaque?')) {
+                $('#limpar_exame_periodico').text('Limpando...').prop('disabled', true);
+
+                $.ajax({
+                    'url': '<?php echo site_url('gestaoDePessoal/limparExamePeriodico/') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': $('.filtro').serialize(),
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else {
+                            alert('Error get data from ajax');
+                        }
+                        $('#limpar_exame_periodico').text('Limpar').prop('disabled', false);
+                    },
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert('Error get data from ajax');
+                        $('#limpar_exame_periodico').text('Limpar').prop('disabled', false);
+                    }
+                });
+            }
+        }
+
+        function limpar_treinamentos() {
+            if (confirm('Deseja limpar o Quadro de Treinamentos no mês em destaque?')) {
+                $('#limpar_treinamentos').text('Limpando...').prop('disabled', true);
+
+                $.ajax({
+                    'url': '<?php echo site_url('gestaoDePessoal/limparTreinamentos/') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': $('.filtro').serialize(),
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else {
+                            alert('Error get data from ajax');
+                        }
+                        $('#limpar_treinamentos').text('Limpar').prop('disabled', false);
+                    },
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert('Error get data from ajax');
+                        $('#limpar_treinamentos').text('Limpar').prop('disabled', false);
+                    }
+                });
+            }
+        }
+
+        function limpar_demissoes() {
+            if (confirm('Deseja limpar o Quadro de Demissoes no mês em destaque?')) {
+                $('#limpar_demissoes').text('Limpando...').prop('disabled', true);
+
+                $.ajax({
+                    'url': '<?php echo site_url('gestaoDePessoal/limparDemissoes/') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': $('.filtro').serialize(),
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else {
+                            alert('Error get data from ajax');
+                        }
+                        $('#limpar_demissoes').text('Limpar').prop('disabled', false);
+                    },
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert('Error get data from ajax');
+                        $('#limpar_demissoes').text('Limpar').prop('disabled', false);
                     }
                 });
             }

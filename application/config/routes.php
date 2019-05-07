@@ -40,6 +40,7 @@
 
 $route['default_controller'] = 'home';
 $route['(:any)/login'] = 'login';
+$route['(:any)/vagas'] = 'vagas';
 $route['404_override'] = 'empresa';
 
 

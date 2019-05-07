@@ -7,7 +7,7 @@
     </div>
     <!--logo end-->
 
-    <?php if ($this->session->userdata('tipo') !== 'cliente'): ?>
+    <?php if (!in_array($this->session->userdata('tipo'), ['cliente', 'candidato_externo'])): ?>
         <div class="nav notify-row" id="top_menu">
             <!--  notification start -->
             <ul class="nav top-menu">
@@ -55,6 +55,10 @@
                     <li>
                         <?php if ($this->session->userdata('tipo') === 'cliente') : ?>
                             <a href="#" onclick="edit_perfil();">
+                                <i class="fa fa-user-circle-o"></i> Meu perfil
+                            </a>
+                        <?php elseif ($this->session->userdata('tipo') === 'candidato_externo') : ?>
+                            <a href="<?php echo site_url('candidatoVagas/editarPerfil/' . $this->session->userdata('id')); ?>">
                                 <i class="fa fa-user-circle-o"></i> Meu perfil
                             </a>
                         <?php elseif ($this->session->userdata('tipo') === 'candidato'): ?>

@@ -45,7 +45,7 @@ class Login extends CI_Controller
         $this->load->model('Usuarios_model', 'usuarios');
         $data['senha'] = $this->usuarios->setPassword($data['senha']);
 
-        $login = $this->usuarios->getUsuario($data['email'], $data['senha']);
+        $login = $this->usuarios->getUsuario(trim($data['email']), $data['senha']);
         if (!$login) {
             exit(json_encode(array('retorno' => 0, 'aviso' => 'Nome de usuário / senha inválidos')));
         }
@@ -135,12 +135,16 @@ class Login extends CI_Controller
             'hash_acesso' => $hash_acesso
         ));
 
+        # Atuaiza o ID da session para acessar o registro de log atual
+//        $this->session->sess_update();
+
         # Insere a data e hora da login
         $dados['usuario'] = $this->session->userdata('id');
         $dados['tipo'] = $this->session->userdata('tipo');
         $dados['data_acesso'] = mdate("%Y-%m-%d %H:%i:%s");
         $dados['endereco_ip'] = $this->input->ip_address();
         $dados['agente_usuario'] = $this->input->user_agent();
+        $dados['id_sessao'] = session_id();
 
         if ($dados['usuario'] == $dados_old['usuario'] and
             $dados['endereco_ip'] == $dados_old['endereco_ip'] and
@@ -149,6 +153,7 @@ class Login extends CI_Controller
             $dados_old['data_acesso'] = mdate("%Y-%m-%d %H:%i:%s");
             $dados_old['data_atualizacao'] = null;
             $dados_old['data_saida'] = null;
+            $dados_old['id_sessao'] = session_id();
             $this->db->update('acessosistema', $dados_old, array('id' => $id_old));
         } else {
             $this->db->query($this->db->insert_string('acessosistema', $dados));
@@ -170,7 +175,7 @@ class Login extends CI_Controller
     {
         header('Content-type: text/json');
 
-        $data['email'] = $this->input->post('email');
+        $data['email'] = trim($this->input->post('email'));
 
         if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             exit(json_encode(array('retorno' => 0, 'aviso' => 'Endereço de e-mail inválido')));

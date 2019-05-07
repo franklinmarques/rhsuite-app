@@ -55,7 +55,7 @@ class GestaoDePessoal extends MY_Controller
 
 
         $this->db->select('a.id, a.nome, b.mes, b.total_colaboradores');
-        $this->db->join('requisicoes_pessoal_estruturas b', "b.id_depto = a.id AND b.ano = '{$ano}'", 'left');
+        $this->db->join('gestao_pessoal_quadro b', "b.id_depto = a.id AND b.ano = '{$ano}'", 'left');
         $this->db->where('a.id_empresa', $this->session->userdata('empresa'));
 
         $query = $this->db->get('empresa_departamentos a');
@@ -85,8 +85,8 @@ class GestaoDePessoal extends MY_Controller
                           UNION
                           SELECT a.id, c.id_usuario
                           FROM empresa_departamentos a
-                          INNER JOIN usuarios b ON b.id_depto = a.id or b.depto = a.nome
-                          INNER JOIN usuarios_afastamento c on c.id_usuario = b.id
+                          LEFT JOIN usuarios b ON b.id_depto = a.id or b.depto = a.nome
+                          LEFT JOIN usuarios_afastamento c on c.id_usuario = b.id
                           WHERE c.data_afastamento <= '{$dataLimite}' AND 
                                 (c.data_retorno >= '{$dataInicial}' OR c.data_retorno IS NULL)) s 
                     GROUP BY s.id";
@@ -99,9 +99,9 @@ class GestaoDePessoal extends MY_Controller
         $data = array();
         $total = array_pad([], 12, null);
         foreach ($rows as $id => $nome) {
-            if (isset($totalMes[$id][$busca['mes']]) == false) {
-                continue;
-            }
+//            if (isset($totalMes[$id][$busca['mes']]) == false) {
+//                continue;
+//            }
             $row = array(
                 $nome,
                 $totalMes[$id]['01'] ?? null,
@@ -234,7 +234,7 @@ class GestaoDePessoal extends MY_Controller
         $this->db->where('id_empresa', $this->session->userdata('empresa'));
         $this->db->where('ano', $ano);
 
-        $query = $this->db->get('requisicoes_pessoal_relatorios');
+        $query = $this->db->get('gestao_pessoal_indicadores');
         $this->load->library('dataTables');
 
         $output = $this->datatables->generate($query);
@@ -363,7 +363,7 @@ class GestaoDePessoal extends MY_Controller
         $this->db->where('id_empresa', $this->session->userdata('empresa'));
         $this->db->where('ano', $ano);
 
-        $query = $this->db->get('requisicoes_pessoal_relatorios');
+        $query = $this->db->get('gestao_pessoal_indicadores');
         $this->load->library('dataTables');
 
         $output = $this->datatables->generate($query);
@@ -579,6 +579,418 @@ class GestaoDePessoal extends MY_Controller
 
     // -------------------------------------------------------------------------
 
+    public function ajaxListPeriodoExperiencia($return = false)
+    {
+        parse_str($this->input->post('busca'), $busca);
+        $ano = !empty($busca['ano']) ? $busca['ano'] : date('Y');
+        $experienciaAtual = $this->input->post('experiencia_atual');
+        $empresa = $this->session->userdata('empresa');
+
+
+        $this->db->select('a.id, a.nome, b.mes, b.total_avaliados');
+        $this->db->join('gestao_pessoal_experiencia b', "b.id_depto = a.id AND b.ano = '{$ano}'", 'left');
+        $this->db->where('a.id_empresa', $empresa);
+        $this->db->order_by('a.nome', 'asc');
+
+        $query = $this->db->get('empresa_departamentos a');
+
+        $this->load->library('dataTables');
+
+        $output = $this->datatables->generate($query);
+
+
+        $rows = array();
+        $totalMes = array();
+        foreach ($output->data as $estrutura) {
+            $rows[$estrutura->id] = $estrutura->nome;
+            if ($estrutura->total_avaliados) {
+                $totalMes[$estrutura->id][$estrutura->mes] = $estrutura->total_avaliados;
+            }
+        }
+
+        if ($experienciaAtual) {
+            $dataLimite = date('Y-m-t', mktime(0, 0, 0, intval($busca['mes']), 1, $ano));
+            $dataInicial = date('Y-m-d', mktime(0, 0, 0, intval($busca['mes']), 1, $ano));
+            $sql = "SELECT s.id, COUNT(DISTINCT s.id_avaliado) AS total_avaliados
+                    FROM (SELECT a.id, c.id_avaliado
+                          FROM empresa_departamentos a
+                          LEFT JOIN usuarios b ON b.id_depto = a.id or b.depto = a.nome AND b.empresa = a.id_empresa
+                          LEFT JOIN avaliacaoexp_avaliados c on c.id_avaliado = b.id
+                          LEFT JOIN avaliacaoexp_modelos d on d.id = c.id_modelo
+                          LEFT JOIN avaliacaoexp_avaliadores e on e.id_avaliado = c.id
+                          WHERE b.empresa = '{$empresa}'
+                                AND e.data_avaliacao BETWEEN '{$dataInicial}' AND '{$dataLimite}'
+                                AND c.id_avaliacao IS NULL
+                                AND d.tipo = 'P'
+                          GROUP BY c.id) s 
+                    GROUP BY s.id";
+            $experiencias = $this->db->query($sql)->result();
+            foreach ($experiencias as $experiencia) {
+                $totalMes[$experiencia->id][$busca['mes']] = $experiencia->total_avaliados;
+            }
+        }
+
+        $data = array();
+        $total = array_pad([], 12, null);
+        foreach ($rows as $id => $nome) {
+            $row = array(
+                $nome,
+                $totalMes[$id]['01'] ?? null,
+                $totalMes[$id]['02'] ?? null,
+                $totalMes[$id]['03'] ?? null,
+                $totalMes[$id]['04'] ?? null,
+                $totalMes[$id]['05'] ?? null,
+                $totalMes[$id]['06'] ?? null,
+                $totalMes[$id]['07'] ?? null,
+                $totalMes[$id]['08'] ?? null,
+                $totalMes[$id]['09'] ?? null,
+                $totalMes[$id]['10'] ?? null,
+                $totalMes[$id]['11'] ?? null,
+                $totalMes[$id]['12'] ?? null,
+                isset($totalMes[$id]) ? round(array_sum($totalMes[$id]) / max(count(array_filter($totalMes[$id], function ($v) {
+                        return strlen($v) > 0;
+                    })), 1)) : null,
+                $id
+            );
+
+            $data[] = $row;
+
+            for ($i = 0; $i < 12; $i++) {
+                if (strlen($row[$i + 1]) > 0) {
+                    $total[$i] += $row[$i + 1];
+                }
+            }
+        }
+
+        $total[] = round(array_sum($total) / max(count(array_filter($total, function ($v) {
+                return strlen($v) > 0;
+            })), 1));
+
+        if ($return) {
+            return $data;
+        }
+
+        $output->recordsTotal = count($data);
+        $output->recordsFiltered = $output->recordsTotal;
+        $output->ano = $ano;
+        $output->total = $total;
+        $output->data = $data;
+
+
+        echo json_encode($output);
+    }
+
+    // -------------------------------------------------------------------------
+
+    public function ajaxListExamePeriodico($return = false)
+    {
+        parse_str($this->input->post('busca'), $busca);
+        $ano = !empty($busca['ano']) ? $busca['ano'] : date('Y');
+        $examePeriodicoAtual = $this->input->post('exame_periodico_atual');
+        $empresa = $this->session->userdata('empresa');
+
+
+        $this->db->select('a.id, a.nome, b.mes, b.total_colaboradores');
+        $this->db->join('gestao_pessoal_exames_periodicos b', "b.id_depto = a.id AND b.ano = '{$ano}'", 'left');
+        $this->db->where('a.id_empresa', $empresa);
+        $this->db->order_by('a.nome', 'asc');
+        $query = $this->db->get('empresa_departamentos a');
+
+        $this->load->library('dataTables');
+
+        $output = $this->datatables->generate($query);
+
+
+        $rows = array();
+        $totalMes = array();
+        foreach ($output->data as $estrutura) {
+            $rows[$estrutura->id] = $estrutura->nome;
+            if ($estrutura->total_colaboradores) {
+                $totalMes[$estrutura->id][$estrutura->mes] = $estrutura->total_colaboradores;
+            }
+        }
+
+        if ($examePeriodicoAtual) {
+            $dataLimite = date('Y-m-t', mktime(0, 0, 0, intval($busca['mes']), 1, $ano));
+            $dataInicial = date('Y-m-d', mktime(0, 0, 0, intval($busca['mes']), 1, $ano));
+            $sql = "SELECT s.id, COUNT(s.id_usuario) AS total_colaboradores
+                    FROM (SELECT a.id, c.id_usuario
+                          FROM empresa_departamentos a
+                          INNER JOIN usuarios b ON b.id_depto = a.id or b.depto = a.nome
+                          INNER JOIN usuarios_exame_periodico c on c.id_usuario = b.id
+                          WHERE b.empresa = '{$empresa}' 
+                                AND c.data_realizacao BETWEEN '{$dataInicial}' AND '{$dataLimite}' 
+                                AND c.data_realizacao IS NOT NULL) s 
+                    GROUP BY s.id";
+            $examesPeriodicos = $this->db->query($sql)->result();
+            foreach ($examesPeriodicos as $examePeriodico) {
+                $totalMes[$examePeriodico->id][$busca['mes']] = $examePeriodico->total_colaboradores;
+            }
+        }
+
+        $data = array();
+        $total = array_pad([], 12, null);
+        foreach ($rows as $id => $nome) {
+            $row = array(
+                $nome,
+                $totalMes[$id]['01'] ?? null,
+                $totalMes[$id]['02'] ?? null,
+                $totalMes[$id]['03'] ?? null,
+                $totalMes[$id]['04'] ?? null,
+                $totalMes[$id]['05'] ?? null,
+                $totalMes[$id]['06'] ?? null,
+                $totalMes[$id]['07'] ?? null,
+                $totalMes[$id]['08'] ?? null,
+                $totalMes[$id]['09'] ?? null,
+                $totalMes[$id]['10'] ?? null,
+                $totalMes[$id]['11'] ?? null,
+                $totalMes[$id]['12'] ?? null,
+                isset($totalMes[$id]) ? round(array_sum($totalMes[$id]) / max(count(array_filter($totalMes[$id], function ($v) {
+                        return strlen($v) > 0;
+                    })), 1)) : null,
+                $id
+            );
+
+            $data[] = $row;
+
+            for ($i = 0; $i < 12; $i++) {
+                if (strlen($row[$i + 1]) > 0) {
+                    $total[$i] += $row[$i + 1];
+                }
+            }
+        }
+
+        $total[] = round(array_sum($total) / max(count(array_filter($total, function ($v) {
+                return strlen($v) > 0;
+            })), 1));
+
+        if ($return) {
+            return $data;
+        }
+
+        $output->recordsTotal = count($data);
+        $output->recordsFiltered = $output->recordsTotal;
+        $output->ano = $ano;
+        $output->total = $total;
+        $output->data = $data;
+
+
+        echo json_encode($output);
+    }
+
+    // -------------------------------------------------------------------------
+
+    public function ajaxListTreinamentos($return = false)
+    {
+        parse_str($this->input->post('busca'), $busca);
+        $ano = !empty($busca['ano']) ? $busca['ano'] : date('Y');
+        $treinamentosAtual = $this->input->post('treinamentos_atual');
+        $empresa = $this->session->userdata('empresa');
+
+
+        $this->db->select('a.id, a.nome, b.mes, b.total_colaboradores');
+        $this->db->join('gestao_pessoal_treinamentos b', "b.id_depto = a.id AND b.ano = '{$ano}'", 'left');
+        $this->db->where('a.id_empresa', $empresa);
+        $this->db->order_by('a.nome', 'asc');
+        $query = $this->db->get('empresa_departamentos a');
+
+
+        $this->load->library('dataTables');
+
+        $output = $this->datatables->generate($query);
+
+
+        $rows = array();
+        $totalMes = array();
+        foreach ($output->data as $estrutura) {
+            $rows[$estrutura->id] = $estrutura->nome;
+            if ($estrutura->total_colaboradores) {
+                $totalMes[$estrutura->id][$estrutura->mes] = $estrutura->total_colaboradores;
+            }
+        }
+
+
+        if ($treinamentosAtual) {
+            $dataLimite = date('Y-m-t', mktime(0, 0, 0, intval($busca['mes']), 1, $ano));
+            $dataInicial = date('Y-m-d', mktime(0, 0, 0, intval($busca['mes']), 1, $ano));
+            $sql = "SELECT s.id, COUNT(s.id_usuario) AS total_colaboradores
+                    FROM (SELECT a.id, b.id AS id_usuario
+                          FROM empresa_departamentos a
+                          LEFT JOIN usuarios b ON b.id_depto = a.id OR b.depto = a.nome
+                          LEFT JOIN cursos_usuarios c ON c.id_usuario = b.id
+                          WHERE b.empresa = '{$empresa}' AND 
+                                b.tipo = 'funcionario' AND 
+                                b.datacadastro <= '{$dataLimite}' AND 
+                                c.data_inicio <= '{$dataLimite}' AND 
+                                c.data_maxima >= '{$dataInicial}'
+                          GROUP BY b.id) s 
+                    GROUP BY s.id";
+            $treinamentos = $this->db->query($sql)->result();
+            foreach ($treinamentos as $treinamento) {
+                $totalMes[$treinamento->id][$busca['mes']] = $treinamento->total_colaboradores;
+            }
+        }
+
+
+        $data = array();
+        $total = array_pad([], 12, null);
+        foreach ($rows as $id => $nome) {
+            $row = array(
+                $nome,
+                $totalMes[$id]['01'] ?? null,
+                $totalMes[$id]['02'] ?? null,
+                $totalMes[$id]['03'] ?? null,
+                $totalMes[$id]['04'] ?? null,
+                $totalMes[$id]['05'] ?? null,
+                $totalMes[$id]['06'] ?? null,
+                $totalMes[$id]['07'] ?? null,
+                $totalMes[$id]['08'] ?? null,
+                $totalMes[$id]['09'] ?? null,
+                $totalMes[$id]['10'] ?? null,
+                $totalMes[$id]['11'] ?? null,
+                $totalMes[$id]['12'] ?? null,
+                isset($totalMes[$id]) ? round(array_sum($totalMes[$id]) / max(count(array_filter($totalMes[$id], function ($v) {
+                        return strlen($v) > 0;
+                    })), 1)) : null,
+                $id
+            );
+
+            $data[] = $row;
+
+            for ($i = 0; $i < 12; $i++) {
+                if (strlen($row[$i + 1]) > 0) {
+                    $total[$i] += $row[$i + 1];
+                }
+            }
+        }
+
+        $total[] = round(array_sum($total) / max(count(array_filter($total, function ($v) {
+                return strlen($v) > 0;
+            })), 1));
+
+        if ($return) {
+            return $data;
+        }
+
+        $output->recordsTotal = count($data);
+        $output->recordsFiltered = $output->recordsTotal;
+        $output->ano = $ano;
+        $output->total = $total;
+        $output->data = $data;
+
+
+        echo json_encode($output);
+    }
+
+    // -------------------------------------------------------------------------
+
+    public function ajaxListDemissoes($return = false)
+    {
+        parse_str($this->input->post('busca'), $busca);
+        $ano = !empty($busca['ano']) ? $busca['ano'] : date('Y');
+        $demissoesAtual = $this->input->post('demissoes_atual');
+        $empresa = $this->session->userdata('empresa');
+
+
+        $this->db->select('a.id, a.nome, b.mes, b.total_colaboradores');
+        $this->db->join('gestao_pessoal_demissoes b', "b.id_depto = a.id AND b.ano = '{$ano}'", 'left');
+        $this->db->where('a.id_empresa', $empresa);
+        $this->db->order_by('a.nome', 'asc');
+        $query = $this->db->get('empresa_departamentos a');
+
+        $this->load->library('dataTables');
+
+        $output = $this->datatables->generate($query);
+
+
+        $rows = array();
+        $totalMes = array();
+        foreach ($output->data as $estrutura) {
+            $rows[$estrutura->id] = $estrutura->nome;
+            if ($estrutura->total_colaboradores) {
+                $totalMes[$estrutura->id][$estrutura->mes] = $estrutura->total_colaboradores;
+            }
+        }
+
+        if ($demissoesAtual) {
+            $dataLimite = date('Y-m-t', mktime(0, 0, 0, intval($busca['mes']), 1, $ano));
+            $dataInicial = date('Y-m-d', mktime(0, 0, 0, intval($busca['mes']), 1, $ano));
+            $sql = "SELECT s.id, COUNT(s.id_usuario) AS total_colaboradores
+                    FROM (SELECT a.id, b.id AS id_usuario
+                          FROM empresa_departamentos a
+                          LEFT JOIN usuarios b ON b.id_depto = a.id or b.depto = a.nome
+                          WHERE b.empresa = '{$empresa}' AND 
+                                b.tipo = 'funcionario' AND b.status IN (4, 5) AND 
+                                b.datacadastro <= '{$dataLimite}' AND 
+                                b.data_demissao IS NOT NULL AND
+                                b.data_demissao BETWEEN '{$dataInicial}' AND '{$dataLimite}'
+                          UNION
+                          SELECT a.id, c.id_usuario
+                          FROM empresa_departamentos a
+                          LEFT JOIN usuarios b ON b.id_depto = a.id or b.depto = a.nome
+                          LEFT JOIN usuarios_demissao c on c.id_usuario = b.id
+                          WHERE b.empresa = '{$empresa}' 
+                                AND c.data_demissao IS NOT NULL
+                                AND c.data_demissao BETWEEN '{$dataInicial}' AND '{$dataLimite}') s 
+                    GROUP BY s.id";
+            $demissoes = $this->db->query($sql)->result();
+            foreach ($demissoes as $demissao) {
+                $totalMes[$demissao->id][$busca['mes']] = $demissao->total_colaboradores;
+            }
+        }
+
+        $data = array();
+        $total = array_pad([], 12, null);
+        foreach ($rows as $id => $nome) {
+            $row = array(
+                $nome,
+                $totalMes[$id]['01'] ?? null,
+                $totalMes[$id]['02'] ?? null,
+                $totalMes[$id]['03'] ?? null,
+                $totalMes[$id]['04'] ?? null,
+                $totalMes[$id]['05'] ?? null,
+                $totalMes[$id]['06'] ?? null,
+                $totalMes[$id]['07'] ?? null,
+                $totalMes[$id]['08'] ?? null,
+                $totalMes[$id]['09'] ?? null,
+                $totalMes[$id]['10'] ?? null,
+                $totalMes[$id]['11'] ?? null,
+                $totalMes[$id]['12'] ?? null,
+                isset($totalMes[$id]) ? round(array_sum($totalMes[$id]) / max(count(array_filter($totalMes[$id], function ($v) {
+                        return strlen($v) > 0;
+                    })), 1)) : null,
+                $id
+            );
+
+            $data[] = $row;
+
+            for ($i = 0; $i < 12; $i++) {
+                if (strlen($row[$i + 1]) > 0) {
+                    $total[$i] += $row[$i + 1];
+                }
+            }
+        }
+
+        $total[] = round(array_sum($total) / max(count(array_filter($total, function ($v) {
+                return strlen($v) > 0;
+            })), 1));
+
+        if ($return) {
+            return $data;
+        }
+
+        $output->recordsTotal = count($data);
+        $output->recordsFiltered = $output->recordsTotal;
+        $output->ano = $ano;
+        $output->total = $total;
+        $output->data = $data;
+
+
+        echo json_encode($output);
+    }
+
+    // -------------------------------------------------------------------------
+
     public function ajaxEdit()
     {
         $where = array(
@@ -587,7 +999,7 @@ class GestaoDePessoal extends MY_Controller
             'ano' => $this->input->post('ano')
         );
 
-        $data = $this->db->get_where('requisicoes_pessoal_relatorios', $where)->row();
+        $data = $this->db->get_where('gestao_pessoal_indicadores', $where)->row();
         if (empty($data)) {
             $data = $where;
         }
@@ -606,7 +1018,7 @@ class GestaoDePessoal extends MY_Controller
             'ano' => $this->input->post('ano')
         );
 
-        $data = $this->db->get_where('requisicoes_pessoal_estruturas', $where)->row_array();
+        $data = $this->db->get_where('gestao_pessoal_quadro', $where)->row_array();
         if (empty($data)) {
             $data = $where;
             $data['id'] = null;
@@ -653,9 +1065,9 @@ class GestaoDePessoal extends MY_Controller
         }
 
         if ($id) {
-            $status = $this->db->update('requisicoes_pessoal_relatorios', $data, ['id' => $id]);
+            $status = $this->db->update('gestao_pessoal_indicadores', $data, ['id' => $id]);
         } else {
-            $status = $this->db->insert('requisicoes_pessoal_relatorios', $data);
+            $status = $this->db->insert('gestao_pessoal_indicadores', $data);
         }
 
         echo json_encode(['status' => $status !== false]);
@@ -670,7 +1082,7 @@ class GestaoDePessoal extends MY_Controller
             $data['id_empresa'] = $this->session->userdata('empresa');
         }
 
-        $status = $this->db->insert('requisicoes_pessoal_estruturas', $data);
+        $status = $this->db->insert('gestao_pessoal_quadro', $data);
 
         echo json_encode(['status' => $status !== false]);
     }
@@ -688,9 +1100,9 @@ class GestaoDePessoal extends MY_Controller
                 $data['id_empresa'] = $this->session->userdata('empresa');
             }
 
-            $status = $this->db->update('requisicoes_pessoal_estruturas', $data, ['id' => $id]);
+            $status = $this->db->update('gestao_pessoal_quadro', $data, ['id' => $id]);
         } else {
-            $status = $this->db->delete('requisicoes_pessoal_estruturas', ['id' => $id]);
+            $status = $this->db->delete('gestao_pessoal_quadro', ['id' => $id]);
         }
 
         echo json_encode(['status' => $status !== false]);
@@ -704,8 +1116,8 @@ class GestaoDePessoal extends MY_Controller
         $mes = $this->input->post('mes');
         $ano = $this->input->post('ano');
 
-        $dataLimite = date('Y-m-t', mktime(0, 0, 0, intval($mes) - 1, 1, $ano));
-        $dataInicial = date('Y-m-d', mktime(0, 0, 0, intval($mes) - 1, 1, $ano));
+        $dataLimite = date('Y-m-t', mktime(0, 0, 0, intval($mes), 1, $ano));
+        $dataInicial = date('Y-m-d', mktime(0, 0, 0, intval($mes), 1, $ano));
 
         $sql = "SELECT s.id_depto, 
                        s.id_empresa,
@@ -739,7 +1151,7 @@ class GestaoDePessoal extends MY_Controller
         }
 
         $this->db->select('a.id AS id_depto, b.id');
-        $this->db->join('requisicoes_pessoal_estruturas b', "b.id_depto = a.id AND b.ano = '{$ano}' AND b.mes = '{$mes}'", 'left');
+        $this->db->join('gestao_pessoal_quadro b', "b.id_depto = a.id AND b.ano = '{$ano}' AND b.mes = '{$mes}'", 'left');
         $this->db->where('a.id_empresa', $empresa);
 
         $estruturas = $this->db->get('empresa_departamentos a')->result();
@@ -748,9 +1160,9 @@ class GestaoDePessoal extends MY_Controller
 
         foreach ($estruturas as $estrutura) {
             if ($estrutura->id) {
-                $this->db->update('requisicoes_pessoal_estruturas', $data[$estrutura->id_depto], ['id' => $estrutura->id]);
+                $this->db->update('gestao_pessoal_quadro', $data[$estrutura->id_depto], ['id' => $estrutura->id]);
             } else {
-                $this->db->insert('requisicoes_pessoal_estruturas', $data[$estrutura->id_depto]);
+                $this->db->insert('gestao_pessoal_quadro', $data[$estrutura->id_depto]);
             }
         }
 
@@ -771,7 +1183,7 @@ class GestaoDePessoal extends MY_Controller
             'ano' => $this->input->post('ano')
         );
 
-        $status = $this->db->delete('requisicoes_pessoal_estruturas', $where);
+        $status = $this->db->delete('gestao_pessoal_quadro', $where);
 
         echo json_encode(['status' => $status !== false]);
     }
@@ -783,7 +1195,7 @@ class GestaoDePessoal extends MY_Controller
         $this->db->where('id_empresa', $this->session->userdata('empresa'));
         $this->db->where('mes', $this->input->post('mes'));
         $this->db->where('ano', $this->input->post('ano'));
-        $turnover = $this->db->get('requisicoes_pessoal_relatorios')->row_array();
+        $turnover = $this->db->get('gestao_pessoal_indicadores')->row_array();
 
         $id = $turnover['id'];
         $data = array(
@@ -801,9 +1213,9 @@ class GestaoDePessoal extends MY_Controller
         $turnover = array_filter(array_diff_key($turnover, $data));
 
         if ($turnover) {
-            $status = $this->db->update('requisicoes_pessoal_relatorios', $data, ['id' => $id]);
+            $status = $this->db->update('gestao_pessoal_indicadores', $data, ['id' => $id]);
         } else {
-            $status = $this->db->delete('requisicoes_pessoal_relatorios', ['id' => $id]);
+            $status = $this->db->delete('gestao_pessoal_indicadores', ['id' => $id]);
         }
 
 
@@ -817,7 +1229,7 @@ class GestaoDePessoal extends MY_Controller
         $this->db->where('id_empresa', $this->session->userdata('empresa'));
         $this->db->where('mes', $this->input->post('mes'));
         $this->db->where('ano', $this->input->post('ano'));
-        $afastamentos = $this->db->get('requisicoes_pessoal_relatorios')->row_array();
+        $afastamentos = $this->db->get('gestao_pessoal_indicadores')->row_array();
 
         $id = $afastamentos['id'];
         $data = array(
@@ -835,11 +1247,71 @@ class GestaoDePessoal extends MY_Controller
         $afastamentos = array_filter(array_diff_key($afastamentos, $data));
 
         if ($afastamentos) {
-            $status = $this->db->update('requisicoes_pessoal_relatorios', $data, ['id' => $id]);
+            $status = $this->db->update('gestao_pessoal_indicadores', $data, ['id' => $id]);
         } else {
-            $status = $this->db->delete('requisicoes_pessoal_relatorios', ['id' => $id]);
+            $status = $this->db->delete('gestao_pessoal_indicadores', ['id' => $id]);
         }
 
+
+        echo json_encode(['status' => $status !== false]);
+    }
+
+    // -------------------------------------------------------------------------
+
+    public function limparPeriodoExperiencia()
+    {
+        $where = array(
+            'id_empresa' => $this->session->userdata('empresa'),
+            'mes' => $this->input->post('mes'),
+            'ano' => $this->input->post('ano')
+        );
+
+        $status = $this->db->delete('gestao_pessoal_experiencia', $where);
+
+        echo json_encode(['status' => $status !== false]);
+    }
+
+    // -------------------------------------------------------------------------
+
+    public function limparExamePeriodico()
+    {
+        $where = array(
+            'id_empresa' => $this->session->userdata('empresa'),
+            'mes' => $this->input->post('mes'),
+            'ano' => $this->input->post('ano')
+        );
+
+        $status = $this->db->delete('gestao_pessoal_exames_periodicos', $where);
+
+        echo json_encode(['status' => $status !== false]);
+    }
+
+    // -------------------------------------------------------------------------
+
+    public function limparTreinamentos()
+    {
+        $where = array(
+            'id_empresa' => $this->session->userdata('empresa'),
+            'mes' => $this->input->post('mes'),
+            'ano' => $this->input->post('ano')
+        );
+
+        $status = $this->db->delete('gestao_pessoal_treinamentos', $where);
+
+        echo json_encode(['status' => $status !== false]);
+    }
+
+    // -------------------------------------------------------------------------
+
+    public function limparDemissoes()
+    {
+        $where = array(
+            'id_empresa' => $this->session->userdata('empresa'),
+            'mes' => $this->input->post('mes'),
+            'ano' => $this->input->post('ano')
+        );
+
+        $status = $this->db->delete('gestao_pessoal_demissoes', $where);
 
         echo json_encode(['status' => $status !== false]);
     }
@@ -874,14 +1346,14 @@ class GestaoDePessoal extends MY_Controller
             'mes' => $mes
         );
         $this->db->where($where);
-        $afastamento = $this->db->get('requisicoes_pessoal_relatorios')->num_rows();
+        $afastamento = $this->db->get('gestao_pessoal_indicadores')->num_rows();
 
         $this->db->trans_start();
 
         if ($afastamento) {
-            $this->db->update('requisicoes_pessoal_relatorios', $data, $where);
+            $this->db->update('gestao_pessoal_indicadores', $data, $where);
         } else {
-            $this->db->insert('requisicoes_pessoal_relatorios', $data);
+            $this->db->insert('gestao_pessoal_indicadores', $data);
         }
 
         $this->db->trans_complete();
@@ -926,14 +1398,14 @@ class GestaoDePessoal extends MY_Controller
             'mes' => $mes
         );
         $this->db->where($where);
-        $afastamento = $this->db->get('requisicoes_pessoal_relatorios')->num_rows();
+        $afastamento = $this->db->get('gestao_pessoal_indicadores')->num_rows();
 
         $this->db->trans_start();
 
         if ($afastamento) {
-            $this->db->update('requisicoes_pessoal_relatorios', $data, $where);
+            $this->db->update('gestao_pessoal_indicadores', $data, $where);
         } else {
-            $this->db->insert('requisicoes_pessoal_relatorios', $data);
+            $this->db->insert('gestao_pessoal_indicadores', $data);
         }
 
         $this->db->trans_complete();
@@ -942,6 +1414,257 @@ class GestaoDePessoal extends MY_Controller
 
         echo json_encode(['status' => $status !== false]);
     }
+
+    // -------------------------------------------------------------------------
+
+    public function salvarPeriodoExperiencia()
+    {
+        $empresa = $this->session->userdata('empresa');
+        $mes = $this->input->post('mes');
+        $ano = $this->input->post('ano');
+
+        $dataLimite = date('Y-m-t', mktime(0, 0, 0, intval($mes), 1, $ano));
+        $dataInicial = date('Y-m-d', mktime(0, 0, 0, intval($mes), 1, $ano));
+
+        $sql = "SELECT s.id_depto, 
+                       s.id_empresa,
+                       COUNT(DISTINCT s.id_avaliado) AS total_avaliados,
+                       '{$mes}' AS mes,
+                       '{$ano}' AS ano
+                FROM (SELECT a.id AS id_depto, a.id_empresa, c.id_avaliado
+                      FROM empresa_departamentos a
+                      LEFT JOIN usuarios b ON (b.id_depto = a.id OR b.depto = a.nome) 
+                                AND b.empresa = a.id_empresa
+                      LEFT JOIN avaliacaoexp_avaliados c on c.id_avaliado = b.id
+                      LEFT JOIN avaliacaoexp_modelos d on d.id = c.id_modelo
+                      LEFT JOIN avaliacaoexp_avaliadores e on e.id_avaliado = c.id
+                      WHERE b.empresa = '{$empresa}'
+                            AND e.data_avaliacao BETWEEN '{$dataInicial}' AND '{$dataLimite}'
+                            AND c.id_avaliacao IS NULL
+                            AND d.tipo = 'P'
+                      GROUP BY c.id) s 
+                GROUP BY s.id_depto";
+        $rows = $this->db->query($sql)->result();
+
+        $data = array();
+        foreach ($rows as $row) {
+            $data[$row->id_depto] = $row;
+        }
+
+        $this->db->select('a.id AS id_depto, b.id');
+        $this->db->join('gestao_pessoal_experiencia b', "b.id_depto = a.id AND b.ano = '{$ano}' AND b.mes = '{$mes}'", 'left');
+        $this->db->where('a.id_empresa', $empresa);
+        $experiencias = $this->db->get('empresa_departamentos a')->result();
+
+        $this->db->trans_start();
+
+
+        foreach ($experiencias as $experiencia) {
+            if (isset($data[$experiencia->id_depto])) {
+                if ($experiencia->id) {
+                    $this->db->update('gestao_pessoal_experiencia', $data[$experiencia->id_depto], ['id' => $experiencia->id]);
+                } else {
+                    $this->db->insert('gestao_pessoal_experiencia', $data[$experiencia->id_depto]);
+                }
+            } else {
+                $this->db->delete('gestao_pessoal_experiencia', ['id' => $experiencia->id]);
+            }
+        }
+
+        $this->db->trans_complete();
+
+        $status = $this->db->trans_status();
+
+        echo json_encode(['status' => $status !== false]);
+    }
+
+    // -------------------------------------------------------------------------
+
+    public function salvarExamePeriodico()
+    {
+        $empresa = $this->session->userdata('empresa');
+        $mes = $this->input->post('mes');
+        $ano = $this->input->post('ano');
+
+        $dataLimite = date('Y-m-t', mktime(0, 0, 0, intval($mes), 1, $ano));
+        $dataInicial = date('Y-m-d', mktime(0, 0, 0, intval($mes), 1, $ano));
+
+        $sql = "SELECT s.id_depto, 
+                       s.id_empresa,
+                       COUNT(s.id_usuario) AS total_colaboradores,
+                       '{$mes}' AS mes,
+                       '{$ano}' AS ano
+                FROM (SELECT a.id AS id_depto, a.id_empresa, c.id_usuario
+                      FROM empresa_departamentos a
+                      INNER JOIN usuarios b ON b.id_depto = a.id or b.depto = a.nome
+                      INNER JOIN usuarios_exame_periodico c on c.id_usuario = b.id
+                      WHERE b.empresa = '{$empresa}' 
+                            AND c.data_realizacao BETWEEN '{$dataInicial}' AND '{$dataLimite}' 
+                            AND c.data_realizacao IS NOT NULL) s 
+                GROUP BY s.id_depto";
+        $rows = $this->db->query($sql)->result();
+
+        $data = array();
+        foreach ($rows as $row) {
+            $data[$row->id_depto] = $row;
+        }
+
+        $this->db->select('a.id AS id_depto, b.id');
+        $this->db->join('gestao_pessoal_exames_periodicos b', "b.id_depto = a.id AND b.ano = '{$ano}' AND b.mes = '{$mes}'", 'left');
+        $this->db->where('a.id_empresa', $empresa);
+        $examesPeriodicos = $this->db->get('empresa_departamentos a')->result();
+
+        $this->db->trans_start();
+
+
+        foreach ($examesPeriodicos as $examePeriodico) {
+            if (isset($data[$examePeriodico->id_depto])) {
+                if ($examePeriodico->id) {
+                    $this->db->update('gestao_pessoal_exames_periodicos', $data[$examePeriodico->id_depto], ['id' => $examePeriodico->id]);
+                } else {
+                    $this->db->insert('gestao_pessoal_exames_periodicos', $data[$examePeriodico->id_depto]);
+                }
+            } else {
+                $this->db->delete('gestao_pessoal_exames_periodicos', ['id' => $examePeriodico->id]);
+            }
+        }
+
+        $this->db->trans_complete();
+
+        $status = $this->db->trans_status();
+
+        echo json_encode(['status' => $status !== false]);
+    }
+
+    // -------------------------------------------------------------------------
+
+    public function salvarTreinamentos()
+    {
+        $empresa = $this->session->userdata('empresa');
+        $mes = $this->input->post('mes');
+        $ano = $this->input->post('ano');
+
+        $dataLimite = date('Y-m-t', mktime(0, 0, 0, intval($mes), 1, $ano));
+        $dataInicial = date('Y-m-d', mktime(0, 0, 0, intval($mes), 1, $ano));
+
+
+        $sql = "SELECT s.id_depto, 
+                       s.id_empresa,
+                       COUNT(s.id_usuario) AS total_colaboradores,
+                       '{$mes}' AS mes,
+                       '{$ano}' AS ano
+                FROM (SELECT a.id AS id_depto, a.id_empresa b.id AS id_usuario
+                      FROM empresa_departamentos a
+                      LEFT JOIN usuarios b ON b.id_depto = a.id or b.depto = a.nome
+                      LEFT JOIN cursos_usuarios c ON c.id_usuario = b.id
+                      WHERE b.empresa = '{$empresa}' AND 
+                            b.tipo = 'funcionario' AND 
+                            b.datacadastro <= '{$dataLimite}' AND 
+                            c.data_inicio <= '{$dataLimite}' AND 
+                            c.data_maxima >= '{$dataInicial}'
+                      GROUP BY b.id) s 
+                GROUP BY s.id";
+
+        $rows = $this->db->query($sql)->result();
+
+        $data = array();
+        foreach ($rows as $row) {
+            $data[$row->id_depto] = $row;
+        }
+
+        $this->db->select('a.id AS id_depto, b.id');
+        $this->db->join('gestao_pessoal_treinamentos b', "b.id_depto = a.id AND b.ano = '{$ano}' AND b.mes = '{$mes}'", 'left');
+        $this->db->where('a.id_empresa', $empresa);
+        $treinamentos = $this->db->get('empresa_departamentos a')->result();
+
+        $this->db->trans_start();
+
+
+        foreach ($treinamentos as $treinamento) {
+            if (isset($data[$treinamento->id_depto])) {
+                if ($treinamento->id) {
+                    $this->db->update('gestao_pessoal_treinamentos', $data[$treinamento->id_depto], ['id' => $treinamento->id]);
+                } else {
+                    $this->db->insert('gestao_pessoal_treinamentos', $data[$treinamento->id_depto]);
+                }
+            } else {
+                $this->db->delete('gestao_pessoal_treinamentos', ['id' => $treinamento->id]);
+            }
+        }
+
+        $this->db->trans_complete();
+
+        $status = $this->db->trans_status();
+
+        echo json_encode(['status' => $status !== false]);
+    }
+
+    // -------------------------------------------------------------------------
+
+    public function salvarDemissoes()
+    {
+        $empresa = $this->session->userdata('empresa');
+        $mes = $this->input->post('mes');
+        $ano = $this->input->post('ano');
+
+        $dataLimite = date('Y-m-t', mktime(0, 0, 0, intval($mes), 1, $ano));
+        $dataInicial = date('Y-m-d', mktime(0, 0, 0, intval($mes), 1, $ano));
+
+        $sql = "SELECT s.id_depto, 
+                       s.id_empresa,
+                       COUNT(s.id_usuario) AS total_colaboradores,
+                       '{$mes}' AS mes,
+                       '{$ano}' AS ano
+                FROM (SELECT a.id AS id_depto, a.id_empresa, b.id AS id_usuario
+                      FROM empresa_departamentos a
+                      LEFT JOIN usuarios b ON b.id_depto = a.id or b.depto = a.nome
+                      WHERE b.empresa = '{$empresa}' AND 
+                            b.tipo = 'funcionario' AND b.status IN (4, 5) AND 
+                            b.datacadastro <= '{$dataLimite}' AND 
+                            b.data_demissao BETWEEN '{$dataInicial}' AND '{$dataLimite}'
+                      UNION
+                      SELECT a.id AS id_depto, a.id_empresa, c.id_usuario
+                      FROM empresa_departamentos a
+                      LEFT JOIN usuarios b ON b.id_depto = a.id or b.depto = a.nome
+                      LEFT JOIN usuarios_demissao c on c.id_usuario = b.id
+                      WHERE b.empresa = '{$empresa}' 
+                            AND c.data_demissao BETWEEN '{$dataInicial}' AND '{$dataLimite}') s 
+                GROUP BY s.id_depto";
+        $rows = $this->db->query($sql)->result();
+
+        $data = array();
+        foreach ($rows as $row) {
+            $data[$row->id_depto] = $row;
+        }
+
+        $this->db->select('a.id AS id_depto, b.id');
+        $this->db->join('gestao_pessoal_demissoes b', "b.id_depto = a.id AND b.ano = '{$ano}' AND b.mes = '{$mes}'", 'left');
+        $this->db->where('a.id_empresa', $empresa);
+        $demissoes = $this->db->get('empresa_departamentos a')->result();
+
+        $this->db->trans_start();
+
+
+        foreach ($demissoes as $demissao) {
+            if (isset($data[$demissao->id_depto])) {
+                if ($demissao->id) {
+                    $this->db->update('gestao_pessoal_demissoes', $data[$demissao->id_depto], ['id' => $demissao->id]);
+                } else {
+                    $this->db->insert('gestao_pessoal_demissoes', $data[$demissao->id_depto]);
+                }
+            } else {
+                $this->db->delete('gestao_pessoal_demissoes', ['id' => $demissao->id]);
+            }
+        }
+
+        $this->db->trans_complete();
+
+        $status = $this->db->trans_status();
+
+        echo json_encode(['status' => $status !== false]);
+    }
+
+    // -------------------------------------------------------------------------
 
     public function relatorio()
     {
