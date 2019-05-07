@@ -419,7 +419,7 @@ class Cuidadores extends MY_Controller
             $row[] = $ei->supervisor;
             $row[] = $ei->nome;
             $row[] = '
-                      <button type="button" class="btn btn-sm btn-success" onclick="edit_cuidadores(' . $ei->id_escola . ')" title="Vincular cuidadores"><i class="glyphicon glyphicon-plus"></i> Vincular cuidadores</button>&emsp;&emsp;
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_cuidadores(' . $ei->id_escola . ')" title="Vincular cuidadores"><i class="glyphicon glyphicon-plus"></i> Vincular cuidadores</button>&emsp;&emsp;
                       <button type="button" class="btn btn-sm btn-danger" onclick="delete_cuidadores(' . $ei->id_escola . ')" title="Desvincular cuidadores"><i class="glyphicon glyphicon-minus"></i> </button>
                     ';
             $data[] = $row;

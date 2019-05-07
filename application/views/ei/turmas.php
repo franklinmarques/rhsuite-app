@@ -33,6 +33,7 @@
                             <th>Disciplina</th>
                             <th>Cuidador</th>
                             <th>Horário</th>
+                            <!--                            <th>Nota</th>-->
                             <th>Ações</th>
                         </tr>
                         </thead>

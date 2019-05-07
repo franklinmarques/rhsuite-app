@@ -142,6 +142,12 @@
                                 <label class="control-label col-md-1">Município</label>
                                 <div class="col-md-4"><?php echo form_dropdown('municipio', array('' => 'Todos'), '', 'id="municipio" class="form-control filtro"'); ?></div>
                             </div>
+                            <div class="row form-group">
+                                <label class="control-label col-md-3">Supervisor(a)</label>
+                                <div class="col-md-6">
+                                    <?php echo form_dropdown('id_supervisor', $supervisor, '', 'id="id_supervisores" class="form-control"'); ?>
+                                </div>
+                            </div>
                             <hr>
                             <div class="row form-group">
                                 <div class="col-md-12">
@@ -281,6 +287,12 @@
                                             class="btn btn-success">Salvar
                                     </button>
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <label class="control-label col-md-3">Supervisor(a)</label>
+                                <div class="col-md-6">
+                                    <?php echo form_dropdown('id_supervisor', $supervisor, '', 'id="supervisor" class="form-control"'); ?>
                                 </div>
                             </div>
                             <hr style="margin: 0px;">
@@ -828,6 +840,7 @@
                 $('#funcao').html($(json.funcao).html());
                 $('#municipio').html($(json.municipio).html());
                 $('#id_usuarios').html($(json.id_usuarios).html());
+                $('#id_supervisores').val(json.supervisores);
                 console.log(json.id_usuarios);
                 demo1.bootstrapDualListbox('refresh', true);
 
@@ -957,11 +970,12 @@
                 id: id,
             },
             success: function (json) {
-                $('#profissional').text(json.nome_usuario);
-                $('#semana').text(json.nome_semana);
-                $('#periodo').text(json.nome_periodo);
+                $('#profissional').text(json.input.nome_usuario);
+                $('#semana').text(json.input.nome_semana);
+                $('#periodo').text(json.input.nome_periodo);
+                $('#supervisor').html(json.input.supervisores);
 
-                $.each(json, function (key, value) {
+                $.each(json.data, function (key, value) {
                     $('#form_dados [name="' + key + '"]').val(value);
                 });
 

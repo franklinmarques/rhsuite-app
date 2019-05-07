@@ -126,7 +126,7 @@ class Turmas extends MY_Controller
                        WHERE x.id = '{$idAlunoCurso}'
                        ORDER BY a.ano DESC,
                                 a.semestre DESC,
-                                utgutj,kuo80opbtdFb.dia_semana ASC,
+                                b.dia_semana ASC,
                                 b.hora_inicio ASC,
                                 b.hora_termino ASC) s";
         /*if ($id_turma) {

@@ -1816,6 +1816,8 @@ class Relatorios extends MY_Controller
     public function pdfMapaCarregamento()
     {
         $get = $this->input->get();
+        $idMes = intval($get['mes']) - ($get['semestre'] > 1 ? 7 : 0);
+
 
         $empresa = $this->session->userdata('empresa');
         $this->load->library('m_pdf');
@@ -1841,7 +1843,7 @@ class Relatorios extends MY_Controller
         $this->db->where('a.id_diretoria', $get['diretoria']);
         $this->db->where('a.id_supervisor', $get['supervisor']);
         $this->db->where('a.ano', $get['ano']);
-        $this->db->where('a.semestre', intval($get['mes']) > 6 ? 2 : 1);
+        $this->db->where('a.semestre', $get['semestre']);
         $alocacao = $this->db->get('ei_alocacao a')->row();
 
         $cabecalho = '<table width="100%">
@@ -1911,8 +1913,8 @@ class Relatorios extends MY_Controller
                                   WHEN '5' THEN ' a 6&ordf;'
                                   WHEN '6' THEN ' a Sáb'
                                   END AS max_semana,
-                             TIME_FORMAT(MIN(g.horario_inicio), '%H:%i') AS horario_inicio,
-                             TIME_FORMAT(MAX(g.horario_termino), '%H:%i') AS horario_termino,
+                             TIME_FORMAT(MIN(g.horario_inicio_mes{$idMes}), '%H:%i') AS horario_inicio,
+                             TIME_FORMAT(MAX(g.horario_termino_mes{$idMes}), '%H:%i') AS horario_termino,
                              a.cuidador,
                              g.funcao,
                              DATE_FORMAT(c.data_inicio, '%d/%b') AS data_inicio,
@@ -1927,7 +1929,7 @@ class Relatorios extends MY_Controller
                       LEFT JOIN ei_matriculados_turmas c2 ON c2.id_alocado_horario = g.id
                       LEFT JOIN ei_matriculados c ON c.id = c2.id_matriculado AND c.id_alocacao_escola = a2.id
                       WHERE b.id = '{$alocacao->id}'
-                      GROUP BY a2.escola, a.cuidador, g.cargo, g.funcao, c.curso, g.horario_inicio, g.horario_termino
+                      GROUP BY a2.escola, a.cuidador, g.cargo, g.funcao, c.curso, g.horario_inicio_mes{$idMes}, g.horario_termino_mes{$idMes}
                       ORDER BY IF(CHAR_LENGTH(a2.codigo) > 0, a2.codigo, CAST(a2.escola AS DECIMAL)) ASC,
                       a2.municipio ASC, a2.escola ASC, COALESCE(g.funcao, 'zzz') ASC, a.cuidador, a2.ordem_servico ASC, a.cuidador ASC, c.aluno ASC) s
                 GROUP BY s.ordem_servico, s.escola, s.aluno
@@ -1953,6 +1955,7 @@ class Relatorios extends MY_Controller
     public function pdfMapaCarregamentoOS()
     {
         $get = $this->input->get('busca');
+        $idMes = intval($get['mes']) - ($get['semestre'] > 1 ? 7 : 0);
 
         $empresa = $this->session->userdata('empresa');
         $this->load->library('m_pdf');
@@ -2069,8 +2072,8 @@ class Relatorios extends MY_Controller
                                   WHEN '5' THEN ' a 6&ordf;'
                                   WHEN '6' THEN ' a Sáb'
                                   END AS max_semana,
-                             TIME_FORMAT(MIN(i.horario_inicio), '%H:%i') AS horario_inicio,
-                             TIME_FORMAT(MAX(i.horario_termino), '%H:%i') AS horario_termino,
+                             TIME_FORMAT(MIN(i.horario_inicio_mes{$idMes}), '%H:%i') AS horario_inicio,
+                             TIME_FORMAT(MAX(i.horario_termino_mes{$idMes}), '%H:%i') AS horario_termino,
                              DATE_FORMAT(MIN(d.data_inicio), '%d/%m/%Y') AS data_inicio,
                              DATE_FORMAT(MAX(d.data_termino), '%d/%m/%Y') AS data_termino,
                              d.modulo,
@@ -2088,7 +2091,7 @@ class Relatorios extends MY_Controller
                       LEFT JOIN ei_ordem_servico_profissionais h ON h.id = i.id_os_profissional AND h.id_ordem_servico_escola = b.id
                       LEFT JOIN empresa_funcoes k ON k.id = i.id_funcao
                       WHERE a.id IN ({$ordensServico})
-                      GROUP BY a.id, b.id_escola, e.id, k.id, i.horario_inicio, i.horario_termino
+                      GROUP BY a.id, b.id_escola, e.id, k.id, i.horario_inicio_mes{$idMes}, i.horario_termino_mes{$idMes}
                       ORDER BY IF(CHAR_LENGTH(c.codigo) > 0, c.codigo, CAST(c.nome AS DECIMAL)) ASC, c.municipio ASC, c.nome ASC, COALESCE(funcao, 'zzz') ASC, 
                       a.nome ASC, e.nome ASC) s
                 GROUP BY s.ordem_servico, s.escola, s.aluno
@@ -2170,6 +2173,97 @@ class Relatorios extends MY_Controller
 
 
         return $data;
+    }
+
+
+    public function unidadeVisitada($isPdf = false)
+    {
+        $empresa = $this->session->userdata('empresa');
+        $this->db->select('foto, foto_descricao');
+        $data['empresa'] = $this->db->get_where('usuarios', ['id' => $empresa])->row();
+
+
+        $id = $this->input->get('id_mapa_unidade');
+
+        $this->db->select('a.*, b.ano', false);
+        $this->db->join('ei_alocacao b', 'b.id = a.id_alocacao');
+        $this->db->where('a.id', $id);
+        $mapaUnidade = $this->db->get('ei_mapa_unidades a')->row();
+
+        $mes = $this->input->get('mes');
+        $ano = $this->input->get('ano');
+        if (empty($ano)) {
+            $ano = $mapaUnidade->ano;
+        }
+
+
+        $sql = "SELECT DATE_FORMAT(a.data_visita, '%d/%m/%Y') AS data_visita, a.escola, 
+                       a.supervisor_visitante, 
+                       a.prestadores_servicos_tratados, 
+                       (CASE a.motivo_visita
+                             WHEN 1 THEN 'Visita de rotina'
+                             WHEN 2 THEN 'Visita programada'
+                             WHEN 3 THEN 'Solicitação da unidade'
+                             WHEN 4 THEN 'Solicitação de materiais'
+                             WHEN 5 THEN 'Processo seletivo'
+                             WHEN 6 THEN 'Ocorrência com aluno'
+                             WHEN 7 THEN 'Ocorrência com funcionário'
+                             WHEN 8 THEN 'Ocorrência na escola'
+                             END) AS motivo_visita,                             
+                       FORMAT(a.gastos_materiais, 2, 'de_DE') AS gastos_materiais, 
+                       a.sumario_visita, 
+                       a.observacoes
+                FROM ei_mapa_visitacao a
+                INNER JOIN ei_mapa_unidades b ON b.id = a.id_mapa_unidade
+                INNER JOIN ei_alocacao c ON c.id = b.id_alocacao
+                WHERE c.id_empresa = '{$empresa}'
+                      AND (b.id = '{$mapaUnidade->id}'
+                      OR (c.ano = '{$ano}' AND b.escola = '{$mapaUnidade->id_escola}' AND b.escola = '{$mapaUnidade->escola}'))
+                ORDER BY a.data_visita ASC, a.escola ASC, a.supervisor_visitante ASC";
+
+        $data['visitas'] = $this->db->query($sql)->result();
+
+
+        $data['id'] = $id;
+        $data['mes'] = $mes;
+        $data['ano'] = $ano;
+        $data['mes_ano'] = implode('/', array_filter([$mes, $ano]));
+
+        $data['query_string'] = http_build_query(['id_mapa_unidade' => $id, 'ano' => $ano, 'mes' => $mes]);
+        $data['is_pdf'] = $isPdf === true;
+
+        if ($data['is_pdf']) {
+            return $this->load->view('ei/relatorio_visitas', $data, true);
+        }
+
+        $this->load->view('ei/relatorio_visitas', $data);
+    }
+
+
+    public function pdfUnidadeVisitada()
+    {
+        $this->load->library('m_pdf');
+
+        $stylesheet = '#table thead tr th { border-top: 4px solid #ddd; padding-top: 8px; } ';
+        $stylesheet .= 'table.unidades_visitadas {  border: 1px solid #333; margin-bottom: 0px; } ';
+        $stylesheet .= 'table.unidades_visitadas thead tr th { font-size: 12px; padding: 4px; background-color: #f5f5f5; border: 1px solid #333;  } ';
+        $stylesheet .= 'table.unidades_visitadas tbody tr td { font-size: 11px; padding: 4px; vertical-align: top; border: 1px solid #333;  } ';
+
+
+        $this->m_pdf->pdf->setTopMargin(45);
+        $this->m_pdf->pdf->AddPage('L');
+        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
+        $this->m_pdf->pdf->writeHTML($this->unidadeVisitada(true));
+
+
+        $mes = $this->input->get('mes');
+        $ano = $this->input->get('ano');
+
+        $this->load->library('Calendar');
+        $this->calendar->month_type = 'short';
+        $nome = 'Relatório de Visitas - ' . implode('/', array_filter([$mes, $ano]));
+
+        $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
 
 

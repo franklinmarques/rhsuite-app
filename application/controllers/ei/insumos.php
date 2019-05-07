@@ -91,7 +91,7 @@ class Insumos extends MY_Controller
             $row[] = $insumo->nome;
             $row[] = $insumo->tipo;
             $row[] = '
-                      <button class="btn btn-sm btn-primary" onclick="edit_insumo(' . $insumo->id . ')" title="Editar insumo"><i class="glyphicon glyphicon-pencil"></i></button>
+                      <button class="btn btn-sm btn-info" onclick="edit_insumo(' . $insumo->id . ')" title="Editar insumo"><i class="glyphicon glyphicon-pencil"></i></button>
                       <button class="btn btn-sm btn-danger" onclick="delete_insumo(' . $insumo->id . ')" title="Excluir insumo"><i class="glyphicon glyphicon-trash"></i></button>
                      ';
 

@@ -264,6 +264,9 @@
                                 <li role="presentation" style="font-size: 13px; font-weight: bolder"><a
                                             href="#visitas" aria-controls="visitas" role="tab"
                                             data-toggle="tab">Mapa de visitação</a></li>
+                                <li role="presentation" style="font-size: 13px; font-weight: bolder"><a
+                                            href="#dias_letivos" aria-controls="dias_letivos" role="tab"
+                                            data-toggle="tab">Dias letivos</a></li>
                             </ul>
 
                             <div class="tab-content" style="border: 1px solid #ddd; border-top-width: 0;">
@@ -421,8 +424,37 @@
                                         <tr>
                                             <th rowspan="2" class="warning">Município</th>
                                             <th rowspan="2" class="warning" style="vertical-align: middle;">Unidade</th>
-                                            <th rowspan="2" class="warning" style="vertical-align: middle;">ID</th>
-                                            <th colspan="14" class="text-center">Mapa de Visitas do semestre</th>
+                                            <th colspan="7" class="text-center">Mapa de Visitas do semestre</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center nome_mes1"><?= $semestre[0]; ?></th>
+                                            <th class="text-center nome_mes2"><?= $semestre[1]; ?></th>
+                                            <th class="text-center nome_mes3"><?= $semestre[2]; ?></th>
+                                            <th class="text-center nome_mes4"><?= $semestre[3]; ?></th>
+                                            <th class="text-center nome_mes5"><?= $semestre[4]; ?></th>
+                                            <th class="text-center nome_mes6"><?= $semestre[5]; ?></th>
+                                            <th class="text-center nome_mes7"><?= $semestre[6]; ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div role="tabpane" class="tab-pane" id="dias_letivos">
+                                    <table id="table_dias_letivos"
+                                           class="table table-hover table-condensed table-bordered" cellspacing="0"
+                                           width="100%" style="border-radius: 0 !important;">
+                                        <thead>
+                                        <tr>
+                                            <th rowspan="2" class="warning">Município</th>
+                                            <th rowspan="2" class="warning" style="vertical-align: middle;">
+                                                Funcionário(a)
+                                            </th>
+                                            <th colspan="7" class="text-center">Total de dias letivos por mês</th>
+                                            <th rowspan="2" class="warning text-center" style="vertical-align: middle;">
+                                                Total dias
+                                            </th>
                                         </tr>
                                         <tr>
                                             <th class="text-center nome_mes1"><?= $semestre[0]; ?></th>
@@ -629,14 +661,15 @@
                                     <div class="col-md-12">
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="possui_mapa_visitacao" value="1" checked>
-                                                Limpar Apontamentos + Mapa de Visitação
+                                                <input type="radio" name="possui_mapa_visitacao" value="0" checked>
+                                                Limpar
+                                                somente Apontamentos
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="possui_mapa_visitacao" value="0"> Limpar
-                                                somente Apontamentos
+                                                <input type="radio" name="possui_mapa_visitacao" value="1" checked>
+                                                Limpar Apontamentos + Mapa de Visitação
                                             </label>
                                         </div>
                                     </div>
@@ -930,6 +963,59 @@
             </div><!-- /.modal -->
 
             <!-- Bootstrap modal -->
+            <div class="modal fade" id="modal_horario" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Editar horário de entrada/saída</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <form action="#" id="form_horario" class="form-horizontal">
+                                <input type="hidden" value="" name="id"/>
+                                <input type="hidden" value="" name="semestre"/>
+                                <input type="hidden" value="" name="mes"/>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-4"
+                                           style="margin-top: -13px; font-weight: bolder;">Cuidador(a):<br>Município:<br>Escola:<br>Mês/ano:<br>Dia
+                                        semana/horário:</label>
+                                    <div class="col-md-8" style="margin-top: -13px;">
+                                        <label class="sr-only"></label>
+                                        <p class="form-control-static">
+                                            <span id="nome_horario"></span><br>
+                                            <span id="municipio_horario"></span><br>
+                                            <span id="escola_horario"></span><br>
+                                            <span id="mes_ano_horario"></span><br>
+                                            <span id="horario_semana_horario"></span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-4">Novo horário</label>
+                                    <div class="col-md-5">
+                                        <div class="input-group input-large">
+                                            <input type="text" class="form-control text-center hora"
+                                                   name="horario_inicio" placeholder="hh:mm">
+                                            <span class="input-group-addon">às</span>
+                                            <input type="text" class="form-control text-center hora"
+                                                   name="horario_termino" placeholder="hh:mm">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="btnSaveHorario" onclick="save_horario()" class="btn btn-success">
+                                Salvar
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- Bootstrap modal -->
             <div class="modal fade" id="modal_substituto" role="dialog">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -1158,6 +1244,49 @@
                         <div class="modal-footer">
                             <button type="button" id="btnSaveDataRealTotalizacao" onclick="save_data_real_totalizacao()"
                                     class="btn btn-success">Salvar
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- Bootstrap modal -->
+            <div class="modal fade" id="modal_delete_alocados" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Desalocar tipo de dados</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <form action="#" id="form_delete_alocados" class="form-horizontal">
+                                <input type="hidden" value="" name="id_alocado"/>
+                                <input type="hidden" value="" name="periodo"/>
+                                <div class="row form-group">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo" value="1"> <strong>Escola:</strong>
+                                                <span
+                                                        id="desalocar_escola"></span>
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo" value="2"> <strong>Aluno(s):</strong>
+                                                <span
+                                                        id="desalocar_alunos"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="btnDeleteAlocados" onclick="delete_alocados()"
+                                    class="btn btn-danger">Desalocar
                             </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
@@ -1588,7 +1717,7 @@
                                     <div class="col-md-4">
                                         <select name="motivo_visita" class="form-control">
                                             <option value="">selecione...</option>
-                                            <option value="1">Visita de rotina</option>
+                                            <option value="1">Visita realizada</option>
                                             <option value="2">Visita programada</option>
                                             <option value="3">Solicitação da unidade</option>
                                             <option value="4">Solicitação de materiais</option>
@@ -1653,7 +1782,7 @@
 
     <script>
 
-        var table, table_faturamento, table_controle_materiais, table_visitas;
+        var table, table_faturamento, table_controle_materiais, table_visitas, table_dias_letivos;
         var busca, save_method, demo1;
         var edicaoEvento = true;
 
@@ -1664,6 +1793,7 @@
             'delimiter': '/'
         });
         $('.data').mask('00/00/0000');
+        $('.ano').mask('0000');
         $('.hora').mask('00:00');
         $('.hora_descontada').mask('Z00:00', {
             'translation': {
@@ -1712,6 +1842,7 @@
         $(document).ready(function () {
             busca = $('#busca').serialize();
             var language = "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>";
+
 
             table = $('#table').DataTable({
                 'dom': "<'row'<'col-sm-3'l><'#legenda.col-sm-5'><'col-sm-4'f>>" +
@@ -1961,6 +2092,15 @@
                     {
                         'className': 'text-center',
                         'targets': [3, 6, 8, 12, 14, 18, 20]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            $(td).css('cursor', 'pointer').on('click', function () {
+                                edit_horario(rowData[24], table_faturamento.context[0].json.mes);
+                            }).html('<a>' + cellData + '</a>');
+
+                        },
+                        'targets': [2]
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
@@ -2330,12 +2470,105 @@
                         $('#table_visitas .nome_mes6').text(json.semestre[5]).attr('data-mes', json.meses[5]);
                         $('#table_visitas .nome_mes7').text(json.semestre[6]).attr('data-mes', json.meses[6]);
 
-                        if (table_visitas.context[0].json.semestre.length === 5) {
+                        if (table_visitas.context[0].json.semestre.length === 6) {
                             table_visitas.column(8).visible(false);
-                            table_visitas.column(9).visible(false);
                         } else {
                             table_visitas.column(8).visible(true);
-                            table_visitas.column(9).visible(true);
+                        }
+
+                        return json.data;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'visible': false,
+                        'targets': [0]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            $(td).css({
+                                'cursor': 'pointer'
+                                // }).on('click', function () {
+                                //     unidade_visitada(rowData[9]);
+                            }).html('<a href="<?= site_url('ei/relatorios/unidadeVisitada') ?>/q?id_mapa_unidade=' + rowData[9] + '" target="_blank">' + cellData + '</a>');
+                        },
+                        'width': '40%',
+                        'targets': [1]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            $(td).css({
+                                'cursor': 'pointer'
+                            });
+                            $(td).addClass('total_horas_mes');
+                            if (rowData[col] !== null) {
+                                // if ((rowData[col + 8]) !== null && (rowData[col + 8]) !== '0') {
+                                if (rowData[col + 22] === '1') {
+                                    $(td).css({
+                                        'background-color': '#5cb85c',
+                                        'color': '#fff'
+                                    }).html(moment(rowData[col + 15]).format('DD/MM/YYYY'));
+                                    // } else if (rowData[col + 22] > 0) {
+                                } else if (rowData[col + 22] === '2') {
+                                    $(td).css({
+                                        'background-color': '#c9302c',
+                                        'color': '#fff'
+                                    }).html(moment(rowData[col + 15]).format('DD/MM/YYYY'));
+                                } else {
+                                    $(td).css({
+                                        'background-color': '#f0ad4e',
+                                        'color': '#fff'
+                                    }).html(moment(rowData[col + 15]).format('DD/MM/YYYY'));
+                                }
+                            }
+                            $(td).on('click', function () {
+                                gerenciar_visitas(rowData[9], table_visitas.column(col).header().dataset.mes);
+                            });
+                        },
+                        'width': '10%',
+                        'className': 'text-center',
+                        'orderable': false,
+                        'searchable': false,
+                        'targets': [2, 3, 4, 5, 6, 7, 8]
+                    }
+                ]
+            });
+
+            table_dias_letivos = $('#table_dias_letivos').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 50,
+                'language': {
+                    'url': language
+                },
+                'rowGroup': {
+                    'className': 'active',
+                    'startRender': function (rows, group) {
+                        return '<strong>Município: </strong>' + group;
+                    },
+                    'dataSrc': 0
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('ei/apontamento/ajaxListDiasLetivos') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
+                        d.busca = busca;
+                        return d;
+                    },
+                    'dataSrc': function (json) {
+                        $('#table_dias_letivos .nome_mes1').text(json.semestre[0]).attr('data-mes', json.meses[0]);
+                        $('#table_dias_letivos .nome_mes2').text(json.semestre[1]).attr('data-mes', json.meses[1]);
+                        $('#table_dias_letivos .nome_mes3').text(json.semestre[2]).attr('data-mes', json.meses[2]);
+                        $('#table_dias_letivos .nome_mes4').text(json.semestre[3]).attr('data-mes', json.meses[3]);
+                        $('#table_dias_letivos .nome_mes5').text(json.semestre[4]).attr('data-mes', json.meses[4]);
+                        $('#table_dias_letivos .nome_mes6').text(json.semestre[5]).attr('data-mes', json.meses[5]);
+                        $('#table_dias_letivos .nome_mes7').text(json.semestre[6]).attr('data-mes', json.meses[6]);
+
+                        if (table_dias_letivos.context[0].json.semestre.length === 6) {
+                            table_dias_letivos.column(8).visible(false);
+                        } else {
+                            table_dias_letivos.column(8).visible(true);
                         }
 
                         return json.data;
@@ -2351,45 +2584,11 @@
                         'targets': [1]
                     },
                     {
-                        'visible': false,
-                        'targets': [2]
-                    },
-                    {
                         'width': '10%',
-                        'targets': [3, 4, 5, 6, 7, 8, 9]
-                    },
-                    {
-                        'createdCell': function (td, cellData, rowData, row, col) {
-                            $(td).css({
-                                'cursor': 'pointer'
-                            });
-                            $(td).addClass('total_horas_mes');
-                            if (rowData[col] !== null) {
-                                if ((rowData[col + 7]) !== null && (rowData[col + 7]) !== '0') {
-                                    $(td).css({
-                                        'background-color': '#c9302c',
-                                        'color': '#fff'
-                                    }).html(moment(rowData[col + 14]).format('DD/MM/YYYY'));
-                                } else if (rowData[col + 21] > 0) {
-                                    $(td).css({
-                                        'background-color': '#f0ad4e',
-                                        'color': '#fff'
-                                    }).html(moment(rowData[col + 14]).format('DD/MM/YYYY'));
-                                } else {
-                                    $(td).css({
-                                        'background-color': '#5cb85c',
-                                        'color': '#fff'
-                                    }).html(moment(rowData[col + 14]).format('DD/MM/YYYY'));
-                                }
-                            }
-                            $(td).on('click', function () {
-                                gerenciar_visitas(rowData[2], table_visitas.column(col).header().dataset.mes);
-                            });
-                        },
                         'className': 'text-center',
-                        'orderable': false,
                         'searchable': false,
-                        'targets': [3, 4, 5, 6, 7, 8, 9]
+                        'orderable': false,
+                        'targets': [2, 3, 4, 5, 6, 7, 8, 9]
                     }
                 ]
             });
@@ -2793,7 +2992,7 @@
                     $('#form_os_exclusao [name="ano"]').val(json.ano);
                     $('#form_os_exclusao [name="semestre"]').val(json.semestre);
 
-                    $('#form_os_exclusao [name="possui_mapa_visitacao"][value="1"]').prop('checked', true);
+                    $('#form_os_exclusao [name="possui_mapa_visitacao"][value="0"]').prop('checked', true);
                     $('#modal_os_exclusao').modal('show');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -2988,6 +3187,98 @@
             });
         }
 
+        function edit_desalocacao(id_alocado, periodo) {
+            $('#form_delete_alocados')[0].reset();
+            $.ajax({
+                'url': '<?= site_url('ei/apontamento/ajaxEditDesalocacao/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_alocado': id_alocado,
+                    'periodo': periodo
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        $('#form_delete_alocados [name="id_alocado"]').val(id_alocado);
+                        $('#form_delete_alocados [name="periodo"]').val(periodo);
+                        $('#desalocar_escola').text(json.escola);
+                        if (json.alunos === null) {
+                            $('#form_delete_alocados [name="tipo"][value="2"]').prop('disabled', true);
+                            $('#desalocar_alunos').text('nenhum').parents('.radio').addClass('disabled');
+                        } else {
+                            $('#form_delete_alocados [name="tipo"][value="2"]').prop('disabled', false);
+                            $('#desalocar_alunos').text(json.alunos + ' (' + json.periodo + ')').parents('.radio').removeClass('disabled');
+                        }
+
+
+                        $('#modal_delete_alocados').modal('show');
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+        function delete_alocados() {
+            if (confirm('Deseja desalocar o item selecionado?')) {
+                $('#btnDeleteAlocados').text('Excluindo...').attr('disabled', true);
+                $.ajax({
+                    'url': '<?php echo site_url('ei/apontamento/ajaxDeleteAlocados') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': $('#form_delete_alocados').serialize(),
+                    'success': function (json) {
+                        if (json.erro) {
+                            alert(json.erro);
+                        }
+                        if (json.status) {
+                            $('#modal_delete_alocados').modal('hide');
+                            reload_table();
+                        }
+                        $('#btnDeleteAlocados').text('Excluir').attr('disabled', false);
+                    },
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert('Error get data from ajax');
+                        $('#btnDeleteAlocados').text('Excluir').attr('disabled', false);
+                    }
+                });
+            }
+        }
+
+        function edit_horario(id_horario, mes) {
+            $('#form_horario')[0].reset();
+            $('#form_horario [name="id"], #form_horario [name="mes"]').val('');
+            $.ajax({
+                'url': '<?= site_url('ei/apontamento/ajaxEditHorario/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_horario': id_horario,
+                    'mes': mes
+                },
+                'success': function (json) {
+                    $('#nome_horario').html(json.cuidador);
+                    $('#municipio_horario').html(json.municipio);
+                    $('#escola_horario').html(json.escola);
+                    $('#mes_ano_horario').html(json.mes_ano);
+                    $('#horario_semana_horario').html(json.horario_semana);
+
+                    $('#form_horario [name="id"]').val(json.id);
+                    $('#form_horario [name="semestre"]').val(json.semestre);
+                    $('#form_horario [name="mes"]').val(mes);
+                    $('#form_horario [name="horario_inicio"]').val(json.horario_inicio);
+                    $('#form_horario [name="horario_termino"]').val(json.horario_termino);
+
+                    $('#modal_horario').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
 
         function edit_substituto(id_horario, mes) {
             $('#form_substituto')[0].reset();
@@ -3265,6 +3556,41 @@
         $('#id_visita').on('change', function () {
             edit_visita(this.value);
         });
+
+
+        function unidade_visitada(id) {
+            $.ajax({
+                'url': '<?php echo site_url('ei/apontamento/ajaxUnidadeVisitada/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        $('#form_unidade_visitada [name="id_mapa_unidade"]').val(json.id);
+                        $('#nome_unidade_visitada').text(json.escola);
+                        $('#form_unidade_visitada [name="ano"]').val(json.ano);
+                        relatorio_unidade_visitada();
+                        $('#modal_unidade_visitada').modal('show');
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+        $('#modal_unidade_visitada input').on('change', function () {
+            relatorio_unidade_visitada();
+        });
+
+        function relatorio_unidade_visitada() {
+            var search = '/q?' + $('#form_unidade_visitada').serialize();
+
+            $('#pdf_unidade_visitada').prop('href', "<?= site_url('ei/relatorios/pdfUnidadeVisitada/'); ?>" + search);
+        }
+
 
         function edit_visita(id) {
             $.ajax({
@@ -3554,6 +3880,30 @@
                     alert('Error get data from ajax');
                     $('#btnRecuperarFaturamentoConsolidado').text('Recuperar e validar base').attr('disabled', false);
                     $('#form_faturamento_consolidado [name="id_supervisor"]').attr('disabled', false);
+                }
+            });
+        }
+
+        function save_horario() {
+            $('#btnSaveHorario').text('Salvando...').attr('disabled', true);
+            $.ajax({
+                'url': '<?php echo site_url('ei/apontamento/ajaxSaveHorario') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#form_horario').serialize(),
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        $('#modal_horario').modal('hide');
+                        reload_table();
+                    }
+
+                    $('#btnSaveHorario').text('Salvar').attr('disabled', false);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                    $('#btnSaveHorario').text('Salvar').attr('disabled', false);
                 }
             });
         }
@@ -4030,6 +4380,7 @@
             table_faturamento.ajax.reload(stmt, reset);
             table_controle_materiais.ajax.reload(stmt, reset);
             table_visitas.ajax.reload(stmt, reset);
+            table_dias_letivos.ajax.reload(stmt, reset);
         }
 
     </script>

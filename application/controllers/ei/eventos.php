@@ -282,46 +282,52 @@ class Eventos extends MY_Controller
                        s.data,
                        s.status,
                        s.nome_bck,
-                       s.desconto
-                FROM (SELECT db.cuidador,
-                             db.escola,
+                       s.apontamento_desc,
+                       s.apontamento_asc,
+                       s.observacoes
+                FROM (SELECT d.cuidador,
+                             d.escola,
                              DATE_FORMAT(a.data, '%d/%m/%Y') AS data,
                              a.status,
                              c.nome AS nome_bck,
-                             TIME_FORMAT(a.desconto, '%H:%i') AS desconto
+                             TIME_FORMAT(a.apontamento_desc, '%H:%i') AS apontamento_desc,
+                             TIME_FORMAT(a.apontamento_asc, '%H:%i') AS apontamento_asc,
+                             a.observacoes
                       FROM ei_apontamento a
                       INNER JOIN ei_alocados d ON 
                                  d.id = a.id_alocado 
                       INNER JOIN ei_alocacao e
                                  ON e.id = d.id_alocacao
+                      INNER JOIN usuarios b ON 
+                                 b.nome = d.cuidador 
                       LEFT JOIN usuarios c ON 
-                                c.id = a.id_alocado_sub1 
+                                c.id = a.id_cuidador_sub 
                       WHERE e.id_empresa = {$this->session->userdata('empresa')}";
         if (!empty($busca['depto'])) {
-            $sql .= " AND ec.depto = '{$busca['depto']}'";
+            $sql .= " AND e.depto = '{$busca['depto']}'";
         }
         if (!empty($busca['diretoria'])) {
-            $sql .= " AND ec.diretoria = '{$busca['diretoria']}'";
+            $sql .= " AND e.diretoria = '{$busca['diretoria']}'";
         }
         if (!empty($busca['supervisor'])) {
-            $sql .= " AND ec.supervisor = '{$busca['supervisor']}'";
+            $sql .= " AND e.supervisor = '{$busca['supervisor']}'";
         }
         if (!empty($busca['escola'])) {
-            $sql .= " AND db.escola = '{$busca['escola']}'";
+            $sql .= " AND d.escola = '{$busca['escola']}'";
         }
         if (!empty($busca['status'])) {
             $sql .= " AND a.status = '{$busca['status']}'";
         }
         if (!empty($busca['mes'])) {
-            $sql .= " AND DATE_FORMAT(ec.data, '%m') = '{$busca['mes']}'";
+            $sql .= " AND DATE_FORMAT(e.data, '%m') = '{$busca['mes']}'";
         }
         if (!empty($busca['ano'])) {
-            $sql .= " AND DATE_FORMAT(ec.data, '%Y') = '{$busca['ano']}'";
+            $sql .= " AND DATE_FORMAT(e.data, '%Y') = '{$busca['ano']}'";
         }
         $sql .= ') s';
         $recordsTotal = $this->db->query($sql)->num_rows();
 
-        $columns = array('s.cuidador', 's.escola', 's.data', 's.status', 's.nome_bck', 's.desconto');
+        $columns = array('s.cuidador', 's.escola', 's.data', 's.status', 's.nome_bck', 's.apontamento_desc', 's.apontamento_asc', 's.observacoes');
         if ($post['search']['value']) {
             foreach ($columns as $key => $column) {
                 if ($key > 1) {
@@ -355,7 +361,9 @@ class Eventos extends MY_Controller
             $row[] = $apontamento->data;
             $row[] = $apontamento->status;
             $row[] = $apontamento->nome_bck;
-            $row[] = $apontamento->desconto;
+            $row[] = $apontamento->apontamento_desc;
+            $row[] = $apontamento->apontamento_asc;
+            $row[] = $apontamento->observacoes;
 
             $data[] = $row;
         }
@@ -404,8 +412,10 @@ class Eventos extends MY_Controller
                              WHEN 'FR' THEN CONCAT(a.qtde_dias, 'd')
                              ELSE TIME_FORMAT(a.hora_glosa, '%H:%i') END) AS glosa,
                        c.nome AS nome_bck,
-                       TIME_FORMAT(a.desconto, '%H:%i') AS desconto,
-                       a.detalhes
+                       TIME_FORMAT(a.apontamento_desc, '%H:%i') AS apontamento_desc,
+                       TIME_FORMAT(a.apontamento_extra, '%H:%i') AS apontamento_extra,
+                       a.detalhes,
+                       a.observacoes
                 FROM alocacao_apontamento a
                 INNER JOIN alocacao_usuarios d ON 
                            d.id = a.id_alocado 

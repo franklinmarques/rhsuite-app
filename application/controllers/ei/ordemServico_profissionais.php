@@ -17,7 +17,7 @@ class OrdemServico_profissionais extends MY_Controller
             $idEscola = $this->uri->rsegment(3, 0);
         }
 
-        $this->db->select('a2.nome AS ordemServico, e.id AS id_depto, a2.semestre', false);
+        $this->db->select('a2.nome AS ordemServico, e.id AS id_depto, a2.ano, a2.semestre', false);
         $this->db->select('b.nome AS nomeEscola', false);
         $this->db->select('c.nome AS nomeCliente', false);
         $this->db->select('d.contrato AS nomeContrato', false);
@@ -50,6 +50,18 @@ class OrdemServico_profissionais extends MY_Controller
         $funcoes = $this->getFuncoes();
         $funcoes[''] = 'selecione...';
         $data->funcoes = $funcoes;
+
+
+        $this->db->select('b.id, b.nome');
+        $this->db->join('usuarios b', 'b.id = a.id_usuario');
+        $this->db->where('b.empresa', $this->session->userdata('empresa'));
+        $this->db->where('a.ano', $data->ano);
+        $this->db->where('a.semestre', $data->semestre);
+        $this->db->where('a.is_supervisor', 1);
+        $this->db->order_by('b.nome', 'asc');
+        $supervisores = $this->db->get('ei_coordenacao a')->result();
+
+        $data->supervisor = ['' => 'nenhum...', '-1' => '-- manter --'] + array_column($supervisores, 'nome', 'id');
 
 
         $this->load->view('ei/ordemServico_profissionais', $data);
@@ -162,6 +174,15 @@ class OrdemServico_profissionais extends MY_Controller
         $usuariosSelecionados = array_column($rows, 'id_usuario');
 
 
+        $this->db->where('id_ordem_servico_escola', $data['id_ordem_servico_escola']);
+        $supervisores = $this->db->get('ei_ordem_servico_profissionais')->result_array();
+        if (count($supervisores) === 1) {
+            $data['supervisores'] = $supervisores[0];
+        } else {
+            $data['supervisores'] = $supervisores ? '-1' : '';
+        }
+
+
         $data['depto'] = form_dropdown('id_departamento', $deptos, '', 'id="depto" class="form-control filtro"');
         $data['area'] = form_dropdown('id_area', $areas, '', 'id="area" class="form-control"');
         $data['setor'] = form_dropdown('id_setor', $setores, '', 'id="setor" class="form-control"');
@@ -257,19 +278,23 @@ class OrdemServico_profissionais extends MY_Controller
         $id = $this->input->post('id');
         $idOSProfissional = $this->input->post('id_os_profissional');
 
-        $this->db->select('a.*, b.id_usuario, b.id_ordem_servico_escola, c.nome AS nome_usuario', false);
+        $this->db->select('a.*, e.ano, e.semestre, b.id_usuario, b.id_supervisor, b.id_ordem_servico_escola, c.nome AS nome_usuario', false);
         $this->db->select("(CASE a.dia_semana WHEN 0 THEN 'Domingo' WHEN 1 THEN 'Segunda-feira' WHEN 2 THEN 'Terça-feira' WHEN 3 THEN 'Quarta-feira' WHEN 4 THEN 'Quinta-feira' WHEN 5 THEN 'Sexta-feira' WHEN 6 THEN 'Sábado' END) AS nome_semana", false);
         $this->db->select("(CASE a.periodo WHEN 0 THEN 'Madrugada' WHEN 1 THEN 'Manhã' WHEN 2 THEN 'Tarde' WHEN 3 THEN 'Noite' END) AS nome_periodo", false);
         $this->db->join('ei_ordem_servico_profissionais b', 'b.id = a.id_os_profissional');
         $this->db->join('usuarios c', 'c.id = b.id_usuario');
+        $this->db->join('ei_ordem_servico_escolas d', 'd.id = b.id_ordem_servico_escola');
+        $this->db->join('ei_ordem_servico e', 'e.id = d.id_ordem_servico');
         $this->db->where('a.id', $id);
         $this->db->where('b.id', $idOSProfissional);
         $data = $this->db->get('ei_ordem_servico_horarios a')->row();
 
 
         if (empty($data)) {
-            $this->db->select(["a.*, b.nome AS nome_usuario, 'Integral' AS nome_periodo, 'Sem cadastro' AS nome_semana"], false);
+            $this->db->select(["a.*, d.ano, d.semestre, b.nome AS nome_usuario, 'Integral' AS nome_periodo, 'Sem cadastro' AS nome_semana"], false);
             $this->db->join('usuarios b', 'b.id = a.id_usuario');
+            $this->db->join('ei_ordem_servico_escolas c', 'c.id = a.id_ordem_servico_escola');
+            $this->db->join('ei_ordem_servico d', 'd.id = c.id_ordem_servico');
             $this->db->where('a.id', $idOSProfissional);
             $data = $this->db->get('ei_ordem_servico_profissionais a')->row();
         }
@@ -342,7 +367,42 @@ class OrdemServico_profissionais extends MY_Controller
         }
 
 
-        echo json_encode($data);
+        $sql = "SELECT s.id, s.nome
+                FROM(SELECT b.id, b.nome 
+                     FROM ei_ordem_servico_profissionais a 
+                     INNER JOIN usuarios b ON b.id = a.id_supervisor
+                     WHERE a.id = '{$data->id}'
+                     UNION 
+                     SELECT d.id, d.nome 
+                     FROM ei_coordenacao c
+                     INNER JOIN usuarios d ON d.id = c.id_usuario
+                     WHERE d.empresa = '{$this->session->userdata('empresa')}' AND 
+                           c.ano = '{$data->ano}' AND 
+                           c.semestre = '{$data->semestre}' AND 
+                           c.is_supervisor = 1) s 
+                ORDER BY s.nome ASC";
+        $supervisores = $this->db->query($sql)->result();
+
+        $nomeUsuario = $data->nome_usuario;
+        $nomeSemana = $data->nome_semana;
+        $nomePeriodo = $data->nome_periodo;
+        $idSupervisor = $data->id_supervisor;
+
+        unset($data->nome_usuario, $data->nome_semana, $data->nome_periodo, $data->id_supervisor);
+
+        $retorno = array(
+            'data' => $data,
+            'input' => array(
+                'nome_usuario' => $nomeUsuario,
+                'nome_semana' => $nomeSemana,
+                'nome_periodo' => $nomePeriodo
+            )
+        );
+
+        $retorno['input']['supervisores'] = form_dropdown('', ['' => 'selecione...'] + array_column($supervisores, 'nome', 'id'), $idSupervisor);
+
+
+        echo json_encode($retorno);
     }
 
 
@@ -417,6 +477,10 @@ class OrdemServico_profissionais extends MY_Controller
         if (empty($idUsuarios)) {
             $idUsuarios = array();
         }
+        $idSupervisor = $this->input->post('id_supervisor');
+        if (empty($idSupervisor)) {
+            $idSupervisor = null;
+        }
 
         $this->db->trans_start();
 
@@ -445,6 +509,13 @@ class OrdemServico_profissionais extends MY_Controller
             $data['id_usuario'] = $idNovoUsuario;
 
             $this->db->insert('ei_ordem_servico_profissionais', $data);
+        }
+
+        if ($idSupervisor != '-1') {
+            $this->db->set('id_supervisor', $idSupervisor);
+            $this->db->where('id_ordem_servico_escola', $idOSEscola);
+            $this->db->where_in('id_usuario', $idUsuarios + array(0));
+            $this->db->update('ei_ordem_servico_profissionais');
         }
 
         $this->db->trans_complete();
@@ -633,8 +704,14 @@ class OrdemServico_profissionais extends MY_Controller
         $id = $this->input->post('id');
         $idOSProfissional = $this->input->post('id_os_profissional');
 
+        if (empty($data['id_supervisor'])) {
+            $data['id_supervisor'] = null;
+        }
+
+
         if ($id) {
-            unset($data['id'], $data['id_usuario'], $data['id_ordem_servico_escola']);
+            $idSupervisor = $data['id_supervisor'];
+            unset($data['id'], $data['id_usuario'], $data['id_ordem_servico_escola'], $data['id_supervisor']);
             $tipo = array_column($this->db->field_data('ei_ordem_servico_horarios'), 'type', 'name');
         } else {
             unset($data['id'], $data['id_os_profissional']);
@@ -659,6 +736,7 @@ class OrdemServico_profissionais extends MY_Controller
             $this->db->where('id_os_profissional', $idOSProfissional);
             $this->db->where('periodo', $horario->periodo);
             $status = $this->db->update('ei_ordem_servico_horarios', $data);
+            $this->db->update('ei_ordem_servico_profissionais', ['id_supervisor' => $idSupervisor], ['id' => $idOSProfissional]);
         } else {
             if ($idOSProfissional) {
                 if (!$this->db->get_where('ei_ordem_servico_profissionais', ['id' => $idOSProfissional])->num_rows()) {
@@ -791,7 +869,6 @@ class OrdemServico_profissionais extends MY_Controller
         $this->db->join('empresa_areas e', 'e.nome = c.area', 'left');
         $this->db->join('empresa_setores f', 'f.nome = c.setor', 'left');
         $this->db->where('b.id_empresa', $this->session->userdata('empresa'));
-        $this->db->where('d.nome', 'Educação Inclusiva');
         $this->db->where('d.nome', 'Educação Inclusiva');
         if (!empty($where['id_area'])) {
             $this->db->where('e.id', $where['id_area']);
