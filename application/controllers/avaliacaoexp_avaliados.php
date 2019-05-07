@@ -654,6 +654,7 @@ class Avaliacaoexp_avaliados extends MY_Controller
 //                $line->descricao = wordwrap($line->descricao, 18, "<br/>", true);
 //                $line->resultado = wordwrap($line->resultado, 18, "<br/>", true);
 //            }
+            $vars['ocultar_avaliadores'] = $this->input->get('ocultar_avaliadores');
             return $this->load->view('getavaliacaoexp_relatorio', $vars, true);
         } else {
             $this->load->view('avaliacaoexp_relatorio', $vars);
@@ -686,6 +687,7 @@ class Avaliacaoexp_avaliados extends MY_Controller
 
         $stylesheet .= 'table.parecer_final tr th, table.parecer_final tr td { font-size: 12px; padding: 5px; } ';
 
+        $this->m_pdf->pdf->AddPage('L');
         $this->m_pdf->pdf->writeHTML($stylesheet, 1);
         $this->m_pdf->pdf->writeHTML($this->relatorio($this->uri->rsegment(3), true));
 
@@ -1047,6 +1049,9 @@ class Avaliacaoexp_avaliados extends MY_Controller
         }
         if (isset($busca['resultado']) and !empty($busca['resultado'])) {
             $sql .= ' AND h.id_avaliador IS NULL';
+        }
+        if (isset($busca['status']) and !empty($busca['status'])) {
+            $sql .= ' AND b.status  = 1';
         }
         if ($tipo == '1') {
             $sql .= " AND e.tipo = 'A'";

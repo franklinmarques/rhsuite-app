@@ -298,9 +298,9 @@ class UsuarioDemissao extends MY_Controller
             $sql .= " AND a.data_demissao BETWEEN '{$dataInicial}' AND '{$dataFinal}'";
         } else {
             if ($dataInicial) {
-                $sql .= " AND a.data_demissao <='{$dataInicial}'";
+                $sql .= " AND a.data_demissao >='{$dataInicial}'";
             } elseif ($dataFinal) {
-                $sql .= " AND a.data_demissao >='{$dataFinal}'";
+                $sql .= " AND a.data_demissao <='{$dataFinal}'";
             }
         }
         $sql .= ') s';
@@ -365,9 +365,9 @@ class UsuarioDemissao extends MY_Controller
             $sql .= " AND a.data_demissao BETWEEN '{$dataInicial}' AND '{$dataFinal}'";
         } else {
             if ($dataInicial) {
-                $sql .= " AND a.data_demissao <='{$dataInicial}'";
+                $sql .= " AND a.data_demissao >='{$dataInicial}'";
             } elseif ($dataFinal) {
-                $sql .= " AND a.data_demissao >='{$dataFinal}'";
+                $sql .= " AND a.data_demissao <='{$dataFinal}'";
             }
         }
         $sql .= ') s';

@@ -87,26 +87,32 @@
         <thead>
         <tr class='active'>
             <?php if ($dadosAvaliacao->tipo === 'P'): ?>
-                <th colspan="4" class="text-center">1&ordf; Avaliador (Av1)</th>
-                <th colspan="4" class="text-center">2&ordf; Avaliador (Av2)</th>
-                <th colspan="4" class="text-center">3&ordf; Avaliador (Av3)</th>
+                <th colspan="<?= $ocultar_avaliadores ? '3' : '4' ?>" class="text-center">1&ordf; Avaliador (Av1)</th>
+                <th colspan="<?= $ocultar_avaliadores ? '3' : '4' ?>" class="text-center">2&ordf; Avaliador (Av2)</th>
+                <th colspan="<?= $ocultar_avaliadores ? '3' : '4' ?>" class="text-center">3&ordf; Avaliador (Av3)</th>
             <?php else: ?>
-                <th colspan="4" class="text-center">1&ordf; Avaliador</th>
-                <th colspan="4" class="text-center">2&ordf; Avaliador</th>
-                <th colspan="4" class="text-center">3&ordf; Avaliador</th>
+                <th colspan="<?= $ocultar_avaliadores ? '3' : '4' ?>" class="text-center">1&ordf; Avaliador</th>
+                <th colspan="<?= $ocultar_avaliadores ? '3' : '4' ?>" class="text-center">2&ordf; Avaliador</th>
+                <th colspan="<?= $ocultar_avaliadores ? '3' : '4' ?>" class="text-center">3&ordf; Avaliador</th>
             <?php endif; ?>
         </tr>
         <tr class='active'>
             <th>Data programada</th>
-            <th>Avaliador</th>
+            <?php if (!$ocultar_avaliadores): ?>
+                <th>Avaliador</th>
+            <?php endif; ?>
             <th>Data de realização</th>
             <th>Resultado</th>
             <th>Data programada</th>
-            <th>Avaliador</th>
+            <?php if (!$ocultar_avaliadores): ?>
+                <th>Avaliador</th>
+            <?php endif; ?>
             <th>Data de realização</th>
             <th>Resultado</th>
             <th>Data programada</th>
-            <th>Avaliador</th>
+            <?php if (!$ocultar_avaliadores): ?>
+                <th>Avaliador</th>
+            <?php endif; ?>
             <th>Data de realização</th>
             <th>Resultado</th>
         </tr>
@@ -115,7 +121,9 @@
         <tr>
             <?php foreach ($dadosAvaliadores as $dadosAvaliador): ?>
                 <td class="text-center"><?= $dadosAvaliador->data_avaliacao ?></td>
-                <td><?= $dadosAvaliador->nome ?></td>
+                <?php if (!$ocultar_avaliadores): ?>
+                    <td><?= $dadosAvaliador->nome ?></td>
+                <?php endif; ?>
                 <td class="text-center"><?= $dadosAvaliador->data_realizacao ?></td>
                 <td class="text-right"><?= round(array_sum($dadosAvaliador->resultado), 1) ?></td>
             <?php endforeach; ?>

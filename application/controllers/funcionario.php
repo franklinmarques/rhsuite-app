@@ -549,6 +549,7 @@ class Funcionario extends MY_Controller
         $data['data_faltasAtrasos1'] = $this->faltasAtrasos($id_usuario); // Pendente
         $data['data_pdi1'] = $this->pdi($id_usuario); // Recebe somente dados do usuario
         $data['data_documentos1'] = $this->documentos($id_usuario); // Recebe somente dados do usuario
+        $data['data_contratos1'] = ['id_usuario' => $id_usuario]; // Recebe somente dados do usuario
 
         $this->load->view('editarfuncionario1', $data);
     }

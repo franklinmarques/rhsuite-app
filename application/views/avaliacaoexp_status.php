@@ -60,7 +60,7 @@ require_once "header.php";
                     <br/>
                     <br/>
                     <div class="row">
-                        <form action="#" id="busca">
+                        <form action="#" id="busca" autocomplete="off">
                             <div class="col-md-4">
                                 <label class="control-label">Filtrar por departamento</label>
                                 <?php echo form_dropdown('depto', $depto, '', 'onchange="atualizarFiltro()" class="form-control input-sm"'); ?>
@@ -90,13 +90,15 @@ require_once "header.php";
                                 <br>
                                 <button type="button" id="limpar" class="btn btn-default">Limpar filtro</button>
                             </div>
-                            <div class="col-md-6">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="resultado" onchange="atualizarFiltro();"> Filtrar
-                                        apenas resultados pendentes
-                                    </label>
-                                </div>
+                            <div class="col-md-12">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="resultado" onchange="atualizarFiltro();" checked>
+                                    Filtrar apenas resultados pendentes
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="status" onchange="atualizarFiltro();" checked> Filtrar
+                                    somente colaboradores ativos
+                                </label>
                             </div>
                         </form>
                     </div>

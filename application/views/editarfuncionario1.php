@@ -70,8 +70,10 @@ require_once "header.php";
                                     <a href="#pdis" aria-controls="pdis" role="tab" data-toggle="tab">PDIs</a>
                                 </li>
                                 <li role="presentation">
-                                    <a href="#documentos" aria-controls="documentos" role="tab"
-                                       data-toggle="tab">Documentos</a>
+                                    <a href="#documentos" aria-controls="documentos" role="tab" data-toggle="tab">Documentos</a>
+                                </li>
+                                <li role="presentation">
+                                    <a href="#contratos" aria-controls="contratos" role="tab" data-toggle="tab">Contratos</a>
                                 </li>
                             </ul>
 
@@ -713,7 +715,13 @@ require_once "header.php";
 
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="documentos">
+
                                     <?php echo $this->load->view('funcionario_documentos1', $data_documentos1); ?>
+
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="contratos">
+                                    
+                                    <?php echo $this->load->view('funcionario_contratos1', $data_contratos1); ?>
 
                                 </div>
                             </div>

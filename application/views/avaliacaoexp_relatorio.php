@@ -92,13 +92,19 @@ require_once "header.php";
                                     Individual</a>
                             <?php endif; ?>
                             <?php if ($is_pdf == false): ?>
-                                <a class="btn btn-sm btn-info"
+                                <a id="pdf" class="btn btn-sm btn-info"
                                    href="<?= site_url('avaliacaoexp_avaliados/pdfRelatorio/' . $this->uri->rsegment(3)); ?>"
                                    title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar
                                     PDF</a>
                                 <button class="btn btn-sm btn-default" onclick="history.back()"><i
                                             class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
                                 </button>
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="ocultar_avaliadores" type="checkbox" autocomplete="off"> Não
+                                        apresentar nome dos avaliadores
+                                    </label>
+                                </div>
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>
@@ -157,15 +163,15 @@ require_once "header.php";
                 </tr>
                 <tr class='active'>
                     <th class="hidden-xs hidden-sm">Data programada</th>
-                    <th>Avaliador</th>
+                    <th class="avaliador">Avaliador</th>
                     <th class="hidden-xs hidden-sm">Data de realização</th>
                     <th>Resultado</th>
                     <th class="hidden-xs hidden-sm">Data programada</th>
-                    <th>Avaliador</th>
+                    <th class="avaliador">Avaliador</th>
                     <th class="hidden-xs hidden-sm">Data de realização</th>
                     <th>Resultado</th>
                     <th class="hidden-xs hidden-sm">Data programada</th>
-                    <th>Avaliador</th>
+                    <th class="avaliador">Avaliador</th>
                     <th class="hidden-xs hidden-sm">Data de realização</th>
                     <th>Resultado</th>
                 </tr>
@@ -174,7 +180,7 @@ require_once "header.php";
                 <tr>
                     <?php foreach ($dadosAvaliadores as $dadosAvaliador): ?>
                         <td class="text-center hidden-xs hidden-sm"><?= $dadosAvaliador->data_avaliacao ?></td>
-                        <td><?= $dadosAvaliador->nome ?></td>
+                        <td class="avaliador"><?= $dadosAvaliador->nome ?></td>
                         <td class="text-center hidden-xs hidden-sm"><?= $dadosAvaliador->data_realizacao ?></td>
                         <td class="text-right"><?= round(array_sum($dadosAvaliador->resultado), 1) ?>%</td>
                     <?php endforeach; ?>
@@ -467,7 +473,20 @@ require_once "header.php";
         document.title = 'CORPORATE RH - LMS - <?= $dadosAvaliacao->titulo ?>';
     });
 </script>
-<?php
-require_once "end_js.php";
-require_once "end_html.php";
-?>
+
+<?php require_once "end_js.php"; ?>
+
+<script>
+    $('#ocultar_avaliadores').on('change', function () {
+        var search = '';
+        if ($(this).is(':checked')) {
+            search = '/q?ocultar_avaliadores=1';
+            $('.avaliador').hide();
+        } else {
+            $('.avaliador').show();
+        }
+        $('#pdf').prop('href', '<?= site_url('avaliacaoexp_avaliados/pdfRelatorio/' . $this->uri->rsegment(3)); ?>' + search);
+    });
+</script>
+
+<?php require_once "end_html.php"; ?>

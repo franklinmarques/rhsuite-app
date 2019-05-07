@@ -1292,11 +1292,20 @@ PIS (2)';
         $this->pdf();
 
 
+        $this->db->select('b.nome AS depto');
+        $this->db->join('empresa_departamentos b', 'b.id = a.id_depto', 'left');
+        $this->db->where('a.id', $id);
+        $requisicaoPessoal = $this->db->get('requisicoes_pessoal a')->row();
+
+
         $this->load->library('email');
 
         foreach ($destinatarios as $destinatario_apoio) {
             $this->email->from($remetente->email, $remetente->nome);
             $this->email->to($destinatario_apoio->email);
+            if ($requisicaoPessoal->depto === 'Cuidadores') {
+                $this->email->cc('wendell@ame-sp.org.br');
+            }
             $this->email->subject($email['titulo']);
             $this->email->message($email['mensagem']);
             $this->email->attach($filename);

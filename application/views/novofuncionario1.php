@@ -68,6 +68,9 @@ require_once "header.php";
                                 <li role="presentation" class="disabled">
                                     <a href="#">Documentos</a>
                                 </li>
+                                <li role="presentation" class="disabled">
+                                    <a href="#">Contratos</a>
+                                </li>
                             </ul>
 
                             <div class="tab-content">

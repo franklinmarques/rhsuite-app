@@ -999,8 +999,10 @@
             // $('#form [name="data_fechamento"]').prop('disabled', this.value !== 'F');
             // $('#form input[name="data_suspensao"], #form input[name="data_cancelamento"]').prop('disabled', true);
             if (this.value === 'F') {
-                if ($('[name="data_fechamento"]').val().length === 0) {
-                    $('[name="data_fechamento"]').val(moment().format('DD/MM/YYYY'));
+                if ('<?= $id_depto ?>' === '7' || '<?= $depto ?>' === 'Gestão de Pessoas' || '<?= $tipo ?>' === 'empresa') {
+                    if ($('[name="data_fechamento"]').val().length === 0) {
+                        $('[name="data_fechamento"]').val(moment().format('DD/MM/YYYY'));
+                    }
                 }
                 $('[name="estagio"]').val('12');
             } else if (this.value === 'A') {
