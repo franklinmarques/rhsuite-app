@@ -204,6 +204,7 @@ require_once "end_js.php";
                 "processing": true, //Feature control the processing indicator.
                 "serverSide": true, //Feature control DataTables' server-side processing mode.
                 "order": [], //Initial no order.
+                'iDisplayLength': 100,
                 "language": {
                     "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
                 },

@@ -29,6 +29,13 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                     </li>
                 <?php endif; ?>
 
+                <li>
+                    <a href="<?php echo site_url('manutencao'); ?>">
+                        <i class="fa fa-address-book"></i>
+                        <span>Scheduler - Atividades</span>
+                    </a>
+                </li>
+
                 <?php if (isset($hash_acesso['GP'])): ?>
                     <li class="sub-menu">
                         <a href="javascript:void(0);"<?= (in_array($this->uri->rsegment(2), array('home', 'funcionarios', 'cursosfuncionario', 'novocursofuncionario', 'novofuncionario', 'editarfuncionario')) ? ' class="active"' : ''); ?>>
@@ -82,24 +89,28 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                     </li>
                 <?php endif; ?>
 
+                <li class="sub-menu">
+                    <a href="javascript:void(0);"<?= (in_array($this->uri->rsegment(2), array('estruturas', 'cargo_funcao')) ? ' class="active"' : ''); ?>>
+                        <i class="fa fa-industry"> </i>
+                        <span>Estrutura Organizacional</span>
+                    </a>
+                    <ul class="sub">
+                        <li class="<?php echo(in_array($this->uri->rsegment(2), array('estruturas')) ? 'active' : ''); ?>">
+                            <a href="<?php echo site_url('estruturas'); ?>">Gerenciar Estruturas</a>
+                        </li>
+                        <li class="<?php echo(in_array($this->uri->rsegment(2), array('cargo_funcao')) ? 'active' : ''); ?>">
+                            <a href="<?php echo site_url('cargo_funcao'); ?>">Gerenciar Cargos/Funções</a>
+                        </li>
+                    </ul>
+                </li>
+
                 <?php if (isset($hash_acesso['JD'])): ?>
-                    <li class="sub-menu">
-                        <a href="javascript:void(0);"<?= (in_array($this->uri->rsegment(2), array('estruturas', 'cargo_funcao')) ? ' class="active"' : ''); ?>>
+                    <li>
+                        <a href="<?php echo site_url('jobDescriptor'); ?>"
+                           class="<?php echo($this->uri->rsegment(2) == 'jobDescriptor' ? 'active' : ''); ?>">
                             <i class="glyphicons glyphicons-nameplate"> </i>
                             <span>Job Descriptor</span>
                         </a>
-                        <ul class="sub">
-                            <li class="<?php echo(in_array($this->uri->rsegment(2), array('estruturas')) ? 'active' : ''); ?>">
-                                <a href="<?php echo site_url('estruturas'); ?>">Gerenciar Estrutura
-                                    Organizacional</a>
-                            </li>
-                            <li class="<?php echo(in_array($this->uri->rsegment(2), array('cargo_funcao')) ? 'active' : ''); ?>">
-                                <a href="<?php echo site_url('cargo_funcao'); ?>">Gerenciar Cargos/Funções</a>
-                            </li>
-                            <li class="<?php echo(in_array($this->uri->rsegment(2), array('cargo_funcao')) ? 'active' : ''); ?>">
-                                <a href="<?php echo site_url('jobDescriptor'); ?>">Gerenciar Descrições de Funções</a>
-                            </li>
-                        </ul>
                     </li>
                 <?php endif; ?>
 

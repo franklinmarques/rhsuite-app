@@ -84,7 +84,7 @@ require_once "header.php";
                             <div class="col-md-2">
                                 <label class="control-label">Filtrar a partir de</label>
                                 <input class="form-control input-sm text-center" name="data_avaliacao"
-                                       placeholder="dd/mm/aaaa" type="text">
+                                       placeholder="dd/mm/aaaa" type="text" onchange="reload_table();">
                             </div>
                             <div class="col-md-2">
                                 <br>
@@ -92,12 +92,16 @@ require_once "header.php";
                             </div>
                             <div class="col-md-12">
                                 <label class="checkbox-inline">
-                                    <input type="checkbox" name="resultado" onchange="atualizarFiltro();" checked>
+                                    <input type="checkbox" name="resultado" onchange="reload_table();" checked>
                                     Filtrar apenas resultados pendentes
                                 </label>
                                 <label class="checkbox-inline">
-                                    <input type="checkbox" name="status" onchange="atualizarFiltro();" checked> Filtrar
+                                    <input type="checkbox" name="status" onchange="reload_table();" checked> Filtrar
                                     somente colaboradores ativos
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="ultimo_semestre" onchange="reload_table();"> Filtrar
+                                    últimos seis meses
                                 </label>
                             </div>
                         </form>
@@ -196,6 +200,10 @@ require_once "end_js.php";
             reload_table();
         });
 
+        $('[name="ultimo_semestre"]').on('change', function () {
+            $('[name="data_avaliacao"]').val('').prop('readonly', this.checked);
+        });
+
         $(document).ready(function () {
 
             //datatables
@@ -275,7 +283,7 @@ require_once "end_js.php";
                     $('[name="cargo"]').html($(data.cargo).html());
                     $('[name="funcao"]').html($(data.funcao).html());
 
-                    $('[name="data_avaliacao"]').prop('readonly', $('[name="resultado"]').is(':checked'));
+                    // $('[name="data_avaliacao"]').prop('readonly', $('[name="resultado"]').is(':checked'));
 
                     reload_table();
                 },

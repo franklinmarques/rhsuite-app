@@ -86,73 +86,65 @@ class Atividades extends MY_Controller
         $data['data_termino'] = $data_atividade->data_termino;
 
         $data['id'] = $this->session->userdata('id');
+        $data['tipo'] = $this->session->userdata('tipo');
         $this->load->view('atividades', $data);
     }
 
-    public function ajax_list($id = '')
+
+    public function ajax_list()
     {
-        if (empty($id)) {
-            $id = $this->session->userdata('id');
-        }
+        $id = $this->session->userdata('id');
+
+
         $post = $this->input->post();
 
-        $sql = "SELECT s.id, 
-                       s.nome, 
-                       s.prioridade,
-                       s.tipo,
-                       s.status,
-                       s.atividade,
-                       s.data_cadastro,
-                       s.data_limite,
-                       s.data_fechamento,
-                       s.id_usuario,
-                       s.id_mae,
-                       s.ordem_mae,
-                       s.ordem_filha,
-                       s.possui_filha,
-                       s.filhas_finalizadas
-                FROM (SELECT a.id, 
-                             b.nome, 
-                             a.prioridade,
-                             a.tipo,
-                             CASE WHEN a.status = 1 THEN '1' 
-                                  WHEN CURDATE() BETWEEN a.data_lembrete AND a.data_limite THEN '2' 
-                                  WHEN CURDATE() > a.data_limite THEN '3' 
-                                  ELSE a.status END AS status,
-                             a.atividade,
-                             DATE_FORMAT(a.data_cadastro, '%d/%m/%Y') AS data_cadastro,
-                             DATE_FORMAT(a.data_limite, '%d/%m/%Y') AS data_limite,
-                             DATE_FORMAT(a.data_fechamento, '%d/%m/%Y') AS data_fechamento,
-                             a.id_mae,
-                             a.id_usuario,
-                             CASE WHEN c.id_usuario IS NULL 
-                                  THEN a.id 
-                                  ELSE a.id_mae END AS ordem_mae,
-                             CASE WHEN c.id IS NULL 
-                                  THEN 0 
-                                  ELSE a.id END AS ordem_filha,
-                             (SELECT CASE WHEN COUNT(f.id_mae) > 0 
-                                          THEN 1 
-                                          ELSE 0 END
-                                     FROM atividades m 
-                                     LEFT JOIN atividades f ON 
-                                               f.id_mae = m.id 
-                                     WHERE m.id = a.id AND 
-                                           f.id_mae IS NOT NULL) AS possui_filha,
-                             (SELECT CASE WHEN COUNT(f.id) > 0 
-                                          THEN 0 
-                                          ELSE 1 END
-                                     FROM atividades m 
-                                     LEFT JOIN atividades f ON 
-                                               f.id_mae = m.id 
-                                     WHERE m.id = a.id AND 
-                                           f.status = 0) AS filhas_finalizadas
-                      FROM atividades a
-                      INNER JOIN usuarios b ON 
-                                 b.id = a.id_usuario
-                      LEFT JOIN atividades c ON
-                                c.id = a.id_mae
-                      WHERE 1";
+
+        $sql = "SELECT a.id, 
+                       a.atividade,
+                       a.prioridade,
+                       CASE WHEN a.status = 1 THEN '1' 
+                            WHEN CURDATE() BETWEEN a.data_lembrete AND a.data_limite THEN '2' 
+                            WHEN CURDATE() > a.data_limite THEN '3' 
+                            ELSE a.status END AS status,
+                       b.nome, 
+                       a.data_cadastro,
+                       a.data_limite,
+                       a.data_fechamento,
+                       a.tipo,
+                       DATE_FORMAT(a.data_cadastro, '%d/%m/%Y') AS data_cadastro_de,
+                       DATE_FORMAT(a.data_limite, '%d/%m/%Y') AS data_limite_de,
+                       DATE_FORMAT(a.data_fechamento, '%d/%m/%Y') AS data_fechamento_de,
+                       a.id_mae,
+                       a.id_usuario,
+                       a.observacoes,
+                       CASE WHEN c.id_usuario IS NULL 
+                            THEN a.id 
+                            ELSE a.id_mae END AS ordem_mae,
+                       CASE WHEN c.id IS NULL 
+                            THEN 0 
+                            ELSE a.id END AS ordem_filha,
+                       (SELECT CASE WHEN COUNT(f.id_mae) > 0 
+                                    THEN 1 
+                                    ELSE 0 END
+                        FROM atividades m 
+                        LEFT JOIN atividades f ON 
+                                  f.id_mae = m.id 
+                        WHERE m.id = a.id AND 
+                              f.id_mae IS NOT NULL) AS possui_filha,
+                       (SELECT CASE WHEN COUNT(f.id) > 0 
+                                    THEN 0 
+                                    ELSE 1 END
+                        FROM atividades m 
+                        LEFT JOIN atividades f ON 
+                                  f.id_mae = m.id 
+                        WHERE m.id = a.id AND 
+                              f.status = 0) AS filhas_finalizadas
+                FROM atividades a
+                INNER JOIN usuarios b ON 
+                           b.id = a.id_usuario
+                LEFT JOIN atividades c ON
+                          c.id = a.id_mae
+                WHERE 1";
         if ($post['prioridade']) {
             $sql .= " AND (a.prioridade = {$post['prioridade']} OR c.prioridade = {$post['prioridade']})";
         }
@@ -178,99 +170,81 @@ class Atividades extends MY_Controller
         } else {
             $sql .= " AND (a.id_usuario = {$id} OR c.id_usuario = {$id})";
         }
-        $sql .= ') s';
-        $recordsTotal = $this->db->query($sql)->num_rows();
 
-        $columns = array('s.id', 's.atividade');
-        if ($post['search']['value']) {
-            foreach ($columns as $key => $column) {
-                if ($key > 1) {
-                    $sql .= " OR
-                         {$column} LIKE '%{$post['search']['value']}%'";
-                } elseif ($key == 1) {
-                    $sql .= " 
-                        WHERE {$column} LIKE '%{$post['search']['value']}%'";
-                }
-            }
-        }
-        $recordsFiltered = $this->db->query($sql)->num_rows();
 
-        $sql .= ' ORDER BY s.ordem_mae, s.ordem_filha';
-        if (isset($post['order'])) {
-            $orderBy = array();
-            foreach ($post['order'] as $order) {
-                $orderBy[] = ($order['column'] + 1) . ' ' . $order['dir'];
-            }
-            $sql .= ' ,' . implode(', ', $orderBy);
-        }
+        $this->load->library('dataTables');
 
-        if ($post['length'] > 0) {
-            $sql .= " 
-                LIMIT {$post['start']}, {$post['length']}";
-        }
-        $list = $this->db->query($sql)->result();
+        $output = $this->datatables->query($sql);
 
         $data = array();
-        foreach ($list as $atividade) {
-            $row = array();
-            $row[] = $atividade->id;
-            $row[] = $atividade->id_mae;
-            $row[] = $atividade->prioridade;
-            $row[] = $atividade->tipo;
-            $row[] = $atividade->status;
-            $row[] = $atividade->atividade;
-            $row[] = $atividade->id_usuario == $this->session->userdata('id') ? 'Mãe' : 'Filha';
-            $row[] = $atividade->nome;
-            $row[] = $atividade->data_cadastro;
-            $row[] = $atividade->data_limite;
-            $row[] = $atividade->data_fechamento;
 
-            $acao = null;
+        foreach ($output->data as $row) {
+            $acao = '';
+
             if ($this->agent->is_mobile == false) {
-                if ($atividade->status === '1') {
-                    $acao .= '<button class="btn btn-sm btn-primary disabled"><i class="glyphicon glyphicon-pencil"></i></button> ';
+                if ($row->status === '1') {
+                    $acao .= '<button class="btn btn-sm btn-info disabled"><i class="glyphicon glyphicon-pencil"></i></button> ';
                 } else {
-                    $acao .= '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_atividade(' . "'" . $atividade->id . "'" . ',)"><i class="glyphicon glyphicon-pencil"></i></a> ';
+                    if ($row->id_mae) {
+                        $acao .= '<a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_atividade_filha(' . "'" . $row->id . "'" . ',)"><i class="glyphicon glyphicon-pencil"></i></a> ';
+                    } else {
+                        $acao .= '<a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_atividade_mae(' . "'" . $row->id . "'" . ',)"><i class="glyphicon glyphicon-pencil"></i></a> ';
+                    }
                 }
-                if ($atividade->id_usuario == $id) {
-                    $acao .= ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Cadastrar atividade(s) filha(s)" onclick="add_atividade_filha(' . "'" . $atividade->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i></a>';
+                if ($this->session->userdata('tipo') == 'empresa') {
+                    $acao .= ' <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Cadastrar atividade(s) filha(s)" onclick="add_atividade_filha(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i></a>';
                 } else {
-                    $acao .= ' <button class="btn btn-sm btn-success disabled"><i class="glyphicon glyphicon-plus"></i></button>';
+                    $acao .= ' <button class="btn btn-sm btn-info disabled"><i class="glyphicon glyphicon-plus"></i></button>';
                 }
-                $acao .= ' <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_atividade(' . "'" . $atividade->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>';
+                if ($this->session->userdata('tipo') == 'empresa') {
+                    $acao .= ' <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_atividade(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>';
+                } else {
+                    $acao .= ' <a class="btn btn-sm btn-danger disabled" href="javascript:void(0)" title="Excluir"><i class="glyphicon glyphicon-trash"></i></a>';
+                }
             }
-            if ($atividade->status === '0' and $atividade->filhas_finalizadas === '1') {
-                $acao .= ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Finalizar" onclick="finaliza_atividade(' . "'" . $atividade->id . "'" . ')"><i class="glyphicon glyphicon-ok"></i></a>';
+            if ($row->status === '0' and $row->filhas_finalizadas === '1') {
+                $acao .= ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Finalizar" onclick="finaliza_atividade(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-ok"></i></a>';
             } else {
                 $acao .= ' <button class="btn btn-sm btn-success disabled"><i class="glyphicon glyphicon-ok"></i></button>';
             }
 
-            $row[] = $acao;
-            $row[] = $atividade->id_usuario;
-            $row[] = $atividade->possui_filha;
+            $idMae = $row->id_mae ? '' : $row->id;
+            $idFilha = $row->id_mae ? '<strong>(' . $row->id_mae . ')</strong> ' . $row->id . ' - ' : '';
 
-            $data[] = $row;
+            $data[] = array(
+                $idMae,
+                $idFilha . $row->atividade . (strlen($row->observacoes) ? '<p style="margin: 8px 0 0 15px;">Obs.: ' . $row->observacoes . '</p>' : ''),
+                $row->prioridade,
+                $row->status,
+                $row->nome,
+                $row->data_cadastro_de,
+                $row->data_limite_de,
+                $row->data_fechamento_de,
+                $acao,
+                $row->id_mae,
+                $row->id_usuario,
+                $row->possui_filha
+            );
         }
-        $output = array(
-            "draw" => $this->input->post('draw'),
-            "recordsTotal" => $recordsTotal,
-            "recordsFiltered" => $recordsFiltered,
-            "data" => $data,
-        );
-        //output to json format
+
+        $output->data = $data;
+
+
         echo json_encode($output);
     }
+
 
     public function ajax_edit()
     {
         $id = $this->input->post('id');
-        $this->db->select('id, id_usuario, atividade, prioridade, tipo, id_mae');
+        $this->db->select('id, id_usuario, atividade, prioridade, tipo, observacoes, id_mae');
         $this->db->select("DATE_FORMAT(data_limite, '%d/%m/%Y') AS data_limite", false);
         $this->db->select("DATEDIFF(data_limite, data_lembrete) AS data_lembrete", false);
         $data = $this->db->get_where('atividades', array('id' => $id))->row();
 
         echo json_encode($data);
     }
+
 
     public function ajax_add()
     {
@@ -281,6 +255,10 @@ class Atividades extends MY_Controller
             $data_limite = strtotime(str_replace('/', '-', $data['data_limite']));
             $data['data_limite'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $data['data_limite'] . ' 23:59:59')));
             $data['data_lembrete'] = date('Y-m-d', strtotime("-{$data['data_lembrete']} days", $data_limite));
+        }
+
+        if (strlen($data['observacoes']) == 0) {
+            $data['observacoes'] = null;
         }
 
         if (empty($data['id_mae'])) {
@@ -309,6 +287,7 @@ class Atividades extends MY_Controller
         echo json_encode(array("status" => true));
     }
 
+
     public function ajax_update()
     {
         $data = $this->input->post();
@@ -317,6 +296,9 @@ class Atividades extends MY_Controller
             $data_limite = strtotime(str_replace('/', '-', $data['data_limite']));
             $data['data_limite'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $data['data_limite'] . ' 23:59:59')));
             $data['data_lembrete'] = date('Y-m-d', strtotime("-{$data['data_lembrete']} days", $data_limite));
+        }
+        if (strlen($data['observacoes']) == 0) {
+            $data['observacoes'] = null;
         }
         if (empty($data['id_mae'])) {
             $data['id_mae'] = null;
@@ -327,6 +309,7 @@ class Atividades extends MY_Controller
         echo json_encode(array("status" => true));
     }
 
+
     public function ajax_delete()
     {
         $id = $this->input->post('id');
@@ -335,6 +318,7 @@ class Atividades extends MY_Controller
         echo json_encode(array("status" => true));
     }
 
+
     public function ajax_finalizar()
     {
         $id = $this->input->post('id');
@@ -342,6 +326,7 @@ class Atividades extends MY_Controller
 
         echo json_encode(array("status" => true));
     }
+
 
     public function avaliaAtividade()
     {
@@ -412,13 +397,18 @@ class Atividades extends MY_Controller
         }
     }
 
-    public function pdf()
+
+    public function relatorio($isPdf = false)
     {
         $id = $this->session->userdata('id');
         $get = $this->input->get();
+        $observacoes = $get['observacoes'] ?? '';
 
-        $sql = "SELECT a.id, 
-                       b.nome, 
+        $sql = "SELECT (CASE WHEN a.id_mae IS NULL 
+                             THEN a.id END) AS id,
+                       (CASE WHEN a.id_mae IS NOT NULL 
+                             THEN CONCAT(a.id, ' - ', b.nome)
+                             ELSE b.nome END) AS nome,
                        CONCAT_WS('/', b.depto, b.area, b.setor) AS estrutura,
                        CASE a.prioridade 
                             WHEN 2 THEN 'AL'
@@ -430,6 +420,8 @@ class Atividades extends MY_Controller
                             WHEN CURDATE() > a.data_limite THEN 'L' 
                             ELSE 'NF' END AS status,
                        a.atividade,
+                       a.id_mae,
+                       IF(CHAR_LENGTH('{$observacoes}'), a.observacoes, NULL) AS observacoes,
                        DATE_FORMAT(a.data_cadastro, '%d/%m/%Y') AS data_cadastro,
                        DATE_FORMAT(a.data_limite, '%d/%m/%Y') AS data_limite,
                        DATE_FORMAT(a.data_fechamento, '%d/%m/%Y') AS data_fechamento,
@@ -483,9 +475,166 @@ class Atividades extends MY_Controller
         $this->db->select("nome, CONCAT_WS('/', depto, area, setor) AS estrutura", false);
         $this->db->where('id', $this->session->userdata('id'));
         $data['usuario'] = $this->db->get('usuarios')->row();
-        if(empty($data['usuario']->estrutura)) {
+        if (empty($data['usuario']->estrutura)) {
             $data['usuario']->estrutura = 'Todos';
         }
+
+        $data['is_pdf'] = $isPdf === true;
+
+        if ($data['is_pdf']) {
+            return $this->load->view('atividadesPdf', $data, true);
+        }
+
+
+        $sql = "SELECT a.prioridade, 
+                       a.status, 
+                       a.id_usuario, 
+                       a.data_cadastro, 
+                       a.data_lembrete, 
+                       a.data_limite, 
+                       1 AS nivel
+                FROM atividades a 
+                WHERE a.id_usuario = {$this->session->userdata('empresa')} 
+                UNION
+                SELECT b.prioridade, 
+                       b.status, 
+                       b.id_usuario, 
+                       b.data_cadastro, 
+                       b.data_lembrete,
+                       b.data_limite,
+                       2 AS nivel
+                FROM atividades b 
+                INNER JOIN atividades c on c.id = b.id_mae 
+                WHERE c.id_usuario = {$this->session->userdata('empresa')}";
+
+        $sql_prioridade = "SELECT DISTINCT(s.prioridade) AS id,
+                                  CASE s.prioridade 
+                                       WHEN 0 THEN 'Baixa'
+                                       WHEN 1 THEN 'Média'
+                                       WHEN 2 THEN 'Alta' END AS nome 
+                           FROM($sql) s 
+                           ORDER BY s.prioridade DESC";
+        $prioridades = $this->db->query($sql_prioridade)->result();
+        $data['prioridades'] = array('' => 'Todas');
+        foreach ($prioridades as $prioridade) {
+            $data['prioridades'][$prioridade->id] = $prioridade->nome;
+        }
+
+        $sql_status = "SELECT DISTINCT(CASE WHEN s.status = 1 THEN '1' 
+                                            WHEN CURDATE() BETWEEN s.data_lembrete AND s.data_limite THEN '2' 
+                                            WHEN CURDATE() > s.data_limite THEN '3' 
+                                            ELSE s.status END) AS id,
+                              CASE WHEN s.status = 1 THEN 'Finalizados' 
+                                   WHEN CURDATE() BETWEEN s.data_lembrete AND s.data_limite THEN 'Próximos à data limite' 
+                                   WHEN CURDATE() > s.data_limite THEN 'Limite expirado' 
+                                   ELSE 'Não-finalizados' END AS nome 
+                           FROM($sql) s 
+                           ORDER BY s.status ASC";
+        $status = $this->db->query($sql_status)->result();
+        $data['status'] = array('' => 'Todos');
+        foreach ($status as $row) {
+            $data['status'][$row->id] = $row->nome;
+        }
+
+        $sql_usuario = "SELECT DISTINCT(s.id_usuario) AS id,
+                               CONCAT(CASE WHEN s.nivel = 1 THEN '' ELSE '&squarf; ' END, u.nome) AS nome
+                           FROM($sql) s 
+                           INNER JOIN usuarios u ON
+                                      u.id = s.id_usuario";
+        $usuarios = $this->db->query($sql_usuario)->result();
+        $data['usuarios'] = array('' => 'Todos');
+        foreach ($usuarios as $usuario) {
+            $data['usuarios'][$usuario->id] = $usuario->nome;
+        }
+
+
+        $this->load->view('atividades_relatorio', $data);
+    }
+
+
+    public function ajaxRelatorio()
+    {
+        $get = $this->input->post();
+
+
+        $this->db->select('a.id, b.nome, a.atividade, a.id_mae');
+        if (!empty($get['observacoes'])) {
+            $this->db->select('a.observacoes');
+        } else {
+            $this->db->select('NULL AS observacoes', false);
+        }
+        $this->db->select("(CASE a.prioridade WHEN 2 THEN 'AL'WHEN 1 THEN 'MD' ELSE 'BX' END) AS prioridade", false);
+        $this->db->select("(CASE WHEN a.status = 1 THEN 'F' 
+                            WHEN CURDATE() BETWEEN a.data_lembrete AND a.data_limite THEN 'DL' 
+                            WHEN CURDATE() > a.data_limite THEN 'L' 
+                            ELSE 'NF' END) AS status", false);
+        $this->db->select(["DATE_FORMAT(a.data_cadastro, '%d/%m/%Y') AS data_cadastro"], false);
+        $this->db->select(["DATE_FORMAT(a.data_limite, '%d/%m/%Y') AS data_limite"], false);
+        $this->db->select(["DATE_FORMAT(a.data_fechamento, '%d/%m/%Y') AS data_fechamento"], false);
+        $this->db->join('usuarios b', 'b.id = a.id_usuario');
+        $this->db->join('atividades c', 'c.id = a.id_mae', 'left');
+        if (!empty($get['prioridade'])) {
+            $this->db->where("(a.prioridade = {$get['prioridade']} OR c.prioridade = {$get['prioridade']})", null, false);
+        }
+        if (!empty($get['status'])) {
+            if ($get['status'] == 1) {
+                $this->db->where("(a.status = {$get['status']} OR c.status = {$get['status']})", null, false);
+            } elseif ($get['status'] == 2) {
+                $this->db->where("(CURDATE() BETWEEN a.data_lembrete AND a.data_limite OR CURDATE() BETWEEN c.data_lembrete AND c.data_limite)", null, false);
+            } elseif ($get['status'] == 3) {
+                $this->db->where("(CURDATE() > a.data_limite OR CURDATE() > c.data_limite)", null, false);
+            }
+        }
+        if (!empty($get['data_inicio'])) {
+            $data_inicio = date('Y-m-d', strtotime('-1 days', strtotime(str_replace('/', '-', $get['data_inicio']))));
+            $this->db->where("(a.data_cadastro > '{$data_inicio}' OR c.data_cadastro > '{$data_inicio}')", null, false);
+        }
+        if (!empty($get['data_termino'])) {
+            $data_termino = date('Y-m-d', strtotime('+1 days', strtotime(str_replace('/', '-', $get['data_termino']))));
+            $this->db->where("(a.data_limite < '{$data_termino}' OR c.data_limite < '{$data_termino}')", null, false);
+        }
+        if (!empty($get['usuario'])) {
+            if ($get['usuario'] == $id) {
+                $this->db->where('a.id_usuario', $id);
+            } elseif ($get['usuario']) {
+                $this->db->where('c.id_usuario', $get['usuario']);
+            } else {
+                $this->db->where("(a.id_usuario = {$id} OR c.id_usuario = {$id})", null, false);
+            }
+        }
+        $query = $this->db->get('atividades a');
+
+
+        $this->load->library('dataTables');
+
+        $output = $this->datatables->generate($query);
+
+        $data = array();
+
+        foreach ($output->data as $row) {
+            $idMae = $row->id_mae ? '' : $row->id;
+            $idFilha = $row->id_mae ? $row->id . ' - ' : '';
+            $data[] = array(
+                $idMae,
+                $idFilha . $row->nome,
+                $row->prioridade,
+                $row->status,
+                $row->atividade . (strlen($row->observacoes) ? '<p style="margin: 8px 0 0 15px;">Obs.: ' . $row->observacoes . '</p>' : ''),
+                $row->data_cadastro,
+                $row->data_limite,
+                $row->data_fechamento,
+                $row->id_mae
+            );
+        }
+
+        $output->data = $data;
+
+        echo json_encode($output);
+    }
+
+
+    public function pdf()
+    {
         $this->load->library('m_pdf');
 
         $stylesheet = '#atividades thead th { font-size: 12px; padding: 4px 0px; text-align: center; font-weight: normal; } ';
@@ -494,10 +643,11 @@ class Atividades extends MY_Controller
         $stylesheet .= '#atividades tbody tr.dados_paciente td { padding: 0px; 0px; } ';
         $stylesheet .= '#table thead th { font-size: 12px; padding: 4px; background-color: #f5f5f5;} ';
         $stylesheet .= '#table tbody td { font-size: 12px; padding: 4px; vertical-align: top; } ';
+        $stylesheet .= '#table tbody td:eq(0), #table tbody tr.active td { background-color: #f5f5f5; } ';
 
         $this->m_pdf->pdf->AddPage('L');
         $this->m_pdf->pdf->writeHTML($stylesheet, 1);
-        $this->m_pdf->pdf->writeHTML($this->load->view('atividadesPdf', $data, true));
+        $this->m_pdf->pdf->writeHTML($this->relatorio(true));
 
         $this->m_pdf->pdf->Output('Relatório de Pendências.pdf', 'D');
     }

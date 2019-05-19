@@ -62,8 +62,13 @@
                                                                      data-provides="fileinput">
                                                                     <div class="fileinput-new thumbnail"
                                                                          style="width: auto; height: 150px;">
-                                                                        <img src="<?= base_url('imagens/usuarios/Sem+imagem.png') ?>"
-                                                                             alt="Sem imagem"/>
+                                                                        <?php if (empty($candidato->foto)): ?>
+                                                                            <img src="<?= base_url('imagens/usuarios/Sem+imagem.png') ?>"
+                                                                                 alt="Sem imagem"/>
+                                                                        <?php else: ?>
+                                                                            <img src="<?= base_url('imagens/usuarios/' . $candidato->foto) ?>"
+                                                                                 alt="<?= $candidato->foto ?>"/>
+                                                                        <?php endif; ?>
                                                                     </div>
                                                                     <div class="fileinput-preview fileinput-exists thumbnail"
                                                                          style="width: auto; height: 150px;"></div>
@@ -85,7 +90,8 @@
                                                             <label class="col-sm-2 control-label">Nome candidato</label>
                                                             <div class="col-lg-7 controls">
                                                                 <input type="text" name="nome"
-                                                                       placeholder="Nome do candidato" value=""
+                                                                       placeholder="Nome do candidato"
+                                                                       value="<?= $candidato->nome; ?>"
                                                                        class="form-control"/>
                                                             </div>
                                                         </div>
@@ -95,23 +101,17 @@
                                                             <div class="col-sm-2">
                                                                 <input type="text" name="data_nascimento"
                                                                        placeholder="dd/mm/aaaa"
-                                                                       value=""
+                                                                       value="<?= $candidato->data_nascimento_de; ?>"
                                                                        class="form-control text-center date"/>
                                                             </div>
                                                             <label class="col-sm-1 control-label">Sexo</label>
                                                             <div class="col-sm-2">
-                                                                <select name="sexo" class="form-control">
-                                                                    <option value="M">Masculino</option>
-                                                                    <option value="F">Feminino</option>
-                                                                </select>
+                                                                <?php echo form_dropdown('sexo', $sexos, $candidato->sexo, 'class="form-control"'); ?>
                                                             </div>
                                                             <label class="col-sm-1 control-label text-nowrap">Estado
                                                                 civil</label>
                                                             <div class="col-sm-3">
-                                                                <select name="estado_civil" class="form-control">
-                                                                    <option value="M">Masculino</option>
-                                                                    <option value="F">Feminino</option>
-                                                                </select>
+                                                                <?php echo form_dropdown('estado_civil', $estados_civis, $candidato->estado_civil, 'class="form-control"'); ?>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -119,13 +119,13 @@
                                                             <div class="col-lg-4 controls">
                                                                 <input type="text" name="telefone"
                                                                        placeholder="Telefone"
-                                                                       value=""
+                                                                       value="<?= $candidato->telefone; ?>"
                                                                        class="form-control"/>
                                                             </div>
                                                             <label class="col-sm-1 control-label">E-mail</label>
                                                             <div class="col-lg-4 controls">
                                                                 <input type="email" name="email" placeholder="E-mail"
-                                                                       value=""
+                                                                       value="<?= $candidato->email; ?>"
                                                                        class="form-control"/>
                                                             </div>
                                                         </div>
@@ -154,7 +154,8 @@
                                                             <div class="col-lg-7 controls">
                                                                 <input type="text" name="nome_mae"
                                                                        placeholder="Nome da mãe do(a) candidato(a)"
-                                                                       value="" class="form-control"/>
+                                                                       value="<?= $candidato->nome_mae; ?>"
+                                                                       class="form-control"/>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
@@ -162,17 +163,11 @@
                                                             <div class="col-lg-7 controls">
                                                                 <input type="text" name="nome_pai"
                                                                        placeholder="Nome do pai do(a) candidato(a)"
-                                                                       value="" class="form-control"/>
+                                                                       value="<?= $candidato->nome_pai; ?>"
+                                                                       class="form-control"/>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="col-sm-2 control-label">Status</label>
-                                                            <div class="col-sm-3 col-lg-2 controls">
-                                                                <select name="status" class="form-control">
-                                                                    <option value="A">Ativo</option>
-                                                                    <option value="E">Excluído</option>
-                                                                </select>
-                                                            </div>
                                                             <label class="col-sm-2 control-label">Nível de
                                                                 acesso</label>
                                                             <div class="col-sm-3 col-lg-2 controls">
@@ -183,7 +178,7 @@
                                                             <label class="col-sm-1 control-label">CPF</label>
                                                             <div class="col-lg-2 controls">
                                                                 <input type="text" name="cpf" id="cpf" placeholder="CPF"
-                                                                       value=""
+                                                                       value="<?= $candidato->cpf; ?>"
                                                                        class="form-control"/>
                                                             </div>
                                                         </div>
@@ -191,13 +186,13 @@
                                                             <label class="col-sm-2 control-label">RG</label>
                                                             <div class="col-lg-2 controls">
                                                                 <input type="text" name="rg" id="rg" placeholder="RG"
-                                                                       value=""
+                                                                       value="<?= $candidato->rg; ?>"
                                                                        class="form-control"/>
                                                             </div>
                                                             <label class="col-sm-1 control-label">PIS</label>
                                                             <div class="col-lg-2 controls">
                                                                 <input type="text" name="pis" id="pis" placeholder="PIS"
-                                                                       value=""
+                                                                       value="<?= $candidato->pis; ?>"
                                                                        class="form-control"/>
                                                             </div>
                                                             <label class="col-sm-1 control-label">CEP</label>
@@ -205,7 +200,7 @@
                                                                 <div class="input-group">
                                                                     <input type="text" name="cep" id="cep"
                                                                            placeholder="CEP"
-                                                                           value=""
+                                                                           value="<?= $candidato->cep; ?>"
                                                                            class="form-control"/>
                                                                     <span class="input-group-btn">
                                             <button class="btn btn-info" id="consultar_cep" type="button"><i
@@ -219,11 +214,13 @@
                                                             <div class="col-lg-6 controls">
                                                                 <input type="text" name="logradouro" id="logradouro"
                                                                        placeholder="Logradouro"
-                                                                       value="" class="form-control"/>
+                                                                       value="<?= $candidato->logradouro; ?>"
+                                                                       class="form-control"/>
                                                             </div>
                                                             <label class="col-sm-1 control-label">Número</label>
                                                             <div class="col-lg-2 controls">
-                                                                <input type="number" name="numero" value=""
+                                                                <input type="number" name="numero"
+                                                                       value="<?= $candidato->numero; ?>"
                                                                        class="form-control text-right"/>
                                                             </div>
                                                         </div>
@@ -232,41 +229,42 @@
                                                             <div class="col-lg-4 controls">
                                                                 <input type="text" name="complemento" id="complemento"
                                                                        placeholder="Complemento"
-                                                                       value="" class="form-control"/>
+                                                                       value="<?= $candidato->complemento; ?>"
+                                                                       class="form-control"/>
                                                             </div>
                                                             <label class="col-sm-1 control-label">Bairro</label>
                                                             <div class="col-lg-4 controls">
                                                                 <input type="text" name="bairro" id="bairro"
                                                                        placeholder="Bairro"
-                                                                       value=""
+                                                                       value="<?= $candidato->bairro; ?>"
                                                                        class="form-control"/>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label class="col-sm-2 control-label">Estado</label>
                                                             <div class="col-sm-2 controls">
-                                                                <?php echo form_dropdown('estado', $estados, '', 'id="estado" class="form-control filtro"'); ?>
+                                                                <?php echo form_dropdown('estado', $estados, $candidato->estado, 'id="estado" class="form-control filtro"'); ?>
                                                             </div>
                                                             <label class="col-sm-1 control-label">Cidade </label>
                                                             <div class="col-lg-6 controls">
-                                                                <?php echo form_dropdown('cidade', $cidades, '', 'id="cidade" class="form-control filtro"'); ?>
+                                                                <?php echo form_dropdown('cidade', $cidades, $candidato->cidade, 'id="cidade" class="form-control filtro"'); ?>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label class="col-sm-2 control-label">Escolaridade</label>
                                                             <div class="col-sm-4 col-lg-3 controls">
-                                                                <?php echo form_dropdown('escolaridade', $escolaridades, '', 'id="escolaridade" class="form-control"'); ?>
+                                                                <?php echo form_dropdown('escolaridade', $escolaridades, $candidato->escolaridade, 'id="escolaridade" class="form-control"'); ?>
                                                             </div>
                                                             <label class="col-sm-1 control-label">Deficiência</label>
                                                             <div class="col-sm-4 col-lg-3 controls">
-                                                                <?php echo form_dropdown('deficiencia', $deficiencias, '', 'id="deficiencia" class="form-control"'); ?>
+                                                                <?php echo form_dropdown('deficiencia', $deficiencias, $candidato->deficiencia, 'id="deficiencia" class="form-control"'); ?>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label class="col-sm-2 control-label">Fonte
                                                                 contratação</label>
                                                             <div class="col-sm-5 col-lg-4 controls">
-                                                                <?php echo form_dropdown('fonte_contratacao', $fontesContratacao, '', 'class="form-control"'); ?>
+                                                                <?php echo form_dropdown('fonte_contratacao', $fontesContratacao, $candidato->fonte_contratacao, 'class="form-control"'); ?>
                                                             </div>
                                                         </div>
                                                     </fieldset>
@@ -279,30 +277,34 @@
                                             <div class="form-group last">
                                                 <label class="col-sm-2 control-label">Nível de escolaridade</label>
                                                 <div class="col-lg-4 controls">
-                                                    <?php echo form_dropdown('escolaridade', $escolaridades, '', 'id="escolaridade" class="form-control"'); ?>
+                                                    <?php echo form_dropdown('escolaridade', $escolaridades, $candidato->escolaridade, 'id="escolaridade" class="form-control"'); ?>
                                                 </div>
                                             </div>
                                             <br>
                                             <fieldset>
                                                 <legend>Ensino Fundamental</legend>
-                                                <input type="hidden" name="id_escolaridade[0]" value="">
+                                                <input type="hidden" name="id[0]" value="<?= $formacao[0]->id; ?>">
+                                                <input type="hidden" name="id_escolaridade[0]"
+                                                       value="<?= $formacao[0]->id_escolaridade; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Instituição</label>
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[0]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[0]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[0]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[0]" placeholder="aaaa"
+                                                               value="<?= $formacao[0]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                     <div class="col-sm-2 controls">
                                                         <div class="checkbox">
                                                             <label>
-                                                                <input name="concluido[0]" type="checkbox" value="1">Completo
+                                                                <input name="concluido[0]" type="checkbox"
+                                                                       value="1" <?= $formacao[0]->concluido ? 'checked' : ''; ?>>Completo
                                                             </label>
                                                         </div>
                                                     </div>
@@ -310,21 +312,27 @@
                                             </fieldset>
                                             <fieldset>
                                                 <legend>Ensino Médio</legend>
-                                                <input type="hidden" name="id_escolaridade[1]" value="">
+                                                <input type="hidden" name="id[1]" value="<?= $formacao[1]->id; ?>">
+                                                <input type="hidden" name="id_escolaridade[1]"
+                                                       value="<?= $formacao[1]->id_escolaridade; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 1</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[1]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[1]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-1 control-label">Tipo</label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[1]" value="N"> Normal
+                                                        <input type="radio" name="tipo[1]"
+                                                               value="N" <?= $formacao[1]->tipo == 'N' ? 'checked' : ''; ?>>
+                                                        Normal
                                                     </label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[1]" value="T"> Técnico
+                                                        <input type="radio" name="tipo[1]"
+                                                               value="T" <?= $formacao[1]->tipo == 'T' ? 'checked' : ''; ?>>
+                                                        Técnico
                                                     </label>
                                                 </div>
                                                 <div class="form-group">
@@ -332,31 +340,36 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[1]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[1]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[1]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[1]" placeholder="aaaa"
+                                                               value="<?= $formacao[1]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id_escolaridade[2]" value="">
+                                                <input type="hidden" name="id[2]" value="<?= $formacao[2]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 2</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[2]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[2]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-1 control-label">Tipo</label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[2]" value="N"> Normal
+                                                        <input type="radio" name="tipo[2]"
+                                                               value="N" <?= $formacao[2]->tipo == 'N' ? 'checked' : ''; ?>>
+                                                        Normal
                                                     </label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[2]" value="T"> Técnico
+                                                        <input type="radio" name="tipo[2]"
+                                                               value="T" <?= $formacao[2]->tipo == 'T' ? 'checked' : ''; ?>>
+                                                        Técnico
                                                     </label>
                                                 </div>
                                                 <div class="form-group">
@@ -364,31 +377,36 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[2]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[2]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[2]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[2]" placeholder="aaaa"
+                                                               value="<?= $formacao[2]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id_escolaridade[3]" value="">
+                                                <input type="hidden" name="id[3]" value="<?= $formacao[3]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 1</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[3]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[3]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-1 control-label">Tipo</label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[3]" value="N"> Normal
+                                                        <input type="radio" name="tipo[3]"
+                                                               value="N" <?= $formacao[3]->tipo == 'N' ? 'checked' : ''; ?>>
+                                                        Normal
                                                     </label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[3]" value="T"> Técnico
+                                                        <input type="radio" name="tipo[3]"
+                                                               value="T"<?= $formacao[3]->tipo == 'T' ? ' checked' : ''; ?>>
+                                                        Técnico
                                                     </label>
                                                 </div>
                                                 <div class="form-group">
@@ -396,33 +414,38 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[3]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[3]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[3]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[3]" placeholder="aaaa"
+                                                               value="<?= $formacao[3]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                             </fieldset>
                                             <fieldset>
                                                 <legend>Graduação</legend>
-                                                <input type="hidden" name="id_escolaridade[4]" value="">
+                                                <input type="hidden" name="id[4]" value="<?= $formacao[4]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 1</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[4]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[4]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-1 control-label">Tipo</label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[4]" value="B"> Bacharel
+                                                        <input type="radio" name="tipo[4]"
+                                                               value="B"<?= $formacao[4]->tipo == 'B' ? ' checked' : ''; ?>>
+                                                        Bacharel
                                                     </label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[4]" value="T"> Tecnólogo
+                                                        <input type="radio" name="tipo[4]"
+                                                               value="T"<?= $formacao[4]->tipo == 'T' ? ' checked' : ''; ?>>
+                                                        Tecnólogo
                                                     </label>
                                                 </div>
                                                 <div class="form-group">
@@ -430,31 +453,36 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[4]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[4]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[4]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[4]" placeholder="aaaa"
+                                                               value="<?= $formacao[4]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id_escolaridade[5]" value="">
+                                                <input type="hidden" name="id[5]" value="<?= $formacao[5]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 2</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[5]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[5]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-1 control-label">Tipo</label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[5]" value="B"> Bacharel
+                                                        <input type="radio" name="tipo[5]"
+                                                               value="B"<?= $formacao[5]->tipo == 'B' ? ' checked' : ''; ?>>
+                                                        Bacharel
                                                     </label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[5]" value="T"> Tecnólogo
+                                                        <input type="radio" name="tipo[5]"
+                                                               value="T"<?= $formacao[5]->tipo == 'T' ? ' checked' : ''; ?>>
+                                                        Tecnólogo
                                                     </label>
                                                 </div>
                                                 <div class="form-group">
@@ -462,31 +490,36 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[5]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[5]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[5]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[5]" placeholder="aaaa"
+                                                               value="<?= $formacao[5]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id_escolaridade[6]" value="">
+                                                <input type="hidden" name="id[6]" value="<?= $formacao[6]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 3</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[6]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[6]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-1 control-label">Tipo</label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[6]" value="B"> Bacharel
+                                                        <input type="radio" name="tipo[6]"
+                                                               value="B"<?= $formacao[6]->tipo == 'B' ? ' checked' : ''; ?>>
+                                                        Bacharel
                                                     </label>
                                                     <label class="radio-inline">
-                                                        <input type="radio" name="tipo[6]" value="T"> Tecnólogo
+                                                        <input type="radio" name="tipo[6]"
+                                                               value="T"<?= $formacao[6]->tipo == 'T' ? ' checked' : ''; ?>>
+                                                        Tecnólogo
                                                     </label>
                                                 </div>
                                                 <div class="form-group">
@@ -494,32 +527,33 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[6]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[6]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[6]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[6]" placeholder="aaaa"
+                                                               value="<?= $formacao[6]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                             </fieldset>
                                             <fieldset>
                                                 <legend>Pós-Graduação</legend>
-                                                <input type="hidden" name="id_escolaridade[7]" value="">
+                                                <input type="hidden" name="id[7]" value="<?= $formacao[7]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 1</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[7]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[7]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[7]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[7]" placeholder="aaaa"
+                                                               value="<?= $formacao[7]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -527,24 +561,25 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[7]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[7]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id_escolaridade[8]" value="">
+                                                <input type="hidden" name="id[8]" value="<?= $formacao[7]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 2</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[8]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[8]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[8]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[8]" placeholder="aaaa"
+                                                               value="<?= $formacao[8]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -552,24 +587,25 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[8]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[8]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id_escolaridade[9]" value="">
+                                                <input type="hidden" name="id[9]" value="<?= $formacao[9]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 3</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[9]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[9]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[9]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[9]" placeholder="aaaa"
+                                                               value="<?= $formacao[9]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -577,26 +613,27 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[9]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[9]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                             </fieldset>
                                             <fieldset>
                                                 <legend>Mestrado</legend>
-                                                <input type="hidden" name="id_escolaridade[10]" value="">
+                                                <input type="hidden" name="id[10]" value="<?= $formacao[10]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 1</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[10]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[10]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[10]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[10]" placeholder="aaaa"
+                                                               value="<?= $formacao[10]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -604,24 +641,25 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[10]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[10]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id_escolaridade[11]" value="">
+                                                <input type="hidden" name="id[11]" value="<?= $formacao[11]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 2</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[11]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[11]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[11]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[11]" placeholder="aaaa"
+                                                               value="<?= $formacao[11]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -629,24 +667,25 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[11]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[11]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id_escolaridade[12]" value="">
+                                                <input type="hidden" name="id[12]" value="<?= $formacao[12]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Curso 3</label>
                                                     <div class="col-sm-4 controls">
                                                         <input type="text" name="curso[12]"
                                                                placeholder="Nome do curso de formação"
-                                                               value=""
+                                                               value="<?= $formacao[12]->curso; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Ano de conclusão</label>
                                                     <div class="col-sm-2 controls">
-                                                        <input type="text" name="ano_conclusao[12]" placeholder="aaaa"
-                                                               value=""
-                                                               class="form-control text-center ano"/>
+                                                        <input type="number" name="ano_conclusao[12]" placeholder="aaaa"
+                                                               value="<?= $formacao[12]->ano_conclusao; ?>"
+                                                               class="form-control text-right" size="4" min="0"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -654,7 +693,8 @@
                                                     <div class="col-sm-4">
                                                         <input type="text" name="instituicao[12]"
                                                                placeholder="Nome da instituição de ensino"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $formacao[12]->instituicao; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                             </fieldset>
@@ -674,13 +714,15 @@
                                             </div>
                                             <fieldset>
                                                 <legend>Experiência profissional</legend>
-                                                <input type="hidden" name="id[0]" value="">
+                                                <input type="hidden" name="id[0]"
+                                                       value="<?= $historicoProfissional[0]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Empresa 1<span
                                                                 class="text-primary"> *</span></label>
                                                     <div class="col-sm-9">
                                                         <input type="text" name="instituicao[0]"
-                                                               placeholder="Nome da empresa" value=""
+                                                               placeholder="Nome da empresa"
+                                                               value="<?= $historicoProfissional[0]->instituicao; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -690,13 +732,13 @@
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_entrada[0]"
                                                                placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[0]->data_entrada; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Data de saída</label>
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_saida[0]" placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[0]->data_saida; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                 </div>
@@ -706,7 +748,8 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_entrada[0]"
                                                                placeholder="Nome do cargo de entrada"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $historicoProfissional[0]->cargo_entrada; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -714,7 +757,7 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_saida[0]"
                                                                placeholder="Nome do cargo de saída"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[0]->cargo_saida; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -724,7 +767,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_entrada[0]" value=""
+                                                            <input type="text" name="salario_entrada[0]"
+                                                                   value="<?= $historicoProfissional[0]->salario_entrada; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -732,7 +776,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_saida[0]" value=""
+                                                            <input type="text" name="salario_saida[0]"
+                                                                   value="<?= $historicoProfissional[0]->salario_saida; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -741,24 +786,26 @@
                                                     <label class="col-sm-2 control-label">Razão da saída</label>
                                                     <div class="col-sm-9">
                                 <textarea name="motivo_saida[0]" class="form-control" rows="1"
-                                          maxlength="255"></textarea>
+                                          maxlength="255"><?= $historicoProfissional[0]->motivo_saida; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Realizações</label>
                                                     <div class="col-sm-9">
                                                     <textarea name="realizacoes[0]" class="form-control"
-                                                              rows="3"></textarea>
+                                                              rows="3"><?= $historicoProfissional[0]->realizacoes; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id[1]" value="">
+                                                <input type="hidden" name="id[1]"
+                                                       value="<?= $historicoProfissional[1]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Empresa 2<span
                                                                 class="text-primary"> *</span></label>
                                                     <div class="col-sm-9">
                                                         <input type="text" name="instituicao[1]"
-                                                               placeholder="Nome da empresa" value=""
+                                                               placeholder="Nome da empresa"
+                                                               value="<?= $historicoProfissional[1]->instituicao; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -768,13 +815,13 @@
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_entrada[1]"
                                                                placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[1]->data_entrada; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Data de saída</label>
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_saida[1]" placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[1]->data_saida; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                 </div>
@@ -784,7 +831,8 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_entrada[1]"
                                                                placeholder="Nome do cargo de entrada"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $historicoProfissional[1]->cargo_entrada; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -792,7 +840,7 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_saida[1]"
                                                                placeholder="Nome do cargo de saída"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[1]->cargo_saida; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -802,7 +850,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_entrada[1]" value=""
+                                                            <input type="text" name="salario_entrada[1]"
+                                                                   value="<?= $historicoProfissional[1]->salario_entrada; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -810,7 +859,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_saida[1]" value=""
+                                                            <input type="text" name="salario_saida[1]"
+                                                                   value="<?= $historicoProfissional[1]->salario_saida; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -819,24 +869,26 @@
                                                     <label class="col-sm-2 control-label">Razão da saída</label>
                                                     <div class="col-sm-9">
                                 <textarea name="motivo_saida[1]" class="form-control" rows="1"
-                                          maxlength="255"></textarea>
+                                          maxlength="255"><?= $historicoProfissional[1]->motivo_saida; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Realizações</label>
                                                     <div class="col-sm-9">
                                                     <textarea name="realizacoes[1]" class="form-control"
-                                                              rows="3"></textarea>
+                                                              rows="3"><?= $historicoProfissional[1]->realizacoes; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id[2]" value="">
+                                                <input type="hidden" name="id[2]"
+                                                       value="<?= $historicoProfissional[2]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Empresa 3<span
                                                                 class="text-primary"> *</span></label>
                                                     <div class="col-sm-9">
                                                         <input type="text" name="instituicao[2]"
-                                                               placeholder="Nome da empresa" value=""
+                                                               placeholder="Nome da empresa"
+                                                               value="<?= $historicoProfissional[2]->instituicao; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -846,13 +898,13 @@
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_entrada[2]"
                                                                placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[2]->data_entrada; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Data de saída</label>
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_saida[2]" placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[2]->data_saida; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                 </div>
@@ -862,7 +914,8 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_entrada[2]"
                                                                placeholder="Nome do cargo de entrada"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $historicoProfissional[2]->cargo_entrada; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -870,7 +923,7 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_saida[2]"
                                                                placeholder="Nome do cargo de saída"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[2]->cargo_saida; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -880,7 +933,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_entrada[2]" value=""
+                                                            <input type="text" name="salario_entrada[2]"
+                                                                   value="<?= $historicoProfissional[2]->salario_entrada; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -888,7 +942,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_saida[2]" value=""
+                                                            <input type="text" name="salario_saida[2]"
+                                                                   value="<?= $historicoProfissional[2]->salario_saida; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -897,24 +952,26 @@
                                                     <label class="col-sm-2 control-label">Razão da saída</label>
                                                     <div class="col-sm-9">
                                 <textarea name="motivo_saida[2]" class="form-control" rows="1"
-                                          maxlength="255"></textarea>
+                                          maxlength="255"><?= $historicoProfissional[2]->motivo_saida; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Realizações</label>
                                                     <div class="col-sm-9">
                                                     <textarea name="realizacoes[2]" class="form-control"
-                                                              rows="3"></textarea>
+                                                              rows="3"><?= $historicoProfissional[2]->realizacoes; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id[3]" value="">
+                                                <input type="hidden" name="id[3]"
+                                                       value="<?= $historicoProfissional[3]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Empresa 4<span
                                                                 class="text-primary"> *</span></label>
                                                     <div class="col-sm-9">
                                                         <input type="text" name="instituicao[3]"
-                                                               placeholder="Nome da empresa" value=""
+                                                               placeholder="Nome da empresa"
+                                                               value="<?= $historicoProfissional[3]->instituicao; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -924,13 +981,13 @@
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_entrada[3]"
                                                                placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[3]->data_entrada; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Data de saída</label>
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_saida[3]" placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[3]->data_saida; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                 </div>
@@ -940,7 +997,8 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_entrada[3]"
                                                                placeholder="Nome do cargo de entrada"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $historicoProfissional[3]->cargo_entrada; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -948,7 +1006,7 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_saida[3]"
                                                                placeholder="Nome do cargo de saída"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[3]->cargo_saida; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -958,7 +1016,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_entrada[3]" value=""
+                                                            <input type="text" name="salario_entrada[3]"
+                                                                   value="<?= $historicoProfissional[3]->salario_entrada; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -966,7 +1025,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_saida[3]" value=""
+                                                            <input type="text" name="salario_saida[3]"
+                                                                   value="<?= $historicoProfissional[3]->salario_saida; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -975,24 +1035,26 @@
                                                     <label class="col-sm-2 control-label">Razão da saída</label>
                                                     <div class="col-sm-9">
                                 <textarea name="motivo_saida[3]" class="form-control" rows="1"
-                                          maxlength="255"></textarea>
+                                          maxlength="255"><?= $historicoProfissional[3]->motivo_saida; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Realizações</label>
                                                     <div class="col-sm-9">
                                                     <textarea name="realizacoes[3]" class="form-control"
-                                                              rows="3"></textarea>
+                                                              rows="3"><?= $historicoProfissional[3]->realizacoes; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id[4]" value="">
+                                                <input type="hidden" name="id[4]"
+                                                       value="<?= $historicoProfissional[4]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Empresa 5<span
                                                                 class="text-primary"> *</span></label>
                                                     <div class="col-sm-9">
                                                         <input type="text" name="instituicao[4]"
-                                                               placeholder="Nome da empresa" value=""
+                                                               placeholder="Nome da empresa"
+                                                               value="<?= $historicoProfissional[4]->instituicao; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -1002,13 +1064,13 @@
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_entrada[4]"
                                                                placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[4]->data_entrada; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Data de saída</label>
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_saida[4]" placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[4]->data_saida; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                 </div>
@@ -1018,7 +1080,8 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_entrada[4]"
                                                                placeholder="Nome do cargo de entrada"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $historicoProfissional[4]->cargo_entrada; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -1026,7 +1089,7 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_saida[4]"
                                                                placeholder="Nome do cargo de saída"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[4]->cargo_saida; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -1036,7 +1099,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_entrada[4]" value=""
+                                                            <input type="text" name="salario_entrada[4]"
+                                                                   value="<?= $historicoProfissional[4]->salario_entrada; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -1044,7 +1108,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_saida[4]" value=""
+                                                            <input type="text" name="salario_saida[4]"
+                                                                   value="<?= $historicoProfissional[4]->salario_saida; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -1053,24 +1118,26 @@
                                                     <label class="col-sm-2 control-label">Razão da saída</label>
                                                     <div class="col-sm-9">
                                 <textarea name="motivo_saida[4]" class="form-control" rows="1"
-                                          maxlength="255"></textarea>
+                                          maxlength="255"><?= $historicoProfissional[4]->motivo_saida; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Realizações</label>
                                                     <div class="col-sm-9">
                                                     <textarea name="realizacoes[4]" class="form-control"
-                                                              rows="3"></textarea>
+                                                              rows="3"><?= $historicoProfissional[4]->realizacoes; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id[5]" value="">
+                                                <input type="hidden" name="id[5]"
+                                                       value="<?= $historicoProfissional[5]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Empresa 6<span
                                                                 class="text-primary"> *</span></label>
                                                     <div class="col-sm-9">
                                                         <input type="text" name="instituicao[5]"
-                                                               placeholder="Nome da empresa" value=""
+                                                               placeholder="Nome da empresa"
+                                                               value="<?= $historicoProfissional[5]->instituicao; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -1080,13 +1147,13 @@
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_entrada[5]"
                                                                placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[5]->data_entrada; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Data de saída</label>
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_saida[5]" placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[5]->data_saida; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                 </div>
@@ -1096,7 +1163,8 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_entrada[5]"
                                                                placeholder="Nome do cargo de entrada"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $historicoProfissional[5]->cargo_entrada; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -1104,7 +1172,7 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_saida[5]"
                                                                placeholder="Nome do cargo de saída"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[5]->cargo_saida; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -1114,7 +1182,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_entrada[5]" value=""
+                                                            <input type="text" name="salario_entrada[5]"
+                                                                   value="<?= $historicoProfissional[5]->salario_entrada; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -1122,7 +1191,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_saida[5]" value=""
+                                                            <input type="text" name="salario_saida[5]"
+                                                                   value="<?= $historicoProfissional[5]->salario_saida; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -1131,24 +1201,26 @@
                                                     <label class="col-sm-2 control-label">Razão da saída</label>
                                                     <div class="col-sm-9">
                                 <textarea name="motivo_saida[5]" class="form-control" rows="1"
-                                          maxlength="255"></textarea>
+                                          maxlength="255"><?= $historicoProfissional[5]->motivo_saida; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Realizações</label>
                                                     <div class="col-sm-9">
                                                     <textarea name="realizacoes[5]" class="form-control"
-                                                              rows="3"></textarea>
+                                                              rows="3"><?= $historicoProfissional[5]->realizacoes; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <hr>
-                                                <input type="hidden" name="id[6]" value="">
+                                                <input type="hidden" name="id[6]"
+                                                       value="<?= $historicoProfissional[6]->id; ?>">
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Empresa 7<span
                                                                 class="text-primary"> *</span></label>
                                                     <div class="col-sm-9">
                                                         <input type="text" name="instituicao[6]"
-                                                               placeholder="Nome da empresa" value=""
+                                                               placeholder="Nome da empresa"
+                                                               value="<?= $historicoProfissional[6]->instituicao; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -1158,13 +1230,13 @@
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_entrada[6]"
                                                                placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[6]->data_entrada; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                     <label class="col-sm-2 control-label">Data de saída</label>
                                                     <div class="col-sm-2">
                                                         <input type="text" name="data_saida[6]" placeholder="dd/mm/aaaa"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[6]->data_saida; ?>"
                                                                class="form-control text-center date"/>
                                                     </div>
                                                 </div>
@@ -1174,7 +1246,8 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_entrada[6]"
                                                                placeholder="Nome do cargo de entrada"
-                                                               value="" class="form-control"/>
+                                                               value="<?= $historicoProfissional[6]->cargo_entrada; ?>"
+                                                               class="form-control"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -1182,7 +1255,7 @@
                                                     <div class="col-sm-9">
                                                         <input type="text" name="cargo_saida[6]"
                                                                placeholder="Nome do cargo de saída"
-                                                               value=""
+                                                               value="<?= $historicoProfissional[6]->cargo_saida; ?>"
                                                                class="form-control"/>
                                                     </div>
                                                 </div>
@@ -1192,7 +1265,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_entrada[6]" value=""
+                                                            <input type="text" name="salario_entrada[6]"
+                                                                   value="<?= $historicoProfissional[6]->salario_entrada; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -1200,7 +1274,8 @@
                                                     <div class="col-sm-2">
                                                         <div class="input-group">
                                                             <span class="input-group-addon">R$</span>
-                                                            <input type="text" name="salario_saida[6]" value=""
+                                                            <input type="text" name="salario_saida[6]"
+                                                                   value="<?= $historicoProfissional[6]->salario_saida; ?>"
                                                                    class="form-control text-right valor"/>
                                                         </div>
                                                     </div>
@@ -1209,14 +1284,14 @@
                                                     <label class="col-sm-2 control-label">Razão da saída</label>
                                                     <div class="col-sm-9">
                                 <textarea name="motivo_saida[6]" class="form-control" rows="1"
-                                          maxlength="255"></textarea>
+                                          maxlength="255"><?= $historicoProfissional[6]->motivo_saida; ?></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Realizações</label>
                                                     <div class="col-sm-9">
                                                     <textarea name="realizacoes[6]" class="form-control"
-                                                              rows="3"></textarea>
+                                                              rows="3"><?= $historicoProfissional[6]->realizacoes; ?></textarea>
                                                     </div>
                                                 </div>
                                             </fieldset>
@@ -1261,6 +1336,8 @@
     </script>
 
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo base_url("assets/js/bootstrap-fileinput/bootstrap-fileinput.css"); ?>">
+    <link rel="stylesheet" href="<?php echo base_url("assets/js/jquery-tags-input/jquery.tagsinput.css"); ?>"/>
 
     <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js') ?>"></script>
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js') ?>"></script>
@@ -1455,7 +1532,7 @@
             $('.btnSave').text('Salvando...').attr('disabled', true);
 
             $.ajax({
-                'url': '<?php echo site_url('vagas/salvarCandidato') ?>',
+                'url': '<?php echo site_url('candidatoVagas/salvarPerfil') ?>',
                 'type': 'POST',
                 'data': {
                     'candidato': $('#form_candidato').serialize(),
@@ -1467,7 +1544,7 @@
                     $('html, body').animate({scrollTop: 0}, 1500);
                     if (json.status) {
                         $('#alert').html('<div class="alert alert-success">Cadastro realizado com sucesso</div>').hide().fadeIn('slow', function () {
-                            window.location = '<?= site_url('login'); ?>';
+                            window.location = '<?= site_url('candidatoVagas'); ?>';
                         });
                     } else {
                         $('#alert').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');

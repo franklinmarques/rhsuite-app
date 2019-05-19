@@ -2,33 +2,43 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5508c712-56e3-46af-9edb-ea5a029e3767" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/config/routes.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/routes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/atividades.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/atividades.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/controllers/avaliacaoexp_avaliados.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/avaliacaoexp_avaliados.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/ei/apontamento [2019-04-07].php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/funcionario.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/funcionario.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/gestaoDePessoal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/gestaoDePessoal.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/home.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/home.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/login.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/login.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/candidatoVagas.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/candidatoVagas.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/gestaoDeVagas.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/gestaoDeVagas.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/recrutamentoPresencial_cargos.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/recrutamentoPresencial_cargos.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/recrutamentoPresencial_testes.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/recrutamentoPresencial_testes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/recrutamento_candidatos.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/recrutamento_candidatos.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/controllers/requisicaoPessoal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/requisicaoPessoal.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/usuarioDemissao.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/usuarioDemissao.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/controllers/vagas.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/vagas.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/models/usuarios_model.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/models/usuarios_model.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/views/avaliacaoexp_relatorio.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/avaliacaoexp_relatorio.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/atividades.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/atividades.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/atividadesPdf.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/atividadesPdf.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/views/avaliacaoexp_status.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/avaliacaoexp_status.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/views/editarfuncionario1.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/editarfuncionario1.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/views/gestao_de_pessoal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/gestao_de_pessoal.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/views/getavaliacaoexp_relatorio.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/getavaliacaoexp_relatorio.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/views/header.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/header.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/candidato_perfil.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/candidato_perfil.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/candidato_vagas.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/candidato_vagas.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/gestao_de_vagas.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/gestao_de_vagas.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/menu_empresa.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/menu_empresa.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/views/navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/navbar.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/views/novofuncionario1.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/novofuncionario1.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/recrutamentoPresencial_cargo.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/recrutamentoPresencial_cargo.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/recrutamento_candidatos.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/recrutamento_candidatos.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/recrutamento_perfil.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/recrutamento_perfil.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/recrutamento_perfil_novo.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/recrutamento_perfil_novo.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/views/requisicaoPessoal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/requisicaoPessoal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/requisicaoPessoal_fontes.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/requisicaoPessoal_fontes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/vagas.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/vagas.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/vagas_curriculo.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/vagas_curriculo.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution>
+      <executable />
+    </execution>
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
@@ -48,86 +58,7 @@
     <favorites_list name="rhsuite" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/controllers/vagas.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="397">
-              <caret line="199" column="37" selection-start-line="199" selection-start-column="37" selection-end-line="199" selection-end-column="37" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/controllers/login.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="825">
-              <caret line="126" column="28" selection-start-line="126" selection-start-column="22" selection-end-line="126" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/controllers/candidatoVagas.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="127">
-              <caret line="96" column="34" lean-forward="true" selection-start-line="96" selection-start-column="34" selection-end-line="96" selection-end-column="34" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/application/controllers/ei/turmas.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="16" selection-start-line="2" selection-start-column="16" selection-end-line="2" selection-end-column="16" />
-              <folding>
-                <element signature="e#23#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/models/usuarios_model.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="33" column="99" selection-start-line="33" selection-start-column="99" selection-end-line="33" selection-end-column="99" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/views/candidato_perfil.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="1444" column="8" lean-forward="true" selection-start-line="1444" selection-start-column="11" selection-end-line="1450" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/views/vagas.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1620">
-              <caret line="75" column="24" lean-forward="true" selection-start-line="75" selection-start-column="24" selection-end-line="75" selection-end-column="24" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/views/vagas_curriculo.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="683" column="74" lean-forward="true" selection-start-line="683" selection-start-column="74" selection-end-line="683" selection-end-column="74" />
-              <folding>
-                <element signature="n#style#0;n#hr#0;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -378,10 +309,10 @@
       <path value="$PROJECT_DIR$/../../php" />
     </include_path>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="425" />
-    <option name="y" value="495" />
-    <option name="width" value="2020" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="235" />
+    <option name="y" value="150" />
+    <option name="width" value="2560" />
     <option name="height" value="1555" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -410,6 +341,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -427,20 +359,6 @@
               <item name="rhsuite" type="462c0819:PsiDirectoryNode" />
               <item name="application" type="462c0819:PsiDirectoryNode" />
               <item name="controllers" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rhsuite" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rhsuite" type="462c0819:PsiDirectoryNode" />
-              <item name="application" type="462c0819:PsiDirectoryNode" />
-              <item name="controllers" type="462c0819:PsiDirectoryNode" />
-              <item name="ei" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rhsuite" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rhsuite" type="462c0819:PsiDirectoryNode" />
-              <item name="application" type="462c0819:PsiDirectoryNode" />
-              <item name="controllers" type="462c0819:PsiDirectoryNode" />
-              <item name="facilities" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="rhsuite" type="b2602c69:ProjectViewProjectNode" />
@@ -565,7 +483,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1148,11 +1065,12 @@
       <workItem from="1557148917486" duration="20951000" />
       <workItem from="1557189426090" duration="4082000" />
       <workItem from="1557232376228" duration="11217000" />
+      <workItem from="1558305138380" duration="649000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6069226000" />
+    <option name="totallyTimeSpent" value="6069875000" />
   </component>
   <component name="TodoView" selected-index="2">
     <todo-panel id="selected-file">
@@ -1164,11 +1082,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-6" y="-6" width="1293" height="693" extended-state="6" />
-    <editor active="true" />
+    <frame x="94" y="60" width="1024" height="622" extended-state="0" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.38662317" visible="true" weight="0.3805668" />
-      <window_info id="Structure" order="1" sideWeight="0.61337686" side_tool="true" visible="true" weight="0.3805668" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.38560885" visible="true" weight="0.3478261" />
+      <window_info id="Structure" order="1" sideWeight="0.61439115" side_tool="true" visible="true" weight="0.3478261" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32626426" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -1250,18 +1167,6 @@
     <MESSAGE value="avaliação de desempenho criada" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/assets/bootstrap/css/bootstrap.min.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="4" column="46186" lean-forward="true" selection-start-line="4" selection-start-column="46136" selection-end-line="4" selection-end-column="46186" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/css/style-responsive.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-27" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/recrutamentoPresencial.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -1496,76 +1401,57 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/vagas.php">
+    <entry file="file://$PROJECT_DIR$/application/views/facilities/relatorio_modelo [2019-04-16].php" />
+    <entry file="file://$PROJECT_DIR$/application/views/facilities/relatorio_manutencoes [2019-04-16].php" />
+    <entry file="file://$PROJECT_DIR$/application/views/facilities/realizacao_manutencoes [2019-04-16].php" />
+    <entry file="file://$PROJECT_DIR$/application/helpers/relatorio.php" />
+    <entry file="file://$PROJECT_DIR$/application/helpers/relatorios.php" />
+    <entry file="file://$PROJECT_DIR$/application/controllers/vagas.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1620">
-          <caret line="75" column="24" lean-forward="true" selection-start-line="75" selection-start-column="24" selection-end-line="75" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/vagas_curriculo.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="683" column="74" lean-forward="true" selection-start-line="683" selection-start-column="74" selection-end-line="683" selection-end-column="74" />
-          <folding>
-            <element signature="n#style#0;n#hr#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/candidato_perfil.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="1444" column="8" lean-forward="true" selection-start-line="1444" selection-start-column="11" selection-end-line="1450" selection-end-column="14" />
+        <state relative-caret-position="2370">
+          <caret line="158" selection-start-line="158" selection-end-line="158" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/login.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="825">
+        <state relative-caret-position="1890">
           <caret line="126" column="28" selection-start-line="126" selection-start-column="22" selection-end-line="126" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/models/usuarios_model.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="33" column="99" selection-start-line="33" selection-start-column="99" selection-end-line="33" selection-end-column="99" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/facilities/relatorio_modelo [2019-04-16].php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/facilities/relatorio_manutencoes [2019-04-16].php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/facilities/realizacao_manutencoes [2019-04-16].php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/vagas.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="199" column="37" selection-start-line="199" selection-start-column="37" selection-end-line="199" selection-end-column="37" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/candidatoVagas.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="127">
-          <caret line="96" column="34" lean-forward="true" selection-start-line="96" selection-start-column="34" selection-end-line="96" selection-end-column="34" />
+        <state relative-caret-position="150">
+          <caret line="10" column="23" selection-start-line="10" selection-start-column="23" selection-end-line="10" selection-end-column="23" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/helpers/relatorio.php">
+    <entry file="file://$PROJECT_DIR$/application/models/usuarios_model.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-832" />
+        <state relative-caret-position="495">
+          <caret line="33" column="99" selection-start-line="33" selection-start-column="99" selection-end-line="33" selection-end-column="99" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/helpers/relatorios.php">
+    <entry file="file://$PROJECT_DIR$/application/views/candidato_perfil.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
+        <state relative-caret-position="21840">
+          <caret line="1456" column="8" selection-start-line="1456" selection-start-column="8" selection-end-line="1456" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/vagas.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1125">
+          <caret line="75" column="24" selection-start-line="75" selection-start-column="24" selection-end-line="75" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/vagas_curriculo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9225">
+          <caret line="615" column="67" selection-start-line="615" selection-start-column="67" selection-end-line="615" selection-end-column="67" />
         </state>
       </provider>
     </entry>
@@ -1576,6 +1462,20 @@
           <folding>
             <element signature="e#23#31#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/avaliacaoexp_avaliados.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/atividades.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
         </state>
       </provider>
     </entry>

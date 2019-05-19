@@ -268,6 +268,10 @@
                                     <a href="#banco_google" aria-controls="banco_google" role="tab"
                                        data-toggle="tab">Lista de candidatos potenciais</a>
                                 </li>
+                                <li role="presentation">
+                                    <a href="#banco_interessados" aria-controls="banco_interessados" role="tab"
+                                       data-toggle="tab">Lista de interessados na vaga</a>
+                                </li>
                             </ul>
                             <br>
                             <div class="tab-content">
@@ -747,6 +751,201 @@
                                         </div>
                                     </form>
                                 </div>
+                                <div role="tabpanel" class="tab-pane" id="banco_interessados">
+                                    <form action="#" id="form_banco_interessados" class="form-horizontal">
+                                        <div class="form-body" style="padding-top: 0px;">
+                                            <input type="hidden" value="" name="id"/>
+                                            <input type="hidden" value="<?= $requisicao ?>" name="id_requisicao"/>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="panel-group m-bot20" id="accordion">
+                                                        <div class="well well-sm">
+                                                            <div class="">
+                                                                <a class="accordion-toggle" data-toggle="collapse"
+                                                                   data-parent="#accordion" href="#collapseThree"
+                                                                   style="height: 1px;">
+                                                                    <span style="padding-left: 40%; font-weight: bold;"><i
+                                                                                class="glyphicon glyphicon-search"></i>&ensp;Para realizar pesquisa avançada clique aqui</span>
+                                                                </a>
+                                                            </div>
+                                                            <div id="collapseThree" class="panel-collapse collapse">
+                                                                <div class="panel-body">
+                                                                    <div class="row">
+                                                                        <div class="col-md-2">
+                                                                            <label class="control-label">Estado</label>
+                                                                            <?php echo form_dropdown('estado', array(), '', 'id="estado" class="form-control filtro input-sm"'); ?>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <label class="control-label">Cidade</label>
+                                                                            <?php echo form_dropdown('cidade', array(), '', 'id="cidade" class="form-control filtro input-sm"'); ?>
+                                                                        </div>
+                                                                        <div class="col-md-1">
+                                                                            <label>&nbsp;</label><br>
+                                                                            <button type="button"
+                                                                                    id="limpa_filtro_interessados"
+                                                                                    class="btn btn-default">
+                                                                                Limpar
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="col-md-3 text-right">
+                                                                            <label>&nbsp;</label><br>
+                                                                            <button type="button"
+                                                                                    id="btnSaveBancoInteressados"
+                                                                                    onclick="table_interessados.ajax.reload(null, false);"
+                                                                                    class="btn btn-info">Pesquisar
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="col-md-7">
+                                                                            <label class="control-label">Bairro</label>
+                                                                            <?php echo form_dropdown('bairro', array(), '', 'id="bairro" class="form-control filtro input-sm"'); ?>
+                                                                        </div>
+                                                                        <div class="col-md-5">
+                                                                            <label class="control-label">Deficiência</label>
+                                                                            <?php echo form_dropdown('deficiencia', array(), '', 'id="deficiencia" class="form-control filtro input-sm"'); ?>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-5">
+                                                                            <label class="control-label">Escolaridade</label>
+                                                                            <?php echo form_dropdown('escolaridade', $escolaridade, '', 'id="escolaridade" class="form-control filtro input-sm"'); ?>
+                                                                        </div>
+                                                                        <div class="col-md-2">
+                                                                            <label class="control-label">Sexo</label>
+                                                                            <select id="sexo" name="sexo"
+                                                                                    class="form-control filtro input-sm">
+                                                                                <option value="">Todos</option>
+                                                                                <option value="M">Masculino</option>
+                                                                                <option value="F">Feminino</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-5">
+                                                                            <label class="control-label">Cargo/função
+                                                                                processos
+                                                                                passados</label>
+                                                                            <select id="cargo_funcao"
+                                                                                    name="cargo_funcao"
+                                                                                    class="form-control filtro input-sm">
+                                                                                <option value="">Todos</option>
+                                                                                <option value="A">Selecionado</option>
+                                                                                <option value="C">Contratado</option>
+                                                                                <option value="S">Stand by</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-5">
+                                                                            <label class="control-label">Resultado
+                                                                                entrevista
+                                                                                seleção</label>
+                                                                            <select id="resultado_selecao"
+                                                                                    name="resultado_selecao"
+                                                                                    class="form-control filtro input-sm">
+                                                                                <option value="">Todos</option>
+                                                                                <option value="A">Selecionado</option>
+                                                                                <option value="X">Aprovado</option>
+                                                                                <option value="S">Stand by</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-5">
+                                                                            <label class="control-label">Resultado
+                                                                                entrevista
+                                                                                cliente</label>
+                                                                            <select id="resultado_representante"
+                                                                                    name="reultado_representante"
+                                                                                    class="form-control filtro input-sm">
+                                                                                <option value="">Todos</option>
+                                                                                <option value="A">Selecionado</option>
+                                                                                <option value="C">Contratado</option>
+                                                                                <option value="S">Stand by</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="table-responsive">
+                                                <div class="form-inline">
+                                                    <label class="control-label">Ocultar as colunas abaixo:
+                                                        &nbsp;</label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="1"
+                                                               autocomplete="off"> Cliente
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="2"
+                                                               autocomplete="off"> Cargo
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="3"
+                                                               autocomplete="off"> Cidade
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="5"
+                                                               autocomplete="off"> Deficiência
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="6"
+                                                               autocomplete="off"> Telefone
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="7"
+                                                               autocomplete="off"> E-mail
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="8"
+                                                               autocomplete="off"> Fonte
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="9"
+                                                               autocomplete="off"> Status
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="10"
+                                                               autocomplete="off"> Data entrevista RH
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="12"
+                                                               autocomplete="off"> Data entrevista cliente
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="14"
+                                                               autocomplete="off"> Observações
+                                                    </label>
+                                                </div>
+                                                <hr style="margin-top: 10px; margin-bottom: 0px;">
+                                                <table id="table_interessados"
+                                                       class="table table-striped table-condensed"
+                                                       cellspacing="0" width="100%">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Ação</th>
+                                                        <th>Cliente</th>
+                                                        <th>Cargo</th>
+                                                        <th>Cidade</th>
+                                                        <th>Nome do candidato</th>
+                                                        <th>Deficiência</th>
+                                                        <th>Telefone</th>
+                                                        <th>E-mail</th>
+                                                        <th>Fonte</th>
+                                                        <th>Status</th>
+                                                        <th>Data entrevista RH</th>
+                                                        <th>Resultado entrevista RH</th>
+                                                        <th>Data entrevista cliente</th>
+                                                        <th>Resultado entrevista cliente</th>
+                                                        <th>Observações</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div><!-- /.modal-content -->
@@ -1162,7 +1361,7 @@
 
     <script>
         var save_method;
-        var table, table_google;
+        var table, table_google, table_interessados;
         var demo1;
         var candidato;
 
@@ -1190,7 +1389,13 @@
                         d.busca = $('#form_banco_novo').serialize();
                         return d;
                     }
-                }
+                },
+                'columnDefs': [
+                    {
+                        'className': 'text-nowrap',
+                        'targets': [0]
+                    }
+                ]
             });
 
             table_google = $('#table_google').DataTable({
@@ -1209,7 +1414,38 @@
                         d.busca = $('#form_banco_google').serialize();
                         return d;
                     }
-                }
+                },
+                'columnDefs': [
+                    {
+                        'className': 'text-nowrap',
+                        'targets': [0]
+                    }
+                ]
+            });
+
+            table_interessados = $('#table_interessados').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'ordering': false,
+                'iDisplayLength': 50,
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>',
+                    'searchPlaceholder': 'Nome do candidato'
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajaxListInteressados/' . $requisicao) ?>',
+                    'type': 'POST',
+                    'data': function (d) {
+                        d.busca = $('#form_banco_interessados').serialize();
+                        return d;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'className': 'text-nowrap',
+                        'targets': [0]
+                    }
+                ]
             });
 
             table = $('#table').DataTable({
@@ -1459,6 +1695,11 @@
                 var column = table_google.column($(this).val());
                 column.visible(!column.visible());
             });
+
+            $('#banco_interessados input.toggle-vis').on('change', function (e) {
+                var column = table_interessados.column($(this).val());
+                column.visible(!column.visible());
+            });
         });
 
 
@@ -1614,6 +1855,7 @@
             table.ajax.reload(null, false); //reload datatable ajax
             table_ame.ajax.reload(null, false);
             table_google.ajax.reload(null, false);
+            table_interessados.ajax.reload(null, false);
         }
 
         function save() {
@@ -1727,6 +1969,34 @@
                     alert('Error adding / update data');
                     $('#btnSaveStatus').text('Salvar'); //change button text
                     $('#btnSaveStatus').attr('disabled', false); //set button enable
+                }
+            });
+        }
+
+        function salvar_interessado(id) {
+            $('#btnSaveBancoInteressados').text('Salvando...').attr('disabled', true); //set button disable
+            $.ajax({
+                'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_addInteressado') ?>',
+                'type': 'POST',
+                'data': {
+                    'id': id
+                },
+                'dataType': 'json',
+                'success': function (json) {
+                    if (json.status) //if success close modal and reload ajax table
+                    {
+                        reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
+                    }
+
+                    $('#btnSaveBancoInteressados').text('Salvar'); //change button text
+                    $('#btnSaveBancoInteressados').attr('disabled', false); //set button enable
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                    $('#btnSaveBancoInteressados').text('Salvar'); //change button text
+                    $('#btnSaveBancoInteressados').attr('disabled', false); //set button enable
                 }
             });
         }
@@ -2049,6 +2319,15 @@
             var logado = <?php echo $this->session->userdata('logado') ? 'true' : 'false'; ?>;
             if (logado) {
                 window.open("<?php echo site_url('requisicaoPessoal_documentos/candidato'); ?>/" + id_candidato, 'Alunos', 'STATUS=NO, TOOLBAR=NO, LOCATION=NO, DIRECTORIES=NO, RESISABLE=NO, SCROLLBARS=YES, TOP=80, LEFT=210, WIDTH=1050, HEIGHT=560');
+            } else {
+                window.open("<?php echo site_url('home/sair'); ?>");
+            }
+        }
+
+        function detalhes_candidato(id) {
+            var logado = <?php echo $this->session->userdata('logado') ? 'true' : 'false'; ?>;
+            if (logado) {
+                window.open("<?php echo site_url('recrutamento_candidatos/visualizarPerfil'); ?>/" + id, 'Candidato', 'STATUS=NO, TOOLBAR=NO, LOCATION=NO, DIRECTORIES=NO, RESISABLE=NO, SCROLLBARS=YES, TOP=80, LEFT=180, WIDTH=1130, HEIGHT=560');
             } else {
                 window.open("<?php echo site_url('home/sair'); ?>");
             }

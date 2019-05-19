@@ -496,7 +496,7 @@ class RecrutamentoPresencial_testes extends MY_Controller
         $this->db->where('id', $this->session->userdata('id'));
         $this->db->where('empresa', $this->session->userdata('empresa'));
         $row = $this->db->get('recrutamento_usuarios')->row();
-        if (!($row && $this->session->userdata('tipo') === 'candidato')) {
+        if (!($row && in_array($this->session->userdata('tipo'), ['candidato', 'candidato_externo']))) {
             exit(json_encode(array('retorno' => 0, 'aviso' => 'Acesso negado!')));
         }
 
@@ -578,7 +578,9 @@ class RecrutamentoPresencial_testes extends MY_Controller
             }
         }
 
-        $this->db->insert_batch('requisicoes_pessoal_resultado', $data);
+        if (count($data)) {
+            $this->db->insert_batch('requisicoes_pessoal_resultado', $data);
+        }
 
 
         if ($this->db->trans_status() !== false) {

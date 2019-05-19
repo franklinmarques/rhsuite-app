@@ -65,6 +65,9 @@ require_once "header.php";
                             <li role="presentation" class="disabled">
                                 <a href="#">Histórico profissional</a>
                             </li>
+                            <li role="presentation" class="disabled">
+                                <a href="#">Currículo</a>
+                            </li>
                         <?php else: ?>
                             <li role="presentation">
                                 <a href="#formacao" aria-controls="formacao" role="tab" data-toggle="tab">Formação</a>
@@ -72,6 +75,9 @@ require_once "header.php";
                             <li role="presentation">
                                 <a href="#historico_profissional" aria-controls="historico_profissional" role="tab"
                                    data-toggle="tab">Histórico profissional</a>
+                            </li>
+                            <li role="presentation" class="disabled">
+                                <a href="#">Currículo</a>
                             </li>
                         <?php endif; ?>
                     </ul>

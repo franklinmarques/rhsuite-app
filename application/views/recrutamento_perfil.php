@@ -73,6 +73,10 @@ require_once "header.php";
                                 <a href="#historico_profissional" aria-controls="historico_profissional" role="tab"
                                    data-toggle="tab">Histórico profissional</a>
                             </li>
+                            <li role="presentation">
+                                <a href="#curriculo" aria-controls="curriculo" role="tab"
+                                   data-toggle="tab">Currículo</a>
+                            </li>
                         <?php endif; ?>
                     </ul>
                     <br/>
@@ -300,6 +304,7 @@ require_once "header.php";
                                 </div>
                             </div>
                         </div>
+
                         <div role="tabpanel" class="tab-pane" id="formacao">
                             <?php echo form_open('recrutamento_candidatos/ajax_updateFormacao', 'data-aviso="alert" class="form-horizontal ajax-upload autocomplete="off"'); ?>
                             <input type="hidden" name="id_usuario" value="<?= $id ?>"/>
@@ -1291,6 +1296,53 @@ require_once "header.php";
                             </fieldset>
 
                             <?php echo form_close(); ?>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="curriculo">
+                            <h5 class="text-primary">Para anexar seu currículo digital (*.pdf), selecione o
+                                mesmo e acione o botão "Importar".</h5>
+                            <?php echo form_open_multipart('recrutamento_candidatos/ajax_updateCurriculo', 'data-aviso="alert" class="form-horizontal ajax-upload autocomplete="off"'); ?>
+                            <input type="hidden" name="id" value="<?= $id ?>"/>
+                            <div class="row form-group">
+                                <label class="col-sm-3 col-lg-2 control-label">Arquivo .pdf</label>
+                                <div class="col-sm-7 col-lg-7 controls">
+                                    <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                        <div class="form-control" data-trigger="fileinput">
+                                            <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                                            <span class="fileinput-filename"></span>
+                                        </div>
+                                        <div class="input-group-addon btn btn-default btn-file">
+                                            <span class="fileinput-new">Selecionar arquivo</span>
+                                            <span class="fileinput-exists">Alterar</span>
+                                            <input type="file" name="arquivo_curriculo" accept=".pdf">
+                                        </div>
+                                        <a href="#" class="input-group-addon btn btn-default fileinput-exists"
+                                           data-dismiss="fileinput">Remover</a>
+                                    </div>
+                                    <?php if ($arquivo_curriculo): ?>
+                                        <span class="help-block"><?= $arquivo_curriculo; ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="col-sm-2 col-lg-3 text-right">
+                                    <button type="submit" name="submit" class="btn btn-success">
+                                        <i class="fa fa-upload"></i> Importar
+                                    </button>
+                                    <button class="btn btn-default" onclick="javascript:history.back()"><i
+                                                class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
+                                    </button>
+                                </div>
+                            </div>
+                            <?php echo form_close(); ?>
+                            <?php if ($arquivo_curriculo): ?>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <iframe src="https://docs.google.com/gview?embedded=true&url=<?php echo base_url('arquivos/curriculos/' . convert_accented_characters($arquivo_curriculo)); ?>"
+                                                width="100%" height="450px" frameborder="0"
+                                                allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
 

@@ -1044,14 +1044,17 @@ class Avaliacaoexp_avaliados extends MY_Controller
         if ($busca['funcao']) {
             $sql .= " AND b.funcao = '{$busca['funcao']}'";
         }
-        if ($busca['data_avaliacao']) {
+        if (strlen($busca['data_avaliacao'])) {
             $sql .= " AND c.data_avaliacao >= '" . date("Y-m-d", strtotime(str_replace('/', '-', $busca['data_avaliacao']))) . "'";
         }
         if (isset($busca['resultado']) and !empty($busca['resultado'])) {
             $sql .= ' AND h.id_avaliador IS NULL';
         }
         if (isset($busca['status']) and !empty($busca['status'])) {
-            $sql .= ' AND b.status  = 1';
+            $sql .= ' AND b.status = 1';
+        }
+        if (isset($busca['ultimo_semestre']) and !empty($busca['ultimo_semestre'])) {
+            $sql .= ' AND c.data_avaliacao >= SUBDATE(NOW(), INTERVAL 6 MONTH)';
         }
         if ($tipo == '1') {
             $sql .= " AND e.tipo = 'A'";

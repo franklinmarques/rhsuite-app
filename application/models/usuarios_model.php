@@ -19,7 +19,7 @@ class Usuarios_model extends CI_Model
         if ($row->num_rows() == 1) {
             return $row->row();
         } else {
-            $this->db->select("a.*, b.url, b.cabecalho, 'candidato' AS tipo, NULL AS hash_acesso", false);
+            $this->db->select("a.*, b.url, b.cabecalho, IF(a.nivel_acesso = 'E', 'candidato_externo', 'candidato') AS tipo, NULL AS hash_acesso", false);
             $this->db->join('usuarios b', 'b.id = a.empresa');
             $row = $this->db->get_where('recrutamento_usuarios a', array('a.email' => $email, 'a.senha' => $senha));
             if ($row->num_rows() == 1) {

@@ -1395,6 +1395,24 @@
             }
         }
 
+
+        function publicar_vaga(id) {
+            $.ajax({
+                'url': '<?php echo site_url('requisicaoPessoal/publicarVaga') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.status) {
+                        alert('Vaga publicada com sucesso.');
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error deleting data');
+                }
+            });
+        }
+
     </script>
 
 <?php require_once 'end_html.php'; ?>

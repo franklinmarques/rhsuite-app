@@ -153,20 +153,27 @@
                                         <div class="col-md-2">
                                             <input name="codigo" class="form-control" type="text" readonly>
                                         </div>
-                                        <label class="control-label col-md-1">Status</label>
-                                        <div class="col-md-2">
-                                            <select name="status" class="form-control">
-                                                <option value="1">Aberta</option>
-                                                <option value="0">Fechada</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-5 text-right">
+                                        <div class="col-md-7 text-right">
                                             <button type="button" id="btnSave" onclick="save()" class="btn btn-success">
                                                 Salvar
                                             </button>
                                             <button type="button" class="btn btn-default" data-dismiss="modal">
                                                 Cancelar
                                             </button>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Status</label>
+                                        <div class="col-md-2">
+                                            <select name="status" class="form-control">
+                                                <option value="1">Aberta</option>
+                                                <option value="0">Fechada</option>
+                                            </select>
+                                        </div>
+                                        <label class="control-label col-md-3">Requisição de Pessoal <span
+                                                    class="text-danger">*</span></label>
+                                        <div class="col-md-2">
+                                            <?php echo form_dropdown('id_requisicao_pessoal', $requisicoesPessoal, '', 'id="id_requisicao_pessoal" class="form-control"'); ?>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -320,7 +327,11 @@
                         'targets': [1, 2, 4]
                     },
                     {
-                        'width': '50%',
+                        'width': '34%',
+                        'targets': [3]
+                    },
+                    {
+                        'width': '33%',
                         'targets': [5, 6]
                     },
                     {

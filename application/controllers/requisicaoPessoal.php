@@ -549,6 +549,7 @@ class RequisicaoPessoal extends MY_Controller
                     $row[] = '
                               <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
                               <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $requisicao->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                              <button type="button" class="btn btn-sm btn-success disabled" onclick="publicar_vaga(' . $requisicao->id . ')" title="Publicar vaga">Publicar vaga</button>
                               <a class="btn btn-sm btn-primary" href="' . site_url('/recrutamentoPresencial_cargos/gerenciar/' . $requisicao->id) . '" title="Processo Seletivo">Processo</a>
                               <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $requisicao->id . ')" title="Mostrar aprovados">Aprovados</button>
                               <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $requisicao->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
@@ -558,6 +559,7 @@ class RequisicaoPessoal extends MY_Controller
                     $row[] = '
                               <button type="button" class="btn btn-sm btn-info disabled" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
                               <button type="button" class="btn btn-sm btn-danger disabled" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                              <button type="button" class="btn btn-sm btn-success disabled" title="Publicar vaga">Publicar vaga</button>
                               <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
                               <button type="button" class="btn btn-sm btn-info disabled" title="Mostrar aprovados">Aprovados</button>
                               <button type="button" class="btn btn-sm btn-primary disabled" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></button>
@@ -569,6 +571,7 @@ class RequisicaoPessoal extends MY_Controller
                     $row[] = '
                               <button type="button" class="btn btn-sm btn-info disabled" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
                               <button type="button" class="btn btn-sm btn-danger disabled" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                              <button type="button" class="btn btn-sm btn-success disabled" title="Publicar vaga">Publicar vaga</button>
                               <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
                               <button type="button" class="btn btn-sm btn-info disabled" title="Mostrar aprovados">Aprovados</button>
                               <button type="button" class="btn btn-sm btn-primary disabled" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></button>
@@ -578,6 +581,7 @@ class RequisicaoPessoal extends MY_Controller
                     $row[] = '
                               <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
                               <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $requisicao->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                              <button type="button" class="btn btn-sm btn-success disabled" onclick="publicar_vaga(' . $requisicao->id . ')" title="Publicar vaga">Publicar vaga</button>
                               <a class="btn btn-sm btn-primary" href="' . site_url('/recrutamentoPresencial_cargos/gerenciar/' . $requisicao->id) . '" title="Processo Seletivo">Processo</a>
                               <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $requisicao->id . ')" title="Mostrar aprovados">Aprovados</button>
                               <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $requisicao->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
@@ -587,6 +591,7 @@ class RequisicaoPessoal extends MY_Controller
                     $row[] = '
                               <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
                               <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $requisicao->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                              <button type="button" class="btn btn-sm btn-success disabled" onclick="publicar_vaga(' . $requisicao->id . ')" title="Publicar vaga">Publicar vaga</button>
                               <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
                               <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $requisicao->id . ')" title="Mostrar aprovados">Aprovados</button>
                               <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $requisicao->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
@@ -1330,7 +1335,7 @@ PIS (2)';
         $rowEmails = $this->db->get('requisicoes_pessoal_emails')->result();
         $emails = array_column($rowEmails, 'email', 'id');
         $data['emails'] = form_dropdown('', ['' => 'selecione...'] + $emails, '');
-        $data['mensagem'] = 'Favor promover o agendamento de exame médico admissioal para os colaboradores abaixo!';
+        $data['mensagem'] = 'Favor promover o agendamento de exame médico admissional para os colaboradores abaixo!';
 
         $this->db->select('c.nome, c.rg, c.pis, c.cpf, e.nome AS cargo, f.nome AS funcao', false);
         $this->db->select("DATE_FORMAT(c.data_nascimento, '%d/%m/%Y') AS data_nascimento", false);
@@ -1600,5 +1605,67 @@ PIS (2)';
             $this->m_pdf->pdf->Output('Requisição - ' . $this->uri->rsegment(3) . '.pdf', 'D');
         }
     }
+
+
+    public function publicarVaga()
+    {
+        $this->db->select('a.id_empresa');
+        $this->db->select('a.data_abertura');
+        $this->db->select(["IF(a.status = 'A', 1, 0) AS status"], false);
+        $this->db->select('a.id AS id_requisicao_pessoal');
+        $this->db->select('a.id_cargo');
+        $this->db->select('a.id_funcao');
+//        $this->db->select('formacao_minima');
+//        $this->db->select('formacao_especifica_minima');
+//        $this->db->select('perfil_profissional_desejado');
+        $this->db->select('a.numero_vagas AS quantidade');
+        $this->db->select('d.estado AS estado_vaga');
+        $this->db->select('a.municipio AS cidade_vaga');
+        $this->db->select('a.local_trabalho AS bairro_vaga');
+        $this->db->select('a.regime_contratacao AS tipo_vinculo');
+        $this->db->select('a.remuneracao_mensal AS remuneracao');
+        $this->db->select("(CASE a.vale_transporte WHEN 1 THEN 'vale transporte' END) AS vale_transporte", false);
+        $this->db->select("(CASE a.vale_alimentacao WHEN 1 THEN 'vale alimentação' END) AS vale_alimentacao", false);
+        $this->db->select("(CASE a.vale_refeicao WHEN 1 THEN 'vale refeição' END) AS vale_refeicao", false);
+        $this->db->select("(CASE a.cesta_basica WHEN 1 THEN 'cesta básica' END) AS cesta_basica", false);
+        $this->db->select("(CASE a.assistencia_medica WHEN 1 THEN 'assistência médica' END) AS assistencia_medica", false);
+        $this->db->select("(CASE a.plano_odontologico WHEN 1 THEN 'plano odontológico' END) AS plano_odontologico", false);
+        $this->db->select("(CASE a.participacao_resultados WHEN 1 THEN 'participação nos resultados' END) AS participacao_resultados", false);
+        $this->db->select('NULL AS beneficios', false);
+        $this->db->select('a.horario_trabalho');
+        $this->db->select("CONCAT(b.nome, ' ', b.telefone) AS contato_selecionador");
+        $this->db->join('usuarios b', 'b.nome = a.selecionador', 'left');
+        $this->db->join('municipios c', 'c.municipio = a.municipio', 'left');
+        $this->db->join('estados d', 'd.cod_uf = c.cod_uf', 'left');
+        $this->db->where('a.id', $this->input->post('id'));
+        $data = $this->db->get('requisicao_pessoal a')->row();
+
+        $camposBeneficios = array(
+            'vale_transporte' => $data['vale_transporte'],
+            'vale_alimentacao' => $data['vale_alimentacao'],
+            'vale_refeicao' => $data['vale_refeicao'],
+            'cesta_basica' => $data['cesta_basica'],
+            'assistencia_medica' => $data['assistencia_medica'],
+            'plano_odontologico' => $data['plano_odontologico'],
+            'participacao_resultados' => $data['participacao_resultados']
+        );
+
+        $beneficios = array_filter($camposBeneficios);
+
+        if (count($beneficios)) {
+            $data['beneficios'] = ucfirst(implode(', ', $beneficios));
+        }
+
+        $data = array_diff($data, array_keys($camposBeneficios));
+
+        $this->db->trans_start();
+        $this->db->insert('gestao_vagas', $data);
+        $this->db->trans_complete();
+
+        $status = $this->db->trans_status();
+
+        echo json_encode(['status' => $status]);
+    }
+
 
 }

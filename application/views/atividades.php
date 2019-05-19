@@ -91,7 +91,7 @@ require_once "header.php";
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
                         <li class="active">Lista de Pendências</li>
                         <?php if ($this->agent->is_mobile()): ?>
-                            <button style="float:right;" class="btn btn-success btn-xs" onclick="add_atividade()">
+                            <button style="float:right;" class="btn btn-info btn-xs" onclick="add_atividade()">
                                 <i class="glyphicon glyphicon-plus"></i> Cadastrar atividade
                             </button>
                         <?php endif; ?>
@@ -99,22 +99,17 @@ require_once "header.php";
                     <div class="row form-inline">
                         <div class="col-sm-5 col-md-4">
                             <?php if ($this->agent->is_mobile() == false): ?>
-                                <button class="btn btn-success" onclick="add_atividade()"><i
+                                <button class="btn btn-info" onclick="add_atividade()"><i
                                             class="glyphicon glyphicon-plus"></i> Cadastrar atividade mãe
                                 </button>
-                                <button class="btn btn-info" onclick=""><i class="glyphicon glyphicon-list-alt"></i>
+                                <a class="btn btn-primary" href="<?= site_url('atividades/relatorio'); ?>"><i
+                                            class="glyphicon glyphicon-list-alt"></i>
                                     Relatório
-                                </button>
+                                </a>
                             <?php endif; ?>
                         </div>
                         <div class="col-sm-7 col-md-8 right hidden-xs hidden-sm">
                             <?php if ($this->agent->is_mobile() == false): ?>
-                                Legenda: &emsp;
-                                <i class="glyphicon glyphicon-stop"
-                                   style="color: #87bcd6;"></i> Possui atividades filhas
-                                                                contraídas &emsp;
-                                <i class="glyphicon glyphicon-stop" style="color: #08C;"></i> Possui atividades filhas
-                                                                                              expandidas &emsp;
                                 <p class="bg-info text-info" id="alerta" style="padding: 5px;">
                                     <small>* ID - Identificador &nbsp; | &nbsp; * ST - Status: [ NF - Não-finalizado;
                                         &nbsp;
@@ -138,11 +133,6 @@ require_once "header.php";
                                     </small>
                                     <br>
                                 </p>
-                            <?php endif; ?>
-                            <?php if ($this->agent->is_mobile() == false): ?>
-                                <em class="text-danger">* Clique na linha que possua a descrição da atividade em fundo
-                                    azul
-                                    para exibir ou ocultar as atividades filhas. &nbsp;</em>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -186,10 +176,9 @@ require_once "header.php";
                                         </div>
                                         <?php if ($this->agent->is_mobile() == false): ?>
                                             <div class="btn-group" role="group" aria-label="...">
-                                                <a id="pdf" class="btn btn-sm btn-danger"
+                                                <a id="pdf" class="btn btn-sm btn-info"
                                                    href="<?= site_url('atividades/pdf/'); ?>" title="Exportar PDF"><i
-                                                            class="glyphicon glyphicon-download-alt"></i> Exportar
-                                                    PDF</a>
+                                                            class="glyphicon glyphicon-print"></i> Imprimir</a>
                                             </div>
                                         <?php endif; ?>
                                     </div>
@@ -197,21 +186,30 @@ require_once "header.php";
                             </div>
                         </div>
                     </div>
-                    <table id="table" class="table table-striped table-hover table-bordered table-condensed"
-                           width="100%">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <i class="glyphicon glyphicon-stop" style="color: #08C;"></i> Atividades mães &emsp;
+                            <i class="glyphicon glyphicon-stop" style="color: #87bcd6;"></i> Atividades filhas
+                        </div>
+                        <div class="col-md-8">
+                            <?php if ($this->agent->is_mobile() == false): ?>
+                                <em class="text-danger">* Clique na linha que possua a descrição da atividade em fundo
+                                    azul para exibir ou ocultar as atividades filhas. &nbsp;</em>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <table id="table" class="table table-hover table-bordered table-condensed" width="100%">
                         <thead>
                         <tr>
                             <th style="padding: 5px;" class="hidden-xs hidden-sm" nowrap>ID<span
                                         class="text-info"> *</span></th>
-                            <th class="hidden-xs hidden-sm">ID Mãe</th>
+                            <th nowrap>Atividade</th>
                             <th style="padding: 5px;" class="hidden-xs hidden-sm" nowrap>PR<span
-                                        class="text-info"> *</span></th>
-                            <th style="padding: 5px;" class="hidden-xs hidden-sm" nowrap>TP<span
                                         class="text-info"> *</span></th>
                             <th style="padding: 5px;" class="hidden-xs hidden-sm" nowrap>ST<span
                                         class="text-info"> *</span></th>
-                            <th nowrap>Atividade</th>
-                            <th class="hidden-xs hidden-sm">Nível</th>
                             <th>Colaborador/empresa</th>
                             <th style="padding: 5px;" class="hidden-xs hidden-sm">Data cadastro</th>
                             <th style="padding: 5px;" class="hidden-xs hidden-sm">Data limite</th>
@@ -240,23 +238,29 @@ require_once "header.php";
                                 <input type="hidden" value="" name="id"/>
                                 <input type="hidden" value="" name="id_mae"/>
                                 <div class="form-body">
+                                    <div class="row form-group" id="id_atividade_mae">
+                                        <label class="control-label col-md-2">ID atividade mãe</label>
+                                        <div class="col-md-2">
+                                            <input class="form-control" type="text" value="" readonly>
+                                        </div>
+                                    </div>
                                     <div class="row form-group" id="colaborador">
                                         <label class="control-label col-md-2">Colaborador</label>
                                         <div class="col col-md-9">
-                                            <?php echo form_dropdown('id_usuario', array('' => 'selecione...') + $id_usuario, '', 'class="form-control"') ?>
+                                            <?php echo form_dropdown('id_usuario', array('' => 'selecione...') + $id_usuario, '', 'class="form-control empresa"') ?>
                                         </div>
                                     </div>
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Atividade</label>
                                         <div class="col-md-9">
-                                            <textarea name="atividade" class="form-control" rows="2"></textarea>
+                                            <textarea name="atividade" class="form-control empresa" rows="2"></textarea>
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Prioridade</label>
                                         <div class="col-md-3">
-                                            <select name="prioridade" class="form-control">
+                                            <select name="prioridade" class="form-control empresa">
                                                 <option value="">selecione...</option>
                                                 <option value="0">Baixa</option>
                                                 <option value="1">Média</option>
@@ -265,7 +269,7 @@ require_once "header.php";
                                         </div>
                                         <label class="control-label col-md-2">Tipo atividade</label>
                                         <div class="col-md-3">
-                                            <select name="tipo" class="form-control">
+                                            <select name="tipo" class="form-control empresa">
                                                 <option value="">selecione...</option>
                                                 <option value="G">Gestão</option>
                                                 <option value="O">Operacional</option>
@@ -276,20 +280,28 @@ require_once "header.php";
                                         <label class="control-label col-md-2">Data limite</label>
                                         <div class="col-md-3">
                                             <input name="data_limite" id="data_limite" placeholder="dd/mm/aaaa"
-                                                   class="form-control text-center" type="text">
+                                                   class="form-control text-center empresa" type="text">
                                             <span class="help-block"></span>
                                         </div>
                                         <label class="control-label col-md-3">Lembrar dias antes</label>
                                         <div class="col-md-2">
-                                            <input name="data_lembrete" min="0" step="1" class="form-control text-right"
+                                            <input name="data_lembrete" min="0" step="1"
+                                                   class="form-control text-right empresa"
                                                    type="number">
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Observações do realizador</label>
+                                        <div class="col-md-9">
+                                            <textarea name="observacoes" class="form-control" rows="2"></textarea>
+                                            <span class="help-block"></span>
                                         </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Salvar</button>
+                            <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div><!-- /.modal-content -->
@@ -357,7 +369,7 @@ require_once "header.php";
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSaveFilha" onclick="save_filha()" class="btn btn-primary">
+                            <button type="button" id="btnSaveFilha" onclick="save_filha()" class="btn btn-success">
                                 Salvar
                             </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -400,22 +412,21 @@ require_once "end_js.php";
             $('#data_limite, #data_limite_filha').mask('00/00/0000');
 
             table = $('#table').DataTable({
-                "info": false,
-                iDisplayLength: -1,
-                lengthMenu: [[5, 10, 25, 50, 100, 500, 1000, -1], [5, 10, 25, 50, 100, 500, 1000, 'Todos']],
-                "processing": true,
-                "serverSide": true,
-                "searching": false,
-                "bLengthChange": false,
-                "order": [[1, 'desc']],
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, 1000, -1], [5, 10, 25, 50, 100, 500, 1000, 'Todos']],
+                'processing': true,
+                'serverSide': true,
+                'searching': false,
+                'bLengthChange': false,
+                'order': [[1, 'desc']],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                "ajax": {
-                    "url": "<?php echo site_url('atividades/ajax_list/') ?>",
-                    "type": "POST",
-                    timeout: 90000,
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('atividades/ajax_list/') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
                         d.prioridade = $('[name="busca[prioridades]"]').val();
                         d.status = $('[name="busca[status]"]').val();
                         d.data_inicio = $('[name="busca[data_inicio]"]').val();
@@ -424,58 +435,38 @@ require_once "end_js.php";
                         return d;
                     }
                 },
-                //Set column definition initialisation properties.
-                "createdRow": function (row, data, index) {
-                    if (data[12] === '<?= $id ?>') {
-                        if (data[13] === '1') {
-                            $('td:eq(4)', row).css({'background-color': '#87bcd6', 'color': '#fff'});
-                            $('td:lt(10)', row).css('cursor', 'pointer');
-                            $('td:lt(10)', row).on('click', function () {
-                                if ($('td:eq(4)', row).hasClass('active')) {
-                                    $('td:eq(4)', row).removeClass('active');
+                'createdRow': function (row, data, index) {
+                    if (data[10] === '<?= $id ?>') {
+                        if (data[11] === '1') {
+                            $('td:eq(0)', row).css({'background-color': '#08c', 'color': '#fff'});
+                            $('td:lt(8)', row).on('click touchend', function () {
+                                if ($('td:eq(0)', row).hasClass('active')) {
+                                    $('td:eq(0)', row).removeClass('active');
                                     $('tr[data-mae="' + data[0] + '"]').slideUp();
-                                    $('td:eq(4)', row).css('background-color', '#87bcd6');
                                 } else {
-                                    $('td:eq(4)', row).css('background-color', '#08c');
-                                    $('#table tbody tr[data-mae]').slideUp();
-                                    $('#table tbody tr td:eq(4)').removeClass('active');
-                                    $('td:eq(4)', row).addClass('active');
+                                    $('td:eq(0)', row).addClass('active');
                                     $('tr[data-mae="' + data[0] + '"]').slideDown();
                                 }
-                            });
-                            $('td:lt(10)', row).on('touchend', function () {
-                                if ($('td:eq(4)', row).hasClass('active')) {
-                                    $('td:eq(4)', row).removeClass('active');
-                                    $('tr[data-mae="' + data[0] + '"]').slideUp();
-                                    $('td:eq(4)', row).css('background-color', '#87bcd6');
-                                } else {
-                                    $('td:eq(4)', row).css('background-color', '#08c');
-                                    $('#table tbody tr[data-mae]').slideUp();
-                                    $('#table tbody tr td:eq(4)').removeClass('active');
-                                    $('td:eq(4)', row).addClass('active');
-                                    $('tr[data-mae="' + data[0] + '"]').slideDown();
-                                }
-                            });
+                            }).css('cursor', 'pointer');
                         }
                     } else {
-                        $(row).attr('data-mae', data[1]).hide();
+                        $(row).attr('data-mae', data[9]).hide();
+                    }
+                    if (data[9] !== null) {
+                        $(row).addClass('info');
                     }
                 },
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        width: '100%',
-                        targets: [5]
+                        'width': '100%',
+                        'targets': [1]
                     },
                     {
-                        visible: false,
-                        targets: [1, 3]
+                        'visible': <?php echo $this->agent->is_mobile() ? 'false' : 'true'; ?>,
+                        'targets': [0, 2, 4, 5, 6, 7]
                     },
                     {
-                        visible: <?php echo $this->agent->is_mobile() ? 'false' : 'true'; ?>,
-                        targets: [0, 1, 2, 3, 4, 6, 8, 9, 10]
-                    },
-                    {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             $(td).css({'font-weight': 'bold', 'cursor': 'pointer'});
                             switch (rowData[col]) {
                                 case '0':
@@ -488,16 +479,10 @@ require_once "end_js.php";
                                     $(td).addClass('atv-danger').html('AL');
                             }
                         },
-                        "targets": [2]
+                        'targets': [2]
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
-                            $(td).css({'font-weight': 'bold'});
-                        },
-                        "targets": [3]
-                    },
-                    {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             $(td).css({'font-weight': 'bold', 'cursor': 'pointer'});
                             switch (rowData[col]) {
                                 case '0':
@@ -513,33 +498,29 @@ require_once "end_js.php";
                                     $(td).addClass('atv-danger').html('L');
                             }
                         },
-                        "targets": [4]
+                        'targets': [3]
                     },
                     {
-                        "orderable": false,
-                        targets: [6]
+                        'className': 'text-center',
+                        'targets': [0, 2, 3, 5, 6, 7]
                     },
                     {
-                        className: 'text-center',
-                        targets: [0, 2, 3, 4, 6, 8, 9, 10]
-                    },
-                    {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'className': 'text-nowrap',
+                        'targets': [8],
+                        'orderable': false,
+                        'searchable': false
                     }
                 ]
             });
 
             demo2 = $('#id_usuario').bootstrapDualListbox({
-                nonSelectedListLabel: 'Colaboradores disponíveis',
-                selectedListLabel: 'Colaboradores selecionados',
-                moveOnSelect: false,
-                helperSelectNamePostfix: false,
-                filterPlaceHolder: 'Filtrar',
-                selectorMinimalHeight: 182,
-                infoText: false
+                'nonSelectedListLabel': 'Colaboradores disponíveis',
+                'selectedListLabel': 'Colaboradores selecionados',
+                'moveOnSelect': false,
+                'helperSelectNamePostfix': false,
+                'filterPlaceHolder': 'Filtrar',
+                'selectorMinimalHeight': 182,
+                'infoText': false
             });
 
             setPdf_atributes();
@@ -556,18 +537,21 @@ require_once "end_js.php";
             save_method = 'add';
         }
 
-        function edit_atividade(id) {
+        function edit_atividade_mae(id) {
             $.ajax({
-                url: "<?php echo site_url('atividades/ajax_edit') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (data) {
+                'url': '<?php echo site_url('atividades/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {id: id},
+                'success': function (data) {
                     if (data.id_usuario === '<?= $id ?>') {
                         $('#colaborador').hide();
                     } else {
                         $('#colaborador').show();
                     }
+                    $('input.empresa, textarea.empresa').prop('readonly', '<?= $tipo ?>' !== 'empresa');
+                    $('select.empresa').prop('disabled', '<?= $tipo ?>' !== 'empresa');
+
                     $('#modal_form [name="id"]').val(data.id);
                     $('#modal_form [name="id_usuario"]').val(data.id_usuario);
                     $('#modal_form [name="id_mae"]').val(data.id_mae);
@@ -577,13 +561,53 @@ require_once "end_js.php";
                     $('#modal_form [name="tipo"]').val(data.tipo);
                     $('#modal_form [name="data_limite"]').val(data.data_limite);
                     $('#modal_form [name="data_lembrete"]').val(data.data_lembrete);
+                    $('#modal_form [name="observacoes"]').val(data.observacoes);
+                    $('#id_atividade_mae').hide().find('input').val(data.id_mae);
 
                     $('#modal_form .modal-title').text('Editar atividade mãe');
                     $('#modal_form').modal('show');
                     $('#modal_form .modal-title'); // Set title to Bootstrap modal title
                     save_method = 'update';
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+        function edit_atividade_filha(id) {
+            $.ajax({
+                'url': '<?php echo site_url('atividades/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {id: id},
+                'success': function (data) {
+                    if (data.id_usuario === '<?= $id ?>') {
+                        $('#colaborador').hide();
+                    } else {
+                        $('#colaborador').show();
+                    }
+                    $('input.empresa, textarea.empresa').prop('readonly', '<?= $tipo ?>' !== 'empresa');
+                    $('select.empresa').prop('disabled', '<?= $tipo ?>' !== 'empresa');
+
+                    $('#modal_form [name="id"]').val(data.id);
+                    $('#modal_form [name="id_usuario"]').val(data.id_usuario);
+                    $('#modal_form [name="id_mae"]').val(data.id_mae);
+                    $('#modal_form [name="id_usuario"]').val(data.id_usuario);
+                    $('#modal_form [name="atividade"]').val(data.atividade);
+                    $('#modal_form [name="prioridade"]').val(data.prioridade);
+                    $('#modal_form [name="tipo"]').val(data.tipo);
+                    $('#modal_form [name="data_limite"]').val(data.data_limite);
+                    $('#modal_form [name="data_lembrete"]').val(data.data_lembrete);
+                    $('#modal_form [name="observacoes"]').val(data.observacoes);
+                    $('#id_atividade_mae').show().find('input').val(data.id_mae);
+
+                    $('#modal_form .modal-title').text('Editar atividade filha');
+                    $('#modal_form').modal('show');
+                    $('#modal_form .modal-title'); // Set title to Bootstrap modal title
+                    save_method = 'update';
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -594,24 +618,25 @@ require_once "end_js.php";
             $('#form_filha input[type="hidden"]').val('');
 
             $.ajax({
-                url: "<?php echo site_url('atividades/ajax_edit') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (data) {
+                'url': '<?php echo site_url('atividades/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (data) {
                     $('#modal_form_filha [name="id_mae"]').val(data.id);
                     $('#modal_form_filha [name="atividade"]').val(data.atividade);
                     $('#modal_form_filha [name="prioridade"]').val(data.prioridade);
                     $('#modal_form_filha [name="tipo"]').val(data.tipo);
                     $('#modal_form_filha [name="data_limite"]').val(data.data_limite);
                     $('#modal_form_filha [name="data_lembrete"]').val(data.data_lembrete);
+                    $('#modal_form_filha [name="observacoes"]').val(data.observacoes);
                     demo2.bootstrapDualListbox('refresh', true);
 
                     $('#modal_form_filha').modal('show');
                     $('#modal_form_filha .modal-title'); // Set title to Bootstrap modal title
                     save_method = 'add';
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -642,11 +667,11 @@ require_once "end_js.php";
 
             // ajax adding data to database
             $.ajax({
-                url: url,
-                type: "POST",
-                data: $('#form').serialize(),
-                dataType: "JSON",
-                success: function (data) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'success': function (data) {
                     if (data.status) //if success close modal and reload ajax table
                     {
                         $('#modal_form').modal('hide');
@@ -656,7 +681,7 @@ require_once "end_js.php";
                     $('#btnSave').text('Salvar'); //change button text
                     $('#btnSave').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
                     $('#btnSave').text('Salvar'); //change button text
                     $('#btnSave').attr('disabled', false); //set button enable
@@ -670,11 +695,11 @@ require_once "end_js.php";
 
             // ajax adding data to database
             $.ajax({
-                url: "<?php echo site_url('atividades/ajax_add') ?>",
-                type: "POST",
-                data: $('#form_filha').serialize(),
-                dataType: "JSON",
-                success: function (data) {
+                'url': '<?php echo site_url('atividades/ajax_add') ?>',
+                'type': 'POST',
+                'data': $('#form_filha').serialize(),
+                'dataType': 'json',
+                'success': function (data) {
                     if (data.status) //if success close modal and reload ajax table
                     {
                         $('#modal_form_filha').modal('hide');
@@ -684,7 +709,7 @@ require_once "end_js.php";
                     $('#btnSaveFilha').text('Salvar'); //change button text
                     $('#btnSaveFilha').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
                     $('#btnSaveFilha').text('Salvar'); //change button text
                     $('#btnSaveFilha').attr('disabled', false); //set button enable
@@ -696,15 +721,15 @@ require_once "end_js.php";
             if (confirm('Deseja remover?')) {
                 // ajax delete data to database
                 $.ajax({
-                    url: "<?php echo site_url('atividades/ajax_delete') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {id: id},
-                    success: function (data) {
+                    'url': '<?php echo site_url('atividades/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {id: id},
+                    'success': function (data) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
@@ -715,14 +740,14 @@ require_once "end_js.php";
             if (confirm('Deseja finalizar a atividade?')) {
                 // ajax delete data to database
                 $.ajax({
-                    url: "<?php echo site_url('atividades/ajax_finalizar') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {id: id},
-                    success: function (data) {
+                    'url': '<?php echo site_url('atividades/ajax_finalizar') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {id: id},
+                    'success': function (data) {
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });

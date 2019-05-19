@@ -17,6 +17,9 @@ class GestaoDeVagas extends MY_Controller
         $escolaridade = $this->db->get('escolaridade')->result();
         $data['escolaridades'] = ['' => 'selecione...'] + array_column($escolaridade, 'nome', 'id');
 
+        $requisicoesPessoal = $this->db->select('id')->get('requisicoes_pessoal')->result();
+        $data['requisicoesPessoal'] = ['' => 'selecione...'] + array_column($requisicoesPessoal, 'id', 'id');
+
         $this->load->view('gestao_de_vagas', $data);
     }
 

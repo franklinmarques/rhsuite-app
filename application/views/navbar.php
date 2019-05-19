@@ -42,56 +42,58 @@
     <?php endif; ?>
     <div class="top-nav clearfix">
         <!--search & user info start-->
-        <ul class="nav top-menu">
-            <!-- user login dropdown start-->
-            <li class="dropdown">
-                <a data-toggle="dropdown" class="dropdown-toggle" href="javascript:;"
-                   title="<?php echo $this->session->userdata('nome'); ?>" style="padding:3px 0;">
-                    <img src="<?php //echo base_url('imagens/usuarios/' . $this->session->userdata('foto')); ?>">
-                    <span class="username"><?php echo $this->session->userdata('nome'); ?></span>
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu extended logout">
-                    <li>
-                        <?php if ($this->session->userdata('tipo') === 'cliente') : ?>
-                            <a href="#" onclick="edit_perfil();">
-                                <i class="fa fa-user-circle-o"></i> Meu perfil
+        <?php if ($this->session->userdata('tipo') !== 'candidato_externo') : ?>
+            <ul class="nav top-menu">
+                <!-- user login dropdown start-->
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="javascript:;"
+                       title="<?php echo $this->session->userdata('nome'); ?>" style="padding:3px 0;">
+                        <img src="<?php //echo base_url('imagens/usuarios/' . $this->session->userdata('foto')); ?>">
+                        <span class="username"><?php echo $this->session->userdata('nome'); ?></span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu extended logout">
+                        <li>
+                            <?php if ($this->session->userdata('tipo') === 'cliente') : ?>
+                                <a href="#" onclick="edit_perfil();">
+                                    <i class="fa fa-user-circle-o"></i> Meu perfil
+                                </a>
+                            <?php elseif ($this->session->userdata('tipo') === 'candidato_externo') : ?>
+                                <a href="<?php echo site_url('candidatoVagas/editarPerfil/' . $this->session->userdata('id')); ?>">
+                                    <i class="fa fa-user-circle-o"></i> Meu perfil
+                                </a>
+                            <?php elseif ($this->session->userdata('tipo') === 'candidato'): ?>
+                                <a href="<?php echo site_url('recrutamento_candidatos/perfil/' . $this->session->userdata('id')); ?>">
+                                    <i class="fa fa-user-circle-o"></i> Meu perfil
+                                </a>
+                            <?php else: ?>
+                                <a href="<?php echo site_url('home/meuperfil'); ?>">
+                                    <i class="fa fa-user-circle-o"></i> Meu perfil
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                        <li>
+                            <!--<a href="<?php //echo site_url('contato/novaMensagem');   ?>">-->
+                            <a href="javascript:void(0);" data-toggle="modal" data-target="#modal-contato">
+                                <i class="fa fa-envelope-o"></i> Fale conosco
                             </a>
-                        <?php elseif ($this->session->userdata('tipo') === 'candidato_externo') : ?>
-                            <a href="<?php echo site_url('candidatoVagas/editarPerfil/' . $this->session->userdata('id')); ?>">
-                                <i class="fa fa-user-circle-o"></i> Meu perfil
+                        </li>
+                        <!--<li>
+                            <a href="javascript:void(0);"  data-toggle="modal" data-target="#modal-sobre">
+                                <i class="fa fa-info-circle"></i> Sobre
                             </a>
-                        <?php elseif ($this->session->userdata('tipo') === 'candidato'): ?>
-                            <a href="<?php echo site_url('recrutamento_candidatos/perfil/' . $this->session->userdata('id')); ?>">
-                                <i class="fa fa-user-circle-o"></i> Meu perfil
+                        </li>-->
+                        <li class="divider"></li>
+                        <li>
+                            <a href="<?php echo site_url('home/sair'); ?>">
+                                <i class="fa fa-power-off"></i> Desconectar
                             </a>
-                        <?php else: ?>
-                            <a href="<?php echo site_url('home/meuperfil'); ?>">
-                                <i class="fa fa-user-circle-o"></i> Meu perfil
-                            </a>
-                        <?php endif; ?>
-                    </li>
-                    <li>
-                        <!--<a href="<?php //echo site_url('contato/novaMensagem');   ?>">-->
-                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modal-contato">
-                            <i class="fa fa-envelope-o"></i> Fale conosco
-                        </a>
-                    </li>
-                    <!--<li>
-                        <a href="javascript:void(0);"  data-toggle="modal" data-target="#modal-sobre">
-                            <i class="fa fa-info-circle"></i> Sobre
-                        </a>
-                    </li>-->
-                    <li class="divider"></li>
-                    <li>
-                        <a href="<?php echo site_url('home/sair'); ?>">
-                            <i class="fa fa-power-off"></i> Desconectar
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <!-- user login dropdown end -->
-        </ul>
+                        </li>
+                    </ul>
+                </li>
+                <!-- user login dropdown end -->
+            </ul>
+        <?php endif; ?>
         <!--search & user info end-->
     </div>
 </header>

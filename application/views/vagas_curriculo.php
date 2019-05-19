@@ -67,6 +67,37 @@
             font-weight: bold;
         }
 
+        ul.nav-pills li {
+            margin: 0 5px;
+
+        }
+
+        ul.nav-pills li a {
+            cursor: default;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        ul.nav-pills li.active a {
+            border-color: #2e6da4;
+        }
+
+        ul.nav-pills li.disable a {
+            color: #777;
+            text-decoration: none;
+            background-color: transparent;
+            cursor: not-allowed;
+        }
+
+        ul.nav-pills li.disable.active a {
+            background-color: #78a6ce;
+            border: 1px solid #77a5cd;
+            color: #fdfdfd;
+            border-radius: 20px !important;
+        }
+
     </style>
 </head>
 
@@ -79,7 +110,7 @@
 
 <div class="container">
     <?php
-    if ($logoempresa) {
+    if ($url_empresa) {
         $logo = base_url('imagens/usuarios/' . $logo);
         $hr = '<hr style="margin-top:10px; margin-bottom:10px;"/>';
     } else {
@@ -112,245 +143,282 @@
                 <div class="col-md-12">
                     <div id="alert"></div>
 
-                    <div class="row">
-                        <div class="col-sm-12 text-right">
-                            <button type="button" class="btn btn-success btnSave" onclick="save();"><i
-                                        class="fa fa-save"></i> Salvar
-                            </button>
-                            <a class="btn btn-default" href="<?= site_url('vagas'); ?>"><i
-                                        class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
-                            </a>
-                        </div>
-                    </div>
-
-                    <ul class="nav nav-tabs" role="tablist" style="font-size: 15px; font-weight: bolder;">
+                    <ul class="nav nav-pills" role="tablist" style="font-size: 15px; font-weight: bolder;">
                         <li role="presentation" class="active">
-                            <a href="#dados_cadastrais" aria-controls="dados_cadastrais" role="tab" data-toggle="tab">Passo
-                                1 (dados cadastrais)</a>
+                            <a href="#dados_cadastrais" aria-controls="dados_cadastrais" role="tab" data-toggle="pill">1.
+                                Dados cadastrais</a>
                         </li>
                         <li role="presentation">
-                            <a href="#formacao" aria-controls="formacao" role="tab" data-toggle="tab">Passo 2
-                                (formação)</a>
+                            <a href="#formacao" aria-controls="formacao" role="tab" data-toggle="pill">2. Formação</a>
                         </li>
                         <li role="presentation">
                             <a href="#historico_profissional" aria-controls="historico_profissional" role="tab"
-                               data-toggle="tab">Passo 3 (histórico profissional)</a>
+                               data-toggle="pill">3. Histórico profissional</a>
                         </li>
                     </ul>
-                    <br/>
-                    <br/>
+
+                    <hr>
 
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="dados_cadastrais">
+                        <div role="tabpanel" class="tab-pane fade in active" id="dados_cadastrais">
+                            <?php echo form_open_multipart('#', 'id="form_dados_cadastrais" class="form-horizontal autocomplete="off"'); ?>
+                            <input type="hidden" name="codigo" value="<?= $codigo; ?>">
+                            <input type="hidden" name="id" value="">
                             <div class="row">
-                                <div class="col col-md-12">
-                                    <?php echo form_open('#', 'id="form_candidato" class="form-horizontal autocomplete="off"'); ?>
-                                    <fieldset>
-                                        <legend>Campos obrigatórios</legend>
-                                        <div class="form-group last">
-                                            <label class="col-sm-2 control-label">Foto</label>
-                                            <div class="col-lg-7 controls">
-                                                <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                    <div class="fileinput-new thumbnail"
-                                                         style="width: auto; height: 150px;">
-                                                        <img src="<?= base_url('imagens/usuarios/Sem+imagem.png') ?>"
-                                                             alt="Sem imagem"/>
-                                                    </div>
-                                                    <div class="fileinput-preview fileinput-exists thumbnail"
-                                                         style="width: auto; height: 150px;"></div>
-                                                    <div>
-                                        <span class="btn btn-default btn-file">
-                                            <span class="fileinput-new"><i class="fa fa-paper-clip"></i> Selecionar imagem</span>
-                                            <span class="fileinput-exists"><i class="fa fa-undo"></i> Alterar</span>
-                                            <input type="file" name="foto" class="default" accept="image/*"/>
-                                        </span>
-                                                        <a href="#" class="btn btn-default fileinput-exists"
-                                                           data-dismiss="fileinput"><i class="fa fa-trash"></i> Remover</a>
-                                                    </div>
+                                <div class="col-sm-12 text-right">
+                                    <a class="btn btn-default" href="<?= site_url($url_empresa . 'vagas'); ?>"><i
+                                                class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
+                                    </a>
+                                    <button type="button" class="btn btn-success btnSaveDadosCadastrais"
+                                            onclick="save_dados_cadastrais();">Avançar <i
+                                                class="glyphicon glyphicon-circle-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <fieldset>
+                                <legend>Campos obrigatórios</legend>
+                                <div class="form-group last">
+                                    <label class="col-sm-2 control-label">Foto</label>
+                                    <div class="col-lg-7 controls">
+                                        <div class="fileinput fileinput-new" data-provides="fileinput">
+                                            <div class="fileinput-new thumbnail"
+                                                 style="width: auto; height: 150px;">
+                                                <img src="<?= base_url('imagens/usuarios/Sem+imagem.png') ?>"
+                                                     alt="Sem imagem"/>
+                                            </div>
+                                            <div class="fileinput-preview fileinput-exists thumbnail"
+                                                 style="width: auto; height: 150px;"></div>
+                                            <div>
+                                                <div class="btn btn-default btn-file">
+                                                    <span class="fileinput-new"><i class="fa fa-paper-clip"></i> Selecionar imagem</span>
+                                                    <span class="fileinput-exists"><i
+                                                                class="fa fa-undo"></i> Alterar</span>
+                                                    <input type="file" name="foto" class="default"
+                                                           accept="image/*"/>
                                                 </div>
+                                                <a href="#" class="btn btn-default fileinput-exists"
+                                                   data-dismiss="fileinput"><i class="fa fa-trash"></i> Remover</a>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Nome candidato</label>
-                                            <div class="col-lg-7 controls">
-                                                <input type="text" name="nome" placeholder="Nome do candidato" value=""
-                                                       class="form-control"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Data nascimento</label>
-                                            <div class="col-sm-2">
-                                                <input type="text" name="data_nascimento" placeholder="dd/mm/aaaa"
-                                                       value=""
-                                                       class="form-control text-center date"/>
-                                            </div>
-                                            <label class="col-sm-1 control-label">Sexo</label>
-                                            <div class="col-sm-2">
-                                                <select name="sexo" class="form-control">
-                                                    <option value="M">Masculino</option>
-                                                    <option value="F">Feminino</option>
-                                                </select>
-                                            </div>
-                                            <label class="col-sm-1 control-label text-nowrap">Estado civil</label>
-                                            <div class="col-sm-3">
-                                                <select name="estado_civil" class="form-control">
-                                                    <option value="M">Masculino</option>
-                                                    <option value="F">Feminino</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Telefone</label>
-                                            <div class="col-lg-4 controls">
-                                                <input type="text" name="telefone" placeholder="Telefone" value=""
-                                                       class="form-control"/>
-                                            </div>
-                                            <label class="col-sm-1 control-label">E-mail</label>
-                                            <div class="col-lg-4 controls">
-                                                <input type="email" name="email" placeholder="E-mail" value=""
-                                                       class="form-control"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Senha</label>
-                                            <div class="col-lg-4 controls">
-                                                <input type="password" name="senha" placeholder="Senha" value=""
-                                                       max="32"
-                                                       class="form-control" autocomplete="off"/>
-                                            </div>
-                                            <label class="col-sm-1 control-label">Confirmar senha</label>
-                                            <div class="col-lg-4 controls">
-                                                <input type="password" name="confirmar_senha"
-                                                       placeholder="Confirmar senha"
-                                                       value="" max="32" class="form-control" autocomplete="off"/>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                    <fieldset>
-                                        <legend>Campos complementares</legend>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Nome da mãe</label>
-                                            <div class="col-lg-7 controls">
-                                                <input type="text" name="nome_mae"
-                                                       placeholder="Nome da mãe do(a) candidato(a)"
-                                                       value="" class="form-control"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Nome do pai</label>
-                                            <div class="col-lg-7 controls">
-                                                <input type="text" name="nome_pai"
-                                                       placeholder="Nome do pai do(a) candidato(a)"
-                                                       value="" class="form-control"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Status</label>
-                                            <div class="col-sm-3 col-lg-2 controls">
-                                                <select name="status" class="form-control">
-                                                    <option value="A">Ativo</option>
-                                                    <option value="E">Excluído</option>
-                                                </select>
-                                            </div>
-                                            <label class="col-sm-2 control-label">Nível de acesso</label>
-                                            <div class="col-sm-3 col-lg-2 controls">
-                                                <select name="nivel_acesso" class="form-control">
-                                                    <option value="C">Candidato</option>
-                                                </select>
-                                            </div>
-                                            <label class="col-sm-1 control-label">CPF</label>
-                                            <div class="col-lg-2 controls">
-                                                <input type="text" name="cpf" id="cpf" placeholder="CPF" value=""
-                                                       class="form-control"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">RG</label>
-                                            <div class="col-lg-2 controls">
-                                                <input type="text" name="rg" id="rg" placeholder="RG" value=""
-                                                       class="form-control"/>
-                                            </div>
-                                            <label class="col-sm-1 control-label">PIS</label>
-                                            <div class="col-lg-2 controls">
-                                                <input type="text" name="pis" id="pis" placeholder="PIS" value=""
-                                                       class="form-control"/>
-                                            </div>
-                                            <label class="col-sm-1 control-label">CEP</label>
-                                            <div class="col-lg-3">
-                                                <div class="input-group">
-                                                    <input type="text" name="cep" id="cep" placeholder="CEP" value=""
-                                                           class="form-control"/>
-                                                    <span class="input-group-btn">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Nome candidato <span
+                                                class="text-danger">*</span></label>
+                                    <div class="col-lg-7 controls">
+                                        <input type="text" name="nome" placeholder="Nome do candidato" value=""
+                                               class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Data nascimento <span
+                                                class="text-danger">*</span></label>
+                                    <div class="col-sm-2">
+                                        <input type="text" name="data_nascimento" placeholder="dd/mm/aaaa"
+                                               value=""
+                                               class="form-control text-center date"/>
+                                    </div>
+                                    <label class="col-sm-1 control-label">Sexo <span
+                                                class="text-danger">*</span></label>
+                                    <div class="col-sm-2">
+                                        <select name="sexo" class="form-control">
+                                            <option value="M">Masculino</option>
+                                            <option value="F">Feminino</option>
+                                        </select>
+                                    </div>
+                                    <label class="col-sm-1 control-label text-nowrap">Estado civil <span
+                                                class="text-danger">*</span></label>
+                                    <div class="col-sm-3">
+                                        <select name="estado_civil" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">Solteiro(a)</option>
+                                            <option value="2">Casado(a)</option>
+                                            <option value="3">Desquitado(a)</option>
+                                            <option value="4">Divorciado(a)</option>
+                                            <option value="5">Viúvo(a)</option>
+                                            <option value="6">Outro</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Telefone <span
+                                                class="text-danger">*</span></label>
+                                    <div class="col-lg-4 controls">
+                                        <input type="text" name="telefone" placeholder="Telefone" value=""
+                                               class="form-control"/>
+                                    </div>
+                                    <label class="col-sm-1 control-label">E-mail <span
+                                                class="text-danger">*</span></label>
+                                    <div class="col-lg-4 controls">
+                                        <input type="email" name="email" placeholder="E-mail"
+                                               value="nome@email.com.br"
+                                               class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Senha <span
+                                                class="text-danger">*</span></label>
+                                    <div class="col-lg-4 controls">
+                                        <input type="password" name="senha" placeholder="Senha" value="123"
+                                               max="32"
+                                               class="form-control" autocomplete="off"/>
+                                        <i class="help-block">Senha padrão: 123.</i>
+                                    </div>
+                                    <label class="col-sm-1 control-label">Confirmar senha <span
+                                                class="text-danger">*</span></label>
+                                    <div class="col-lg-4 controls">
+                                        <input type="password" name="confirmar_senha"
+                                               placeholder="Confirmar senha"
+                                               value="123" max="32" class="form-control" autocomplete="off"/>
+                                        <i class="help-block">Confirmação de senha padrão: 123.</i>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Campos complementares</legend>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Nome da mãe</label>
+                                    <div class="col-lg-7 controls">
+                                        <input type="text" name="nome_mae"
+                                               placeholder="Nome da mãe do(a) candidato(a)"
+                                               value="" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Nome do pai</label>
+                                    <div class="col-lg-7 controls">
+                                        <input type="text" name="nome_pai"
+                                               placeholder="Nome do pai do(a) candidato(a)"
+                                               value="" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Status</label>
+                                    <div class="col-sm-3 col-lg-2 controls">
+                                        <select name="status" class="form-control">
+                                            <option value="A">Ativo</option>
+                                            <option value="E">Excluído</option>
+                                        </select>
+                                    </div>
+                                    <label class="col-sm-2 control-label">Nível de acesso</label>
+                                    <div class="col-sm-3 col-lg-2 controls">
+                                        <select name="nivel_acesso" class="form-control">
+                                            <option value="E">Candidato</option>
+                                        </select>
+                                    </div>
+                                    <label class="col-sm-1 control-label">CPF</label>
+                                    <div class="col-lg-2 controls">
+                                        <input type="text" name="cpf" id="cpf" placeholder="CPF" value=""
+                                               class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">RG</label>
+                                    <div class="col-lg-2 controls">
+                                        <input type="text" name="rg" id="rg" placeholder="RG" value=""
+                                               class="form-control"/>
+                                    </div>
+                                    <label class="col-sm-1 control-label">PIS</label>
+                                    <div class="col-lg-2 controls">
+                                        <input type="text" name="pis" id="pis" placeholder="PIS" value=""
+                                               class="form-control"/>
+                                    </div>
+                                    <label class="col-sm-1 control-label">CEP</label>
+                                    <div class="col-lg-3">
+                                        <div class="input-group">
+                                            <input type="text" name="cep" id="cep" placeholder="CEP" value=""
+                                                   class="form-control"/>
+                                            <span class="input-group-btn">
                                             <button class="btn btn-info" id="consultar_cep" type="button"><i
                                                         class="glyphicon glyphicon-search"></i> Consultar CEP</button>
                                         </span>
-                                                </div>
-                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Logradouro</label>
-                                            <div class="col-lg-6 controls">
-                                                <input type="text" name="logradouro" id="logradouro"
-                                                       placeholder="Logradouro"
-                                                       value="" class="form-control"/>
-                                            </div>
-                                            <label class="col-sm-1 control-label">Número</label>
-                                            <div class="col-lg-2 controls">
-                                                <input type="number" name="numero" value=""
-                                                       class="form-control text-right"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Complemento</label>
-                                            <div class="col-lg-4 controls">
-                                                <input type="text" name="complemento" id="complemento"
-                                                       placeholder="Complemento"
-                                                       value="" class="form-control"/>
-                                            </div>
-                                            <label class="col-sm-1 control-label">Bairro</label>
-                                            <div class="col-lg-4 controls">
-                                                <input type="text" name="bairro" id="bairro" placeholder="Bairro"
-                                                       value=""
-                                                       class="form-control"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Estado</label>
-                                            <div class="col-sm-2 controls">
-                                                <?php echo form_dropdown('estado', $estados, '', 'id="estado" class="form-control filtro"'); ?>
-                                            </div>
-                                            <label class="col-sm-1 control-label">Cidade </label>
-                                            <div class="col-lg-6 controls">
-                                                <?php echo form_dropdown('cidade', $cidades, '', 'id="cidade" class="form-control filtro"'); ?>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Escolaridade</label>
-                                            <div class="col-sm-4 col-lg-3 controls">
-                                                <?php echo form_dropdown('escolaridade', $escolaridades, '', 'id="escolaridade" class="form-control"'); ?>
-                                            </div>
-                                            <label class="col-sm-1 control-label">Deficiência</label>
-                                            <div class="col-sm-4 col-lg-3 controls">
-                                                <?php echo form_dropdown('deficiencia', $deficiencias, '', 'id="deficiencia" class="form-control"'); ?>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Fonte contratação</label>
-                                            <div class="col-sm-5 col-lg-4 controls">
-                                                <?php echo form_dropdown('fonte_contratacao', $fontesContratacao, '', 'class="form-control"'); ?>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                    <?php echo form_close(); ?>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Logradouro</label>
+                                    <div class="col-lg-6 controls">
+                                        <input type="text" name="logradouro" id="logradouro"
+                                               placeholder="Logradouro"
+                                               value="" class="form-control"/>
+                                    </div>
+                                    <label class="col-sm-1 control-label">Número</label>
+                                    <div class="col-lg-2 controls">
+                                        <input type="number" name="numero" value=""
+                                               class="form-control text-right"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Complemento</label>
+                                    <div class="col-lg-4 controls">
+                                        <input type="text" name="complemento" id="complemento"
+                                               placeholder="Complemento"
+                                               value="" class="form-control"/>
+                                    </div>
+                                    <label class="col-sm-1 control-label">Bairro</label>
+                                    <div class="col-lg-4 controls">
+                                        <input type="text" name="bairro" id="bairro" placeholder="Bairro"
+                                               value=""
+                                               class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Estado</label>
+                                    <div class="col-sm-2 controls">
+                                        <?php echo form_dropdown('estado', $estados, '', 'id="estado" class="form-control filtro"'); ?>
+                                    </div>
+                                    <label class="col-sm-1 control-label">Cidade </label>
+                                    <div class="col-lg-6 controls">
+                                        <?php echo form_dropdown('cidade', $cidades, '', 'id="cidade" class="form-control filtro"'); ?>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Escolaridade</label>
+                                    <div class="col-sm-4 col-lg-3 controls">
+                                        <?php echo form_dropdown('escolaridade', $escolaridades, '', 'id="escolaridade" class="form-control"'); ?>
+                                    </div>
+                                    <label class="col-sm-1 control-label">Deficiência</label>
+                                    <div class="col-sm-4 col-lg-3 controls">
+                                        <?php echo form_dropdown('deficiencia', $deficiencias, '', 'id="deficiencia" class="form-control"'); ?>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Fonte contratação</label>
+                                    <div class="col-sm-5 col-lg-4 controls">
+                                        <?php echo form_dropdown('fonte_contratacao', $fontesContratacao, '', 'class="form-control"'); ?>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-12 text-right">
+                                    <a class="btn btn-default" href="<?= site_url($url_empresa . 'vagas'); ?>"><i
+                                                class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
+                                    </a>
+                                    <button type="button" class="btn btn-success btnSaveDadosCadastrais"
+                                            onclick="save_dados_cadastrais();">Avançar <i
+                                                class="glyphicon glyphicon-circle-arrow-right"></i>
+                                    </button>
                                 </div>
                             </div>
+                            <?php echo form_close(); ?>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="formacao">
+                        <div role="tabpanel" class="tab-pane fade" id="formacao">
                             <?php echo form_open('#', 'id="form_formacao" class="form-horizontal autocomplete="off"'); ?>
+                            <input type="hidden" name="id_usuario" value="" class="id_usuario">
                             <div class="form-group last">
                                 <label class="col-sm-2 control-label">Nível de escolaridade</label>
                                 <div class="col-lg-4 controls">
                                     <?php echo form_dropdown('escolaridade', $escolaridades, '', 'class="form-control"'); ?>
+                                </div>
+                                <div class="col-sm-6 text-right">
+                                    <button type="button" class="btn btn-default" onclick="edit_dados_cadastrais();"><i
+                                                class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
+                                    </button>
+                                    <button type="button" class="btn btn-success btnSaveFormacao"
+                                            onclick="save_formacao();">Avançar <i
+                                                class="glyphicon glyphicon-circle-arrow-right"></i>
+                                    </button>
                                 </div>
                             </div>
                             <br>
@@ -704,16 +772,37 @@
                                     </div>
                                 </div>
                             </fieldset>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-12 text-right">
+                                    <button type="button" class="btn btn-default" onclick="edit_dados_cadastrais();"><i
+                                                class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
+                                    </button>
+                                    <button type="button" class="btn btn-success btnSaveFormacao"
+                                            onclick="save_formacao();">Avançar <i
+                                                class="glyphicon glyphicon-circle-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
 
                             <?php echo form_close(); ?>
                         </div>
-
-                        <div role="tabpanel" class="tab-pane" id="historico_profissional">
+                        <div role="tabpanel" class="tab-pane fade" id="historico_profissional">
                             <?php echo form_open('#', 'id="form_historico_profissional" class="form-horizontal autocomplete="off"'); ?>
+                            <input type="hidden" name="id_usuario" value="" class="id_usuario">
                             <div class="row">
                                 <div class="col-sm-6">
                                     <i class="text-primary"><strong>*</strong> O grupo cujo nome da empresa estiver em
                                         branco será removido do cadastro.</i>
+                                </div>
+                                <div class="col-sm-6 text-right">
+                                    <button type="button" class="btn btn-default" onclick="edit_formacao();">
+                                        <i class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
+                                    </button>
+                                    <button type="button" class="btn btn-success btnSaveHistoricoProfissional"
+                                            onclick="save_historico_profissional();"><i
+                                                class="fa fa-save"></i> Concluir
+                                    </button>
                                 </div>
                             </div>
                             <fieldset>
@@ -1222,6 +1311,18 @@
                                     </div>
                                 </div>
                             </fieldset>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-12 text-right">
+                                    <button type="button" class="btn btn-default" onclick="edit_formacao();">
+                                        <i class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
+                                    </button>
+                                    <button type="button" class="btn btn-success btnSaveHistoricoProfissional"
+                                            onclick="save_historico_profissional();"><i
+                                                class="fa fa-save"></i> Concluir
+                                    </button>
+                                </div>
+                            </div>
 
                             <?php echo form_close(); ?>
                         </div>
@@ -1230,18 +1331,6 @@
                 </div>
             </div>
 
-        </div>
-        <div class="panel-footer">
-            <div class="row">
-                <div class="col-sm-12 text-right">
-                    <button type="button" class="btn btn-success btnSave" onclick="save();"><i class="fa fa-save"></i>
-                        Salvar
-                    </button>
-                    <a class="btn btn-default" href="<?= site_url('vagas'); ?>"><i
-                                class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -1291,6 +1380,10 @@
     $(document).ready(function () {
         $('.combobox').combobox();
     });
+
+    $('ul.nav-pills li a').on('click', function () {
+        return false;
+    })
 
 
     $('select[name="nivel_acesso"]').on('change', function () {
@@ -1447,32 +1540,99 @@
     });
 
 
-    function save() {
-        $('.btnSave').text('Salvando...').attr('disabled', true);
+    function edit_dados_cadastrais() {
+        $('html, body').animate({scrollTop: 0}, 1500);
+        $('.nav-pills a[href="#dados_cadastrais"]').tab('show');
+    }
+
+    function edit_formacao() {
+        $('html, body').animate({scrollTop: 0}, 1500);
+        $('.nav-pills a[href="#formacao"]').tab('show');
+    }
+
+    function edit_historico_profissional() {
+        $('html, body').animate({scrollTop: 0}, 1500);
+        $('.nav-pills a[href="#historico_profissional"]').tab('show');
+    }
+
+
+    function save_dados_cadastrais() {
+        $('.btnSaveDadosCadastrais').html('Avançando... <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', true);
 
         $.ajax({
             'url': '<?php echo site_url('vagas/salvarCandidato') ?>',
             'type': 'POST',
-            'data': {
-                'candidato': $('#form_candidato').serialize(),
-                'formacao': $('#form_formacao').serialize(),
-                'historico_profissional': $('#form_historico_profissional').serialize()
+            'data': new FormData($('#form_dados_cadastrais')[0]),
+            'enctype': 'multipart/form-data',
+            'processData': false,
+            'contentType': false,
+            'cache': false,
+            'dataType': 'json',
+            'success': function (json) {
+                if (json.status) {
+                    $('#form_dados_cadastrais [name="id"], .id_usuario').val(json.id_usuario);
+                    edit_formacao();
+                } else if (json.erro) {
+                    $('html, body').animate({scrollTop: 0}, 1500);
+                    $('#alert').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
+                }
+                $('.btnSaveDadosCadastrais').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
             },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Error adding / update data');
+                $('.btnSaveDadosCadastrais').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
+            }
+        });
+    }
+
+
+    function save_formacao() {
+        $('.btnSaveFormacao').html('Avançando... <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', true);
+
+        $.ajax({
+            'url': '<?php echo site_url('vagas/salvarFormacaoCandidato') ?>',
+            'type': 'POST',
+            'data': $('#form_formacao').serialize(),
+            'dataType': 'json',
+            'success': function (json) {
+                if (json.status) {
+                    edit_historico_profissional();
+                } else if (json.erro) {
+                    $('html, body').animate({scrollTop: 0}, 1500);
+                    $('#alert').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
+                }
+                $('.btnSaveFormacao').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Error adding / update data');
+                $('.btnSaveFormacao').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
+            }
+        });
+    }
+
+
+    function save_historico_profissional() {
+        $('.btnSaveHistoricoProfissional').html('<i class="fa fa-save"> Concluindo...</i>').attr('disabled', true);
+
+        $.ajax({
+            'url': '<?php echo site_url('vagas/salvarHistoricoProfissional') ?>',
+            'type': 'POST',
+            'data': $('#form_historico_profissional').serialize(),
             'dataType': 'json',
             'success': function (json) {
                 $('html, body').animate({scrollTop: 0}, 1500);
                 if (json.status) {
                     $('#alert').html('<div class="alert alert-success">Cadastro realizado com sucesso</div>').hide().fadeIn('slow', function () {
-                        window.location = '<?= site_url('login'); ?>';
+                        window.location = '<?= site_url($url_empresa . 'vagas'); ?>';
                     });
-                } else {
+                } else if (json.erro) {
                     $('#alert').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
-                    $('.btnSave').text('Salvar').attr('disabled', false);
+                    $('.btnSaveHistoricoProfissional').html('<i class="fa fa-save"> Concluir</i>').attr('disabled', false);
                 }
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
-                $('.btnSave').text('Salvar').attr('disabled', false);
+                $('.btnSaveHistoricoProfissional').html('<i class="fa fa-save"> Concluir</i>').attr('disabled', false);
             }
         });
     }

@@ -296,7 +296,7 @@ class Recrutamento_candidatos extends MY_Controller
 
 
         $this->db->select('a.nome, a.cidade AS cod_municipal, a.bairro, a.id');
-        $this->db->select('a.estado, d.municipio AS cidade, a.deficiencia, a.escolaridade');
+        $this->db->select('a.estado, d.municipio AS cidade, a.deficiencia, a.escolaridade, a.email');
         $this->db->join('recrutamento_candidatos b', 'b.id_usuario = a.id', 'left');
         $this->db->join('recrutamento_testes c', 'c.id_candidato = b.id', 'left');
         $this->db->join('municipios d', 'd.cod_mun = a.cidade', 'left');
@@ -321,7 +321,11 @@ class Recrutamento_candidatos extends MY_Controller
 
         $query = $this->db->get('recrutamento_usuarios a');
 
-        $this->load->library('dataTables');
+        $config = array(
+            'search' => ['nome', 'email', 'cidade', 'bairro']
+        );
+
+        $this->load->library('dataTables', $config);
 
         $output = $this->datatables->generate($query);
 
@@ -679,6 +683,161 @@ class Recrutamento_candidatos extends MY_Controller
     {
         $status = $this->db->delete('recrutamento_usuarios', array('id' => $id));
         echo json_encode(array("status" => $status !== false));
+    }
+
+
+    public function ajax_updateCurriculo()
+    {
+        $id = $this->input->post('id');
+
+        $this->db->trans_begin();
+
+        $this->db->select('arquivo_curriculo');
+        $this->db->where('id', $id);
+        $row = $this->db->get('recrutamento_usuarios')->row();
+        $arquivoCurriculoAtual = $row->arquivo_curriculo;
+
+        if (!empty($_FILES['arquivo_curriculo'])) {
+            $config['upload_path'] = './arquivos/curriculos/';
+            $config['allowed_types'] = 'pdf';
+            $config['file_name'] = utf8_decode($_FILES['arquivo_curriculo']['name']);
+
+            $this->load->library('upload', $config);
+
+            if ($this->upload->do_upload('arquivo_curriculo')) {
+                $arquivoCurriculo = $this->upload->data();
+                $data['arquivo_curriculo'] = utf8_encode($arquivoCurriculo['file_name']);
+
+                $this->db->set('arquivo_curriculo', $data['arquivo_curriculo']);
+                $this->db->where('id', $id);
+                $this->db->update('recrutamento_usuarios');
+
+                if (file_exists('./arquivos/curriculos/' . $arquivoCurriculoAtual) && $arquivoCurriculoAtual != $arquivoCurriculo['file_name']) {
+                    @unlink('./arquivos/curriculos/' . $arquivoCurriculoAtual);
+                }
+            } else {
+                exit(json_encode(array('retorno' => 0, 'aviso' => $this->upload->display_errors(), 'redireciona' => 0, 'pagina' => '')));
+            }
+        }
+
+        $status = $this->db->trans_status();
+
+        if ($status == false) {
+            $this->db->trans_rollback();
+            exit(json_encode(array('retorno' => 0, 'aviso' => 'Não foi possível importar o arquivo.', 'redireciona' => 0, 'pagina' => '')));
+        }
+
+        $this->db->trans_commit();
+
+        echo json_encode(array('retorno' => 1, 'aviso' => 'Importação de currículo efetuada com sucesso', 'redireciona' => 1, 'pagina' => site_url(lcfirst(get_class($this) . '/perfil/' . $id))));
+    }
+
+
+    public function visualizarPerfil()
+    {
+        $sql = "SELECT a.nome, a.foto,
+                       DATE_FORMAT(a.data_nascimento, '%d/%m/%Y') AS data_nascimento,
+                       (CASE a.sexo WHEN 'M' THEN 'Masculino' WHEN 'F' THEN 'Feminino' END) AS sexo,
+                       (CASE a.sexo 
+                             WHEN 'M' THEN (CASE a.estado_civil 
+                                                 WHEN 1 THEN 'Solteiro' 
+                                                 WHEN 2 THEN 'Casado' 
+                                                 WHEN 3 THEN 'Desquitado' 
+                                                 WHEN 4 THEN 'Divorciado' 
+                                                 WHEN 5 THEN 'Viúvo' 
+                                                 WHEN 6 THEN 'Outro' END)
+                             WHEN 'F' THEN (CASE a.estado_civil 
+                                                 WHEN 1 THEN 'Solteira' 
+                                                 WHEN 2 THEN 'Casada' 
+                                                 WHEN 3 THEN 'Desquitada' 
+                                                 WHEN 4 THEN 'Divorciada' 
+                                                 WHEN 5 THEN 'Viúva' 
+                                                 WHEN 6 THEN 'Outro' END)
+                             END) AS estado_civil,
+                       a.telefone, a.email,
+                       a.nome_mae, a.nome_pai,
+                       (CASE a.status WHEN 'A' THEN 'Ativo' WHEN 'E' THEN 'Excluído' END) AS status,
+                       a.cpf, a.rg, a.pis, a.cep, 
+                       a.logradouro, a.numero, a.complemento, a.bairro,
+                       b.municipio AS cidade,
+                       c.estado,
+                       d.nome AS escolaridade,
+                       e.tipo AS deficiencia,
+                       a.fonte_contratacao
+                FROM recrutamento_usuarios a
+                LEFT JOIN municipios b ON b.cod_mun = a.cidade
+                LEFT JOIN estados c ON c.cod_uf = a.estado
+                LEFT JOIN escolaridade d ON d.id = a.escolaridade
+                LEFT JOIN deficiencias e ON e.id = a.deficiencia
+                WHERE a.id = '{$this->uri->rsegment(3)}'";
+        $data = $this->db->query($sql)->row_array();
+
+
+        $this->db->select('a.*, b.nome AS escolaridade', false);
+        $this->db->join('escolaridade b', 'b.id = a.id_escolaridade');
+        $this->db->where('a.id_usuario', $this->uri->rsegment(3));
+        $this->db->order_by('a.id_escolaridade', 'asc');
+        $this->db->order_by('a.ano_conclusao', 'asc');
+        $formacoes = $this->db->get('recrutamento_formacao a')->result();
+
+        $formacaoCampos = (object)array_fill_keys($this->db->get('recrutamento_formacao')->list_fields(), null);
+        $data['formacao'] = array();
+        for ($i = 0; $i <= 12; $i++) {
+            $data['formacao'][$i] = $formacaoCampos;
+        }
+
+        $ensinoFundamental = array();
+        $ensinoMedio = array();
+        $graduacao = array();
+        $posGraduacao = array();
+        $mestrado = array();
+        foreach ($formacoes as $formacao) {
+            switch ($formacao->id_escolaridade) {
+                case 1:
+                case 2:
+                    $ensinoFundamental[] = $formacao;
+                    break;
+                case 3:
+                case 4:
+                    $ensinoMedio[] = $formacao;
+                    break;
+                case 5:
+                case 6:
+                    $graduacao[] = $formacao;
+                    break;
+                case 7:
+                case 8:
+                    $posGraduacao[] = $formacao;
+                    break;
+                default:
+                    $mestrado[] = $formacao;
+            }
+        }
+        array_splice($data['formacao'], 0, count($ensinoFundamental), $ensinoFundamental);
+        array_splice($data['formacao'], 1, count($ensinoMedio), $ensinoMedio);
+        array_splice($data['formacao'], 4, count($graduacao), $graduacao);
+        array_splice($data['formacao'], 7, count($posGraduacao), $posGraduacao);
+        array_splice($data['formacao'], 10, count($mestrado), $mestrado);
+
+
+        $this->db->select('id, instituicao, cargo_entrada, cargo_saida, motivo_saida, realizacoes');
+        $this->db->select("DATE_FORMAT(data_entrada, '%d/%m/%Y') AS data_entrada", false);
+        $this->db->select("DATE_FORMAT(data_saida, '%d/%m/%Y') AS data_saida", false);
+        $this->db->select("FORMAT(salario_entrada, 2, 'de_DE') AS salario_entrada", false);
+        $this->db->select("FORMAT(salario_saida, 2, 'de_DE') AS salario_saida", false);
+        $this->db->where('id_usuario', $this->uri->rsegment(3));
+        $this->db->order_by('data_entrada', 'desc');
+        $this->db->order_by('data_saida', 'desc');
+        $this->db->limit(7);
+        $expProfissional = $this->db->get('recrutamento_experiencia_profissional')->result();
+        $expProfissionalCampos = (object)array_fill_keys($this->db->get('recrutamento_experiencia_profissional')->list_fields(), null);
+        $data['historicoProfissional'] = array();
+        for ($i = 0; $i <= 6; $i++) {
+            $data['historicoProfissional'][$i] = $expProfissionalCampos;
+        }
+        array_splice($data['historicoProfissional'], 0, count($expProfissional), $expProfissional);
+
+        $this->load->view('recrutamento_perfil_visualizacao', $data);
     }
 
 }

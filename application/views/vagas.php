@@ -120,21 +120,19 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" style="float:right;">Fechar
+                    </button>
                     <h3 class="modal-title">Detalhes da vaga</h3>
                 </div>
                 <div class="modal-body form">
                     <form action="#" class="form-horizontal">
                         <div class="row">
                             <label class="control-label col-md-3">Código da vaga</label>
-                            <div class="col-md-8">
+                            <div class="col-md-1">
                                 <p id="codigo" class="form-control-static"></p>
                             </div>
-                        </div>
-                        <div class="row">
-                            <label class="control-label col-md-3">Cargo/Função</label>
-                            <div class="col-md-8">
+                            <label class="control-label col-md-2">Cargo/Função</label>
+                            <div class="col-md-5">
                                 <p id="cargo_funcao" class="form-control-static"></p>
                             </div>
                         </div>
@@ -146,32 +144,26 @@
                         </div>
                         <div class="row">
                             <label class="control-label col-md-3">Data de abertura</label>
-                            <div class="col-md-8">
+                            <div class="col-md-1">
                                 <p id="data_abertura" class="form-control-static"></p>
                             </div>
-                        </div>
-                        <div class="row">
                             <label class="control-label col-md-3">Quantidade de vagas</label>
-                            <div class="col-md-8">
+                            <div class="col-md-1">
                                 <p id="quantidade" class="form-control-static"></p>
+                            </div>
+                            <label class="control-label col-md-2">Tipo de vínculo</label>
+                            <div class="col-md-1">
+                                <p id="tipo_vinculo" class="form-control-static"></p>
                             </div>
                         </div>
                         <div class="row">
                             <label class="control-label col-md-3">Cidade da vaga</label>
-                            <div class="col-md-8">
+                            <div class="col-md-3">
                                 <p id="cidade_vaga" class="form-control-static"></p>
                             </div>
-                        </div>
-                        <div class="row">
-                            <label class="control-label col-md-3">Bairro da vaga</label>
-                            <div class="col-md-8">
+                            <label class="control-label col-md-2">Bairro da vaga</label>
+                            <div class="col-md-3">
                                 <p id="bairro_vaga" class="form-control-static"></p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <label class="control-label col-md-3">Tipo de vínculo</label>
-                            <div class="col-md-8">
-                                <p id="tipo_vinculo" class="form-control-static"></p>
                             </div>
                         </div>
                         <div class="row">
@@ -207,7 +199,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Fechar</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -222,7 +214,8 @@
                     <h3 class="modal-title">Candidatar-se a uma vaga</h3>
                 </div>
                 <div class="modal-body form">
-                    <p>Para candidatar-se a uma vaga, é necessário cadastrar seu currículo e fazer login no sistema.</p>
+                    <p>Para candidatar-se a uma vaga, é necessário cadastrar seu currículo e <strong>entrar no
+                            portal.</strong></p>
                     <div class="row">
                         <div class="col-md-6 text-center">
                             <h4>Já sou cadastrado</h4>
@@ -339,7 +332,7 @@
 
 
     function candidatar(codigo) {
-        $('#url_cadastro').prop('href', '<?php echo site_url('vagas/cadastrarCurriculo'); ?>/' + codigo);
+        $('#url_cadastro').prop('href', '<?php echo site_url('vagas/novoCandidato'); ?>/' + codigo);
         $('#modal_candidato').modal('show');
     }
 

@@ -34,22 +34,20 @@
     <table id="atividades" class="table table-condensed table-condensed">
         <thead>
         <tr style='border-top: 5px solid #ddd;'>
-            <th colspan="2" style="padding-bottom: 12px;">
+            <th colspan="3" style="padding-bottom: 12px;">
                 <h2 class="text-center" style="font-weight: bold;">RELATORIO DE ATIVIDADES PENDENTES</h2>
             </th>
         </tr>
         </thead>
         <tbody>
         <tr class="success" style='border-top: 5px solid #ddd; border-bottom: 1px solid #ddd;'>
-            <td colspan="2" style="padding: 4px 0px;">
+            <td style="padding: 4px 0px;">
                 <h5><span style="font-weight: bold;">Data atual: </span><?= date('d/m/Y') ?></h5>
             </td>
-        </tr>
-        <tr class="success" style='border-bottom: 5px solid #ddd;'>
             <td style="padding: 4px 0px;">
                 <h5><span style="font-weight: bold;">Usuário: </span><?= $usuario->nome ?></h5>
             </td>
-            <td style="padding: 4px 0px;" class="text-right">
+            <td style="padding: 4px 0px;">
                 <h5><span style="font-weight: bold;">Depto/área/setor: </span><?= $usuario->estrutura ?></h5>
             </td>
         </tr>
@@ -58,24 +56,24 @@
     <table id="table" class="table table-bordered table-condensed">
         <thead>
         <tr class='active'>
+            <th class="text-center">Atv.</th>
             <th class="text-center">Colaborador</th>
             <th class="text-center">PR</th>
-            <th class="text-center">TP</th>
             <th class="text-center">ST</th>
             <th class="text-center">Atividades</th>
-            <th class="text-center">Data cadastro</th>
-            <th class="text-center">Data limite</th>
-            <th class="text-center">Data fechamento</th>
+            <th class="text-center">Cadastro</th>
+            <th class="text-center">Limite</th>
+            <th class="text-center">Fechamento</th>
         </tr>
         </thead>
         <tbody>
         <?php foreach ($rows as $row): ?>
-            <tr>
+            <tr class="<?= $row->id_mae ? 'active' : ''; ?>">
+                <td style="background-color: #f5f5f5"><?= $row->id ?></td>
                 <td><?= $row->nome ?></td>
                 <td><?= $row->prioridade ?></td>
-                <td><?= $row->tipo ?></td>
                 <td><?= $row->status ?></td>
-                <td><?= $row->atividade ?></td>
+                <td><?= $row->atividade . (strlen($row->observacoes) ? '<br><br><p style="margin: 8px 0 0 15px;">Obs.: ' . $row->observacoes . '</p>' : '') ?></td>
                 <td class="text-center"><?= $row->data_cadastro ?></td>
                 <td class="text-center"><?= $row->data_limite ?></td>
                 <td class="text-center"><?= $row->data_fechamento ?></td>
