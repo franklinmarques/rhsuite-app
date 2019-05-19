@@ -300,7 +300,7 @@ class PDI extends MY_Controller
                 LEFT JOIN cargos c ON
                             c.id = d.id_cargo 
                 LEFT JOIN pdi_desenvolvimento e ON
-                          e.pdi = a.id
+                          e.id_pdi = a.id
                 WHERE a.id = {$pdi}";
 
 
@@ -313,7 +313,7 @@ class PDI extends MY_Controller
                          DATE_FORMAT(data_termino,'%d/%m/%Y') AS data_termino, 
                          status
                  FROM pdi_desenvolvimento
-                 WHERE pdi = {$pdi} 
+                 WHERE id_pdi = {$pdi} 
                  ORDER BY data_inicio ASC, 
                           data_termino ASC";
         $vars['itensPDI'] = $this->db->query($query)->result();

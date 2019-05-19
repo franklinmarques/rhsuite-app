@@ -10,7 +10,7 @@ class PDI_desenvolvimento extends MY_Controller
     public function index()
     {
         $data['id_usuario'] = $this->uri->rsegment(3);
-        $data['pdi'] = $this->uri->rsegment(4, 0);
+        $data['id_pdi'] = $this->uri->rsegment(4, 0);
         $this->load->view('pdi_desenvolvimento', $data);
 //        parent::index();
     }
@@ -21,7 +21,7 @@ class PDI_desenvolvimento extends MY_Controller
         $data['id_usuario'] = $row->id;
         $data['nome_usuario'] = $row->nome;
         $data['funcao_usuario'] = $row->funcao;
-        $data['pdi'] = $this->uri->rsegment(4, 0);
+        $data['id_pdi'] = $this->uri->rsegment(4, 0);
         $this->load->view('pdi_desenvolvimento', $data);
     }
 
@@ -31,11 +31,11 @@ class PDI_desenvolvimento extends MY_Controller
 
         $query = $this->input->post('busca');
 
-        $qryWHERE = 'WHERE pdi = ? ';
+        $qryWHERE = 'WHERE id_pdi = ? ';
         $dataWHERE[] = $this->uri->rsegment(3);
 
         if (!empty($query)) {
-            $qryWHERE .= 'AND (pdi LIKE ? OR data_inicio LIKE ? OR data_fim LIKE ?)';
+            $qryWHERE .= 'AND (id_pdi LIKE ? OR data_inicio LIKE ? OR data_fim LIKE ?)';
             $dataWHERE[] = "%{$query}%";
             $dataWHERE[] = "%{$query}%";
             $dataWHERE[] = "%{$query}%";
@@ -180,7 +180,7 @@ class PDI_desenvolvimento extends MY_Controller
         $data['data_termino'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_termino'])));
 
         $this->db->select('data_inicio, data_termino');
-        $pdi = $this->db->get_where('pdi', array('id' => $data['pdi']))->row();
+        $pdi = $this->db->get_where('pdi', array('id' => $data['id_pdi']))->row();
         if ($data['data_inicio'] < $pdi->data_inicio) {
             exit(json_encode(array('retorno' => 0, 'aviso' => 'A data de início deve ser igual ou maior que a data de início do PDI')));
         }
@@ -188,7 +188,7 @@ class PDI_desenvolvimento extends MY_Controller
             exit(json_encode(array('retorno' => 0, 'aviso' => 'A data de término deve ser igual ou menor que a data de término do PDI')));
         }
 
-        $status = (bool) $this->db->insert('pdi_desenvolvimento', $data);
+        $status = (bool)$this->db->insert('pdi_desenvolvimento', $data);
         echo json_encode(array("status" => $status));
     }
 
@@ -199,7 +199,7 @@ class PDI_desenvolvimento extends MY_Controller
         $data['data_termino'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_termino'])));
 
         $this->db->select('data_inicio, data_termino');
-        $pdi = $this->db->get_where('pdi', array('id' => $data['pdi']))->row();
+        $pdi = $this->db->get_where('pdi', array('id' => $data['id_pdi']))->row();
         if ($data['data_inicio'] < $pdi->data_inicio) {
             exit(json_encode(array('retorno' => 0, 'aviso' => 'A data de início deve ser igual ou maior do que a data de início do PDI')));
         }
@@ -207,13 +207,13 @@ class PDI_desenvolvimento extends MY_Controller
             exit(json_encode(array('retorno' => 0, 'aviso' => 'A data de término deve ser igual ou menor do que a data de término do PDI')));
         }
 
-        $status = (bool) $this->db->update('pdi_desenvolvimento', $data, array('id' => $data['id']));
+        $status = (bool)$this->db->update('pdi_desenvolvimento', $data, array('id' => $data['id']));
         echo json_encode(array("status" => $status));
     }
 
     public function ajax_delete($id)
     {
-        $status = (bool) $this->db->delete('pdi_desenvolvimento', array('id' => $id));
+        $status = (bool)$this->db->delete('pdi_desenvolvimento', array('id' => $id));
         echo json_encode(array("status" => $status));
     }
 
