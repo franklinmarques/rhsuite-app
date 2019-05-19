@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | -------------------------------------------------------------------------
 | Hooks
@@ -10,7 +10,13 @@
 |
 */
 
-
+$hook['pre_controller'] = array(
+    'class' => 'MY_Hook',
+    'function' => 'setSubdomain',
+    'filename' => 'MY_Hook.php',
+    'filepath' => 'hooks',
+    'params' => array()
+);
 
 /* End of file hooks.php */
 /* Location: ./application/config/hooks.php */
