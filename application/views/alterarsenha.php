@@ -42,12 +42,12 @@
             <hr/>
             <div class="form-group">
                 <div class="controls">
-                    <input type="password" name="novasenha" placeholder="Nova Senha" class="form-control" />
+                    <input type="password" name="novasenha" placeholder="Nova Senha" class="form-control" autocomplete="new-password"/>
                 </div>
             </div>
             <div class="form-group">
                 <div class="controls">
-                    <input type="password" name="confirmarsenha" placeholder="Confirmar Senha" class="form-control" />
+                    <input type="password" name="confirmarsenha" placeholder="Confirmar Senha" class="form-control" autocomplete="new-password"/>
                 </div>
             </div>
             <div class="form-group">

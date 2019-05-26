@@ -48,13 +48,14 @@ require_once "header.php";
                                                 <label class="col-sm-3 col-lg-2 control-label">Senha</label>
                                                 <div class="col-sm-9 col-lg-10 controls">
                                                     <input type="password" name="senha" placeholder="Senha" value=""
-                                                           class="form-control"/>
+                                                           class="form-control" autocomplete="new-password"/>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="col-sm-3 col-lg-2 control-label">Confirmar Senha</label>
                                                 <div class="col-sm-9 col-lg-10 controls">
                                                     <input type="password" name="confirmarsenha"
+                                                           autocomplete="new-password"
                                                            placeholder="Confirmar Senha" value="" class="form-control"/>
                                                 </div>
                                             </div>
@@ -317,9 +318,23 @@ require_once "header.php";
                                             </div>
                                             <div class="checkbox">
                                                 <label>
+                                                    <input type="checkbox" name="hash_acesso[SA]" value="23"><i
+                                                            class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
+                                                    Scheduler - Atividades
+                                                </label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
                                                     <input type="checkbox" name="hash_acesso[GP]" value="12"><i
                                                             class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
                                                     Gestão Operacional GP
+                                                </label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="hash_acesso[EO]" value="24"><i
+                                                            class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
+                                                    Estrutura Organizacional
                                                 </label>
                                             </div>
                                             <div class="checkbox">
@@ -390,6 +405,13 @@ require_once "header.php";
                                                     <input type="checkbox" name="hash_acesso[PL]" value="22"><i
                                                             class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
                                                     Gestão da Plataforma
+                                                </label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="hash_acesso[RG]" value="25"><i
+                                                            class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
+                                                    Relatórios de Gestão
                                                 </label>
                                             </div>
                                         </fieldset>

@@ -170,14 +170,14 @@ require_once "header.php";
                                             <div class="col-lg-4 controls">
                                                 <input type="password" name="senha" placeholder="Senha" value=""
                                                        max="32"
-                                                       class="form-control" autocomplete="off"/>
+                                                       class="form-control" autocomplete="new-password"/>
                                             </div>
                                             <label class="col-sm-1 control-label">Confirmar senha</label>
                                             <div class="col-lg-4 controls">
                                                 <input type="password" name="confirmarsenha"
                                                        placeholder="Confirmar senha"
                                                        value=""
-                                                       max="32" class="form-control" autocomplete="off"/>
+                                                       max="32" class="form-control" autocomplete="new-password"/>
                                             </div>
                                         </div>
                                     </fieldset>

@@ -361,7 +361,7 @@ require_once "header.php";
                                                 <label class="col-xs-3 control-label">Senha</label>
                                                 <div class="col-xs-9 controls">
                                                     <input type="password" name="senha" placeholder="Senha" value=""
-                                                           class="form-control"/>
+                                                           class="form-control" autocomplete="new-password"/>
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -369,7 +369,7 @@ require_once "header.php";
                                                 <div class="col-xs-9 controls">
                                                     <input type="password" name="confirmarsenha"
                                                            placeholder="Confirmar Senha" value=""
-                                                           class="form-control"/>
+                                                           class="form-control" autocomplete="new-password"/>
                                                 </div>
                                             </div>
                                             <div class="form-group">

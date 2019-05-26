@@ -53,7 +53,7 @@ require_once "header.php";
 
                                 <div class="col-sm-9 col-lg-10 controls">
                                     <input type="password" name="senha" placeholder="Senha" value=""
-                                           class="form-control" autocomplete="off"/>
+                                           class="form-control" autocomplete="new-password"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -61,7 +61,7 @@ require_once "header.php";
 
                                 <div class="col-sm-9 col-lg-10 controls">
                                     <input type="password" name="confirmarsenha" placeholder="Confirmar Senha" value=""
-                                           class="form-control"/>
+                                           class="form-control" autocomplete="new-password"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -289,32 +289,42 @@ require_once "header.php";
                                         <label>
                                             <input type="checkbox" name="hash_acesso[PD]" value="11"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Lista de
-                                            Pendências
+                                            Lista de Pendências
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="hash_acesso[SA]" value="23"><i
+                                                    class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
+                                            Scheduler - Atividades
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" name="hash_acesso[GP]" value="12"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Gestão
-                                            Operacional GP
+                                            Gestão Operacional GP
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="hash_acesso[EO]" value="24"><i
+                                                    class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
+                                            Estrutura Organizacional
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" name="hash_acesso[JD]" value="13"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Job
-                                            Descriptor
+                                            Job Descriptor
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" name="hash_acesso[PS]" value="14"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Gestão
-                                            Processos Seletivos
+                                            Gestão Processos Seletivos
                                         </label>
                                     </div>
                                     <div class="checkbox">
@@ -328,8 +338,7 @@ require_once "header.php";
                                         <label>
                                             <input type="checkbox" name="hash_acesso[DO]" value="16"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Gestão
-                                            de Documentos
+                                            Gestão de Documentos
                                         </label>
                                     </div>
                                     <div class="checkbox">
@@ -343,40 +352,42 @@ require_once "header.php";
                                         <label>
                                             <input type="checkbox" name="hash_acesso[DE]" value="18"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Gestão
-                                            de Desempenho
+                                            Gestão de Desempenho
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" name="hash_acesso[PE]" value="19"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Gestão
-                                            de Pesquisas
+                                            Gestão de Pesquisas
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" name="hash_acesso[OS]" value="20"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Ordens
-                                            de Serviço
+                                            Ordens de Serviço
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" name="hash_acesso[FA]" value="21"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Gestão
-                                            de Facilities
+                                            Gestão de Facilities
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" name="hash_acesso[PL]" value="22"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Gestão
-                                            da Plataforma
+                                            Gestão da Plataforma
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="hash_acesso[RG]" value="25"><i
+                                                    class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
+                                            Relatórios de Gestão
                                         </label>
                                     </div>
                                 </fieldset>
