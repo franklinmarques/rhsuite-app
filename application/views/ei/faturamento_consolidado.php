@@ -110,9 +110,10 @@
         <table id="faturmaneto_consolidado" class="table table-condensed table-bordered">
             <thead>
             <tr class="active">
-                <th width="30%" class="text-nowrap">Unidade Ensino</th>
-                <th width="30%">Profissionais</th>
-                <th width="30%">Função</th>
+                <th width="25%" class="text-nowrap">Unidade Ensino</th>
+                <th width="25%">Município</th>
+                <th width="25%">Profissionais</th>
+                <th width="25%">Função</th>
                 <th class="text-nowrap">Aprovação faturamento</th>
                 <th class="text-center text-nowrap">Qtde. dias</th>
                 <th class="text-center text-nowrap">Qtde. horas</th>
@@ -122,6 +123,7 @@
             <?php foreach ($rows as $row): ?>
                 <tr>
                     <td><?= $row->escola ?></td>
+                    <td><?= $row->municipio ?></td>
                     <td><?= $row->cuidador ?></td>
                     <td><?= $row->funcao ?></td>
                     <td class="text-center"><?= $row->data_aprovacao ?></td>

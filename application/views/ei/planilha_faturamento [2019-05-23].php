@@ -108,35 +108,17 @@
         Prestação de serviço contínuo de apoio à educação inclusiva, com fornecimento de mão-de-obra aos atendidos
         pelo Centro Paulo Souza, conforme dados abaixo.
     </p>
-
-    <table width="100%">
+    <p><strong>Contrato(s):</strong> <?= $contrato; ?><br>
+        <strong>Unidade escolar:</strong> <?= $escola; ?><br>
+        <strong>Ordem(ns) de Execução de Serviço:</strong> <?= $ordemServico; ?></p>
+    <p><strong>Alunos atendidos:</strong> <?= $alunos; ?><br>
+        <strong>Profissionais:</strong> <?= $profissional; ?></p>
+    <p><strong>Período:</strong> <?= $nomePeriodo; ?></p>
+    <table>
         <tr>
-            <td style="vertical-align: top;" width="50%">
-                <p><strong>Contrato(s):</strong> <?= $contrato; ?><br>
-                    <strong>Unidade escolar:</strong> <?= $escola; ?><br>
-                    <strong>Ordem(ns) de Execução de Serviço:</strong> <?= $ordemServico; ?></p>
-                <p><strong>Alunos atendidos:</strong> <?= $alunos; ?><br>
-                    <strong>Profissionais:</strong> <?= $profissional; ?></p>
-                <p><strong>Período:</strong> <?= $nomePeriodo; ?></p>
-            </td>
-            <td style="vertical-align: top;" width="50%">
-                <?php if ($is_pdf == false): ?>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label class="control-label" style="font-weight: bold;">Observações:</label>
-                            <textarea id="observacoes_faturamento" class="form-control"
-                                      onchange="setPdfFaturamentoAttributes()" rows="4"><?= $observacoes; ?></textarea>
-                        </div>
-                    </div>
-                <?php elseif (strlen($observacoes)): ?>
-                    <p><strong>Observações:</strong> <?= $observacoes; ?></p>
-                <?php endif; ?>
-            </td>
-        </tr>
-        <tr>
-            <td style="vertical-align: top;">
+            <th style="vertical-align: top;">Horário(s) de trabalho:&nbsp;</th>
+            <td>
                 <p>
-                    <strong>Horário(s) de trabalho:</strong>
                     <?php foreach ($diasSemana as $k => $diaSemana): ?>
                         <?= implode('', $diaSemana); ?><?= $k < count($diasSemana) - 1 ? ';<br>' : ''; ?>
                     <?php endforeach; ?>
@@ -234,25 +216,11 @@
 
 <?php if ($is_pdf == false): ?>
     <script>
-        $(document).ready(function () {
-            setPdfFaturamentoAttributes();
-        });
-
-        $('#observacoes_faturamento').on('change', function () {
-            $('#form_totalizacao [name="observacoes"]').val(this.value);
-            setPdfFaturamentoAttributes();
-        });
-
-
         function setPdfFaturamentoAttributes() {
             var search = '';
             var data_atual = $('#data_impressao_faturamento').val();
-            var observacoes = $('#observacoes_faturamento').val();
             if (moment(data_atual, 'DD/MM/YYYY').isValid()) {
                 search = '&data_atual=' + data_atual;
-            }
-            if (observacoes.length > 0) {
-                search = search + '&observacoes=' + observacoes;
             }
             $('#pdf_faturamento').prop('href', '<?= site_url('ei/apontamento/pdfTotalizacao/?' . $query_string); ?>' + search);
         }

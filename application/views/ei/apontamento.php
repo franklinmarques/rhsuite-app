@@ -1150,6 +1150,7 @@
                                 <input type="hidden" value="" name="substituto"/>
                                 <input type="hidden" value="" name="temp_id_alocado"/>
                                 <input type="hidden" value="" name="temp_periodo"/>
+                                <input type="hidden" value="" name="observacoes"/>
                                 <div class="row form-group">
                                     <label class="control-label col-md-2">Data de aprovação</label>
                                     <div class="col-md-2">
@@ -3352,6 +3353,7 @@
                     $('#form_totalizacao [name="substituto"]').val(substituto);
                     $('#form_totalizacao [name="data_aprovacao"]').val(json.data_aprovacao);
                     $('#form_totalizacao [name="data_impressao"]').val(json.data_impressao);
+                    $('#form_totalizacao [name="observacoes"]').val(json.observacoes);
 
                     $('#planilha_faturamento').html(json.planilha_faturamento);
 
@@ -3985,12 +3987,15 @@
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
+                    'id': $('#form_totalizacao [name="id"]').val(),
                     'id_alocado': $('#form_totalizacao [name="temp_id_alocado"]').val(),
                     'mes': $('#form_totalizacao [name="mes"]').val(),
                     'periodo': $('#form_totalizacao [name="temp_periodo"]').val(),
                     'substituto': $('#form_totalizacao [name="substituto"]').val()
                 },
                 'success': function (json) {
+                    $('#form_totalizacao [name="data_aprovacao"]').val(json.data_aprovacao);
+                    $('#form_totalizacao [name="observacoes"]').val(json.observacoes);
                     $('#planilha_faturamento').html(json.planilha_faturamento);
                     $('#btnRecuperarTotalizacao').text('Recuperar e validar base').attr('disabled', false);
                 },

@@ -2291,7 +2291,7 @@ class Apontamento extends MY_Controller
 
 
         $this->db->select('f.id, a.id_alocado, a.periodo, c.id_alocacao, c.id_escola, c.escola, b.cuidador, e.cargo, e.funcao');
-        $this->db->select("'{$mes}' AS mes", false);
+        $this->db->select("'{$mes}' AS mes, f.observacoes_mes{$mes} AS observacoes", false);
         $this->db->select("DATE_FORMAT(f.data_aprovacao_mes{$mes}, '%d/%m/%Y') AS data_aprovacao", false);
         $this->db->select("DATE_FORMAT(IFNULL(f.data_impressao_mes{$mes}, NOW()), '%d/%m/%Y') AS data_impressao", false);
         $this->db->join('ei_alocados b', 'b.id = a.id_alocado');
@@ -2324,6 +2324,13 @@ class Apontamento extends MY_Controller
         $mes = $this->input->post('mes');
         $periodo = $this->input->post('periodo');
 
+        $this->db->select("observacoes_mes{$mes} AS observacoes", false);
+        $this->db->select("DATE_FORMAT(data_aprovacao_mes{$mes}, '%d/%m/%Y') AS data_aprovacao", false);
+        $this->db->where('id', $this->input->post('id'));
+        $row = $this->db->get('ei_faturamento')->row();
+
+        $data['data_aprovacao'] = $row->data_aprovacao ?? '';
+        $data['observacoes'] = $row->observacoes ?? '';
         $data['planilha_faturamento'] = $this->planilhaFaturamento($idAlocado, $mes, $periodo, false, true);
 
         echo json_encode($data);
@@ -3577,6 +3584,10 @@ class Apontamento extends MY_Controller
         } else {
             $dataImpressao = null;
         }
+        $observacoes = $this->input->post('observacoes');
+        if (strlen($observacoes) == 0) {
+            $observacoes = null;
+        }
 
 
         $this->db->trans_start();
@@ -3596,6 +3607,7 @@ class Apontamento extends MY_Controller
         foreach ($faturamentos as $faturamento) {
             $faturamento->{'data_aprovacao_mes' . $mes} = $dataAprovacao;
             $faturamento->{'data_impressao_mes' . $mes} = $dataImpressao;
+            $faturamento->{'observacoes_mes' . $mes} = $observacoes;
 
             if ($faturamento->id) {
                 $this->db->update('ei_faturamento', $faturamento, ['id' => $faturamento->id]);
@@ -4313,7 +4325,7 @@ class Apontamento extends MY_Controller
         $this->db->select(["GROUP_CONCAT(DISTINCT c2.nome ORDER BY c2.nome ASC SEPARATOR ', ') AS cuidador_sub1"], false);
         $this->db->select(["GROUP_CONCAT(DISTINCT c3.nome ORDER BY c3.nome ASC SEPARATOR ', ') AS cuidador_sub2"], false);
         $this->db->select(["GROUP_CONCAT(DISTINCT e.aluno ORDER BY e.aluno ASC SEPARATOR ', ') AS alunos"], false);
-        $this->db->select("MIN(c.dia_semana) AS dia_semana_inicial", false);
+        $this->db->select("g.observacoes_mes{$idMes} AS observacoes, MIN(c.dia_semana) AS dia_semana_inicial", false);
         $this->db->select(["IF(COUNT(c.dia_semana) > 1, MAX(c.dia_semana), NULL) AS dia_semana_final"], false);
         $this->db->select(["TIME_FORMAT(c.horario_inicio_mes{$idMes}, '%H:%i') AS horario_inicio"], false);
         $this->db->select(["TIME_FORMAT(c.horario_termino_mes{$idMes}, '%H:%i') AS horario_termino"], false);
@@ -4331,6 +4343,7 @@ class Apontamento extends MY_Controller
         $this->db->join('ei_matriculados_turmas d', 'd.id_alocado_horario = c.id', 'left');
         $this->db->join('ei_matriculados e', 'e.id = d.id_matriculado AND e.id_alocacao_escola = b.id', 'left');
         $this->db->join('ei_alocados_totalizacao f', 'f.id_alocado = a.id AND f.periodo = c.periodo', 'left');
+        $this->db->join('ei_faturamento g', 'g.id_alocacao = b2.id AND g.id_escola = b.id_escola AND g.cargo = c.cargo AND g.funcao = c.funcao', 'left');
         $this->db->where('b.id_escola', $alocados->id_escola);
         $this->db->where('c.funcao', $alocados->funcao);
         $this->db->group_by('b.id_escola');
@@ -4410,6 +4423,10 @@ class Apontamento extends MY_Controller
         } else {
             $dataAtual = date('Y-m-d');
         }
+        $observacoes = $this->input->get('observacoes');
+        if (strlen($observacoes) == 0 or $recuperar) {
+            $observacoes = $data->observacoes;
+        }
 
 
         $planilha = array(
@@ -4425,6 +4442,7 @@ class Apontamento extends MY_Controller
             'alunos' => $data->alunos,
             'profissional' => implode(', ', array_filter([$data->cuidador, $data->cuidador_sub1, $data->cuidador_sub2])),
             'nomePeriodo' => $data->periodo_inicial . ' a ' . $data->periodo_final,
+            'observacoes' => $observacoes,
             'diasSemana' => array_values($diasSemana),
             'mesAno' => ucfirst($this->calendar->get_month_name($mes)) . '/' . $data->ano,
             'faturamentos' => $faturamentos,

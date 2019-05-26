@@ -2369,7 +2369,8 @@ class Relatorios extends MY_Controller
         $data['empresa'] = $this->db->get('usuarios')->row();
 
 
-        $this->db->select('c.cuidador, d2.funcao, b.escola');
+        $this->db->select('c.cuidador, d2.funcao, b.municipio');
+        $this->db->select(["CONCAT_WS(' - ', b.codigo, b.escola) AS escola"], false);
         $this->db->select(["DATE_FORMAT(e.data_aprovacao_mes{$idMes}, '%d/%m/%Y') AS data_aprovacao"], false);
         $this->db->select(["ROUND(IFNULL(c2.total_dias_mes{$idMes}, SUM(d2.total_semanas_mes{$idMes} - IFNULL(d2.desconto_mes{$idMes}, 0)))) AS total_dias"], false);
         $this->db->select(["TIME_FORMAT(IFNULL(c2.total_horas_mes{$idMes}, SEC_TO_TIME(SUM(TIME_TO_SEC(d2.total_mes{$idMes})))), '%H:%i') AS total_horas"], false);
@@ -2385,8 +2386,8 @@ class Relatorios extends MY_Controller
         $this->db->where('a.id_supervisor', $this->input->get_post('supervisor'));
         $this->db->where('a.ano', $this->input->get_post('ano'));
         $this->db->where('a.semestre', $this->input->get_post('semestre'));
-        $this->db->group_by(['b.id_escola', 'c.id_cuidador', 'd2.cargo', 'd2.funcao']);
-        $this->db->order_by('b.escola', 'asc');
+        $this->db->group_by(['b.id_escola', 'c.id_cuidador', 'd2.cargo', 'd2.funcao', 'c.id', 'd2.periodo']);
+        $this->db->order_by('IF(CHAR_LENGTH(b.codigo) > 0, b.codigo, CAST(b.escola AS DECIMAL)) ASC', null, false);
         $this->db->order_by('c.cuidador', 'asc');
         $this->db->order_by('d2.funcao', 'asc');
         $data['rows'] = $this->db->get('ei_alocacao a')->result();
