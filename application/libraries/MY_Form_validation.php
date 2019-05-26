@@ -192,9 +192,13 @@ class MY_Form_validation extends CI_Form_validation
             return true;
         }
 
-        $str .= substr('00/00/0000', strlen($str), 10 - strlen($str));
-
-        $date = date_create_from_format('d/m/Y', $str);
+        if (strpos($str, '/') === false) {
+            $str .= substr('0000-00-00', strlen($str), 10 - strlen($str));
+            $date = date_create_from_format('Y-m-d', $str);
+        } else {
+            $str .= substr('00/00/0000', strlen($str), 10 - strlen($str));
+            $date = date_create_from_format('d/m/Y', $str);
+        }
 
         $CI = &get_instance();
         $CI->form_validation->set_message('valid_date', 'O campo %s não contém uma data válida.');

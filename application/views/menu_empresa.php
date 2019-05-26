@@ -302,6 +302,13 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                     </li>
                 <?php endif; ?>
 
+                <li>
+                    <a href="<?php echo site_url('manutencao'); ?>">
+                        <i class="glyphicons glyphicons-list"> </i>
+                        <span>Relatórios de Gestão</span>
+                    </a>
+                </li>
+
                 <?php if (in_array($this->uri->rsegment(2), array('acessarcurso'))): ?>
                     <li class="sub-menu" id="menu-curso">
                         <a href="javascript:;"<?= (in_array($this->uri->rsegment(2), array('acessarcurso')) ? ' class="active"' : ''); ?>>

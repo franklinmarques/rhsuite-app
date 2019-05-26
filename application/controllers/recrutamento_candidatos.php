@@ -763,7 +763,8 @@ class Recrutamento_candidatos extends MY_Controller
                        c.estado,
                        d.nome AS escolaridade,
                        e.tipo AS deficiencia,
-                       a.fonte_contratacao
+                       a.fonte_contratacao,
+                       a.arquivo_curriculo
                 FROM recrutamento_usuarios a
                 LEFT JOIN municipios b ON b.cod_mun = a.cidade
                 LEFT JOIN estados c ON c.cod_uf = a.estado

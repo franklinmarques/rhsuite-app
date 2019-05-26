@@ -589,12 +589,12 @@ class RecrutamentoPresencial_cargos extends MY_Controller
 
         $this->db->select('a.id, b.id AS id_usuario, a.nome, f.municipio, g.tipo AS deficiencia');
         $this->db->select('a.telefone, a.email, a.fonte_contratacao, a.status, a.observacoes, b.id_requisicao, h.id AS id_usuario_google');
-        $this->db->join('municipios f', 'f.cod_mun = a.cidade', 'left');
-        $this->db->join('deficiencias g', 'g.id = a.deficiencia', 'left');
         $this->db->join('requisicoes_pessoal_candidatos b', "b.id_usuario = a.id AND b.id_requisicao = '{$busca['id_requisicao']}'", 'left');
-        $this->db->join('requisicoes_pessoal c', "c.id = b.id_requisicao", 'left');
+        $this->db->join('requisicoes_pessoal c', "c.id = b.id_requisicao",'left');
         $this->db->join('empresa_cargos d', 'd.id = c.id_cargo', 'left');
         $this->db->join('empresa_funcoes e', 'e.id = c.id_funcao', 'left');
+        $this->db->join('municipios f', 'f.cod_mun = a.cidade', 'left');
+        $this->db->join('deficiencias g', 'g.id = a.deficiencia', 'left');
         $this->db->join('recrutamento_google h', 'h.nome = a.nome', 'left');
         $this->db->where('a.empresa', $this->session->userdata('empresa'));
         if (!empty($busca['estado'])) {
@@ -626,24 +626,21 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         }
         $this->db->order_by('a.nome', 'ASC');
         $this->db->group_by('a.id');
-        $recordsTotal = $this->db->get('recrutamento_usuarios a')->num_rows();
+        $query = $this->db->get('recrutamento_usuarios a');
 
-        $sql = "SELECT s.* FROM ({$this->db->last_query()}) s";
 
-        $post = $this->input->post();
-        if ($post['search']['value']) {
-            $sql .= " WHERE s.nome LIKE '%{$post['search']['value']}%'";
-        }
-        $recordsFiltered = $this->db->query($sql)->num_rows();
+        $config = array(
+            'search' => ['nome', 'telefone', 'email', 'fonte_contratacao', 'observacoes']
+        );
 
-        if ($post['length'] > 0) {
-            $sql .= " LIMIT {$post['start']}, {$post['length']}";
-        }
-        $rows = $this->db->query($sql)->result();
+        $this->load->library('dataTables', $config);
+
+        $output = $this->datatables->generate($query);
+
 
         $data = array();
 
-        foreach ($rows as $row) {
+        foreach ($output->data as $row) {
             if ($row->id_requisicao or $row->id_usuario_google) {
                 $btn = '<button type="button" class="btn btn-sm btn-success disabled" title="Incluído"><i class="glyphicon glyphicon-ok"></i></button>
                         <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')"><i class="glyphicon glyphicon-info-sign"></i></button>';
@@ -671,12 +668,8 @@ class RecrutamentoPresencial_cargos extends MY_Controller
             );
         }
 
-        $output = array(
-            'draw' => $this->input->post('draw'),
-            'recordsTotal' => $recordsTotal,
-            'recordsFiltered' => $recordsFiltered,
-            'data' => $data,
-        );
+        $output->data = $data;
+
 
         echo json_encode($output);
     }

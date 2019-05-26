@@ -95,7 +95,6 @@
             });
 
 
-
             var sparkLine = function () {
                 $(".sparkline").each(function () {
                     var $data = $(this).data();
@@ -131,9 +130,7 @@
             sparkLine(false);
 
 
-
         }
-
 
 
         if ($.fn.plot) {
@@ -156,8 +153,6 @@
                     }
 
 
-
-
                 },
 
                 legend: {
@@ -173,14 +168,13 @@
         }
 
 
-
         /*==Collapsible==*/
         $('.widget-head').click(function (e) {
             var widgetElem = $(this).children('.widget-collapse').children('i');
 
             $(this)
-                    .next('.widget-container')
-                    .slideToggle('slow');
+                .next('.widget-container')
+                .slideToggle('slow');
             if ($(widgetElem).hasClass('ico-minus')) {
                 $(widgetElem).removeClass('ico-minus');
                 $(widgetElem).addClass('ico-plus');
@@ -190,8 +184,6 @@
             }
             e.preventDefault();
         });
-
-
 
 
         /*==Sidebar Toggle==*/
@@ -204,7 +196,6 @@
             else
                 $(".leftside-navigation").scrollTo("+=" + Math.abs(diff), 500);
         });
-
 
 
         $('.sidebar-toggle-box:has(.fa-bars)').click(function (e) {
@@ -266,7 +257,7 @@
             }
         });
 
-        $('.panel .tools .fa').click(function () {
+        $('.panel .tools .fa-chevron-up, .panel .tools .fa-chevron-down').click(function () {
             var el = $(this).parents(".panel").children(".panel-body");
             if ($(this).hasClass("fa-chevron-down")) {
                 $(this).removeClass("fa-chevron-down").addClass("fa-chevron-up");
@@ -278,10 +269,14 @@
         });
 
 
+        $('.panel .tools .fa-question-circle').click(function () {
+            $('.modal_ajuda').modal('show');
+        });
 
         $('.panel .tools .fa-times').click(function () {
             $(this).parents(".panel").parent().remove();
         });
+
 
         // tool tips
 

@@ -17,7 +17,8 @@
         ?>
         <tr>
             <td><?php echo $row->nome; ?></td>
-            <td nowrap><?php switch ($row->status): case '1':
+            <td class="<?= ($row->status === '1' and strlen($row->tipo_demissao) > 0) ? 'bg-danger' : ''; ?>"
+                nowrap><?php switch ($row->status): case '1':
                     echo 'Ativo';
                     break;
                     case '2':

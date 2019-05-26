@@ -4649,7 +4649,7 @@ span.customSelect.changed {
 .tools a {
     margin-left: 10px;
     color: #a7a7a7;
-    font-size: 12px;
+    font-size: 19px;
 }
 
 /* google maps */
@@ -7281,7 +7281,8 @@ ul.sidebar-menu li a {
 /* Ícones no título */
 .tools a {
     color: #FFF;
-    background-color: rgb(112, 135, 163) !important;
+    background-color: #111343 !important;
+    /*background-color: rgb(112, 135, 163) !important;*/
 }
 
 /* Player */

@@ -137,14 +137,14 @@ require_once "header.php";
                                 <label class="col-sm-3 col-lg-2 control-label">Senha</label>
                                 <div class="col-sm-9 col-lg-10 controls">
                                     <input type="password" name="senha" placeholder="Senha" value=""
-                                           class="form-control"/>
+                                           class="form-control" autocomplete="new-password"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 col-lg-2 control-label">Confirmar Senha</label>
                                 <div class="col-sm-9 col-lg-10 controls">
                                     <input type="password" name="confirmarsenha" placeholder="Confirmar Senha" value=""
-                                           class="form-control"/>
+                                           class="form-control" autocomplete="new-password"/>
                                 </div>
                             </div>
                             <div class="form-group">
