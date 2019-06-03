@@ -31,6 +31,7 @@ require_once "header.php";
                     <div id="alert"></div>
                     <section class="panel">
                         <header class="panel-heading">
+                            <?php echo $this->load->view('modal_processos', ['url' => 'funcionario/novo']); ?>
                             <i class="fa fa-user-plus"></i> Cadastrar novo colaborador CLT
                         </header>
                         <div class="panel-body">

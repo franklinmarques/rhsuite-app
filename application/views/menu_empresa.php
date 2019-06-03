@@ -24,13 +24,13 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                     <li>
                         <a href="<?php echo site_url('atividades'); ?>">
                             <i class="fa fa-calendar"></i>
-                            <span>Lista de Pendências</span>
+                            <span>Lista de Pendências | To Do</span>
                         </a>
                     </li>
                 <?php endif; ?>
 
                 <li>
-                    <a href="<?php echo site_url('manutencao'); ?>">
+                    <a href="<?php echo site_url('atividades_scheduler'); ?>">
                         <i class="fa fa-address-book"></i>
                         <span>Scheduler - Atividades</span>
                     </a>
@@ -155,6 +155,9 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                                 <a href="<?php echo site_url('ead/cursos'); ?>">Gerenciar treinamentos</a></li>
                             <li<?= (in_array($this->uri->rsegment(2), array('cursos_usuarios', 'cursos_usuarios/novo', 'cursos_usuarios/editar')) ? ' class="active"' : ''); ?>>
                                 <a href="<?php echo site_url('ead/clientes/'); ?>">Gerenciar Treinamentos Clientes</a>
+                            </li>
+                            <li<?= (in_array($this->uri->rsegment(2), array('pilulasConhecimento')) ? ' class="active"' : ''); ?>>
+                                <a href="<?php echo site_url('ead/pilulasConhecimento/'); ?>">Gerenciar Pílulas Conhecimento</a>
                             </li>
                         </ul>
                     </li>

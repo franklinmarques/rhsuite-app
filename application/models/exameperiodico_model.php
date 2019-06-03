@@ -37,10 +37,10 @@ class Exameperiodico_model extends CI_Model
     /**
      * Faz a validação dos dados a serem inseridos no banco
      *
+     * @return  bool|string    TRUE para sucesso, FALSE ou string para falha
      * @todo Acrescentar regra de validação (data_programada <= data_realizacao <= data_entrega)
      *
      * @access public
-     * @return  bool|string    TRUE para sucesso, FALSE ou string para falha
      */
     public function validar()
     {
@@ -49,6 +49,7 @@ class Exameperiodico_model extends CI_Model
             array('field' => 'id_usuario', 'rules' => 'required|integer|max_length[11]'),
             array('field' => 'data_programada', 'rules' => 'required|max_length[10]'),
             array('field' => 'data_realizacao', 'rules' => 'max_length[10]'),
+            array('field' => 'data_entrega_copia', 'rules' => 'max_length[10]'),
             array('field' => 'data_entrega', 'rules' => 'max_length[10]')
         );
 
@@ -64,10 +65,10 @@ class Exameperiodico_model extends CI_Model
     /**
      * Faz a validação dos dados a serem alterados no banco
      *
+     * @return  bool|string    TRUE para sucesso, FALSE ou string para falha
      * @todo Acrescentar regra de validação (data_programada <= data_realizacao <= data_entrega)
      *
      * @access public
-     * @return  bool|string    TRUE para sucesso, FALSE ou string para falha
      */
     public function revalidar()
     {
@@ -76,6 +77,7 @@ class Exameperiodico_model extends CI_Model
             array('field' => 'id_usuario', 'rules' => 'required|integer|max_length[11]'),
             array('field' => 'data_programada', 'rules' => 'required|max_length[10]'),
             array('field' => 'data_realizacao', 'rules' => 'max_length[10]'),
+            array('field' => 'data_entrega_copia', 'rules' => 'max_length[10]'),
             array('field' => 'data_entrega', 'rules' => 'max_length[10]')
         );
 
@@ -99,6 +101,7 @@ class Exameperiodico_model extends CI_Model
         $this->db->select('id, id_usuario, observacoes, local_exame');
         $this->db->select("DATE_FORMAT(data_programada, '%d/%m/%Y') AS data_programada", false);
         $this->db->select("DATE_FORMAT(data_realizacao, '%d/%m/%Y') AS data_realizacao", false);
+        $this->db->select("DATE_FORMAT(data_entrega_copia, '%d/%m/%Y') AS data_entrega_copia", false);
         $this->db->select("DATE_FORMAT(data_entrega, '%d/%m/%Y') AS data_entrega", false);
         if ($where) {
             $this->db->where($where);
@@ -112,16 +115,19 @@ class Exameperiodico_model extends CI_Model
     /**
      * Insere os dados na tabela principal
      *
+     * @return  bool|string    TRUE para sucesso, FALSE ou string para falha
      * @todo Retirar verificadores para datas vazias no Codeigniter 3.18
      *
      * @access public
-     * @return  bool|string    TRUE para sucesso, FALSE ou string para falha
      */
     public function insert()
     {
         $data = $this->input->post();
         if (!$data['data_realizacao']) {
             $data['data_realizacao'] = null;
+        }
+        if (!$data['data_entrega_copia']) {
+            $data['data_entrega_copia'] = null;
         }
         if (!$data['data_entrega']) {
             $data['data_entrega'] = null;
@@ -134,17 +140,20 @@ class Exameperiodico_model extends CI_Model
     /**
      * Atualiza os dados na tabela principal
      *
+     * @param mixed[] $where Array com o(s) atributo(s) da cláusula WHERE
+     * @return  bool|string    TRUE para sucesso, FALSE ou string para falha
      * @todo Retirar verificadores para datas vazias no Codeigniter 3.18
      *
      * @access public
-     * @param mixed[] $where Array com o(s) atributo(s) da cláusula WHERE
-     * @return  bool|string    TRUE para sucesso, FALSE ou string para falha
      */
     public function update($where)
     {
         $data = $this->input->post();
         if (!$data['data_realizacao']) {
             $data['data_realizacao'] = null;
+        }
+        if (!$data['data_entrega_copia']) {
+            $data['data_entrega_copia'] = null;
         }
         if (!$data['data_entrega']) {
             $data['data_entrega'] = null;

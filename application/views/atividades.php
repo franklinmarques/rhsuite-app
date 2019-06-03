@@ -90,6 +90,7 @@ require_once "header.php";
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
                         <li class="active">Lista de Pendências</li>
+                        <?php echo $this->load->view('modal_processos', ['url' => 'atividades']); ?>
                         <?php if ($this->agent->is_mobile()): ?>
                             <button style="float:right;" class="btn btn-info btn-xs" onclick="add_atividade()">
                                 <i class="glyphicon glyphicon-plus"></i> Cadastrar atividade
@@ -189,7 +190,7 @@ require_once "header.php";
 
                     <div class="row">
                         <div class="col-md-4">
-                            <i class="glyphicon glyphicon-stop" style="color: #08C;"></i> Atividades mães &emsp;
+                            <i class="glyphicon glyphicon-stop" style="color: #151570;"></i> Atividades mães &emsp;
                             <i class="glyphicon glyphicon-stop" style="color: #87bcd6;"></i> Atividades filhas
                         </div>
                         <div class="col-md-8">
@@ -229,8 +230,11 @@ require_once "header.php";
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
+                            <div style="float: right;">
+                                <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            </div>
                             <h3 class="modal-title">Cadastrar atividade mãe</h3>
                         </div>
                         <div class="modal-body form">
@@ -301,7 +305,7 @@ require_once "header.php";
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
+                            <button type="button" id="btnSave1" onclick="save()" class="btn btn-success">Salvar</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div><!-- /.modal-content -->
@@ -313,8 +317,12 @@ require_once "header.php";
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
+                            <div style="float: right;">
+                                <button type="button" id="btnSaveFilha" onclick="save_filha()" class="btn btn-success">
+                                    Salvar
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            </div>
                             <h3 class="modal-title">Cadastrar atividade(s) filha(s)</h3>
                         </div>
                         <div class="modal-body form">
@@ -369,7 +377,7 @@ require_once "header.php";
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSaveFilha" onclick="save_filha()" class="btn btn-success">
+                            <button type="button" id="btnSaveFilha1" onclick="save_filha()" class="btn btn-success">
                                 Salvar
                             </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -438,7 +446,7 @@ require_once "end_js.php";
                 'createdRow': function (row, data, index) {
                     if (data[10] === '<?= $id ?>') {
                         if (data[11] === '1') {
-                            $('td:eq(0)', row).css({'background-color': '#08c', 'color': '#fff'});
+                            $('td:eq(0)', row).css({'background-color': '#151570', 'color': '#fff'});
                             $('td:lt(8)', row).on('click touchend', function () {
                                 if ($('td:eq(0)', row).hasClass('active')) {
                                     $('td:eq(0)', row).removeClass('active');
@@ -656,8 +664,7 @@ require_once "end_js.php";
         }
 
         function save() {
-            $('#btnSave').text('Salvando...'); //change button text
-            $('#btnSave').attr('disabled', true); //set button disable
+            $('#btnSave, #btnSave1').text('Salvando...').attr('disabled', true); //set button disable
             var url = '';
             if (save_method === 'add') {
                 url = "<?php echo site_url('atividades/ajax_add') ?>";
@@ -678,20 +685,17 @@ require_once "end_js.php";
                         reload_table();
                     }
 
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
+                    $('#btnSave, #btnSave1').text('Salvar').attr('disabled', false); //set button enable
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
+                    $('#btnSave, #btnSave1').text('Salvar').attr('disabled', false); //set button enable
                 }
             });
         }
 
         function save_filha() {
-            $('#btnSaveFilha').text('Salvando...'); //change button text
-            $('#btnSaveFilha').attr('disabled', true); //set button disable
+            $('#btnSaveFilha, #btnSaveFilha1').text('Salvando...').attr('disabled', true); //set button disable
 
             // ajax adding data to database
             $.ajax({
@@ -706,13 +710,11 @@ require_once "end_js.php";
                         reload_table();
                     }
 
-                    $('#btnSaveFilha').text('Salvar'); //change button text
-                    $('#btnSaveFilha').attr('disabled', false); //set button enable
+                    $('#btnSaveFilha, #btnSaveFilha1').attr('disabled', false); //set button enable
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveFilha').text('Salvar'); //change button text
-                    $('#btnSaveFilha').attr('disabled', false); //set button enable
+                    $('#btnSaveFilha, #btnSaveFilha1').attr('disabled', false); //set button enable
                 }
             });
         }

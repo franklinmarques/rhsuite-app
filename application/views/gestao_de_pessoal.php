@@ -28,6 +28,7 @@ require_once "header.php";
                     <div id="alert"></div>
                     <section class="panel">
                         <header class="panel-heading">
+                            <?php echo $this->load->view('modal_processos', ['url' => 'gestaoDePessoal']); ?>
                             <i class="fa fa-pencil-square-o"></i> Relatários de Gestão - Gestão de Pessoal
                         </header>
                         <div class="panel-body">

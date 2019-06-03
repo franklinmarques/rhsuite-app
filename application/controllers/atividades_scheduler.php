@@ -270,8 +270,6 @@ class Atividades_scheduler extends MY_Controller
                 $this->load->library('upload', $config);
 
                 if (!$this->upload->do_upload($documento)) {
-                    var_dump($_FILES);
-                    exit;
                     $status = false;
                     break;
                 }

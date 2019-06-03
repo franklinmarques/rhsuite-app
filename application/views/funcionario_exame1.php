@@ -53,7 +53,8 @@
                 <tr>
                     <th>Data programada</th>
                     <th>Data realização</th>
-                    <th>Data da entrega exame ao RH</th>
+                    <th>Data da entrega exame ao RH (cópia)</th>
+                    <th>Data da entrega exame ao RH (original)</th>
                     <th>Local exame</th>
                     <th>Observações sobre o exame</th>
                     <th>Ações</th>
@@ -88,13 +89,21 @@
                                        class="data form-control text-center" type="text">
                                 <span class="help-block"></span>
                             </div>
+                            <label class="control-label col-md-3">Data entrega (cópia)</label>
+                            <div class="col-md-2">
+                                <input name="data_entrega_copia" placeholder="dd/mm/aaaa" size="7"
+                                       class="data form-control text-center" type="text">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label col-md-2">Data realização</label>
                             <div class="col-md-2">
                                 <input name="data_realizacao" placeholder="dd/mm/aaaa" size="7"
                                        class="data form-control text-center" type="text">
                                 <span class="help-block"></span>
                             </div>
-                            <label class="control-label col-md-2">Data entrega</label>
+                            <label class="control-label col-md-3">Data entrega (original)</label>
                             <div class="col-md-2">
                                 <input name="data_entrega" placeholder="dd/mm/aaaa" size="7"
                                        class="data form-control text-center" type="text">
@@ -181,7 +190,7 @@
         "columnDefs": [
             {
                 className: 'text-center',
-                targets: [0, 1, 2],
+                targets: [0, 1, 2, 3],
             },
             {
                 className: "text-nowrap",
@@ -230,6 +239,7 @@
                 $('#form_exame [name="id"]').val(data.id);
                 $('#form_exame [name="data_programada"]').val(data.data_programada);
                 $('#form_exame [name="data_realizacao"]').val(data.data_realizacao);
+                $('#form_exame [name="data_entrega_copia"]').val(data.data_entrega_copia);
                 $('#form_exame [name="data_entrega"]').val(data.data_entrega);
                 $('#form_exame [name="local_exame"]').val(data.local_exame);
                 $('#form_exame [name="observacoes"]').val(data.observacoes);

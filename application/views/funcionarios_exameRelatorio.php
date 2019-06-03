@@ -58,7 +58,7 @@ require_once "header.php";
                         <div class="row">
                             <div class="col-sm-7">
                                 <label class="radio-inline">
-                                    <input type="radio" name="realizados" value="" checked="" onchange="buscar()"
+                                    <input type="radio" name="realizados" value="" onchange="buscar()"
                                            autocomplete="off">
                                     Todos os exames
                                 </label>
@@ -67,7 +67,7 @@ require_once "header.php";
                                            autocomplete="off"> Somente realizados
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" name="realizados" value="0" onchange="buscar()"
+                                    <input type="radio" name="realizados" value="0" checked="" onchange="buscar()"
                                            autocomplete="off"> Somente não-realizados
                                 </label>
                             </div>
@@ -115,7 +115,8 @@ require_once "header.php";
                     <th>Depto/Área/Setor</th>
                     <th class="text-center">Data programada</th>
                     <th class="text-center">Data realização</th>
-                    <th class="text-center">Data entrega</th>
+                    <th class="text-center">Data entrega (cópia)</th>
+                    <th class="text-center">Data entrega (original)</th>
                     <th class="text-center">Ações</th>
                 </tr>
                 </thead>
@@ -192,7 +193,7 @@ require_once "end_js.php";
                 },
                 {
                     className: 'text-center',
-                    targets: [6, 8, 9, 10]
+                    targets: [6, 8, 9, 10, 11]
                 },
                 {
                     className: "text-nowrap",

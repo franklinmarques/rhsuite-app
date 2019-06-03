@@ -144,7 +144,12 @@ class Home extends MY_Controller
     public function meuperfil()
     {
         $data['row'] = $this->db->query("SELECT * FROM usuarios WHERE id = ?", $this->session->userdata('id'))->row();
-
+        $data['fundo_tela_inicial'] = array(
+            '1' => 'Imagem padrão',
+//            '2' => 'Vídeo padrão',
+            '3' => 'Imagem personalizada',
+            '4' => 'Vídeo personalizado'
+        );
         $this->load->view('meuperfil', $data);
     }
 
@@ -228,26 +233,56 @@ class Home extends MY_Controller
             }
         }
 
-        $imagemFundoPadrao = $this->input->post('imagem_fundo_padrao');
-        if ($imagemFundoPadrao) {
-            $data['imagem_fundo'] = 'fdmrh3.jpg';
-        } elseif (!empty($_FILES['imagem_fundo'])) {
-            $config['upload_path'] = './imagens/usuarios/';
-            $config['allowed_types'] = 'jpg|png';
-            $config['file_name'] = utf8_decode($_FILES['imagem_fundo']['name']);
+        $data['imagem_fundo'] = null;
+        $data['video_fundo'] = null;
+        $data['tipo_tela_inicial'] = $this->input->post('tipo_tela_inicial');
+        switch ($data['tipo_tela_inicial']) {
+            case '1':
+                $data['imagem_fundo'] = 'fdmrh3.jpg';
+                break;
+            case '2':
+                $data['video_fundo'] = 'fdmrh3.jpg';
+                break;
+            case '3':
+                if (!empty($_FILES['imagem_fundo'])) {
+                    $config['upload_path'] = './imagens/usuarios/';
+                    $config['allowed_types'] = 'jpg|png';
+                    $config['file_name'] = utf8_decode($_FILES['imagem_fundo']['name']);
 
-            $this->load->library('upload', $config);
+                    $this->load->library('upload', $config);
 
-            if ($this->upload->do_upload('imagem_fundo')) {
-                $imagem_fundo = $this->upload->data();
-                $data['imagem_fundo'] = utf8_encode($imagem_fundo['file_name']);
-            } else {
-                exit(json_encode(array('retorno' => 0, 'aviso' => $this->upload->display_errors(), 'redireciona' => 0, 'pagina' => '')));
-            }
+                    if ($this->upload->do_upload('imagem_fundo')) {
+                        $imagem_fundo = $this->upload->data();
+                        $data['imagem_fundo'] = utf8_encode($imagem_fundo['file_name']);
+                    } else {
+                        exit(json_encode(array('retorno' => 0, 'aviso' => $this->upload->display_errors(), 'redireciona' => 0, 'pagina' => '')));
+                    }
 
-            if ($usuario->imagem_fundo != 'avatar.jpg' && is_file('./imagens/usuarios/' . $usuario->imagem_fundo) && $usuario->imagem_fundo != $imagem_fundo['file_name']) {
-                unlink('./imagens/usuarios/' . $usuario->imagem_fundo);
-            }
+                    if ($usuario->imagem_fundo != 'avatar.jpg' && is_file('./imagens/usuarios/' . $usuario->imagem_fundo) && $usuario->imagem_fundo != $imagem_fundo['file_name']) {
+                        unlink('./imagens/usuarios/' . $usuario->imagem_fundo);
+                    }
+                }
+                break;
+            case '4':
+                if (!empty($_FILES['video_fundo'])) {
+                    $config['upload_path'] = './videos/usuarios/';
+                    $config['allowed_types'] = 'mp4';
+                    $config['file_name'] = utf8_decode($_FILES['video_fundo']['name']);
+
+                    $this->load->library('upload', $config);
+
+                    if ($this->upload->do_upload('video_fundo')) {
+                        $video_fundo = $this->upload->data();
+                        $data['video_fundo'] = utf8_encode($video_fundo['file_name']);
+                    } else {
+                        exit(json_encode(array('retorno' => 0, 'aviso' => $this->upload->display_errors() . 'aa', 'redireciona' => 0, 'pagina' => '')));
+                    }
+
+                    if ($usuario->video_fundo != 'avatar.jpg' && is_file('./videos/usuarios/' . $usuario->video_fundo) && $usuario->video_fundo != $video_fundo['file_name']) {
+                        unlink('./videos/usuarios/' . $usuario->video_fundo);
+                    }
+                }
+                break;
         }
 
         if (!empty($_FILES['assinatura-digital'])) {

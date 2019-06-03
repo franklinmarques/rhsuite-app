@@ -1,29 +1,30 @@
 <!-- Modal session timeout-->
 <div class="modal" id="session_timeout" tabindex="-1" data-backdrop="static" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-        <h4 class="modal-title">Sessão expirada</h4>
-      </div>
-      <div class="modal-body">
-        <p>Clique no botão abaixo para retornar à tela de login.</p>
-      </div>
-      <div class="modal-footer">
-        <a href="<?php echo site_url('home/sair'); ?>" class="btn btn-primary">Login</a>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Sessão expirada</h4>
+            </div>
+            <div class="modal-body">
+                <p>Clique no botão abaixo para retornar à tela de login.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="<?php echo site_url('home/sair'); ?>" class="btn btn-primary">Login</a>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
 <script>
-    if($.fn.dataTable !== undefined){
-        $.fn.dataTable.ext.errMode = function(settings, tn, msg){
-            if(settings.jqXHR.status !== 401 && settings.jqXHR.statusText !== 'expirado'){
+    if ($.fn.dataTable !== undefined) {
+        $.fn.dataTable.ext.errMode = function (settings, tn, msg) {
+            if (settings.jqXHR.status !== 401 && settings.jqXHR.statusText !== 'expirado') {
                 alert(msg);
             }
         };
     }
 </script>
+
 
 <!-- Modal ajuda -->
 <div class='modal fade' id='modal-ajuda' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
@@ -37,7 +38,8 @@
             <div class='modal-body' style="line-height: normal;">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#manual_ajuda" aria-controls="home" role="tab" data-toggle="tab">Manual</a></li>
+                    <li role="presentation" class="active"><a href="#manual_ajuda" aria-controls="home" role="tab"
+                                                              data-toggle="tab">Manual</a></li>
                     <!--
                     <li role="presentation"><a href="#video_ajuda" aria-controls="profile" role="tab" data-toggle="tab">VÃ­deo</a>
                     </li>

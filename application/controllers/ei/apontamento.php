@@ -1366,7 +1366,7 @@ class Apontamento extends MY_Controller
                 <button type='button' class='btn btn-xs btn-info btnRecesso' onclick='edit_data_real_totalizacao($alocado->id_alocado, $alocado->periodo, 1)'>Editar data término (real)</button>
                 <button type='button' class='btn btn-xs btn-danger' onclick='edit_desalocacao($alocado->id_alocado, $alocado->periodo)'>Desalocar...</button>",
                 $dias_semana[$alocado->dia_semana],
-                $alocado->total_semanas_mes ? ($alocado->horario_entrada . ' às ' . $alocado->horario_saida) : null,
+                strlen($alocado->total_semanas_mes) > 0 ? ($alocado->horario_entrada . ' às ' . $alocado->horario_saida) : '',
                 $alocado->total_horas,
 
 //                <strong>Qtde. de dias letivos no semestre</strong> {$alocado->total_dias_letivos}
@@ -3478,6 +3478,9 @@ class Apontamento extends MY_Controller
         $mes = $this->input->post('mes');
 
         $idCuidadorSub1 = $this->input->post('id_cuidador_sub1');
+        if (strlen($idCuidadorSub1) == 0) {
+            $idCuidadorSub1 = null;
+        }
 
         $FuncaoSub1 = $this->input->post('funcao_sub1');
 
@@ -3489,6 +3492,9 @@ class Apontamento extends MY_Controller
         }
 
         $idCuidadorSub2 = $this->input->post('id_cuidador_sub2');
+        if (strlen($idCuidadorSub2) == 0) {
+            $idCuidadorSub2 = null;
+        }
 
         $FuncaoSub2 = $this->input->post('funcao_sub2');
 
@@ -3504,9 +3510,9 @@ class Apontamento extends MY_Controller
         $this->db->select(["IF(MONTH(MIN(f.data_inicio)) = ({$mes} + IF(d.semestre = 2, 6, 0)), MIN(f.data_inicio), NULL) AS data_inicio"], false);
         $this->db->select(["IF(MONTH(MAX(f.data_termino)) = ({$mes} + IF(d.semestre = 2, 6, 0)), MAX(f.data_termino), NULL) AS data_termino"], false);
         $this->db->join('ei_alocados b', 'b.id = a.id_alocado');
-        $this->db->join('ei_alocacao_escola c', 'c.id = b.id_alocacao_escola');
+        $this->db->join('ei_alocacao_escolas c', 'c.id = b.id_alocacao_escola');
         $this->db->join('ei_alocacao d', 'd.id = c.id_alocacao');
-        $this->db->join('ei_matriculados_turmas e', 'e.id_os_horario = a.id', 'left');
+        $this->db->join('ei_matriculados_turmas e', 'e.id_alocado_horario = a.id', 'left');
         $this->db->join('ei_matriculados f', 'f.id = e.id_matriculado AND f.id_alocacao_escola = c.id', 'left');
         $this->db->where('a.id', $id);
         $this->db->group_by('b.id');

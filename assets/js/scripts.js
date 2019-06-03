@@ -268,11 +268,6 @@
             }
         });
 
-
-        $('.panel .tools .fa-question-circle').click(function () {
-            $('.modal_ajuda').modal('show');
-        });
-
         $('.panel .tools .fa-times').click(function () {
             $(this).parents(".panel").parent().remove();
         });

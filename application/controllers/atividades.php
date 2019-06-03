@@ -257,7 +257,7 @@ class Atividades extends MY_Controller
             $data['data_lembrete'] = date('Y-m-d', strtotime("-{$data['data_lembrete']} days", $data_limite));
         }
 
-        if (strlen($data['observacoes']) == 0) {
+        if (!empty($data['observacoes']) == false) {
             $data['observacoes'] = null;
         }
 
@@ -297,7 +297,7 @@ class Atividades extends MY_Controller
             $data['data_limite'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $data['data_limite'] . ' 23:59:59')));
             $data['data_lembrete'] = date('Y-m-d', strtotime("-{$data['data_lembrete']} days", $data_limite));
         }
-        if (strlen($data['observacoes']) == 0) {
+        if (!empty($data['observacoes']) == false) {
             $data['observacoes'] = null;
         }
         if (empty($data['id_mae'])) {

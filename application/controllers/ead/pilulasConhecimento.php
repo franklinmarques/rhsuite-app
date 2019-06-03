@@ -2,270 +2,242 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Biblioteca extends MY_Controller
+class PilulasConhecimento extends MY_Controller
 {
 
     public function index()
     {
+        $empresa = $this->session->userdata('empresa');
+        $areas = $this->db->order_by('nome', 'asc')->get('cursos_pilulas_areas')->result();
+
+        $this->db->where('id_empresa', $empresa);
+        $this->db->order_by('nome', 'asc');
+        $cursos = $this->db->get('cursos')->result();
+
+        $deptos = $this->db->order_by('nome', 'asc')->get('empresa_departamentos')->result();
+
+        $this->db->where('empresa', $empresa);
+        $this->db->where('tipo', 'funcionario');
+        $this->db->where('status', 1);
+        $this->db->order_by('nome', 'asc');
+        $usuarios = $this->db->get('usuarios')->result();
+
         $data = array(
-            'empresa' => $this->session->userdata('empresa'),
-            'tipo' => '',
-            'nome' => 'Modelo de recrutamento'
+            'empresa' => $empresa,
+            'areas' => ['' => 'selecione...'] + array_column($areas, 'nome', 'id'),
+            'cursos' => ['' => 'selecione...'] + array_column($cursos, 'nome', 'id'),
+            'deptos' => ['' => 'Todos'] + array_column($deptos, 'nome', 'id'),
+            'usuarios' => array_column($usuarios, 'nome', 'id')
         );
 
-        $this->load->view('ead/biblioteca_questoes', $data);
+        $this->load->view('ead/pilulas_conhecimento', $data);
     }
 
-    public function ajax_list($id = '')
+
+    public function ajaxList()
     {
-        if (empty($id)) {
-            $id = $this->session->userdata('id');
-        }
-        $post = $this->input->post();
+        $empresa = $this->session->userdata('empresa');
 
-        $sql = "SELECT s.id, 
-                       s.nome, 
-                       s.tipo
-                FROM (SELECT a.id, 
-                             a.nome, 
-                             (case tipo 
-                              when 1 then 'Múltiplas alternativas'                               
-                              when 2 then 'Dissertativa' 
-                              when 3 then 'Múltiplas alternativas (quick quiz)' 
-                              else '' end) AS tipo
-                      FROM biblioteca_questoes a 
-                      WHERE a.id_empresa = {$id}) s";
-        $recordsTotal = $this->db->query($sql)->num_rows();
-
-        $columns = array('s.id', 's.nome', 's.tipo');
-        if ($post['search']['value']) {
-            foreach ($columns as $key => $column) {
-                if ($key > 1) {
-                    $sql .= " OR
-                         {$column} LIKE '%{$post['search']['value']}%'";
-                } elseif ($key == 1) {
-                    $sql .= " 
-                        WHERE {$column} LIKE '%{$post['search']['value']}%'";
-                }
-            }
+        $this->db->select('c.nome AS area_conhecimento, b.nome AS curso');
+        $this->db->select("(CASE a.publico WHEN 1 THEN 'Aberto' ELSE 'Fechado' END) AS tipo", false);
+        $this->db->select("GROUP_CONCAT(e.nome ORDER BY e.nome SEPARATOR '<br>') AS usuarios, a.id", false);
+        $this->db->join('cursos b', 'b.id = a.id_curso');
+        $this->db->join('cursos_pilulas_areas c', 'c.id = a.id_area_conhecimento', 'left');
+        $this->db->join('cursos_pilulas_colaboradores d', 'd.id_pilula = a.id', 'left');
+        $this->db->join('usuarios e', 'e.id = d.id_usuario', 'left');
+        if ($empresa) {
+            $this->db->where('a.id_empresa', $empresa);
         }
-        $recordsFiltered = $this->db->query($sql)->num_rows();
+        $this->db->group_by('a.id');
+        $query = $this->db->get('cursos_pilulas a');
 
-        if (isset($post['order'])) {
-            $orderBy = array();
-            foreach ($post['order'] as $order) {
-                $orderBy[] = ($order['column'] + 2) . ' ' . $order['dir'];
-            }
-            $sql .= ' 
-                    ORDER BY ' . implode(', ', $orderBy);
-        }
-        $sql .= " 
-                LIMIT {$post['start']}, {$post['length']}";
-        $list = $this->db->query($sql)->result();
+
+        $config = array(
+            'search' => ['area_conhecimento', 'curso', 'usuarios']
+        );
+
+        $this->load->library('dataTables', $config);
+
+        $output = $this->datatables->generate($query);
+
 
         $data = array();
-        foreach ($list as $recrutamento) {
-            $row = array();
-            $row[] = $recrutamento->nome;
-            $row[] = $recrutamento->tipo;
 
-            $row[] = '
-                      <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_questao(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
-                      <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_questao(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                      <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Editar questão" onclick="edit_conteudo(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i> Editar Questão</a>
-                      <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Editar respostas" onclick="edit_respostas(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-list"></i> Editar respostas</a>
-                     ';
-
-            $data[] = $row;
+        foreach ($output->data as $row) {
+            $data[] = array(
+                $row->area_conhecimento,
+                $row->curso,
+                $row->tipo,
+                $row->usuarios,
+                '<button class="btn btn-sm btn-info" onclick="edit_pilula(' . $row->id . ');" title="Editar MIF"><i class="glyphicon glyphicon-pencil"></i></button>
+                 <button class="btn btn-sm btn-danger" onclick="delete_pilula(' . $row->id . ');" title="Excluir MIF"><i class="glyphicon glyphicon-trash"></i></button>'
+            );
         }
-        $output = array(
-            "draw" => $this->input->post('draw'),
-            "recordsTotal" => $recordsTotal,
-            "recordsFiltered" => $recordsFiltered,
-            "data" => $data,
-        );
-        //output to json format
+
+        $output->data = $data;
+
+
         echo json_encode($output);
     }
 
-    public function ajax_edit()
+
+    public function ajaxEdit()
     {
         $id = $this->input->post('id');
-        $data = $this->db->get_where('biblioteca_questoes', array('id' => $id))->row();
+        $data = $this->db->get_where('cursos_pilulas', ['id' => $id])->row();
+
+        $this->db->select('id_usuario');
+        $this->db->where('id_pilula', $id);
+        $usuarios = $this->db->get('cursos_pilulas_colaboradores')->result();
+
+        $data->usuarios = array_column($usuarios, 'id_usuario');
 
         echo json_encode($data);
     }
 
-    public function ajax_conteudo()
+
+    public function montarEstrutura()
     {
-        $id = $this->input->post('id');
-        $this->db->select('id, conteudo');
-        $data = $this->db->get_where('biblioteca_questoes', array('id' => $id))->row();
+        $idDepto = $this->input->post('id_depto');
+        $idArea = $this->input->post('id_area');
+        $idSetor = $this->input->post('id_setor');
+        if (empty($idDepto)) {
+            $idArea = '';
+        }
+        if (empty($idArea)) {
+            $idSetor = '';
+        }
+        $usuariosSelecionados = $this->input->post('usuarios_selecionados');
+        if (empty($usuariosSelecionados)) {
+            $usuariosSelecionados = [0];
+        }
+        $strUusuariosSelecionados = implode(',', $usuariosSelecionados);
+
+        $this->db->where('id_departamento', $idDepto);
+        $this->db->order_by('nome', 'asc');
+        $areas = $this->db->get('empresa_areas')->result();
+        $areas = ['' => 'Todas'] + array_column($areas, 'nome', 'id');
+
+
+        $this->db->where('id_area', $idArea);
+        $this->db->order_by('nome', 'asc');
+        $setores = $this->db->get('empresa_setores')->result();
+        $setores = ['' => 'Todos'] + array_column($setores, 'nome', 'id');
+
+
+        $sql = "SELECT a.id, a.nome FROM usuarios a
+                LEFT JOIN empresa_departamentos b ON b.id = a.id_depto
+                LEFT JOIN empresa_areas c ON c.id = a.id_area
+                LEFT JOIN empresa_setores d ON d.id = a.id_setor
+                WHERE a.empresa = '{$this->session->userdata('empresa')}' AND 
+                      a.tipo = 'funcionario' AND 
+                      a.status = 1 AND
+                      a.id NOT IN ({$strUusuariosSelecionados}) AND
+                      ((a.id_depto = '{$idDepto}' OR CHAR_LENGTH('{$idDepto}') = 0) AND
+                       (a.id_area = '{$idArea}' OR CHAR_LENGTH('{$idArea}') = 0) AND
+                       (a.id_setor = '{$idSetor}' OR CHAR_LENGTH('{$idSetor}') = 0))
+                UNION 
+                SELECT e.id, e.nome FROM usuarios e
+                WHERE e.empresa = '{$this->session->userdata('empresa')}' AND 
+                      e.tipo = 'funcionario' AND 
+                      e.status = 1 AND 
+                      e.id IN ({$strUusuariosSelecionados})
+                ORDER BY nome ASC";
+        $usuarios = array_column($this->db->query($sql)->result(), 'nome', 'id');
+
+
+        $data = array(
+            'area' => form_dropdown('', $areas, $idArea),
+            'setor' => form_dropdown('', $setores, $idSetor),
+            'usuarios' => form_multiselect('', $usuarios, $usuariosSelecionados)
+        );
+
 
         echo json_encode($data);
     }
 
-    public function ajax_respostas()
+
+    public function ajaxAdd()
     {
-        $id = $this->input->post('id');
-        $this->db->select('id AS id_questao, nome, tipo, feedback_correta, feedback_incorreta');
-        $this->db->where('id', $id);
-        $data = $this->db->get('biblioteca_questoes')->row();
-        $sql = "SELECT b.id,
-                       b.alternativa,
-                       b.peso
-                FROM biblioteca_questoes a
-                LEFT JOIN biblioteca_alternativas b ON
-                          b.id_questao = a.id
-                WHERE a.id = {$id}";
-        $data->alternativas = $this->db->query($sql)->result();
-
-        echo json_encode($data);
-    }
-
-    public function ajax_add()
-    {
-        $perguntas = $this->input->post('perguntas');
-        $alternativas = $this->input->post('alternativas');
-        $aleatorizacao = '';
-        if ($perguntas && $alternativas) {
-            $aleatorizacao = 'T';
-        } elseif ($perguntas) {
-            $aleatorizacao = 'P';
-        } elseif ($alternativas) {
-            $aleatorizacao = 'A';
-        }
-
-        $data = array(
-            'id_empresa' => $this->input->post('empresa'),
-            'nome' => $this->input->post('nome'),
-            'tipo' => $this->input->post('tipo'),
-            'observacoes' => $this->input->post('observacoes'),
-            'aleatorizacao' => $aleatorizacao
-        );
+        $data = $this->input->post();
+        $usuarios = $data['id_usuario'] ?? [];
+        unset($data['id_usuario']);
 
         $this->db->trans_start();
 
-        $this->db->insert('biblioteca_questoes', $data);
-        $this->db->trans_complete();
-        $status = $this->db->trans_status();
+        $this->db->insert('cursos_pilulas', $data);
 
-        echo json_encode(array("status" => $status !== false));
-    }
+        if (count($usuarios) > 0) {
+            $idPilula = $this->db->insert_id();
+            $data2 = array();
 
-    public function ajax_update()
-    {
-        $id = $this->input->post('id');
-        $tipo = $this->input->post('tipo');
-        $perguntas = $this->input->post('perguntas');
-        $alternativas = $this->input->post('alternativas');
-        $aleatorizacao = '';
-        if ($perguntas && $alternativas) {
-            $aleatorizacao = 'T';
-        } elseif ($perguntas) {
-            $aleatorizacao = 'P';
-        } elseif ($alternativas) {
-            $aleatorizacao = 'A';
-        }
-
-        $data = array(
-            'id_empresa' => $this->input->post('empresa'),
-            'nome' => $this->input->post('nome'),
-            'tipo' => $tipo,
-            'observacoes' => $this->input->post('observacoes'),
-            'aleatorizacao' => $aleatorizacao
-        );
-
-        $this->db->trans_start();
-
-        $this->db->update('biblioteca_questoes', $data, array('id' => $id));
-        if ($tipo == '2') {
-            $this->db->delete('biblioteca_alternativas', $data, array('id_questao' => $id));
-        }
-        $this->db->trans_complete();
-        $status = $this->db->trans_status();
-
-        echo json_encode(array("status" => $status !== false));
-    }
-
-    public function salvar_conteudo()
-    {
-        $id = $this->input->post('id');
-        $data = array('conteudo' => $this->input->post('conteudo'));
-
-        $this->db->trans_start();
-        $this->db->update('biblioteca_questoes', $data, array('id' => $id));
-        $this->db->trans_complete();
-        $status = $this->db->trans_status();
-
-        echo json_encode(array("status" => $status !== false));
-    }
-
-    public function salvar_respostas()
-    {
-        $this->db->select('id, tipo');
-        $this->db->where('id', $this->input->post('id_questao'));
-        $questao = $this->db->get('biblioteca_questoes')->row();
-        if (empty($questao)) {
-            exit(json_encode(array('retorno' => 0, 'aviso' => 'A questão não foi encontrada')));
-        }
-
-        $data = array(
-            'feedback_correta' => $this->input->post('feedback_correta'),
-            'feedback_incorreta' => $this->input->post('feedback_incorreta')
-        );
-
-        $this->db->trans_begin();
-
-        $update_string = $this->db->update_string('biblioteca_questoes', $data, array('id' => $questao->id));
-        $this->db->query($update_string);
-
-        $id_alternativa = $this->input->post('id_alternativa');
-        if (in_array($questao->tipo, array('1', '3'))) {
-            $alternativas = $this->input->post('alternativa');
-        } else {
-            $alternativas = array_pad(array(), 6, '');
-        }
-
-        $peso = $this->input->post('peso');
-
-        foreach ($alternativas as $k => $alternativa) {
-            $data = array(
-                'id_questao' => $questao->id,
-                'alternativa' => $alternativa,
-                'peso' => $peso[$k]
-            );
-            if ($alternativa) {
-                if ($id_alternativa[$k]) {
-                    $update_string = $this->db->update_string('biblioteca_alternativas', $data, array('id' => $id_alternativa[$k]));
-                    $this->db->query($update_string);
-                } else {
-                    $insert_string = $this->db->insert_string('biblioteca_alternativas', $data);
-                    $this->db->query($insert_string);
-                }
-            } elseif ($id_alternativa[$k]) {
-                $this->db->query("DELETE FROM biblioteca_alternativas WHERE id = $id_alternativa[$k]");
+            foreach ($usuarios as $usuario) {
+                $data2[] = array(
+                    'id_pilula' => $idPilula,
+                    'id_usuario' => $usuario
+                );
             }
+
+            $this->db->insert_batch('cursos_pilulas_colaboradores', $data2);
         }
 
         $this->db->trans_complete();
-        $status = $this->db->trans_status();
 
-        if ($status === FALSE) {
-            $this->db->trans_rollback();
-        } else {
-            $this->db->trans_commit();
-        }
+        $status = $this->db->trans_status();
 
         echo json_encode(array("status" => $status !== false));
     }
 
-    public function ajax_delete()
+
+    public function ajaxUpdate()
+    {
+        $data = $this->input->post();
+        $usuarios = $data['id_usuario'] ?? [];
+        $idPilula = $data['id'];
+        unset($data['id'], $data['id_usuario']);
+
+        $this->db->trans_start();
+
+        $this->db->update('cursos_pilulas', $data, ['id' => $idPilula]);
+
+        $this->db->where('id_pilula', $idPilula);
+        $this->db->where_not_in('id_usuario', $usuarios + [0]);
+        $this->db->delete('cursos_pilulas_colaboradores');
+
+
+        $this->db->where('id_pilula', $idPilula);
+        $usuariosCadastrados = $this->db->get('cursos_pilulas_colaboradores')->result();
+        $usuariosCadastrados = array_column($usuariosCadastrados, 'id_usuario');
+
+        $usuarios = array_diff($usuarios, $usuariosCadastrados);
+
+        if (count($usuarios) > 0) {
+            $data2 = array();
+
+            foreach ($usuarios as $usuario) {
+                $data2[] = array(
+                    'id_pilula' => $idPilula,
+                    'id_usuario' => $usuario
+                );
+            }
+
+            $this->db->insert_batch('cursos_pilulas_colaboradores', $data2);
+        }
+
+        $this->db->trans_complete();
+
+        $status = $this->db->trans_status();
+
+        echo json_encode(array("status" => $status !== false));
+    }
+
+
+    public function ajaxDelete()
     {
         $id = $this->input->post('id');
 
         $this->db->trans_start();
-        $this->db->delete('biblioteca_questoes', array('id' => $id));
+        $this->db->delete('cursos_pilulas', array('id' => $id));
         $this->db->trans_complete();
         $status = $this->db->trans_status();
 

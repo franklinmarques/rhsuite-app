@@ -65,10 +65,8 @@ require_once "header.php";
 
                     <section class="panel">
                         <header class="panel-heading">
+                            <?php echo $this->load->view('modal_processos', ['url' => 'atividades_scheduler']); ?>
                             <i class="fa fa-address-book"></i> Scheduler de atividades recorrentes
-                            <div class="tools pull-right">
-                                <a class="fa fa-question-circle" href="javascript:;"></a>
-                            </div>
                         </header>
                         <div class="panel-body">
                             <form id="busca" action="#" class="form-horizontal" autocomplete="off">

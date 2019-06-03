@@ -94,7 +94,8 @@
             <th>Depto/Área/Setor</th>
             <th class="text-center">Data programada</th>
             <th class="text-center">Data realização</th>
-            <th class="text-center">Data entrega</th>
+            <th class="text-center">Data entrega (copia)</th>
+            <th class="text-center">Data entrega (original)</th>
         </tr>
         </thead>
         <tbody>
@@ -110,6 +111,7 @@
                 <td><?= $funcionario->estrutura ?></td>
                 <td class="text-center"><?= $funcionario->data_programada ?></td>
                 <td class="text-center"><?= $funcionario->data_realizacao ?></td>
+                <td class="text-center"><?= $funcionario->data_entrega_copia ?></td>
                 <td class="text-center"><?= $funcionario->data_entrega ?></td>
             </tr>
         <?php endforeach; ?>

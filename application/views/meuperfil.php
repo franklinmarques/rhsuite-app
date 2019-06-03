@@ -128,7 +128,7 @@ require_once "header.php";
                                 <label class="col-sm-3 col-lg-2 control-label">Senha antiga</label>
                                 <div class="col-sm-9 col-lg-10 controls">
                                     <input type="password" name="senhaantiga" placeholder="Senha antiga"
-                                           class="form-control" autocomplete="off"/>
+                                           class="form-control" autocomplete="new-password"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -136,7 +136,7 @@ require_once "header.php";
 
                                 <div class="col-sm-9 col-lg-10 controls">
                                     <input type="password" name="novasenha" placeholder="Nova senha"
-                                           class="form-control" autocomplete="off"/>
+                                           class="form-control" autocomplete="new-password"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -144,7 +144,7 @@ require_once "header.php";
 
                                 <div class="col-sm-9 col-lg-10 controls">
                                     <input type="password" name="confirmarnovasenha" placeholder="Confirmar nova senha"
-                                           class="form-control" autocomplete="off"/>
+                                           class="form-control" autocomplete="new-password"/>
                                 </div>
                             </div>
                             <?php if ($row->tipo != 'funcionario'): ?>
@@ -191,44 +191,66 @@ require_once "header.php";
                                 </div>
                             </div>-->
                                 <div class="form-group">
+                                    <label class="col-lg-2 control-label">Fundo da tela inicial</label>
+                                    <div class="col col-lg-3">
+                                        <?php echo form_dropdown('tipo_tela_inicial', $fundo_tela_inicial, $row->tipo_tela_inicial, 'id="tipo_tela_inicial" class="form-control input-sm"'); ?>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="upload_imagem"
+                                     style="display: <?= $row->tipo_tela_inicial === '3' ? 'block' : 'none' ?>;">
                                     <label class="col-sm-3 col-lg-2 control-label">Imagem de fundo</label>
                                     <div class="col-sm-9 col-lg-10 controls">
                                         <div class="fileinput fileinput-new" data-provides="fileinput">
                                             <div class="fileinput-new thumbnail" style="width: auto; height: 150px;">
                                                 <?php
+                                                $nome_imagem_fundo = 'Sem imagem';
                                                 $imagem_fundo = "http://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=Sem+imagem";
-                                                $nome_imagem_fundo = '';
                                                 if ($row->imagem_fundo) {
+                                                    $nome_imagem_fundo = $row->imagem_fundo;
                                                     $imagem_fundo = base_url('imagens/usuarios/' . $row->imagem_fundo);
-                                                    $nome_imagem_fundo = $row->nome;
                                                 }
                                                 ?>
                                                 <img src="<?= $imagem_fundo; ?>" alt="<?= $nome_imagem_fundo; ?>">
                                             </div>
                                             <div class="fileinput-preview fileinput-exists thumbnail"
                                                  style="width: auto; height: 150px;"></div>
+                                            <div><span class="fileinput-filename"></span></div>
                                             <div>
-                                                        <span class="btn btn-white btn-file">
-                                                            <span class="fileinput-new"><i class="fa fa-paper-clip"></i> Selecionar Imagem</span>
-                                                            <span class="fileinput-exists"><i class="fa fa-undo"></i> Alterar</span>
-                                                            <input type="file" name="imagem_fundo" class="default"
-                                                                   accept="image/png,image/jpeg,image/jpg"/>
-                                                        </span>
-                                                <a href="#" class="btn btn-danger fileinput-exists"
-                                                   data-dismiss="fileinput"><i class="fa fa-trash"></i>
-                                                    Remover</a>
+                                            <span class="btn btn-default btn-file">
+                                                <span class="fileinput-new"><i class="fa fa-paper-clip"></i> Selecionar imagem</span>
+                                                <span class="fileinput-exists"><i class="fa fa-undo"></i> Alterar</span>
+                                                <input type="file" name="imagem_fundo" class="default"
+                                                       accept="image/png,image/jpeg,image/jpg">
+                                            </span>
+                                                <a href="#" class="btn btn-default fileinput-exists"
+                                                   data-dismiss="fileinput"><i class="fa fa-trash"></i> Remover</a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-lg-2 control-label"></label>
-                                    <div class="col col-lg-9">
-                                        <label class="checkbox-inline">
-                                            <input type="checkbox" id="imagem_fundo_padrao" name="imagem_fundo_padrao"
-                                                   value="1" autocomplete="off"> Usar imagem de
-                                            fundo padrão
-                                        </label>
+
+
+                                <div class="form-group" id="upload_video"
+                                     style="display: <?= $row->tipo_tela_inicial === '4' ? 'block' : 'none' ?>;">
+                                    <label class="col-sm-3 col-lg-2 control-label">Vídeo de fundo (.mp4)</label>
+                                    <div class="col-sm-9 col-lg-10 controls">
+                                        <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                            <div class="form-control" data-trigger="fileinput">
+                                                <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                                                <span class="fileinput-filename"></span>
+                                            </div>
+                                            <div class="input-group-addon btn btn-default btn-file">
+                                                <span class="fileinput-new">Selecionar vídeo</span>
+                                                <span class="fileinput-exists">Alterar</span>
+                                                <input type="file" name="video_fundo" accept="video/mp4"/>
+                                            </div>
+                                            <a href="#" class="input-group-addon btn btn-default fileinput-exists"
+                                               data-dismiss="fileinput">Remover</a>
+                                        </div>
+                                        <?php if ($row->video_fundo): ?>
+                                            <i class="help-block">Vídeo selecionado: <?= $row->video_fundo; ?></i>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
 
@@ -323,8 +345,15 @@ require_once "end_js.php";
                 }
             });
 
-            $('#imagem_fundo_padrao').on('change', function () {
-                $('[name="imagem_fundo"]').prop('disabled', $(this).is(':checked'));
+            $('#tipo_tela_inicial').on('change', function () {
+                $('#upload_imagem, #upload_video').hide();
+                if (this.value === '3') {
+                    $('#upload_imagem').show();
+                } else if (this.value === '4') {
+                    $('#upload_video').show();
+                } else {
+
+                }
             });
         });
     </script>

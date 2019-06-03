@@ -12,6 +12,7 @@ require_once "header.php";
                 <div id="alert"></div>
                 <section class="panel">
                     <header class="panel-heading">
+                        <?php echo $this->load->view('modal_processos', ['url' => 'funcionario/importarFuncionario']); ?>
                         <i class="fa fa-plus"></i> Importar funcionários
                     </header>
                     <div class="panel-body">
@@ -75,77 +76,113 @@ require_once "header.php";
                                     <thead>
                                     <tr>
                                         <th>Funcionário</th>
-                                        <th>Email</th>
-                                        <th nowrap>Data de admissão</th>
-                                        <th>Senha</th>
-                                        <th>Departamento</th>
-                                        <th>Área</th>
-                                        <th>Setor</th>
+                                        <th nowrap>Data de nascimento</th>
+                                        <th>Sexo</th>
                                         <th>Cargo</th>
                                         <th>Função</th>
-                                        <th nowrap>Telefone <span style="color: red;">**</span></th>
-                                        <th nowrap>Nível de acesso</th>
-                                        <th nowrap>Tipo de vínculo</th>
+                                        <th>RG</th>
+                                        <th>CPF</th>
                                         <th>CNPJ</th>
-                                        <th>Município</th>
+                                        <th>PIS</th>
+                                        <th nowrap>Telefone <span style="color: red;">**</span></th>
+                                        <th>Email</th>
+                                        <th>Senha</th>
                                         <th>Contrato</th>
                                         <th nowrap>Centro de custo</th>
+                                        <th nowrap>Tipo de vínculo</th>
+                                        <th>Departamento</th>
+                                        <th>Área/cliente</th>
+                                        <th>Setor/unidade</th>
+                                        <th nowrap>Nome da mãe</th>
+                                        <th nowrap>Nome do pai</th>
+                                        <th>Município</th>
+                                        <th>Matrícula</th>
+                                        <th nowrap>Nível de acesso</th>
+                                        <th nowrap>Data de admissão</th>
+                                        <th>Status</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
                                         <td>nomefuncionario1</td>
-                                        <td>funcionario1@suaempresa.com.br</td>
                                         <td class='text-center'>DD/MM/AAAA</td>
+                                        <td>M/F</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>funcionario1@suaempresa.com.br</td>
                                         <td>senha1</td>
+                                        <td></td>
+                                        <td></td>
+                                        <th style="color: red;" nowrap> * OPÇÕES ABAIXO</th>
                                         <td>Produção</td>
                                         <td>Estoque</td>
                                         <td>1</td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        <td></td>
                                         <th style="color: red;" nowrap> * OPÇÕES ABAIXO</th>
+                                        <td class='text-center'>DD/MM/AAAA</td>
                                         <th style="color: red;" nowrap> * OPÇÕES ABAIXO</th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
                                     </tr>
                                     <tr>
                                         <td>nomefuncionario2</td>
-                                        <td>funcionario2@suaempresa.com.br</td>
                                         <td class='text-center'>DD/MM/AAAA</td>
+                                        <td>M/F</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>funcionario2@suaempresa.com.br</td>
                                         <td>senha2</td>
+                                        <td></td>
+                                        <td></td>
+                                        <th style="color: red;" nowrap> * OPÇÕES ABAIXO</th>
                                         <td>Comercial</td>
                                         <td nowrap>Vendas internas</td>
                                         <td>2</td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <th style="color: red;"> * OPÇÕES ABAIXO</th>
-                                        <th style="color: red;"> * OPÇÕES ABAIXO</th>
                                         <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <th style="color: red;" nowrap> * OPÇÕES ABAIXO</th>
+                                        <td class='text-center'>DD/MM/AAAA</td>
+                                        <th style="color: red;" nowrap> * OPÇÕES ABAIXO</th>
                                     </tr>
                                     <tr>
                                         <td>nomefuncionario3</td>
-                                        <td>funcionario3@suaempresa.com.br</td>
                                         <td class='text-center'>DD/MM/AAAA</td>
+                                        <td>M/F</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>funcionario3@suaempresa.com.br</td>
                                         <td>senha3</td>
+                                        <td></td>
+                                        <td></td>
+                                        <th style="color: red;" nowrap> * OPÇÕES ABAIXO</th>
                                         <td>Administrativo</td>
                                         <td>Finanças</td>
                                         <td>3</td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <th style="color: red;"> * OPÇÕES ABAIXO</th>
-                                        <th style="color: red;"> * OPÇÕES ABAIXO</th>
                                         <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <th style="color: red;" nowrap> * OPÇÕES ABAIXO</th>
+                                        <td class='text-center'>DD/MM/AAAA</td>
+                                        <th style="color: red;" nowrap> * OPÇÕES ABAIXO</th>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -157,6 +194,7 @@ require_once "header.php";
                                     <ul style="color: red; font-weight: bold;">
                                         <li>Administrador</li>
                                         <li>Cliente</li>
+                                        <li>Vistoriador</li>
                                         <li>Colaborador CLT</li>
                                         <li>Colaborador MEI</li>
                                         <li>Colaborador PJ</li>
@@ -168,19 +206,26 @@ require_once "header.php";
                                         <li>Líder</li>
                                         <li>Multiplicador</li>
                                         <li>Presidente</li>
+                                        <li>Diretor</li>
                                         <li>Representante</li>
                                         <li>Selecionador</li>
                                         <li>Supervisor</li>
                                     </ul>
                                 </div>
                                 <div class="col col-sm-6">
+                                    <p style="color: red; font-weight: bold;"> * Status:</p>
+                                    <ul style="color: red; font-weight: bold;">
+                                        <li>Ativo</li>
+                                        <li>Em experiência</li>
+                                    </ul>
+                                    <br>
                                     <p style="color: red; font-weight: bold;"> * Tipos de vínculo:</p>
                                     <ul style="color: red; font-weight: bold;">
                                         <li>CLT</li>
                                         <li>MEI</li>
                                         <li>PJ</li>
+                                        <li>Autônomo</li>
                                     </ul>
-                                    <br>
                                     <br>
                                     <p style="color: red; font-weight: bold;"> ** Quando houver mais de um telefone por
                                         registro, é aconselhável separá-los por barra invertida (/).</p>

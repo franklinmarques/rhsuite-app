@@ -60,6 +60,7 @@ class ExamePeriodico extends MY_Controller
                        s.observacoes,
                        s.data_programada_de,
                        s.data_realizacao_de,
+                       s.data_entrega_copia_de,
                        s.data_entrega_de,
                        s.matricula
                 FROM (SELECT a.id, 
@@ -70,6 +71,7 @@ class ExamePeriodico extends MY_Controller
                              a.observacoes,
                              DATE_FORMAT(a.data_programada,'%d/%m/%Y') AS data_programada_de,
                              DATE_FORMAT(a.data_realizacao,'%d/%m/%Y') AS data_realizacao_de,
+                             DATE_FORMAT(a.data_entrega_copia,'%d/%m/%Y') AS data_entrega_copia_de,
                              DATE_FORMAT(a.data_entrega,'%d/%m/%Y') AS data_entrega_de,
                              b.matricula
                       FROM usuarios_exame_periodico a
@@ -111,6 +113,7 @@ class ExamePeriodico extends MY_Controller
             $row = array();
             $row[] = $exame->data_programada_de;
             $row[] = $exame->data_realizacao_de;
+            $row[] = $exame->data_entrega_copia_de;
             $row[] = $exame->data_entrega_de;
             $row[] = $exame->local_exame;
             $row[] = $exame->observacoes;
@@ -164,6 +167,11 @@ class ExamePeriodico extends MY_Controller
             $_POST['data_realizacao'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_realizacao'])));
         } else {
             $_POST['data_realizacao'] = null;
+        }
+        if ($data['data_entrega_copia']) {
+            $_POST['data_entrega_copia'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_entrega_copia'])));
+        } else {
+            $_POST['data_entrega_copia'] = null;
         }
         if ($data['data_entrega']) {
             $_POST['data_entrega'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_entrega'])));
@@ -306,6 +314,7 @@ class ExamePeriodico extends MY_Controller
         $this->db->select("CONCAT_WS('/', b.depto, b.area, b.setor) AS estrutura", false);
         $this->db->select("DATE_FORMAT(a.data_programada, '%d/%m/%Y') AS data_programada", false);
         $this->db->select("DATE_FORMAT(a.data_realizacao, '%d/%m/%Y') AS data_realizacao", false);
+        $this->db->select("DATE_FORMAT(a.data_entrega_copia, '%d/%m/%Y') AS data_entrega_copia", false);
         $this->db->select("DATE_FORMAT(a.data_entrega, '%d/%m/%Y') AS data_entrega", false);
         $this->db->join('usuarios b', 'b.id = a.id_usuario');
         $this->db->where('b.empresa', $empresa);
@@ -352,6 +361,12 @@ class ExamePeriodico extends MY_Controller
     {
         $post = $this->input->post();
 
+        if ($post['draw'] === '1') {
+            $post['tipo_vinculo'] = '01';
+            $post['status'] = 1;
+            $post['ano'] = date('Y');
+        }
+
         $sql = "SELECT s.id,
                        s.nome,
                        s.cpf,
@@ -366,6 +381,7 @@ class ExamePeriodico extends MY_Controller
                        s.data_entrega,
                        s.data_programada_de,
                        s.data_realizacao_de,
+                       s.data_entrega_copia_de,
                        s.data_entrega_de,
                        s.status
                 FROM (SELECT b.id,
@@ -393,6 +409,7 @@ class ExamePeriodico extends MY_Controller
                              a.data_entrega,
                              DATE_FORMAT(a.data_programada,'%d/%m/%Y') AS data_programada_de,
                              DATE_FORMAT(a.data_realizacao,'%d/%m/%Y') AS data_realizacao_de,
+                             DATE_FORMAT(a.data_entrega_copia,'%d/%m/%Y') AS data_entrega_copia_de,
                              DATE_FORMAT(a.data_entrega,'%d/%m/%Y') AS data_entrega_de
                       FROM usuarios_exame_periodico a
                       INNER JOIN usuarios b
@@ -474,6 +491,7 @@ class ExamePeriodico extends MY_Controller
             $row[] = $exame->estrutura;
             $row[] = $exame->data_programada_de;
             $row[] = $exame->data_realizacao_de;
+            $row[] = $exame->data_entrega_copia_de;
             $row[] = $exame->data_entrega_de;
             $row[] = '
                       <a class="btn btn-success btn-sm"
@@ -527,7 +545,7 @@ class ExamePeriodico extends MY_Controller
             foreach ($examePeriodico as $data_programada) {
                 $anos[$data_programada->ano] = $data_programada->ano;
             }
-            $output['ano'] = form_dropdown('ano', $anos, '', 'class="form-control input-sm" onchange="buscar()"');
+            $output['ano'] = form_dropdown('ano', $anos, $post['ano'], 'class="form-control input-sm" onchange="buscar()"');
             $tipo_vinculo = array(
                 '' => 'Todos',
                 '01' => 'CLT',

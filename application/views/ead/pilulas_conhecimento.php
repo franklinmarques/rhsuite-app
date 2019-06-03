@@ -8,20 +8,20 @@
                 <div class="col-md-12">
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
-                        <li class="active">Gerenciar Treinamentos de Clientes</li>
+                        <li class="active">Gerenciar Pílulas de Conhecimento</li>
                     </ol>
-                    <button class="btn btn-info" onclick="add_cliente();"><i class="glyphicon glyphicon-plus"></i>
-                        Adicionar cliente/usuário
+                    <button class="btn btn-info" onclick="add_pilula();"><i class="glyphicon glyphicon-plus"></i>
+                        Adicionar pílula
                     </button>
                     <br/>
                     <br/>
-
                     <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                         <tr>
-                            <th>Nome usuário(a)</th>
-                            <th>Cliente</th>
-                            <th>Status</th>
+                            <th>Área de conhecimento</th>
+                            <th>Treinamento</th>
+                            <th>Tipo</th>
+                            <th>Colaboradores</th>
                             <th>Ações</th>
                         </tr>
                         </thead>
@@ -33,7 +33,7 @@
             <!-- page end-->
 
             <div class="modal fade" id="modal_form" role="dialog">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -42,20 +42,23 @@
                         </div>
                         <div class="modal-body form">
                             <div id="alert_form"></div>
-                            <form action="#" id="form" class="form-horizontal" enctype="multipart/form-data"
-                                  accept-charset="utf-8">
+                            <form action="#" id="form" class="form-horizontal">
                                 <input type="hidden" value="" name="id"/>
                                 <input type="hidden" value="<?= $empresa ?>" name="id_empresa"/>
                                 <div class="form-body">
                                     <div class="row form-group">
-                                        <label class="control-label col-md-2">Status <span class="text-danger">*</span></label>
-                                        <div class="col-md-3">
-                                            <select name="status" class="form-control">
-                                                <option value="1">Ativo</option>
-                                                <option value="0">Inativo</option>
+                                        <label class="control-label col-md-2">Área conhecimento</label>
+                                        <div class="col-md-4">
+                                            <?php echo form_dropdown('id_area_conhecimento', $areas, '', 'class="form-control"'); ?>
+                                        </div>
+                                        <label class="control-label col-md-1">Tipo</label>
+                                        <div class="col-md-2">
+                                            <select name="publico" class="form-control">
+                                                <option value="1">Aberto</option>
+                                                <option value="0">Fechado</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-7 text-right">
+                                        <div class="col-md-3 text-right">
                                             <button type="button" class="btn btn-success" id="btnSave" onclick="save()">
                                                 Salvar
                                             </button>
@@ -65,71 +68,34 @@
                                         </div>
                                     </div>
                                     <div class="row form-group">
-                                        <label class="control-label col-md-2">Cliente <span class="text-danger">*</span></label>
-                                        <div class="col-md-10">
-                                            <input name="cliente" placeholder="Nome do cliente" class="form-control"
-                                                   type="text">
-                                            <span class="help-block"></span>
-                                        </div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <label class="control-label col-md-2">Usuário <span class="text-danger">*</span></label>
-                                        <div class="col-md-10">
-                                            <input name="nome" placeholder="Nome do usuário" class="form-control"
-                                                   type="text">
-                                            <span class="help-block"></span>
-                                        </div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <label class="control-label col-md-2">E-mail <span class="text-danger">*</span></label>
-                                        <div class="col-md-10">
-                                            <input name="email" placeholder="E-mail do usuário" class="form-control"
-                                                   type="text">
-                                            <span class="help-block"></span>
-                                        </div>
-                                    </div>
-                                    <div class="row form-group" id="senha">
-                                        <label class="control-label col-md-2">Senha <span
+                                        <label class="control-label col-md-2">Treinamento <span
                                                     class="text-danger">*</span></label>
                                         <div class="col-md-10">
-                                            <input name="senha" class="form-control" type="password"
-                                                   placeholder="Senha do usuário">
-                                            <span class="help-block senha"></span>
+                                            <?php echo form_dropdown('id_curso', $cursos, '', 'class="form-control"'); ?>
                                         </div>
                                     </div>
-                                    <div class="row form-group" id="confirmar_senha">
-                                        <label class="control-label col-md-2">Confirmar senha <span class="text-danger">*</span></label>
+                                    <hr>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Departamento</label>
                                         <div class="col-md-10">
-                                            <input name="confirmar_senha" class="form-control" type="password"
-                                                   placeholder="Confirmar a senha do usuário">
-                                            <span class="help-block senha"></span>
+                                            <?php echo form_dropdown('', $deptos, '', 'id="id_depto" class="form-control estrutura"'); ?>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-2">Foto</label>
-                                        <div class="col-md-10 controls">
-                                            <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                <div class="fileinput-new thumbnail"
-                                                     style="width: auto; height: 150px;">
-                                                    <img src="https://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=Sem+imagem"
-                                                         alt="Sem imagem">
-                                                </div>
-                                                <div class="fileinput-preview fileinput-exists thumbnail"
-                                                     style="width: auto; height: 150px;"></div>
-                                                <div>
-                                        <span class="btn btn-white btn-file">
-                                            <span class="fileinput-new btn btn-default"><i
-                                                        class="fa fa-plus text-info"></i> Selecionar Imagem</span>
-                                            <span class="fileinput-exists btn btn-default"><i
-                                                        class="fa fa-undo text-info"></i> Alterar</span>
-                                            <input type="file" name="foto" class="default" accept="image/*"/>
-                                            <span class="help-block"></span>
-                                        </span>
-                                                    <a href="#" class="btn btn-default fileinput-exists"
-                                                       data-dismiss="fileinput"><i class="fa fa-trash text-danger"></i>
-                                                        Remover</a>
-                                                </div>
-                                            </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Área</label>
+                                        <div class="col-md-10">
+                                            <?php echo form_dropdown('', ['' => 'Todas'], '', 'id="id_area" class="form-control estrutura"'); ?>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Setor</label>
+                                        <div class="col-md-10">
+                                            <?php echo form_dropdown('', ['' => 'Todos'], '', 'id="id_setor" class="form-control estrutura"'); ?>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-md-12">
+                                            <?php echo form_multiselect('id_usuario[]', $usuarios, array(), 'id="usuarios" class="form-control demo1"'); ?>
                                         </div>
                                     </div>
                                 </div>
@@ -149,7 +115,7 @@
 
     <!-- Css -->
     <link rel="stylesheet" href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>">
-    <link rel="stylesheet" href="<?php echo base_url('assets/js/bootstrap-fileinput/bootstrap-fileinput.css'); ?>">
+    <link rel="stylesheet" href="<?php echo base_url('assets/bootstrap-duallistbox/bootstrap-duallistbox.css') ?>">
 
 <?php require_once APPPATH . 'views/end_js.php'; ?>
     <!-- Js -->
@@ -161,7 +127,7 @@
 
     <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/js/bootstrap-fileinput/bootstrap-fileinput.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js') ?>"></script>
 
     <script>
         var table;
@@ -170,9 +136,6 @@
         $(document).ready(function () {
 
             table = $('#table').DataTable({
-                'dom': "<'row'<'#clientes.col-sm-6'><'col-sm-6'f>>" +
-                    "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
                 'processing': true,
                 'serverSide': true,
                 'iDisplayLength': -1,
@@ -181,33 +144,35 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('ead/clientes/ajaxList/') ?>',
-                    'type': 'POST',
-                    'data': function (d) {
-                        if ($('#clientes [name="busca_cliente"]').val() !== undefined) {
-                            d.cliente = $('#clientes [name="busca_cliente"]').val();
-                        } else {
-                            d.cliente = '';
-                        }
-
-                        return d;
-                    },
-                    'dataSrc': function (json) {
-                        if (json.draw === 1) {
-                            $("#clientes").append('<br>Cliente&nbsp;' + json.clientes);
-                        }
-
-                        return json.data;
-                    }
+                    'url': '<?php echo site_url('ead/pilulasConhecimento/ajaxList/') ?>',
+                    'type': 'POST'
                 },
                 'columnDefs': [
                     {
-                        'width': '50%',
-                        'targets': [0, 1]
+                        'width': '24%',
+                        'targets': [0]
                     },
                     {
                         'className': 'text-center',
                         'targets': [2]
+                    },
+                    {
+                        'width': '38%',
+                        'targets': [1]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (cellData === null) {
+                                $(td).addClass('text-muted');
+                                if (rowData[2] === 'Aberto') {
+                                    $(td).text('Alocação desabilitada');
+                                } else {
+                                    $(td).text('Nenhum colaborador alocado');
+                                }
+                            }
+                        },
+                        'width': '38%',
+                        'targets': [3]
                     },
                     {
                         'className': 'text-nowrap',
@@ -218,6 +183,52 @@
                 ]
             });
 
+            demo1 = $('.demo1').bootstrapDualListbox({
+                'nonSelectedListLabel': 'Colaboradores disponíveis',
+                'selectedListLabel': 'Colaboradores alocados para o treinamento',
+                'preserveSelectionOnMove': 'moved',
+                'moveOnSelect': false,
+                'filterPlaceHolder': 'Filtrar',
+                'helperSelectNamePostfix': false,
+                'selectorMinimalHeight': 132,
+                'infoText': false
+            });
+
+        });
+
+
+        $('[name="publico"]').on('change', function () {
+            var is_publico = this.value === '1';
+            $('.estrutura').prop('disabled', is_publico);
+            $('.bootstrap-duallistbox-container').find('*').prop('disabled', is_publico);
+        });
+
+
+        $('.estrutura').on('change', function () {
+            $.ajax({
+                'url': "<?php echo site_url('ead/pilulasConhecimento/montarEstrutura') ?>",
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_depto': $('#id_depto').val(),
+                    'id_area': $('#id_area').val(),
+                    'id_setor': $('#id_setor').val(),
+                    'usuarios_selecionados': $('#usuarios').val()
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        $('#id_area').html($(json.area).html());
+                        $('#id_setor').html($(json.setor).html());
+                        $('#usuarios').html($(json.usuarios).html());
+                        demo1.bootstrapDualListbox('refresh', true);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Erro ao montar a estrutura');
+                }
+            });
         });
 
 
@@ -226,32 +237,27 @@
         }
 
 
-        function add_cliente() {
+        function add_pilula() {
             save_method = 'add';
             $('#form')[0].reset();
             $('#alert_form').html('');
             $('#form .form-group').removeClass('has-error');
             $('#form span.help-block').html('');
-            $('#senha label span, #confirmar_senha label span').removeClass('text-primary');
-            $('#senha label span, #confirmar_senha label span').addClass('text-danger');
-            $('#form .senha').html('');
-            $('.modal-title').text('Adicionar cliente/usuário');
-            $('.fileinput-new img').prop({
-                'src': 'https://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=Sem+imagem',
-                'alt': 'Sem imagem'
-            });
+            $('[name="publico"]').trigger('change');
+            $('.modal-title').text('Adicionar pílula de conhecimento');
+            demo1.bootstrapDualListbox('refresh', true);
             $('#modal_form').modal('show');
         }
 
 
-        function edit_cliente(id) {
+        function edit_pilula(id) {
             save_method = 'update';
             $('#form')[0].reset();
             $('#form .form-group').removeClass('has-error');
             $('#form span.help-block').html('');
 
             $.ajax({
-                'url': "<?php echo site_url('ead/clientes/ajaxEdit') ?>",
+                'url': "<?php echo site_url('ead/pilulasConhecimento/ajaxEdit') ?>",
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -263,29 +269,19 @@
                         return false;
                     }
 
-                    $.each(json, function (key, value) {
-                        if ($('#form input[name="' + key + '"]').prop('type') !== 'file') {
-                            $('#form input[name="' + key + '"]').val(value);
-                        }
-                    });
+                    $('#form [name="id"]').val(json.id);
+                    $('#form [name="id_empresa"]').val(json.id_empresa);
 
-                    if (json.foto) {
-                        $('.fileinput-new img').prop({
-                            'src': '<?= base_url('imagens/usuarios'); ?>/' + json.foto,
-                            'alt': json.foto
-                        });
-                    } else {
-                        $('.fileinput-new img').prop({
-                            'src': 'https://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=Sem+imagem',
-                            'alt': 'Sem imagem'
-                        });
-                    }
+                    $.each(json, function (key, value) {
+                        $('#form select[name="' + key + '"]').val(value);
+                    });
+                    $('#usuarios').val(json.usuarios);
+                    $('[name="publico"], .estrutura').trigger('change');
+
+                    demo1.bootstrapDualListbox('refresh', true);
 
                     $('#alert_form').html('');
-                    $('#senha label span, #confirmar_senha label span').removeClass('text-danger');
-                    $('#senha label span, #confirmar_senha label span').addClass('text-primary');
-                    $('#form .senha').html('<small><i>Obs.: caso não queira alterar a senha, deixar este campo em branco</i></small>');
-                    $('.modal-title').text('Editar cliente/usuário');
+                    $('.modal-title').text('Editar pílula de conhecimento');
                     $('#modal_form').modal('show');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -299,23 +295,16 @@
             $('#btnSave, #btnSave2').text('Salvando...').attr('disabled', true);
             $('#form .form-group').removeClass('has-error');
             $('#form span.help-block').html('');
-            var url = '<?php echo site_url('ead/clientes/ajaxUpdate') ?>';
+            var url = '<?php echo site_url('ead/pilulasConhecimento/ajaxUpdate') ?>';
             if (save_method === 'add') {
-                url = '<?php echo site_url('ead/clientes/ajaxAdd') ?>';
+                url = '<?php echo site_url('ead/pilulasConhecimento/ajaxAdd') ?>';
             }
-
-            var form = $('#form')[0];
-            var data = new FormData(form);
 
             $.ajax({
                 'url': url,
                 'type': 'POST',
                 'dataType': 'json',
-                'data': data,
-                'enctype': 'multipart/form-data',
-                'processData': false,
-                'contentType': false,
-                'cache': false,
+                'data': $('#form').serialize(),
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
@@ -343,10 +332,10 @@
         }
 
 
-        function delete_cliente(id) {
-            if (confirm('Tem certeza que deseja excluir esse cliente/usuário?')) {
+        function delete_pilula(id) {
+            if (confirm('Tem certeza que deseja excluir?')) {
                 $.ajax({
-                    'url': "<?php echo site_url('ead/clientes/ajaxDelete') ?>",
+                    'url': "<?php echo site_url('ead/pilulasConhecimento/ajaxDelete') ?>",
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {

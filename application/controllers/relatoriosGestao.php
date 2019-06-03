@@ -248,9 +248,11 @@ class RelatoriosGestao extends MY_Controller
     }
 
 
-    private function gerarPDF()
+    private function gerarPDF($isPdf = false)
     {
-        $this->db->select('b.nome AS usuario, c.nome AS depto, d.nome AS area, e.nome AS setor');
+
+        $this->db->query("SET lc_time_names = 'pt_BR'");
+        $this->db->select('a.id, b.nome AS usuario, c.nome AS depto, d.nome AS area, e.nome AS setor');
         $this->db->select('a.mes_referencia, a.ano_referencia');
         $this->db->select('a.indicadores, a.riscos_oportunidades');
         $this->db->select('a.ocorrencias, a.necessidades_investimentos');
@@ -265,7 +267,45 @@ class RelatoriosGestao extends MY_Controller
             exit(json_encode(['erro' => 'Relatório não encontrado ou excluído recentemente.']));
         }
 
+        $this->db->select('foto, foto_descricao');
+        $this->db->where('id', $this->session->userdata('empresa'));
+        $empresa = $this->db->get('usuarios')->row();
+
+        $data->foto = 'imagens/usuarios/' . $empresa->foto;
+        $data->foto_descricao = 'imagens/usuarios/' . $empresa->foto_descricao;
+        $data->is_pdf = $isPdf;
+
+        $this->load->library('calendar');
+        $data->mes_referencia = ucfirst($this->calendar->get_month_name($data->mes_referencia));
+
         return $this->load->view('relatorios_gestao_pdf', $data, true);
+    }
+
+
+    public function pdf()
+    {
+        $this->load->library('m_pdf');
+
+        $stylesheet = 'table.gestao thead th { font-size: 12px; padding: 5px; text-align: center; font-weight: normal; } ';
+        $stylesheet .= 'table.gestao tbody tr { border-width: 5px; border-color: #ddd; } ';
+        $stylesheet .= 'table.gestao tbody tr th { font-size: 11px; padding: 2px; } ';
+        $stylesheet .= 'table.gestao tbody td { font-size: 12px; padding: 1px; border-top: 1px solid #ddd;} ';
+        $stylesheet .= 'table.gestao tbody td strong { font-weight: bold; } ';
+
+        $stylesheet .= 'table.dados thead th { font-size: 12px; padding: 5px; border-bottom: 2px solid #ddd; } ';
+        $stylesheet .= 'table.dados thead tr.active td { background-color: #e5e5e5; }';
+        $stylesheet .= 'table.dados tbody td { font-size: 12px; padding: 5px; border-top: 1px solid #ddd; word-wrap: break-word;} ';
+
+        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
+        $this->m_pdf->pdf->writeHTML($this->gerarPDF(true));
+
+        $this->db->select('parecer_final');
+        $this->db->where('id', $this->input->get('id'));
+        $row = $this->db->get('relatorios_gestao')->row();
+
+        $parecer = !empty($row->parecer_final) ? ' - ' . $row->parecer_final : '';
+
+        $this->m_pdf->pdf->Output('Relatório de Gestão' . $parecer . '.pdf', 'D');
     }
 
 

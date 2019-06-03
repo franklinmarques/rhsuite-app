@@ -39,9 +39,29 @@
             }
         </style>
     <?php endif; ?>
+
+    <style>
+        .background-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1000;
+            background: url(<?= '../imagens/usuarios/' . $imagem_fundo ?>) no-repeat;
+            background-size: cover;
+        }
+    </style>
 </head>
 
 <body class="login-page">
+
+<video autoplay loop poster="<?= base_url('imagens/usuarios/' . $imagem_fundo) ?>" class="background-video">
+    <source src="<?= base_url('videos/usuarios/' . $video_fundo) ?>" type="video/mp4">
+</video>
+
 <div id="cookie" class="text-danger text-center" style="background-color: #ffe; display: none;">
     Este site usa Cookies! Habilite o uso de cookies em seu navegador para o correto funcionamento do site.
 </div>
@@ -56,10 +76,10 @@
         $hr = '';
     }
     ?>
-    <div style="width: 100%; max-width: 370px; margin: 0 auto;">
+    <div style="width: 100%; max-width: 400px; margin: 0 auto;">
         <div align="center">
             <img src="<?php echo $logo; ?>" style="width: auto; max-height: 100px; margin-bottom: 3%;">
-            <h4 style="color: #111343; text-shadow: 1px 2px 4px rgba(0, 0, 0, .15);">
+            <h4 style="color: #111343; text-shadow: 1px 1px 1px rgba(255,255,255,0.5);">
                 <strong><?php echo $cabecalho; ?></strong></h4>
         </div>
     </div>
@@ -83,7 +103,8 @@
                 <div class="form-group">
                     <div class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                        <input type="password" name="senha" placeholder="Senha" class="form-control" autocomplete="new-password"/>
+                        <input type="password" name="senha" placeholder="Senha" class="form-control"
+                               autocomplete="new-password"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -164,13 +185,75 @@
         <button type="button" class="btn btn-primary form-control" style="box-shadow: 1px 2px 4px rgba(0, 0, 0, .15);">
             Consultar vagas | Cadastrar currículo
         </button>
+        <br>
+        <button type="button" class="btn btn-primary form-control"
+                style="margin-top: 3px; box-shadow: 1px 2px 4px rgba(0, 0, 0, .15);"
+                data-toggle="modal" data-target="#modal_pilulas_conhecimento">
+            Pílulas de Conhecimento
+        </button>
+
+        <!--<div class="row">
+            <div class="col-sm-6" style="padding-right: 5px;">
+                <button type="button" class="btn btn-sm btn-primary btn-block"
+                        style="box-shadow: 1px 2px 4px rgba(0, 0, 0, .15);">
+                    Pílulas de Conhecimento
+                </button>
+            </div>
+            <div class="col-sm-6" style="padding-left: 5px;">
+                <button type="button" class="btn btn-sm btn-primary btn-block"
+                        style="box-shadow: 1px 2px 4px rgba(0, 0, 0, .15);" disabled>
+                    Prog. Form. Continuada
+                </button>
+            </div>
+        </div>-->
+
 
         <!-- END Main Content -->
 
     </div>
+
+
+    <div id="modal_pilulas_conhecimento" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" style="float:right;" class="btn btn-default" data-dismiss="modal">Fechar
+                    </button>
+                    <h4 class="modal-title text-primary">
+                        <strong>Programa de Formação Continuada - Pílulas de Conhecimento</strong>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="area_conhecimento" class="col-sm-3 text-primary control-label"><strong>Área
+                                    de conhecimento</strong></label>
+                            <div class="col-sm-4">
+                                <?php echo form_dropdown('area_conhecimento', $area_conhecimento, '', 'id="area_conhecimento" class="form-control" autocomplete="off"'); ?>
+                            </div>
+                            <label for="tema" class="col-sm-1 text-primary control-label"><strong>Tema</strong></label>
+                            <div class="col-sm-4">
+                                <?php echo form_dropdown('tema', $tema, '', 'id="tema" class="form-control" autocomplete="off"'); ?>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-xs-12">
+                                <div id="conteudo" class="embed-responsive embed-responsive-16by9"></div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="form-group">
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
 </div>
 <footer class="footer">
-    <p style="text-align: center; color: #151860; text-shadow: 1px 2px 4px rgba(0, 0, 0, .15);">Copyright &copy;
+    <p style="text-align: center; color: rgb(21,24,96); text-shadow: -1px -1px 0 rgba(255,255,255,0.51);">Copyright
+        &copy;
         PeopleNet In
         Education<br>
         <a href="mailto:contato@rhsuite.com.br" style="color: #151860;">contato@rhsuite.com.br</a> | <a
@@ -214,6 +297,60 @@
             goToForm('register');
         });
     });
+
+
+    $('#area_conhecimento').on('change', function () {
+        var tema = $('#tema').val();
+        $.ajax({
+            'url': "<?php echo site_url('login/filtrarTemas') ?>",
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'area_conhecimento': this.value,
+                'tema': tema
+            },
+            'success': function (json) {
+                if (json.erro) {
+                    alert(json.erro);
+                } else {
+                    $('#tema').html($(json.tema).html());
+
+                    if ($('#tema').val() !== tema) {
+                        $('#tema').trigger('change');
+                    }
+                }
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Erro ao montar a estrutura');
+            }
+        });
+    });
+
+
+    $('#tema').on('change', function () {
+        $.ajax({
+            'url': "<?php echo site_url('login/mostrarPilulaConhecimento') ?>",
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'tema': this.value
+            },
+            'success': function (json) {
+                if (json.erro) {
+                    alert(json.erro);
+                } else if (json.conteudo) {
+                    $('#conteudo').html($(json.conteudo).html());
+                } else {
+                    $('#conteudo').html('');
+                }
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Erro ao montar a estrutura');
+            }
+        });
+    });
+
+
 </script>
 
 </body>

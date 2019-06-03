@@ -1150,203 +1150,262 @@ class Funcionario extends MY_Controller
         echo json_encode(array('retorno' => 1, 'aviso' => 'Programa de Integração editado com sucesso', 'redireciona' => 1, 'pagina' => site_url('funcionario/editar/' . $id_usuario)));
     }
 
+
     public function importarFuncionario()
     {
         $this->load->helper('form');
         $this->load->view('importarFuncionario');
     }
 
+
     public function importarCsv()
     {
         header('Content-type: text/json; charset=UTF-8');
-        // Verifica se o arquivo foi enviado
-        if (!(isset($_FILES) && !empty($_FILES))) {
-            //Mensagem de erro
-            exit(json_encode(array('retorno' => 0, 'aviso' => 'Erro no envio do arquivo. Por favor, tente mais tarde', 'redireciona' => 0, 'pagina' => '')));
+
+        if (!(isset($_FILES) && !empty($_FILES) && empty($_FILES['arquivo']['error']))) {
+            exit(json_encode(['retorno' => 0, 'aviso' => 'Erro no envio do arquivo. Por favor, tente mais tarde', 'redireciona' => 0, 'pagina' => '']));
         }
 
-        $this->load->helper(array('date'));
+        $config = array(
+            'upload_path' => './arquivos/csv/',
+            'file_name' => utf8_decode($_FILES['arquivo']['name']),
+            'allowed_types' => '*',
+            'overwrite' => true
+        );
 
-        if ($_FILES['arquivo']['error'] == 0) {
-            $config['upload_path'] = './arquivos/csv/';
-            $config['file_name'] = utf8_decode($_FILES['arquivo']['name']);
-            $config['allowed_types'] = '*';
-            $config['overwrite'] = TRUE;
+        $this->load->library('upload', $config);
 
-            //Upload do csv
-            $this->load->library('upload', $config);
-            if ($this->upload->do_upload('arquivo')) {
-                $csv = $this->upload->data();
+        if (!$this->upload->do_upload('arquivo')) {
+            exit(json_encode(['retorno' => 0, 'aviso' => $this->upload->display_errors(), 'redireciona' => 0, 'pagina' => '']));
+        }
 
-                //Importar o arquivo transferido para o banco de dados
-                $handle = fopen($config['upload_path'] . $csv['file_name'], "r");
 
-                $x = 0;
-                $validacao = true;
-                $html = '';
-                $label = array(
-                    'Funcionário',
-                    'Email',
-                    'Data de admissão',
-                    'Senha',
-                    'Departamento',
-                    'Área',
-                    'Setor',
-                    'Cargo',
-                    'Função',
-                    'Telefone',
-                    'Nível de acesso',
-                    'Tipo de vínculo',
-                    'CNPJ',
-                    'Município',
-                    'Contrato',
-                    'Centro de custo'
-                );
-                $data = array();
+        $csv = $this->upload->data();
+        $handle = fopen($config['upload_path'] . $csv['file_name'], "r");
 
-                $this->load->library('form_validation');
-                $this->load->model('Usuarios_model', 'usuarios');
 
-                $this->db->trans_begin();
+        $label = array(
+            'nome' => 'Funcionário',
+            'data_nascimento' => 'Data de nascimento',
+            'sexo' => 'Sexo',
+            'cargo' => 'Cargo',
+            'funcao' => 'Função',
+            'rg' => 'RG',
+            'cpf' => 'CPF',
+            'cnpj' => 'CNPJ',
+            'pis' => 'PIS',
+            'telefone' => 'Telefone',
+            'email' => 'Email',
+            'senha' => 'Senha',
+//            'confirmar_senha' => 'Confirmar senha',
+            'contrato' => 'Contrato',
+            'centro_custo' => 'Centro de custo',
+            'tipo_vinculo' => 'Tipo de vínculo',
+            'depto' => 'Departamento',
+            'area' => 'Área',
+            'setor' => 'Setor',
+            'nome_mae' => 'Nome da mãe',
+            'nome_pai' => 'Nome do pai',
+            'municipio' => 'Município',
+            'matricula' => 'Matrícula',
+            'nivel_acesso' => 'Nível de acesso',
+            'data_admissao' => 'Data de admissão',
+            'status' => 'Status'
+        );
 
-                while (($row = fgetcsv($handle, 1850, ";")) !== FALSE) {
-                    $x++;
+        $ordemColunas = array_flip(array_keys($label));
 
-                    if ($x == 1) {
-                        if (count(array_filter($row)) == 16) {
-                            $label = $row;
-                        }
-                        continue;
-                    }
 
-                    $row = array_pad($row, 16, '');
-                    if (count(array_filter($row)) == 0) {
-                        $html .= "Linha $x: registro não encontrado.<br>";
-                        continue;
-                    }
 
-                    $data['nome'] = utf8_encode($row[0]);
-                    $data['email'] = utf8_encode($row[1]);
-                    $data['data_admissao'] = utf8_encode($row[2]);
-                    $data['senha'] = trim(utf8_encode($row[3]));
-                    $data['depto'] = utf8_encode($row[4]);
-                    $data['area'] = utf8_encode($row[5]);
-                    $data['setor'] = utf8_encode($row[6]);
-                    $data['cargo'] = utf8_encode($row[7]);
-                    $data['funcao'] = utf8_encode($row[8]);
-                    $telefones = explode('/', $row[9]);
-                    foreach ($telefones as $k => $telefone) {
-                        $telefones[$k] = trim($telefone);
-                    }
-                    $data['telefone'] = utf8_encode(implode('/', $telefones));
-                    $data['nivel_acesso'] = utf8_encode(strtolower($row[10]));
-                    $data['tipo_vinculo'] = utf8_encode(strtolower($row[11]));
-                    $cnpj = preg_replace('/\D/', '', $row[12]);
-                    $data['cnpj'] = preg_replace('/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/', '$1.$2.$3/$4-$5', $cnpj);
-                    $data['municipio'] = trim(utf8_encode($row[13]));
-                    $data['contrato'] = trim(utf8_encode($row[14]));
-                    $data['centro_custo'] = trim(utf8_encode($row[15]));
+        $this->load->library('form_validation');
+        $this->load->model('Usuarios_model', 'usuarios');
 
-                    $_POST = $data;
-                    if ($this->validaCsv($label)) {
-                        $data['data_admissao'] = date("Y-m-d", strtotime(str_replace('/', '-', $row[2])));
-                        $data['datacadastro'] = date('Y-m-d H:i:s');
-                        $data['senha'] = $this->usuarios->setPassword($data['senha']);
-                        $data['foto'] = 'avatar.jpg';
-                        $data['token'] = uniqid();
+        $this->db->trans_begin();
 
-                        $data['tipo'] = 'funcionario';
-                        $data['empresa'] = $this->session->userdata('empresa');
-                        switch ($data['nivel_acesso']) {
-                            case 'administrador':
-                                $data['nivel_acesso'] = 1;
-                                break;
-                            case 'multiplicador':
-                                $data['nivel_acesso'] = 2;
-                                break;
-                            case 'gestor':
-                                $data['nivel_acesso'] = 3;
-                                break;
-                            case 'colaborador clt':
-                                $data['nivel_acesso'] = 4;
-                                break;
-                            case 'cliente':
-                                $data['nivel_acesso'] = 5;
-                                break;
-                            case 'selecionador':
-                                $data['nivel_acesso'] = 6;
-                                break;
-                            case 'presidente':
-                                $data['nivel_acesso'] = 7;
-                                break;
-                            case 'gerente':
-                                $data['nivel_acesso'] = 8;
-                                break;
-                            case 'coordenador':
-                                $data['nivel_acesso'] = 9;
-                                break;
-                            case 'supervisor':
-                                $data['nivel_acesso'] = 10;
-                                break;
-                            case 'encarregado':
-                                $data['nivel_acesso'] = 11;
-                                break;
-                            case 'líder':
-                                $data['nivel_acesso'] = 12;
-                                break;
-                            case 'cuidador comunitário':
-                                $data['nivel_acesso'] = 13;
-                                break;
-                            case 'colaborador pj':
-                                $data['nivel_acesso'] = 14;
-                                break;
-                            case 'representante':
-                                $data['nivel_acesso'] = 15;
-                                break;
-                            case 'colaborador mei':
-                                $data['nivel_acesso'] = 16;
-                                break;
-                        }
-                        switch ($data['tipo_vinculo']) {
-                            case 'pj':
-                                $data['tipo_vinculo'] = 3;
-                                break;
-                            case 'mei':
-                                $data['tipo_vinculo'] = 2;
-                                break;
-                            case 'clt':
-                                $data['tipo_vinculo'] = 1;
-                                $data['cnpj'] = null;
-                            default:
-                                $data['tipo_vinculo'] = null;
-                                $data['cnpj'] = null;
-                        }
+        $x = 0;
+        $validacao = true;
+        $html = '';
 
-                        //Inserir informação no banco
-                        $this->db->query($this->db->insert_string('usuarios', $data));
-                    } else {
-                        $html .= $this->form_validation->error_string("Linha $x: ");
-                        $validacao = false;
-                    }
+        while (($row = fgetcsv($handle, 1850, ";")) !== FALSE) {
+
+            $x++;
+            if ($x == 1) {
+                if (count(array_filter($row)) == count($label)) {
+                    $label = array_combine(array_keys($label), array_filter($row));
+                }
+                continue;
+            }
+
+            $row = array_pad($row, count($label), '');
+            if (count(array_filter($row)) == 0) {
+                $html .= "Linha $x: registro não encontrado.<br>";
+                continue;
+            }
+
+
+            $telefones = explode('/', $row[9]);
+            foreach ($telefones as $k => $telefone) {
+                $telefones[$k] = trim($telefone);
+            }
+            $row[$ordemColunas['senha']] = trim($row[$ordemColunas['senha']]);
+            $row[$ordemColunas['telefone']] = implode('/', $telefones);
+            $row[$ordemColunas['nivel_acesso']] = strtolower($row[$ordemColunas['nivel_acesso']]);
+            $row[$ordemColunas['tipo_vinculo']] = strtolower($row[$ordemColunas['tipo_vinculo']]);
+            $row[$ordemColunas['status']] = strtolower($row[$ordemColunas['status']]);
+            $row[$ordemColunas['cnpj']] = preg_replace('/\D/', '', $row[$ordemColunas['cnpj']]);
+            $row[$ordemColunas['cnpj']] = preg_replace('/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/', '$1.$2.$3/$4-$5', $row[$ordemColunas['cnpj']]);
+            $row[$ordemColunas['municipio']] = trim($row[$ordemColunas['municipio']]);
+            $row[$ordemColunas['contrato']] = trim($row[$ordemColunas['contrato']]);
+            $row[$ordemColunas['centro_custo']] = trim($row[$ordemColunas['centro_custo']]);
+
+
+            $data = array();
+
+            foreach ($ordemColunas as $coluna => $ordem) {
+                $data[$coluna] = utf8_encode($row[$ordem]);
+            }
+//            unset($data['confirmar_senha']);
+
+
+            $_POST = $data;
+            if ($this->validaCsv($label)) {
+                $this->db->select('a.id AS id_depto, b.id AS id_area, c.id AS id_setor');
+                $this->db->join('empresa_areas b', "b.id_departamento = a.id AND b.nome = '{$data['area']}'", 'left');
+                $this->db->join('empresa_setores c', "c.id_area = b.id AND c.nome = '{$data['setor']}'", 'left');
+                $this->db->where('a.nome', $data['depto']);
+                $estrutura = $this->db->get('empresa_departamentos a')->row();
+
+                $data['id_depto'] = $estrutura->id_depto ?? null;
+                $data['id_area'] = $estrutura->id_area ?? null;
+                $data['id_setor'] = $estrutura->id_setor ?? null;
+
+                $this->db->select('a.id AS id_cargo, b.id AS id_funcao');
+                $this->db->join('empresa_funcoes b', "b.id_cargo = b.id AND b.nome = '{$data['funcao']}'", 'left');
+                $this->db->where('a.nome', $data['cargo']);
+                $cargoFuncao = $this->db->get('empresa_cargos a')->row();
+
+                $data['id_cargo'] = $cargoFuncao->id_cargo ?? null;
+                $data['id_funcao'] = $cargoFuncao->id_funcao ?? null;
+
+
+                $data['data_nascimento'] = date("Y-m-d", strtotime(str_replace('/', '-', $row[$ordemColunas['data_nascimento']])));
+                $data['data_admissao'] = date("Y-m-d", strtotime(str_replace('/', '-', $row[$ordemColunas['data_admissao']])));
+                $data['datacadastro'] = date('Y-m-d H:i:s');
+                $data['senha'] = $this->usuarios->setPassword($data['senha']);
+                $data['foto'] = 'avatar.jpg';
+                $data['token'] = uniqid();
+
+                $data['tipo'] = 'funcionario';
+                $data['empresa'] = $this->session->userdata('empresa');
+                switch ($data['nivel_acesso']) {
+                    case 'administrador':
+                        $data['nivel_acesso'] = 1;
+                        break;
+                    case 'multiplicador':
+                        $data['nivel_acesso'] = 2;
+                        break;
+                    case 'gestor':
+                        $data['nivel_acesso'] = 3;
+                        break;
+                    case 'colaborador clt':
+                        $data['nivel_acesso'] = 4;
+                        break;
+                    case 'cliente':
+                        $data['nivel_acesso'] = 5;
+                        break;
+                    case 'selecionador':
+                        $data['nivel_acesso'] = 6;
+                        break;
+                    case 'presidente':
+                        $data['nivel_acesso'] = 7;
+                        break;
+                    case 'gerente':
+                        $data['nivel_acesso'] = 8;
+                        break;
+                    case 'coordenador':
+                        $data['nivel_acesso'] = 9;
+                        break;
+                    case 'supervisor':
+                        $data['nivel_acesso'] = 10;
+                        break;
+                    case 'encarregado':
+                        $data['nivel_acesso'] = 11;
+                        break;
+                    case 'líder':
+                        $data['nivel_acesso'] = 12;
+                        break;
+                    case 'cuidador comunitário':
+                        $data['nivel_acesso'] = 13;
+                        break;
+                    case 'colaborador pj':
+                        $data['nivel_acesso'] = 14;
+                        break;
+                    case 'representante':
+                        $data['nivel_acesso'] = 15;
+                        break;
+                    case 'colaborador mei':
+                        $data['nivel_acesso'] = 16;
+                        break;
+                    case 'vistoriador':
+                        $data['nivel_acesso'] = 17;
+                        break;
+                    case 'diretor':
+                        $data['nivel_acesso'] = 18;
+                        break;
+                }
+                switch ($data['status']) {
+                    case 'em experiência':
+                    case 'em experiencia':
+                        $data['status'] = 3;
+                        break;
+                    case 'ativo':
+                        $data['status'] = 1;
+                        break;
+                    default:
+                        $data['status'] = 1;
+                }
+                switch ($data['tipo_vinculo']) {
+                    case 'autônomo':
+                    case 'autonomo':
+                        $data['tipo_vinculo'] = 4;
+                        break;
+                    case 'pj':
+                        $data['tipo_vinculo'] = 3;
+                        break;
+                    case 'mei':
+                        $data['tipo_vinculo'] = 2;
+                        break;
+                    case 'clt':
+                        $data['tipo_vinculo'] = 1;
+                        $data['cnpj'] = null;
+                    default:
+                        $data['tipo_vinculo'] = null;
+                        $data['cnpj'] = null;
                 }
 
-                fclose($handle);
-
-                if ($this->db->trans_status() === FALSE) {
-                    $this->db->trans_rollback();
-                } else {
-                    $this->db->trans_commit();
-                }
-
-                if (!$validacao) {
-                    //Mensagem de erro
-                    exit(json_encode(array('retorno' => 0, 'aviso' => "Erro no registro de alguns arquivos: <br> $html", 'redireciona' => 0, 'pagina' => '')));
-                }
-                //Mensagem de confirmação
-                echo json_encode(array('retorno' => 1, 'aviso' => 'Importação de funcionários efetuada com sucesso', 'redireciona' => 1, 'pagina' => site_url('home/funcionarios')));
+                $this->db->insert('usuarios', $data);
+            } else {
+                $html .= $this->form_validation->error_string("Linha $x: ");
+                $validacao = false;
             }
         }
+
+        fclose($handle);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            exit(json_encode(['retorno' => 0, 'aviso' => 'Erro ao salvar a importação', 'redireciona' => 0, 'pagina' => '']));
+        }
+
+        $this->db->trans_commit();
+
+        if (!$validacao) {
+            exit(json_encode(['retorno' => 0, 'aviso' => "Erro no registro de alguns arquivos: <br> $html", 'redireciona' => 0, 'pagina' => '']));
+        }
+
+        echo json_encode(['retorno' => 1, 'aviso' => 'Importação de funcionários efetuada com sucesso', 'redireciona' => 1, 'pagina' => site_url('home/funcionarios')]);
     }
+
 
     function validaCsv($label)
     {
@@ -1383,83 +1442,93 @@ class Funcionario extends MY_Controller
         $config = array(
             array(
                 'field' => 'nome',
-                'label' => $label[0],
+                'label' => $label['nome'],
                 'rules' => 'required|max_length[255]'
             ),
             array(
                 'field' => 'email',
-                'label' => $label[1],
+                'label' => $label['email'],
                 'rules' => 'required|valid_email|is_unique[usuarios.email]|max_length[255]'
             ),
             array(
                 'field' => 'data_admissao',
-                'label' => $label[2],
+                'label' => $label['data_admissao'],
                 'rules' => 'is_date'
             ),
             array(
                 'field' => 'senha',
-                'label' => $label[3],
+                'label' => $label['senha'],
                 'rules' => 'required|max_length[32]'
             ),
             array(
                 'field' => 'depto',
-                'label' => $label[4],
+                'label' => $label['depto'],
                 'rules' => 'max_length[255]'
             ),
             array(
                 'field' => 'area',
-                'label' => $label[5],
+                'label' => $label['area'],
                 'rules' => 'max_length[255]'
             ),
             array(
                 'field' => 'setor',
-                'label' => $label[6],
+                'label' => $label['setor'],
                 'rules' => 'max_length[255]'
             ),
             array(
                 'field' => 'cargo',
-                'label' => $label[7],
+                'label' => $label['cargo'],
                 'rules' => 'max_length[255]'
             ),
             array(
                 'field' => 'funcao',
-                'label' => $label[8],
+                'label' => $label['funcao'],
                 'rules' => 'max_length[255]'
             ),
             array(
                 'field' => 'telefone',
-                'label' => $label[9],
+                'label' => $label['telefone'],
                 'rules' => 'max_length[255]'
             ),
             array(
                 'field' => 'nivel_acesso',
-                'label' => $label[10],
+                'label' => $label['nivel_acesso'],
                 'rules' => 'regex_match[/^(' . implode('|', $niveis) . ')$/i]'
             ),
             array(
                 'field' => 'tipo_vinculo',
-                'label' => $label[11],
-                'rules' => 'regex_match[/^(clt|mei|pj)$/i]'
+                'label' => $label['tipo_vinculo'],
+                'rules' => 'regex_match[/^(clt|mei|pj|autonomo|autônomo)$/i]'
             ),
             array(
                 'field' => 'cnpj',
-                'label' => $label[12],
+                'label' => $label['cnpj'],
                 'rules' => 'regex_match[/^[0-9]{2}\.?[0-9]{3}\.?[0-9]{3}\/?[0-9]{4}\-?[0-9]{2}$/i]'
             ),
             array(
                 'field' => 'municipio',
-                'label' => $label[13],
+                'label' => $label['municipio'],
                 'rules' => 'max_length[255]'
             ),
             array(
                 'field' => 'contrato',
-                'label' => $label[14],
+                'label' => $label['contrato'],
                 'rules' => 'max_length[255]'
             ),
             array(
                 'field' => 'centro_custo',
-                'label' => $label[15],
+                'label' => $label['centro_custo'],
                 'rules' => 'max_length[255]'
+            ),
+            array(
+                'field' => 'sexo',
+                'label' => $label['sexo'],
+                'rules' => 'regex_match[/^(M|F)$/i]'
+            ),
+            array(
+                'field' => 'data_nascimento',
+                'label' => $label['data_nascimento'],
+                'rules' => 'is_date'
             )
         );
 
@@ -1467,6 +1536,7 @@ class Funcionario extends MY_Controller
 
         return $this->form_validation->run();
     }
+
 
     public function pdf()
     {

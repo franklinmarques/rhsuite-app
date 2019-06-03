@@ -12,6 +12,8 @@ class Login extends CI_Controller
         $data['logo'] = '';
         $data['cabecalho'] = '';
         $data['imagem_fundo'] = '';
+        $data['video_fundo'] = '';
+
         if ($uri != 'login') {
             $row = $this->db->query("SELECT u.* FROM usuarios u
                                    WHERE u.url = ?", $uri);
@@ -20,10 +22,25 @@ class Login extends CI_Controller
                 $data['logo'] = $row->row()->foto;
                 $data['cabecalho'] = $row->row()->cabecalho;
                 $data['imagem_fundo'] = $row->row()->imagem_fundo;
+                $data['video_fundo'] = $row->row()->video_fundo;
             } else {
                 show_404();
             }
         }
+
+        $this->db->select('a.id, a.nome');
+        $this->db->join('cursos_pilulas b', 'b.id_area_conhecimento = a.id AND b.publico = 1');
+        $this->db->order_by('a.nome', 'asc');
+        $areasConhecimento = $this->db->get('cursos_pilulas_areas a')->result();
+        $data['area_conhecimento'] = ['' => 'selecione...'] + array_column($areasConhecimento, 'nome', 'id');
+
+        $this->db->select('a.id, a.nome');
+        $this->db->join('cursos_pilulas b', 'b.id_curso = a.id AND b.publico = 1');
+        $this->db->where('b.id_area_conhecimento', null);
+        $this->db->order_by('a.nome', 'asc');
+        $tema = $this->db->get('cursos a')->result();
+        $data['tema'] = ['' => 'selecione...'] + array_column($tema, 'nome', 'id');
+
 
         $this->load->view('login', $data);
     }
@@ -269,6 +286,36 @@ class Login extends CI_Controller
         } else {
             echo json_encode(array('retorno' => 0, 'aviso' => 'Erro ao enviar e-mail, tente novamente, se o erro persistir entre em contato com o administrador'));
         }
+    }
+
+
+    public function filtrarTemas()
+    {
+        $areaConhecimento = $this->input->post('area_conhecimento');
+        $tema = $this->input->post('tema');
+
+        $this->db->select('a.id, a.nome');
+        $this->db->join('cursos_pilulas b', 'b.id_curso = a.id AND b.publico = 1');
+        $this->db->where('b.id_area_conhecimento', $areaConhecimento);
+        $this->db->order_by('a.nome', 'asc');
+        $temas = $this->db->get('cursos a')->result();
+        $temas = ['' => 'selecione...'] + array_column($temas, 'nome', 'id');
+
+        $data['tema'] = form_dropdown('', $temas, $tema);
+
+        echo json_encode($data);
+    }
+
+
+    public function mostrarPilulaConhecimento()
+    {
+        $tema = $this->input->post('tema');
+
+        $this->db->select('conteudo');
+        $this->db->where('id_curso', $tema);
+        $data = $this->db->get('cursos_paginas')->row();
+
+        echo json_encode($data);
     }
 
 }

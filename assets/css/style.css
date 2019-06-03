@@ -399,11 +399,13 @@ ul.sidebar-menu li a.active i {
     z-index: 1038;
 }
 
-#main-content .modal-dialog.modal-lg {
+#main-content .modal-dialog.modal-lg
+{
     width: 94%;
 }
 
-#main-content.merge-left .modal, #main-content.merge-left .modal-backdrop {
+#main-content.merge-left .modal, #main-content.merge-left .modal-backdrop
+{
     left: 0px;
 }
 
@@ -7030,7 +7032,7 @@ div.tagsinput span.tag {
 }
 
 .login-wrapper .panel {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     background-color: #fff;
     border: 0px solid rgba(112, 135, 163, 0.52);
     border-radius: 4px;
@@ -7279,10 +7281,20 @@ ul.sidebar-menu li a {
 }
 
 /* Ícones no título */
-.tools a {
+.panel .tools a {
     color: #FFF;
     background-color: #111343 !important;
     /*background-color: rgb(112, 135, 163) !important;*/
+}
+
+.breadcrumb .tools a {
+    color: #337ab7;
+    background-color: #EEE;
+}
+
+.breadcrumb .tools a:hover {
+    color: #23527c;
+    background-color: #EEE;
 }
 
 /* Player */

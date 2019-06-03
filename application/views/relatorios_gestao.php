@@ -579,8 +579,11 @@ require_once "end_js.php";
                 'url': '<?php echo site_url('relatoriosGestao/visualizar') ?>',
                 'dataType': 'html',
                 'data': {'id': id},
+                'beforeSend': function () {
+                    $('#alert').html('');
+                },
                 'success': function (data) {
-                    $('modal_visualizacao .modal-body').html(data);
+                    $('#modal_visualizacao .modal-body').html(data);
                     $('#modal_visualizacao').modal('show');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
