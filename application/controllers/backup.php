@@ -78,6 +78,23 @@ class Backup extends MY_Controller
         }
     }
 
+
+    public function mysql1()
+    {
+        $this->load->dbutil();
+
+        $backup =& $this->dbutil->backup(['format' => 'txt']);
+
+        $filename = $this->db->database . ' ' . date('Ymd_His') . '.sql';
+
+        $this->load->helper('file');
+        write_file('arquivos/backup/sql/' . $filename, $backup);
+
+        $this->load->helper('download');
+        force_download($filename, $backup);
+    }
+
+
     public function mysql()
     {
         $query = $this->db->query('SHOW TABLES');
@@ -130,7 +147,7 @@ class Backup extends MY_Controller
         $json = array(
             array(
                 $dbase => $this->backup_tb
-        ));
+            ));
 
         header('Content-disposition: attachment; filename=rhsuite_' . date('dmY_His') . '.json');
         header("Content-Type:text/json");
@@ -228,7 +245,7 @@ class Backup extends MY_Controller
             $recordsFiltered++;
         }
 
-        array_multisort($tmp, $post['order'][0]['dir'] === 'asc' ? SORT_ASC : ($post['order'][0]['dir'] === 'desc' ? SORT_DESC : SORT_REGULAR ), $list);
+        array_multisort($tmp, $post['order'][0]['dir'] === 'asc' ? SORT_ASC : ($post['order'][0]['dir'] === 'desc' ? SORT_DESC : SORT_REGULAR), $list);
 
         $data = array();
         foreach ($list as $arquivo) {

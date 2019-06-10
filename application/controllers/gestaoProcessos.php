@@ -201,6 +201,7 @@ class GestaoProcessos extends MY_Controller
                 'requisicaoPessoal/gexec' => 'Requisição de Pessoal'
             ),
             'Gestão da Plataforma' => array(
+                'gestaoProcessos' => 'Gestão de Processos',
                 'backup' => 'Backup/Restore de Database',
                 'log_usuarios' => 'Log de Usuários'
             )

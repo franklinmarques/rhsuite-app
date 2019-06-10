@@ -78,8 +78,8 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                     </ul>
                 </li>
 
-                <!--<li<?/*= (in_array($this->uri->rsegment(2), array('entrada')) ? ' class="active"' : ''); */?>>
-                    <a href="<?php /*echo site_url('email/entrada'); */?>">
+                <!--<li<? /*= (in_array($this->uri->rsegment(2), array('entrada')) ? ' class="active"' : ''); */ ?>>
+                    <a href="<?php /*echo site_url('email/entrada'); */ ?>">
                         <i class="fa fa-envelope"></i>
                         <span>Mensagens Internas</span>
                     </a>
@@ -181,9 +181,12 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                             <li><a href="<?php echo site_url('papd/pacientes'); ?>">Gerenciar Pacientes</a></li>
                             <li><a href="<?php echo site_url('papd/atividades_deficiencias'); ?>">Gerenciar
                                     Atividades/Deficiências</a></li>
-                            <li><a href="<?php echo site_url('papd/relatorios/medicao_mensal'); ?>">Relatório (individual)</a>
-                            <li><a href="<?php echo site_url('papd/relatorios/medicao_consolidada'); ?>">Relatório (consolidado)</a>
-                            <li><a href="<?php echo site_url('requisicaoPessoal/papd'); ?>">Gerenciar Requisição de Pessoal</a></li>
+                            <li><a href="<?php echo site_url('papd/relatorios/medicao_mensal'); ?>">Relatório
+                                    (individual)</a>
+                            <li><a href="<?php echo site_url('papd/relatorios/medicao_consolidada'); ?>">Relatório
+                                    (consolidado)</a>
+                            <li><a href="<?php echo site_url('requisicaoPessoal/papd'); ?>">Gerenciar Requisição de
+                                    Pessoal</a></li>
                             </li>
                         </ul>
                     </li>
@@ -195,7 +198,8 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                         <span>Gestão da Plataforma</span>
                     </a>
                     <ul class="sub">
-                        <li><a href="<?php echo site_url('backup'); ?>">Backup/Restore de DBase</a></li>
+                        <li><a href="<?php echo site_url('gestaoProcessos'); ?>">Gestão de Processos</a></li>
+<!--                        <li><a href="--><?php //echo site_url('backup'); ?><!--">Backup/Restore de DBase</a></li>-->
                         <li><a href="<?php echo site_url('log_usuarios'); ?>">Log de usuários</a></li>
                     </ul>
                 </li>

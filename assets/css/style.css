@@ -399,13 +399,11 @@ ul.sidebar-menu li a.active i {
     z-index: 1038;
 }
 
-#main-content .modal-dialog.modal-lg
-{
+#main-content .modal-dialog.modal-lg {
     width: 94%;
 }
 
-#main-content.merge-left .modal, #main-content.merge-left .modal-backdrop
-{
+#main-content.merge-left .modal, #main-content.merge-left .modal-backdrop {
     left: 0px;
 }
 
@@ -7287,6 +7285,17 @@ ul.sidebar-menu li a {
     /*background-color: rgb(112, 135, 163) !important;*/
 }
 
+.panel .tools a:hover {
+    color: #EEE;
+    background-color: #111343 !important;
+}
+
+.panel .tools a.disabled {
+    color: #758fb0;
+    background-color: #111343 !important;
+    cursor: not-allowed;
+}
+
 .breadcrumb .tools a {
     color: #337ab7;
     background-color: #EEE;
@@ -7295,6 +7304,12 @@ ul.sidebar-menu li a {
 .breadcrumb .tools a:hover {
     color: #23527c;
     background-color: #EEE;
+}
+
+.breadcrumb .tools a.disabled {
+    color: #7aa9d0;
+    background-color: #EEE;
+    cursor: not-allowed;
 }
 
 /* Player */

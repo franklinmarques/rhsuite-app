@@ -34,6 +34,17 @@ class PilulasConhecimento extends MY_Controller
     }
 
 
+    public static function getPilula($url = null)
+    {
+        $ci = &get_instance();
+
+        $ci->db->where('url_pagina', $url);
+        $data = $ci->db->get('cursos_pilulas')->row();
+
+        return $data;
+    }
+
+
     public function ajaxList()
     {
         $empresa = $this->session->userdata('empresa');

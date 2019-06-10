@@ -202,10 +202,11 @@ class Atividades extends MY_Controller
                     $acao .= ' <a class="btn btn-sm btn-danger disabled" href="javascript:void(0)" title="Excluir"><i class="glyphicon glyphicon-trash"></i></a>';
                 }
             }
-            if ($row->status === '0' and $row->filhas_finalizadas === '1') {
-                $acao .= ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Finalizar" onclick="finaliza_atividade(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-ok"></i></a>';
-            } else {
+//            if ($row->status === '0' and $row->filhas_finalizadas === '1') {
+            if ($row->status === '1') {
                 $acao .= ' <button class="btn btn-sm btn-success disabled"><i class="glyphicon glyphicon-ok"></i></button>';
+            } else {
+                $acao .= ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Finalizar" onclick="finaliza_atividade(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-ok"></i></a>';
             }
 
             $idMae = $row->id_mae ? '' : $row->id;

@@ -1044,7 +1044,7 @@ class Avaliacaoexp_avaliados extends MY_Controller
         if ($busca['funcao']) {
             $sql .= " AND b.funcao = '{$busca['funcao']}'";
         }
-        if (strlen($busca['data_avaliacao'])) {
+        if (strlen($busca['data_avaliacao']) > 0) {
             $sql .= " AND c.data_avaliacao >= '" . date("Y-m-d", strtotime(str_replace('/', '-', $busca['data_avaliacao']))) . "'";
         }
         if (isset($busca['resultado']) and !empty($busca['resultado'])) {

@@ -157,7 +157,8 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                                 <a href="<?php echo site_url('ead/clientes/'); ?>">Gerenciar Treinamentos Clientes</a>
                             </li>
                             <li<?= (in_array($this->uri->rsegment(2), array('pilulasConhecimento')) ? ' class="active"' : ''); ?>>
-                                <a href="<?php echo site_url('ead/pilulasConhecimento/'); ?>">Gerenciar Pílulas Conhecimento</a>
+                                <a href="<?php echo site_url('ead/pilulasConhecimento/'); ?>">Gerenciar Pílulas
+                                    Conhecimento</a>
                             </li>
                         </ul>
                     </li>
@@ -449,8 +450,11 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                         </a>
                         <ul class="sub">
                             <li>
-                                <a href="<?php echo site_url('backup'); ?>">Backup/Restore de DBase</a>
+                                <a href="<?php echo site_url('gestaoProcessos'); ?>">Gestão de Processos</a>
                             </li>
+                            <!--<li>
+                                <a href="<?php /*echo site_url('backup'); */?>">Backup/Restore de DBase</a>
+                            </li>-->
                             <li>
                                 <a href="<?php echo site_url('log_usuarios'); ?>">Log de usuários</a>
                             </li>

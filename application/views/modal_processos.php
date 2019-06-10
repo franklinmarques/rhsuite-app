@@ -120,4 +120,8 @@ $processo = GestaoProcessos::getProcesso($url ?? []);
         </div>
     </div>
 
+<?php else: ?>
+    <span class="tools pull-left">
+        <a href="#" class="fa fa-question-circle disabled" style="margin-right: 10px; margin-left: 0 !important;"></a>
+    </span>
 <?php endif; ?>
