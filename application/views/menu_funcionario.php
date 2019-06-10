@@ -31,6 +31,13 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                     </a>
                 </li>
 
+                <li>
+                    <a href="<?php echo site_url('atividades_scheduler'); ?>">
+                        <i class="fa fa-address-book"></i>
+                        <span>Scheduler - Atividades</span>
+                    </a>
+                </li>
+
                 <?php
                 $this->db->select('depto, nivel_acesso');
                 $this->db->where('id', $this->session->userdata('id'));
@@ -371,9 +378,10 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                             <span>Gestão da Plataforma</span>
                         </a>
                         <ul class="sub">
-                            <li>
-                                <a href="<?php echo site_url('backup'); ?>">Backup/Restore de DBase</a>
-                            </li>
+                            <!--                            <li>-->
+                            <!--                                <a href="-->
+                            <?php //echo site_url('backup'); ?><!--">Backup/Restore de DBase</a>-->
+                            <!--                            </li>-->
                             <li>
                                 <a href="<?php echo site_url('log_usuarios'); ?>">Log de usuários</a>
                             </li>
