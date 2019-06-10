@@ -31,7 +31,7 @@ require_once "header.php";
                     <div id="alert"></div>
                     <section class="panel">
                         <header class="panel-heading">
-                            <?php echo $this->load->view('modal_processos', ['url' => 'funcionario/editar']); ?>
+                            <?php $this->load->view('modal_processos', ['url' => 'funcionario/editar']); ?>
                             <i class="fa fa-pencil-square-o"></i> Gerenciar colaborador CLT
                             - <?php echo $row->nome; ?>
                         </header>
@@ -712,17 +712,17 @@ require_once "header.php";
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="pdis">
 
-                                    <?php echo $this->load->view('funcionario_pdi1', $data_pdi1); ?>
+                                    <?php $this->load->view('funcionario_pdi1', $data_pdi1); ?>
 
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="documentos">
 
-                                    <?php echo $this->load->view('funcionario_documentos1', $data_documentos1); ?>
+                                    <?php $this->load->view('funcionario_documentos1', $data_documentos1); ?>
 
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="contratos">
-                                    
-                                    <?php echo $this->load->view('funcionario_contratos1', $data_contratos1); ?>
+
+                                    <?php $this->load->view('funcionario_contratos1', $data_contratos1); ?>
 
                                 </div>
                             </div>

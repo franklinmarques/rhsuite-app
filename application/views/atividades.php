@@ -90,7 +90,7 @@ require_once "header.php";
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
                         <li class="active">Lista de Pendências</li>
-                        <?php echo $this->load->view('modal_processos', ['url' => 'atividades']); ?>
+                        <?php $this->load->view('modal_processos', ['url' => 'atividades']); ?>
                         <?php if ($this->agent->is_mobile()): ?>
                             <button style="float:right;" class="btn btn-info btn-xs" onclick="add_atividade()">
                                 <i class="glyphicon glyphicon-plus"></i> Cadastrar atividade

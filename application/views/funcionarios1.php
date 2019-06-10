@@ -11,7 +11,7 @@ require_once "header.php";
                     <div id="alert"></div>
                     <section class="panel">
                         <header class="panel-heading">
-                            <?php echo $this->load->view('modal_processos', ['url' => 'home/funcionarios']); ?>
+                            <?php $this->load->view('modal_processos', ['url' => 'home/funcionarios']); ?>
                             <i class="fa fa-search"></i> Gerenciar colaboradores CLT
                         </header>
                         <div class="panel-body">

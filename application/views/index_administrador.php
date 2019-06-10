@@ -9,7 +9,7 @@ require_once "header.php";
             <div id="alert"></div>
             <section class="panel">
                 <header class="panel-heading">
-                    <?php echo $this->load->view('modal_processos', ['url' => 'home']); ?>
+                    <?php $this->load->view('modal_processos', ['url' => 'home']); ?>
                     <i class="fa fa-home"></i> Início
                 </header>
                 <div class="panel-body">

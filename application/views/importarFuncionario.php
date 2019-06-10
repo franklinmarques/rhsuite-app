@@ -12,7 +12,7 @@ require_once "header.php";
                 <div id="alert"></div>
                 <section class="panel">
                     <header class="panel-heading">
-                        <?php echo $this->load->view('modal_processos', ['url' => 'funcionario/importarFuncionario']); ?>
+                        <?php $this->load->view('modal_processos', ['url' => 'funcionario/importarFuncionario']); ?>
                         <i class="fa fa-plus"></i> Importar funcionários
                     </header>
                     <div class="panel-body">
