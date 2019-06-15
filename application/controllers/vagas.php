@@ -7,12 +7,18 @@ class Vagas extends CI_Controller
 
     public function index()
     {
-        $uri = $this->uri->segment(1);
+        if ($this->session->userdata('logado')) {
+            $indexPage = $this->config->item('index_page');
+            $uri = !empty($indexPage) ? $indexPage : 'ame';
+        } else {
+            $uri = $this->uri->segment(1);
+        }
         $data['logoempresa'] = '';
         $data['logo'] = '';
         $data['cabecalho'] = '';
         $data['imagem_fundo'] = '';
-        if ($uri != 'login') {
+
+        if ($uri != 'vagas') {
             $row = $this->db->query("SELECT u.* FROM usuarios u
                                    WHERE u.url = ?", $uri);
             if ($row->num_rows() > 0) {
@@ -21,7 +27,7 @@ class Vagas extends CI_Controller
                 $data['cabecalho'] = $row->row()->cabecalho;
                 $data['imagem_fundo'] = $row->row()->imagem_fundo;
             } else {
-//                show_404();
+                show_404();
             }
         }
 
@@ -48,7 +54,14 @@ class Vagas extends CI_Controller
         $output = $this->datatables->generate($query);
 
         $data = array();
+        $logado = (bool)$this->session->userdata('logado');
         foreach ($output->data as $row) {
+            if ($logado) {
+                $acoes = '<button class="btn btn-sm btn-info" title="Detalhes da vaga" onclick="visualizar_vaga(' . $row->codigo . ')">Detalhes da vaga</button>';
+            } else {
+                $acoes = '<button class="btn btn-sm btn-info" title="Detalhes da vaga" onclick="visualizar_vaga(' . $row->codigo . ')">Detalhes da vaga</button>
+                          <button class="btn btn-sm btn-primary" title="Candidatar-se!" onclick="candidatar(' . $row->codigo . ')">Candidatar-se!</button>';
+            }
             $data[] = array(
                 $row->codigo,
                 $row->data_abertura_de,
@@ -56,8 +69,7 @@ class Vagas extends CI_Controller
                 $row->quantidade,
                 $row->cidade_vaga,
                 $row->bairro_vaga,
-                '<button class="btn btn-sm btn-info" title="Detalhes da vaga" onclick="visualizar_vaga(' . $row->codigo . ')">Detalhes da vaga</button>
-                 <button class="btn btn-sm btn-primary" title="Candidatar-se!" onclick="candidatar(' . $row->codigo . ')">Candidatar-se!</button>'
+                $acoes
             );
         }
 

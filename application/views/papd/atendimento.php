@@ -46,6 +46,7 @@ require_once APPPATH . "views/header.php";
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
                         <li class="active">Gerenciar meus atendimentos a pacientes</li>
+                        <?php $this->load->view('modal_processos', ['url' => 'papd/atendimentos']); ?>
                     </ol>
                     <div class="row">
                         <div class="col-md-12">

@@ -175,13 +175,6 @@ require_once "header.php";
                                                 Limpar filtros
                                             </button>
                                         </div>
-                                        <?php if ($this->agent->is_mobile() == false): ?>
-                                            <div class="btn-group" role="group" aria-label="...">
-                                                <a id="pdf" class="btn btn-sm btn-info"
-                                                   href="<?= site_url('atividades/pdf/'); ?>" title="Exportar PDF"><i
-                                                            class="glyphicon glyphicon-print"></i> Imprimir</a>
-                                            </div>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -211,7 +204,7 @@ require_once "header.php";
                                         class="text-info"> *</span></th>
                             <th style="padding: 5px;" class="hidden-xs hidden-sm" nowrap>ST<span
                                         class="text-info"> *</span></th>
-                            <th>Colaborador/empresa</th>
+                            <th>Responsável execução</th>
                             <th style="padding: 5px;" class="hidden-xs hidden-sm">Data cadastro</th>
                             <th style="padding: 5px;" class="hidden-xs hidden-sm">Data limite</th>
                             <th style="padding: 5px;" class="hidden-xs hidden-sm">Data fechamento</th>

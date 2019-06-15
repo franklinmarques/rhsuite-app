@@ -40,7 +40,7 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                     <li class="sub-menu">
                         <a href="javascript:void(0);"<?= (in_array($this->uri->rsegment(2), array('home', 'funcionarios', 'cursosfuncionario', 'novocursofuncionario', 'novofuncionario', 'editarfuncionario')) ? ' class="active"' : ''); ?>>
                             <i class="fa fa-users"></i>
-                            <span>Gestão Operacional GP</span>
+                            <span>Gestão de Pessoas</span>
                         </a>
                         <ul class="sub">
                             <li class="<?= (in_array($this->uri->rsegment(2), array('novofuncionario')) ? 'active' : ''); ?>">
@@ -85,6 +85,11 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                             <li style="border-bottom: solid 1px rgba(255,255,255,0.2);"><a
                                         href="<?php echo site_url('home/funcionarios'); ?>">PDIs - Planos Desenv.
                                     Individuais</a></li>
+                            <?php if (isset($hash_acesso['JD'])): ?>
+                                <li class="<?php echo($this->uri->rsegment(2) == 'jobDescriptor' ? 'active' : ''); ?>"
+                                    style="border-bottom: solid 1px rgba(255,255,255,0.2);"><a
+                                            href="<?php echo site_url('jobDescriptor'); ?>">Job Descriptor</a></li>
+                            <?php endif; ?>
                         </ul>
                     </li>
                 <?php endif; ?>
@@ -103,16 +108,6 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                         </li>
                     </ul>
                 </li>
-
-                <?php if (isset($hash_acesso['JD'])): ?>
-                    <li>
-                        <a href="<?php echo site_url('jobDescriptor'); ?>"
-                           class="<?php echo($this->uri->rsegment(2) == 'jobDescriptor' ? 'active' : ''); ?>">
-                            <i class="glyphicons glyphicons-nameplate"> </i>
-                            <span>Job Descriptor</span>
-                        </a>
-                    </li>
-                <?php endif; ?>
 
                 <?php if (isset($hash_acesso['PS'])): ?>
                     <?php
@@ -134,6 +129,10 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                                 <li><a href="<?php echo site_url('recrutamento_candidatos'); ?>">Banco de Candidatos</a>
                                 <li><a href="<?php echo site_url('requisicaoPessoal'); ?>">Gerenciar Requisições
                                         Pessoal</a>
+                                <li><a href="<?php echo site_url('gestaoDeVagas'); ?>">Gerenciar Vagas Publicadas</a>
+                                </li>
+                                <li><a href="<?php echo site_url('vagas'); ?>" target="_blank">Visualizar Vagas
+                                        Publicadas</a></li>
                                 <li><a href="<?php echo site_url('requisicaoPessoal_fontes'); ?>">Gerenciar
                                         fontes/aprovadores</a>
                                 </li>
@@ -453,7 +452,7 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                                 <a href="<?php echo site_url('gestaoProcessos'); ?>">Gestão de Processos</a>
                             </li>
                             <!--<li>
-                                <a href="<?php /*echo site_url('backup'); */?>">Backup/Restore de DBase</a>
+                                <a href="<?php /*echo site_url('backup'); */ ?>">Backup/Restore de DBase</a>
                             </li>-->
                             <li>
                                 <a href="<?php echo site_url('log_usuarios'); ?>">Log de usuários</a>

@@ -152,6 +152,8 @@ class Login extends CI_Controller
             'hash_acesso' => $hash_acesso
         ));
 
+        $this->session->set_flashdata('scheduler', true);
+
         # Atuaiza o ID da session para acessar o registro de log atual
 //        $this->session->sess_update();
 

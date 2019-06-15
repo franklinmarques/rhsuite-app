@@ -80,8 +80,24 @@ require_once "header.php";
                 </thead>
                 <tbody>
                 <tr style='border-top: 5px solid #ddd;'>
-                    <td colspan="2" class="text-right">
+                    <td>
+                        <div class="row">
+                            <div class="col-md-7">
+                                <label for="setor">Motivo de afastamento</label>
+                                <select id="motivo_afastamento" class="form-control input-sm" autocomplete="off"
+                                        onchange="filtrar_estrutura()">
+                                    <option value="">Todos</option>
+                                    <option value="1">Auxílio doença - INSS</option>
+                                    <option value="2">Licença maternidade</option>
+                                    <option value="3">Acidente de trabalho</option>
+                                    <option value="4">Aposentadoria por invalidez</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-right">
                         <?php if ($is_pdf == false): ?>
+                            <br>
                             <a id="pdf" class="btn btn-sm btn-danger" href="<?= site_url('usuarioAfastamento/pdf'); ?>"
                                title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar PDF
                             </a>
@@ -90,6 +106,22 @@ require_once "header.php";
                 </tr>
                 </tbody>
             </table>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="depto">Departamento</label>
+                    <?php echo form_dropdown('', $depto, '', 'id="depto" class="form-control input-sm" onchange="filtrar_estrutura()" autocomplete="off"'); ?>
+                </div>
+                <div class="col-md-4">
+                    <label for="area">Area</label>
+                    <?php echo form_dropdown('', $area, '', 'id="area" class="form-control input-sm" onchange="filtrar_estrutura()" autocomplete="off"'); ?>
+                </div>
+                <div class="col-md-4">
+                    <label for="setor">Setor</label>
+                    <?php echo form_dropdown('', $setor, '', 'id="setor" class="form-control input-sm" onchange="filtrar_estrutura()" autocomplete="off"'); ?>
+                </div>
+            </div>
+            <hr>
 
             <!--<div class="table-responsive">-->
             <table id="table" class="afastamento table table-bordered table-condensed" cellspacing="0" width="100%">
@@ -153,13 +185,17 @@ require_once "end_js.php";
                 "type": "POST",
                 timeout: 9000,
                 data: function (d) {
+                    d.motivo_afastamento = $('#motivo_afastamento').val();
+                    d.depto = $('#depto').val();
+                    d.area = $('#area').val();
+                    d.setor = $('#setor').val();
                     d.status = ($('#status').is(':checked') ? 1 : 0);
                     d.status2 = ($('#status2').is(':checked') ? 1 : 0);
                     return d;
                 },
                 "dataSrc": function (json) {
                     if (json.draw === '1') {
-                        $("#campo_status").html('<br><div class="checkbox"><label>' +
+                        $("#campo_status").html('<div class="checkbox"><label>' +
                             '<input type="checkbox" name="status" id="status" autocomplete="off" onchange="buscar();">' +
                             ' Mostrar apenas funcionários afastados (status)' +
                             '</label></div><br>' +
@@ -188,20 +224,51 @@ require_once "end_js.php";
                     "searchable": false //set not orderable
                 }
             ],
+            'preDrawCallback': function () {
+                $('#pdf').addClass('disabled');
+            },
+            'drawCallback': function () {
+                setPdf_atributes();
+                $('#pdf').removeClass('disabled');
+            },
             rowsGroup: [0, -1]
         });
 
-        setPdf_atributes();
+
     });
+
+
+    function filtrar_estrutura() {
+        $.ajax({
+            'url': '<?php echo site_url('usuarioAfastamento/filtrarEstrutura') ?>',
+            'type': 'POST',
+            'data': {
+                'depto': $('#depto').val(),
+                'area': $('#area').val(),
+                'setor': $('#setor').val()
+            },
+            'dataType': 'JSON',
+            'success': function (json) {
+                $('#area').html($(json.area).html());
+                $('#setor').html($(json.setor).html());
+                reload_table();
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Error adding / update data');
+            }
+        });
+    }
+
 
     function reload_table() {
         table.ajax.reload(null, false);
     }
 
+
     function buscar() {
         reload_table();
-        setPdf_atributes();
     }
+
 
     function delete_prontuario(id_usuario) {
         if (confirm('Deseja remover os afastamentos do colaborador selecionado?')) {
@@ -223,10 +290,34 @@ require_once "end_js.php";
         }
     }
 
+
     function setPdf_atributes() {
-        var search = ($('#status').is(':checked') ? '1' : '0');
-        $('#pdf').prop('href', "<?= site_url('usuarioAfastamento/pdf'); ?>/q?status=" + search);
+        var search = '';
+        var q = new Array();
+        if ($('#motivo_afastamento').val().length > 0) {
+            q.push("motivo_afastamento=" + $('#motivo_afastamento').val());
+        }
+        if ($('#depto').val().length > 0) {
+            q.push("depto=" + $('#depto').val());
+        }
+        if ($('#area').val().length > 0) {
+            q.push("area=" + $('#area').val());
+        }
+        if ($('#setor').val().length > 0) {
+            q.push("setor=" + $('#setor').val());
+        }
+        if ($('#status').is(':checked')) {
+            q.push('status=1');
+        }
+        if ($('#status2').is(':checked')) {
+            q.push('status2=1');
+        }
+        if (q.length > 0) {
+            search = '/q?' + q.join('&');
+        }
+        $('#pdf').prop('href', '<?= site_url('usuarioAfastamento/pdf'); ?>' + search);
     }
+
 </script>
 <?php
 require_once "end_html.php";

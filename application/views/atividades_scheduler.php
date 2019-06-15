@@ -247,9 +247,9 @@ require_once "header.php";
                     <button class="btn btn-info" id="btnAdd" onclick="add_atividade()"><i
                                 class="glyphicon glyphicon-plus"></i> Nova atividade
                     </button>
-                    <button class="btn hidden-xs btn-info"><i class="glyphicon glyphicon-print"></i>
-                        Imprimir atividade
-                    </button>
+                    <a id="imprimir_atividade" class="btn hidden-xs btn-info" target="_blank" href="#"><i
+                                class="glyphicon glyphicon-print"></i> Imprimir atividade
+                    </a>
                     <br/>
                     <table id="table" class="table table-striped" cellspacing="0" width="100%">
                         <thead>
@@ -594,18 +594,24 @@ require_once "end_js.php";
                         'targets': [0, 1, 2, 8]
                     },
                     {
-                        'className': 'text-center',
-                        'searchable': false,
-                        'targets': [5]
-                    },
-                    {
                         'width': '1%',
                         'className': 'text-nowrap',
                         'targets': [-1],
                         'orderable': false,
                         'searchable': false
                     }
-                ]
+                ],
+                'preDrawCallback': function () {
+                    $('#imprimir_atividade').addClass('disabled');
+                },
+                'drawCallback': function () {
+                    var url = '<?= site_url('atividades_scheduler/imprimirAtividades'); ?>'
+                    var search = $('#busca').serialize();
+                    if (search.length > 0) {
+                        search = '/q?' + search;
+                    }
+                    $('#imprimir_atividade').removeClass('disabled').prop('href', url + search);
+                }
             });
 
         });
@@ -792,6 +798,7 @@ require_once "end_js.php";
                 }
             });
         }
+
 
     </script>
 

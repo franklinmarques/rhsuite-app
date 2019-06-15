@@ -287,28 +287,100 @@ class UsuarioAfastamento extends MY_Controller
     public function relatorio($pdf = false)
     {
         $empresa = $this->session->userdata('empresa');
-        $status = $this->input->get('status');
 
         $data['foto'] = 'imagens/usuarios/' . $this->session->userdata('foto');
         $data['foto_descricao'] = 'imagens/usuarios/' . $this->session->userdata('foto_descricao');
-
-        $this->db->select('b.id, b.nome, a.motivo_afastamento', false);
-        $this->db->select("DATE_FORMAT(a.data_afastamento, '%d/%m/%Y') AS data_afastamento", false);
-        $this->db->select("IF(a.data_pericia_medica, DATE_FORMAT(a.data_pericia_medica, '%d/%m/%Y'), NULL) AS data_pericia_medica", false);
-        $this->db->select("IF(a.data_limite_beneficio, DATE_FORMAT(a.data_limite_beneficio, '%d/%m/%Y'), NULL) AS data_limite_beneficio", false);
-        $this->db->select("IF(a.data_retorno, DATE_FORMAT(a.data_retorno, '%d/%m/%Y'), NULL) AS data_retorno", false);
-        $this->db->join('usuarios b', 'b.id = a.id_usuario');
-        $this->db->where('b.empresa', $empresa);
-        if ($status) {
-            $this->db->where('a.data_retorno', null);
-        }
-        $data['funcionarios'] = $this->db->get('usuarios_afastamento a')->result();
         $data['is_pdf'] = $pdf;
 
         if ($pdf) {
+            $motivoAfastamento = $this->input->get('motivo_afastamento');
+            $depto = $this->input->get('depto');
+            $area = $this->input->get('area');
+            $setor = $this->input->get('setor');
+            $status = $this->input->get('status');
+            $status2 = $this->input->get('status2');
+
+            $this->db->select('b.id, b.nome', false);
+            $this->db->select("CASE a.motivo_afastamento
+                                WHEN 1 THEN 'Auxílio doença - INSS'
+                                WHEN 2 THEN 'Licença maternidade'
+                                WHEN 3 THEN 'Acidente de trabalho'
+                                WHEN 4 THEN 'Aposentadoria por invalidez'
+                                END AS motivo_afastamento", false);
+            $this->db->select("DATE_FORMAT(a.data_afastamento, '%d/%m/%Y') AS data_afastamento", false);
+            $this->db->select("IF(a.data_pericia_medica, DATE_FORMAT(a.data_pericia_medica, '%d/%m/%Y'), NULL) AS data_pericia_medica", false);
+            $this->db->select("IF(a.data_limite_beneficio, DATE_FORMAT(a.data_limite_beneficio, '%d/%m/%Y'), NULL) AS data_limite_beneficio", false);
+            $this->db->select("IF(a.data_retorno, DATE_FORMAT(a.data_retorno, '%d/%m/%Y'), NULL) AS data_retorno", false);
+            $this->db->join('usuarios b', 'b.id = a.id_usuario');
+            $this->db->join('empresa_departamentos c', 'c.id = b.id_depto OR c.nome = b.depto', 'left');
+            $this->db->join('empresa_areas d', 'd.id = b.id_area OR d.nome = b.area', 'left');
+            $this->db->join('empresa_setores e', 'e.id = b.id_setor OR e.nome = b.setor', 'left');
+            $this->db->where('b.empresa', $empresa);
+            if ($motivoAfastamento) {
+                $this->db->where('a.motivo_afastamento', $motivoAfastamento);
+            }
+            if ($depto) {
+                $this->db->where('c.id', $depto);
+            }
+            if ($area) {
+                $this->db->where('d.id', $area);
+            }
+            if ($setor) {
+                $this->db->where('e.id', $setor);
+            }
+            if ($status) {
+                $this->db->where_in('b.status', [6, 7, 8, 9]);
+            }
+            if ($status2) {
+                $this->db->where('a.data_retorno', null);
+            }
+            $this->db->group_by(['a.id', 'b.id']);
+            $this->db->order_by('b.nome', 'asc');
+            $data['funcionarios'] = $this->db->get('usuarios_afastamento a')->result();
+
             return $this->load->view('funcionarios_afastamentoPdf', $data, true);
         }
+
+        $this->db->select('id, nome');
+        $this->db->where('id_empresa', $this->session->userdata('empresa'));
+        $this->db->order_by('nome', 'asc');
+        $deptos = $this->db->get('empresa_departamentos')->result();
+        $data['depto'] = ['' => 'Todos'] + array_column($deptos, 'nome', 'id');
+        $data['area'] = ['' => 'Todas'];
+        $data['setor'] = ['' => 'Todos'];
+
         $this->load->view('funcionarios_afastamentoRelatorio', $data);
+    }
+
+
+    public function filtrarEstrutura()
+    {
+        $depto = $this->input->post('depto');
+        $area = $this->input->post('area');
+        $setor = $this->input->post('setor');
+
+        $this->db->select('a.id, a.nome');
+        $this->db->join('empresa_departamentos b', 'b.id = a.id_departamento');
+        $this->db->where('b.id_empresa', $this->session->userdata('empresa'));
+        $this->db->where('b.id', $depto);
+        $this->db->order_by('a.nome', 'asc');
+        $rowAreas = $this->db->get('empresa_areas a')->result();
+        $areas = array_column($rowAreas, 'nome', 'id');
+
+        $this->db->select('a.id, a.nome');
+        $this->db->join('empresa_areas b', 'b.id = a.id_area');
+        $this->db->join('empresa_departamentos c', 'c.id = b.id_departamento');
+        $this->db->where('c.id_empresa', $this->session->userdata('empresa'));
+        $this->db->where('c.id', $depto);
+        $this->db->where('b.id', $area);
+        $this->db->order_by('a.nome', 'asc');
+        $rowSetores = $this->db->get('empresa_setores a')->result();
+        $setores = array_column($rowSetores, 'nome', 'id');
+
+        $data['area'] = form_dropdown('', ['' => 'Todas'] + $areas, $area);
+        $data['setor'] = form_dropdown('', ['' => 'Todos'] + $setores, $setor);
+
+        echo json_encode($data);
     }
 
     // -------------------------------------------------------------------------
@@ -358,6 +430,9 @@ class UsuarioAfastamento extends MY_Controller
                       INNER JOIN usuarios b
                                  ON b.id = a.id_usuario
                                  AND b.empresa = a.id_empresa
+                      LEFT JOIN empresa_departamentos c ON c.id = b.id_depto OR c.nome = b.depto
+                      LEFT JOIN empresa_areas d ON d.id = b.id_area OR d.nome = b.area
+                      LEFT JOIN empresa_setores e ON e.id = b.id_setor OR e.nome = b.setor
                       WHERE b.empresa = {$this->session->userdata('empresa')}";
         if (!empty($post['status'])) {
             $sql .= ' AND b.status IN (6, 7, 8, 9)';
@@ -365,7 +440,19 @@ class UsuarioAfastamento extends MY_Controller
         if (!empty($post['status2'])) {
             $sql .= ' AND a.data_retorno IS NULL';
         }
-        $sql .= ') s';
+        if (!empty($post['depto'])) {
+            $sql .= " AND c.id = '{$post['depto']}'";
+        }
+        if (!empty($post['area'])) {
+            $sql .= " AND d.id = '{$post['area']}'";
+        }
+        if (!empty($post['setor'])) {
+            $sql .= " AND e.id = '{$post['setor']}'";
+        }
+        if (!empty($post['motivo_afastamento'])) {
+            $sql .= " AND a.motivo_afastamento = '{$post['motivo_afastamento']}'";
+        }
+        $sql .= ' ORDER BY b.nome ASC) s';
         $recordsTotal = $this->db->query($sql)->num_rows();
 
         $columns = array(
@@ -476,7 +563,7 @@ class UsuarioAfastamento extends MY_Controller
         $stylesheet .= 'table.funcionarios tbody tr th { background-color: #dff0d8; } ';
 
         $this->m_pdf->pdf->writeHTML($stylesheet, 1);
-        $this->m_pdf->pdf->writeHTML($this->relatorio($this->uri->rsegment(3), true));
+        $this->m_pdf->pdf->writeHTML($this->relatorio(true));
 
 
         $this->m_pdf->pdf->Output("Relatório de Afastamentos.pdf", 'D');

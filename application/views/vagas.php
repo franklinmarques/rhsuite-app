@@ -56,6 +56,14 @@
             font-weight: bold;
         }
 
+        .panel {
+            background-color: rgba(255, 255, 255, 0.81);
+        }
+
+        .table tbody tr {
+            background-color: #fff;
+        }
+
     </style>
 </head>
 
@@ -77,42 +85,51 @@
         $hr = '';
     }
     ?>
-    <div style="width: 100%; max-width: 370px; margin: 0 auto;">
-        <div align="center">
-            <img src="<?php echo $logo; ?>" style="width: auto; max-height: 100px; margin-bottom: 3%;">
-            <h4 style="color: #111343; text-shadow: 1px 2px 4px rgba(0, 0, 0, .15);">
-                <strong><?php echo $cabecalho; ?></strong></h4>
-        </div>
-    </div>
-    <div style="width: 100%; max-width: 60%; margin: 0 auto;">
-        <div align="center">
-            <h4>Caro candidato, seja bem-vindo ao nosso painel de vagas.</h4>
-            <h5>Caso algumas das vagas seja de seu interesse, basta acionar o botão "Candidatar-se!" que você
-                será
-                automaticamente incluído no processo seletivo da mesma.</h5>
-            <div class="controls">
-                <a type="button" class="btn" href="login"
-                   style="width: 250px; color: #fff; background-color: #111343;">Entrar no portal</a>
+
+    <div class="panel">
+        <div class="panel-header">
+            <br>
+            <div align="center">
+                <img src="<?php echo $logo; ?>" style="width: auto; max-height: 100px; margin-bottom: 3%;">
+                <h4 style="color: #111343; text-shadow: 1px 2px 4px rgba(0, 0, 0, .15);">
+                    <strong><?php echo $cabecalho; ?></strong></h4>
+            </div>
+            <div align="center">
+                <h4>Caro candidato, seja bem-vindo ao nosso painel de vagas.</h4>
+                <h5>Caso algumas das vagas seja de seu interesse, basta acionar o botão "Candidatar-se!" que você
+                    será
+                    automaticamente incluído no processo seletivo da mesma.</h5>
+                <?php if (!$this->session->userdata('logado')): ?>
+                    <div class="controls">
+                        <a type="button" class="btn" href="login"
+                           style="width: 250px; color: #fff; background-color: #111343;">Entrar no portal</a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
-    </div>
-    <br>
-    <div class="table-responsive">
-        <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
-            <thead>
-            <tr class="active">
-                <th>Código</th>
-                <th>Abertura</th>
-                <th>Cargo/Função</th>
-                <th nowrap>N&ordm; vagas</th>
-                <th>Cidade</th>
-                <th>Bairro</th>
-                <th>Ações</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table id="table" class="table table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                    <tr class="active">
+                        <th>Código</th>
+                        <th>Abertura</th>
+                        <th>Cargo/Função</th>
+                        <th nowrap>N&ordm; vagas</th>
+                        <th>Cidade</th>
+                        <th>Bairro</th>
+                        <?php if ($this->session->userdata('logado')): ?>
+                            <th>Ação</th>
+                        <?php else: ?>
+                            <th>Ações</th>
+                        <?php endif; ?>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap modal -->

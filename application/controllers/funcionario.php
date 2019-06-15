@@ -52,6 +52,38 @@ class Funcionario extends MY_Controller
         echo json_encode($data);
     }
 
+
+    public function filtrarEstrutura()
+    {
+        $depto = $this->input->post('depto');
+        $area = $this->input->post('area');
+        $setor = $this->input->post('setor');
+
+        $this->db->select('a.id, a.nome');
+        $this->db->join('empresa_departamentos b', 'b.id = a.id_departamento');
+        $this->db->where('b.id_empresa', $this->session->userdata('empresa'));
+        $this->db->where('b.id', $depto);
+        $this->db->order_by('a.nome', 'asc');
+        $rowAreas = $this->db->get('empresa_areas a')->result();
+        $areas = array_column($rowAreas, 'nome', 'id');
+
+        $this->db->select('a.id, a.nome');
+        $this->db->join('empresa_areas b', 'b.id = a.id_area');
+        $this->db->join('empresa_departamentos c', 'c.id = b.id_departamento');
+        $this->db->where('c.id_empresa', $this->session->userdata('empresa'));
+        $this->db->where('c.id', $depto);
+        $this->db->where('b.id', $area);
+        $this->db->order_by('a.nome', 'asc');
+        $rowSetores = $this->db->get('empresa_setores a')->result();
+        $setores = array_column($rowSetores, 'nome', 'id');
+
+        $data['area'] = form_dropdown('', ['' => 'Todas'] + $areas, $area);
+        $data['setor'] = form_dropdown('', ['' => 'Todos'] + $setores, $setor);
+
+        echo json_encode($data);
+    }
+
+
     public function atualizarCargoFuncao()
     {
         $empresa = $this->session->userdata('empresa');
@@ -789,38 +821,78 @@ class Funcionario extends MY_Controller
         $data['is_pdf'] = $pdf;
 
         if ($pdf) {
+            $depto = $this->input->get('depto');
+            $area = $this->input->get('area');
+            $setor = $this->input->get('setor');
             $mes = $this->input->get('mes');
             $orderBy = $this->input->get('order');
 
-            $this->db->select("nome, DATE_FORMAT(data_nascimento, '%d/%m/%Y') AS data_nascimento", false);
-            $this->db->where('tipo', 'funcionario');
+            $this->db->select("a.nome, DATE_FORMAT(a.data_nascimento, '%d/%m/%Y') AS data_nascimento", false);
+            $this->db->join('empresa_departamentos b', 'b.id = a.id_depto OR b.nome = a.depto', 'left');
+            $this->db->join('empresa_areas c', 'c.id = a.id_area OR c.nome = a.area', 'left');
+            $this->db->join('empresa_setores d', 'd.id = a.id_setor OR d.nome = a.setor', 'left');
+            $this->db->where('a.tipo', 'funcionario');
+            if ($depto) {
+                $this->db->where('b.id', $depto);
+            }
+            if ($area) {
+                $this->db->where('c.id', $area);
+            }
+            if ($setor) {
+                $this->db->where('d.id', $setor);
+            }
             if ($mes) {
                 $this->db->where("MONTH(data_nascimento) =", $mes);
             }
             if (!empty($orderBy[0])) {
-                $this->db->order_by('nome', $orderBy[0][1]);
+                $this->db->order_by('a.nome', $orderBy[0][1]);
             }
             if (!empty($orderBy[1])) {
-                $this->db->order_by('data_nascimento', $orderBy[1][1]);
+                $this->db->order_by('a.data_nascimento', $orderBy[1][1]);
             }
-            $data['funcionarios'] = $this->db->get('usuarios')->result();
+            $data['funcionarios'] = $this->db->get('usuarios a')->result();
 
             return $this->load->view('funcionarios_aniversariantesPdf', $data, true);
         }
+
+        $this->db->select('id, nome');
+        $this->db->where('id_empresa', $this->session->userdata('empresa'));
+        $this->db->order_by('nome', 'asc');
+        $deptos = $this->db->get('empresa_departamentos')->result();
+        $data['depto'] = ['' => 'Todos'] + array_column($deptos, 'nome', 'id');
+        $data['area'] = ['' => 'Todas'];
+        $data['setor'] = ['' => 'Todos'];
+
         $this->load->view('funcionarios_aniversariantesRelatorio', $data);
     }
 
     public function ajaxListAniversariantes()
     {
+        $depto = $this->input->post('depto');
+        $area = $this->input->post('area');
+        $setor = $this->input->post('setor');
         $mes = $this->input->post('mes');
 
-        $this->db->select('id, nome, data_nascimento, matricula');
-        $this->db->select("DATE_FORMAT(data_nascimento, '%d/%m/%Y') AS data_nascimento_de", false);
-        $this->db->where('tipo', 'funcionario');
-        if ($mes) {
-            $this->db->where("MONTH(data_nascimento) =", $mes);
+        $this->db->select('a.id, a.nome, a.data_nascimento, a.matricula');
+        $this->db->select("DATE_FORMAT(a.data_nascimento, '%d/%m/%Y') AS data_nascimento_de", false);
+        $this->db->join('empresa_departamentos b', 'b.id = a.id_depto OR b.nome = a.depto', 'left');
+        $this->db->join('empresa_areas c', 'c.id = a.id_area OR c.nome = a.area', 'left');
+        $this->db->join('empresa_setores d', 'd.id = a.id_setor OR d.nome = a.setor', 'left');
+        $this->db->where('a.tipo', 'funcionario');
+        if ($depto) {
+            $this->db->where('b.id', $depto);
         }
-        $recordsTotal = $this->db->get('usuarios')->num_rows();
+        if ($area) {
+            $this->db->where('c.id', $area);
+        }
+        if ($setor) {
+            $this->db->where('d.id', $setor);
+        }
+        if ($mes) {
+            $this->db->where("MONTH(a.data_nascimento) =", $mes);
+        }
+        $this->db->group_by('a.id');
+        $recordsTotal = $this->db->get('usuarios a')->num_rows();
 
         $sql = "SELECT s.* FROM ({$this->db->last_query()}) s";
 
@@ -1214,7 +1286,6 @@ class Funcionario extends MY_Controller
         );
 
         $ordemColunas = array_flip(array_keys($label));
-
 
 
         $this->load->library('form_validation');

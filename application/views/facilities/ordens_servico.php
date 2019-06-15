@@ -45,14 +45,16 @@
             border-color: #2e6da4;
         }
 
-        #status li.disable a {
+        #status li.disable a,
+        #dados li.disable a {
             color: #777;
             text-decoration: none;
             background-color: transparent;
             cursor: not-allowed;
         }
 
-        #status li.disable.active a {
+        #status li.disable.active a
+        #dados li.disable.active a {
             background-color: #78a6ce;
             border: 1px solid #77a5cd;
             color: #fdfdfd;
@@ -82,6 +84,7 @@
                         <tr>
                             <th nowrap>O.S.</th>
                             <th>Abertura</th>
+                            <th>Estimada</th>
                             <th>Fechamento</th>
                             <th>Prioridade</th>
                             <th>Status</th>
@@ -185,7 +188,7 @@
                                         </div>
                                     </div>
                                     <br>
-                                    <ul class="nav nav-tabs" role="tablist">
+                                    <ul id="dados" class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a href="#dados_os" aria-controls="dados_os" role="tab"
                                                data-toggle="tab"><strong>Dados
@@ -229,7 +232,7 @@
                                                 <div class="col-md-2">
                                                     <input name="data_resolucao_problema"
                                                            class="form-control text-center date"
-                                                           type="text">
+                                                           type="text" <?= $vistoriador ? '' : 'disabled'; ?>>
                                                 </div>
                                             </div>
                                             <div class="row form-group">
@@ -241,7 +244,7 @@
                                                 <label class="control-label col-md-2">Data fechamento</label>
                                                 <div class="col-md-2">
                                                     <input name="data_fechamento" class="form-control text-center date"
-                                                           type="text">
+                                                           readonly type="text" <?= $vistoriador ? '' : 'disabled'; ?>>
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -272,13 +275,15 @@
                                             <div class="row form-group">
                                                 <div class="col-md-10 col-md-offset-1">
                                                     <label>Problema/solicitação</label>
-                                                    <textarea name="descricao_problema" class="form-control"></textarea>
+                                                    <textarea name="descricao_problema"
+                                                              class="form-control" <?= $vistoriador ? 'disabled' : ''; ?> rows="6"></textarea>
                                                 </div>
                                             </div>
                                             <div class="row form-group">
                                                 <div class="col-md-10 col-md-offset-1">
                                                     <label>Observações/andamento</label>
-                                                    <textarea name="observacoes" class="form-control"></textarea>
+                                                    <textarea name="observacoes"
+                                                              class="form-control" <?= $vistoriador ? '' : 'disabled'; ?> rows="6"></textarea>
                                                 </div>
                                             </div>
 
@@ -397,50 +402,50 @@ require_once APPPATH . 'views/end_js.php';
                 'columnDefs': [
                     {
                         'className': 'text-center',
-                        'targets': [0, 1, 2]
+                        'targets': [0, 1, 2, 3]
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
-                            if (rowData[8] === '4' || rowData[8] === '3') {
+                            if (rowData[9] === '4' || rowData[9] === '3') {
                                 // $(td).addClass('danger');
                                 $(td).css({'background-color': '#f00', 'color': '#fff'});
-                            } else if (rowData[8] === '2') {
+                            } else if (rowData[9] === '2') {
                                 // $(td).addClass('warning');
                                 $(td).css('background-color', '#ffad1c');
-                            } else if (rowData[8] === '1') {
+                            } else if (rowData[9] === '1') {
                                 // $(td).addClass('warning');
                                 $(td).css('background-color', '#ff0');
-                            }
-                        },
-                        'className': 'text-center',
-                        'targets': [3]
-                    },
-                    {
-                        'createdCell': function (td, cellData, rowData, row, col) {
-                            if (rowData[9] === 'A') {
-                                // $(td).addClass('danger');
-                                $(td).css({'background-color': '#f00', 'color': '#fff'});
-                            } else if (rowData[9] === 'P' || rowData[9] === 'G') {
-                                // $(td).addClass('warning');
-                                $(td).css('background-color', '#ff0');
-                            } else if (rowData[9] === 'E') {
-                                // $(td).addClass('info');
-                                $(td).css({'background-color': '#2ba8ff', 'color': '#fff'});
-                            } else if (rowData[9] === 'F') {
-                                // $(td).addClass('success');
-                                $(td).css({'background-color': '#0c0', 'color': '#fff'});
                             }
                         },
                         'className': 'text-center',
                         'targets': [4]
                     },
                     {
-                        'width': '40%',
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (rowData[10] === 'A') {
+                                // $(td).addClass('danger');
+                                $(td).css({'background-color': '#f00', 'color': '#fff'});
+                            } else if (rowData[10] === 'P' || rowData[10] === 'G') {
+                                // $(td).addClass('warning');
+                                $(td).css('background-color', '#ff0');
+                            } else if (rowData[10] === 'E') {
+                                // $(td).addClass('info');
+                                $(td).css({'background-color': '#2ba8ff', 'color': '#fff'});
+                            } else if (rowData[10] === 'F') {
+                                // $(td).addClass('success');
+                                $(td).css({'background-color': '#0c0', 'color': '#fff'});
+                            }
+                        },
+                        'className': 'text-center',
                         'targets': [5]
                     },
                     {
-                        'width': '60%',
+                        'width': '40%',
                         'targets': [6]
+                    },
+                    {
+                        'width': '60%',
+                        'targets': [7]
                     },
                     {
                         'className': 'text-nowrap',
@@ -460,6 +465,24 @@ require_once APPPATH . 'views/end_js.php';
             }
             var value = $(this).data('value');
             $('#form [name="status"], #status_atual').val(value);
+            if (value === 'F' && $('#form [name="data_fechamento"]').val().length === 0) {
+                $('#form [name="data_fechamento"]').prop('disabled', false).val(moment().format('DD/MM/YYYY'));
+            }
+        })
+
+
+        $('#dados li a').click(function (e) {
+            if ($(this).parent().hasClass('disable')) {
+                return false;
+            }
+        });
+
+
+        $('#modal_form').on('shown.bs.modal', function () {
+            var vistoriador = <?= $vistoriador ? 'true' : 'false'; ?>;
+            if (vistoriador) {
+                // $('[name="data_resolucao_problema"]').css();
+            }
         })
 
 
@@ -483,7 +506,15 @@ require_once APPPATH . 'views/end_js.php';
                     $('#status li').removeClass('active').addClass('disable');
                     $('#status li').first().removeClass('disable');
                     $('#status li a[data-value="A"]').parent('li').addClass('active');
+                    $('#dados li').eq(0).find('a').trigger('click');
+                    $('#dados li').eq(1).removeClass('active').addClass('disable');
                     $('#status_atual, #form [name="status"]').val('A');
+                    $('#form select, #form textarea, #form input').prop('disabled', false);
+                    if ('<?= $vistoriador; ?>' === '1') {
+                        $('[name="descricao_problema"],[name="data_fechamento"]').prop('disabled', true);
+                    } else {
+                        $('[name="data_resolucao_problema"],[name="data_fechamento"],[name="observacoes"]').prop('disabled', true);
+                    }
 
                     $('[name="data_abertura"]').val(moment().format('DD/MM/YYYY'));
                     $('#modal_form').modal('show');
@@ -523,16 +554,41 @@ require_once APPPATH . 'views/end_js.php';
                         }
                     });
 
-
+                    $('#form select, #form textarea, #form input[name!="numero_os"]').prop('disabled', true);
                     $('#status li').removeClass('active').addClass('disable');
-                    if ('<?= $vistoriador; ?>' === '1') {
-                        $('#status li').eq(0).removeClass('disable');
+                    switch (json.data.status) {
+                        case 'E':
+                        case 'G':
+                            $('#status li').eq(1).removeClass('disable');
+                            $('#status li').eq(2).removeClass('disable');
+                            $('#dados li').eq(1).removeClass('active').addClass('disable');
+                            break;
+                        case 'F':
+                            $('[name="data_fechamento"]').prop('disabled', false);
+                        case 'P':
+                            if ('<?= $vistoriador; ?>' !== '1') {
+                                $('[name="resolucao_satisfatoria"],[name="observacoes_positivas"],[name="observacoes_negativas"]').prop('disabled', false);
+                            }
+                            $('#status li').eq(3).removeClass('disable');
+                            $('#status li').eq(4).removeClass('disable');
+                            $('#dados li').eq(1).removeClass('disable');
+                            break;
+                    }
+                    /*$('#status li').removeClass('active').addClass('disable');
+                    $('#aba_pesquisa_satisfacao').removeClass('active').addClass('disable');
+                    $('[name="data_fechamento"]').prop('disabled', json.data.status === 'F' || json.data.status === 'P');
+                    $('[name="data_abertura"], [name="prioridade"], [name="data_fechamento"], #depto, #area, #setor, #requisitante').prop('disabled', true);
+                    if ('' === '1') {
+                        // $('#status li').eq(0).removeClass('disable');
                         $('#status li').eq(1).removeClass('disable');
                         $('#status li').eq(2).removeClass('disable');
+                        $('ul.nav-tabs li').eq(1).addClass('disable');
                     } else {
+                        $('[name="descricao_problema"]').prop('disabled', json.data.status !== 'A');
                         $('#status li').eq(3).removeClass('disable');
                         $('#status li').eq(4).removeClass('disable');
-                    }
+                        $('ul.nav-tabs li').eq(1).removeClass('disable');
+                    }*/
 
                     $('#status li a[data-value="' + json.data.status + '"]').parent('li').addClass('active');
                     $('#status_atual').val(json.data.status);

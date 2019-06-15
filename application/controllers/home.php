@@ -82,7 +82,56 @@ class Home extends MY_Controller
             $data['usuarios'][$usuario->id] = $usuario->nome;
         }
 
+        $data['scheduler'] = $this->notificar();
+
         $this->load->view($view, $data);
+    }
+
+    public function notificar()
+    {
+        $this->db->select('DAY(NOW()) AS dia, (WEEK(NOW()) - WEEK(DATE_SUB(NOW(), INTERVAL DAY(NOW()) DAY)) + 1) AS semana, MONTH(NOW()) AS mes', false);
+        $data = $this->db->get()->row_array();
+
+        if (!$this->session->flashdata('scheduler')) {
+            $data['atividades'] = null;
+            $data['total'] = 0;
+            return $data;
+        }
+
+        $this->db->select('atividade');
+        $this->db->select("GROUP_CONCAT(DISTINCT objetivos ORDER BY objetivos ASC SEPARATOR '<br>') AS objetivos", false);
+        $this->db->where('id_usuario', $this->session->userdata('id'));
+        $this->db->where("(dia = '{$data['dia']}' OR semana = '{$data['semana']}' OR mes = '{$data['mes']}')");
+        $this->db->where('lembrar', 1);
+        $this->db->group_by('atividade');
+        $this->db->order_by('atividade', 'asc');
+        $data['atividades'] = $this->db->get('atividades_scheduler')->result();
+        $data['total'] = $data['atividades'] ? count($data['atividades']) - 1 : 0;
+
+        return $data;
+    }
+
+    public function atualizarScheduler()
+    {
+        $dia = $this->input->post('dia');
+        $semana = $this->input->post('semana');
+        $mes = $this->input->post('mes');
+
+        $this->db->trans_start();
+
+        $this->db->set('lembrar', 0);
+        $this->db->where('id_usuario', $this->session->userdata('id'));
+        $this->db->where("(dia = '{$dia}' OR semana = '{$semana}' OR mes = '{$mes}')");
+        $this->db->where('lembrar', 1);
+        $this->db->update('atividades_scheduler');
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() == false) {
+            exit(['erro' => 'Erro ao atualizar notificação.']);
+        }
+
+        echo json_encode(['status' => true]);
     }
 
     public function alterarsenha()

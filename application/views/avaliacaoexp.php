@@ -106,12 +106,7 @@ require_once "header.php";
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Modelo avaliação</label>
                                         <div class="col-md-9">
-                                            <select name="id_modelo" class="form-control">
-                                                <option value="">-- selecione --</option>
-                                                <?php foreach ($modelos as $modelo) { ?>
-                                                    <option value="<?= $modelo->id ?>"><?= $modelo->nome ?></option>
-                                                <?php } ?>
-                                            </select>
+                                            <?php echo form_dropdown('id_modelo', $modelos, '', 'class="form-control"'); ?>
                                         </div>
                                     </div>
                                     <div class="row form-group">

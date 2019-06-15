@@ -17,8 +17,9 @@ class Avaliacaoexp extends MY_Controller
         );
         $this->db->select('id, nome');
         $this->db->where('id_usuario_EMPRESA', $data['empresa']);
-        $this->db->where('tipo', 'A');
-        $data['modelos'] = $this->db->get('avaliacaoexp_modelos')->result();
+        $this->db->where_in('tipo', ['A', 'D']);
+        $modelos = $this->db->get('avaliacaoexp_modelos')->result();
+        $data['modelos'] = ['' => 'selecione...'] + array_column($modelos, 'nome', 'id');
         $data['titulo'] = 'Avaliação Periódica de Desempenho';
 
         $this->load->view('avaliacaoexp', $data);

@@ -139,6 +139,7 @@
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
                         <li class="active">Apontamentos Diários</li>
+                        <?php $this->load->view('modal_processos', ['url' => 'ei/apontamento']); ?>
                     </ol>
                     <div class="row">
                         <div class="col-md-6">

@@ -90,6 +90,22 @@ require_once "header.php";
                 </tbody>
             </table>
 
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="depto">Departamento</label>
+                    <?php echo form_dropdown('', $depto, '', 'id="depto" class="form-control input-sm" onchange="filtrar_estrutura()" autocomplete="off"'); ?>
+                </div>
+                <div class="col-md-4">
+                    <label for="area">Area</label>
+                    <?php echo form_dropdown('', $area, '', 'id="area" class="form-control input-sm" onchange="filtrar_estrutura()" autocomplete="off"'); ?>
+                </div>
+                <div class="col-md-4">
+                    <label for="setor">Setor</label>
+                    <?php echo form_dropdown('', $setor, '', 'id="setor" class="form-control input-sm" onchange="filtrar_estrutura()" autocomplete="off"'); ?>
+                </div>
+            </div>
+            <hr>
+
             <!--<div class="table-responsive">-->
             <table id="table" class="demissao table table-bordered table-condensed" cellspacing="0" width="100%">
                 <thead>
@@ -162,6 +178,7 @@ require_once "end_js.php";
 
     $('.date').mask('00/00/0000');
 
+
     $(document).ready(function () {
         document.title = 'CORPORATE RH - LMS - Relatório de Aniversariantes';
 
@@ -170,28 +187,31 @@ require_once "end_js.php";
             'dom': "<'row'<'#meses.col-sm-2'><'#info_data_nascimento.col-sm-6'><'col-sm-4'f>>" +
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-            "processing": true, //Feature control the processing indicator.
-            "serverSide": true, //Feature control DataTables' server-side processing mode.
-            iDisplayLength: -1,
-            lengthChange: false,
-            paging: false,
-            "language": {
-                "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>",
+            'processing': true, //Feature control the processing indicator.
+            'serverSide': true, //Feature control DataTables' server-side processing mode.
+            'iDisplayLength': -1,
+            'lengthChange': false,
+            'paging': false,
+            'language': {
+                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>',
                 'searchPlaceholder': 'Nome/matrícula'
             },
             // Load data for the table's content from an Ajax source
-            "ajax": {
-                "url": "<?php echo site_url('funcionario/ajaxListAniversariantes/') ?>",
-                "type": "POST",
-                timeout: 9000,
-                data: function (d) {
+            'ajax': {
+                'url': '<?php echo site_url('funcionario/ajaxListAniversariantes/') ?>',
+                'type': 'POST',
+                'timeout': 9000,
+                'data': function (d) {
+                    d.depto = $('#depto').val();
+                    d.area = $('#area').val();
+                    d.setor = $('#setor').val();
                     d.mes = $('#mes').val();
                     return d;
                 },
                 'dataSrc': function (json) {
                     if (json.draw === '1') {
-                        $("#meses").append('<br>Mês ' + json.meses);
-                        $("#info_data_nascimento").append('<br><i class="text-info"><strong>*</strong> Clique em uma data de nascimento para edição rápida.</i>');
+                        $('#meses').append('<br>Mês ' + json.meses);
+                        $('#info_data_nascimento').append('<br><i class="text-info"><strong>*</strong> Clique em uma data de nascimento para edição rápida.</i>');
                     }
                     setPdf_atributes();
 
@@ -199,30 +219,59 @@ require_once "end_js.php";
                 }
             },
             //Set column definition initialisation properties.
-            "columnDefs":
-                [
-                    {
-                        'width': '100%',
-                        'targets': [0]
+            'columnDefs': [
+                {
+                    'width': '100%',
+                    'targets': [0]
+                },
+                {
+                    'createdCell': function (td, cellData, rowData, row, col) {
+                        $(td).css('cursor', 'pointer').on('click', function () {
+                            edit_aniversariante(rowData[3], rowData[0], rowData[col]); // id, nome, data_nascimento
+                        });
                     },
-                    {
-                        'createdCell': function (td, cellData, rowData, row, col) {
-                            $(td).css('cursor', 'pointer').on('click', function () {
-                                edit_aniversariante(rowData[3], rowData[0], rowData[col]); // id, nome, data_nascimento
-                            });
-                        },
-                        'className': 'text-center text-nowrap data_nascimento',
-                        'targets': [1]
-                    },
-                    {
-                        'className': 'text-nowrap',
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
-                    }
-                ]
+                    'className': 'text-center text-nowrap data_nascimento',
+                    'targets': [1]
+                },
+                {
+                    'className': 'text-nowrap',
+                    'targets': [-1], //last column
+                    'orderable': false, //set not orderable
+                    'searchable': false //set not orderable
+                }
+            ],
+            'preDrawCallback': function () {
+                $('#pdf').addClass('disabled');
+            },
+            'drawCallback': function () {
+                setPdf_atributes();
+                $('#pdf').removeClass('disabled');
+            }
         });
     });
+
+
+    function filtrar_estrutura() {
+        $.ajax({
+            'url': '<?php echo site_url('funcionario/filtrarEstrutura') ?>',
+            'type': 'POST',
+            'data': {
+                'depto': $('#depto').val(),
+                'area': $('#area').val(),
+                'setor': $('#setor').val()
+            },
+            'dataType': 'JSON',
+            'success': function (json) {
+                $('#area').html($(json.area).html());
+                $('#setor').html($(json.setor).html());
+                reload_table();
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Error adding / update data');
+            }
+        });
+    }
+
 
     function edit_aniversariante(id, nome, data_nascimento) {
         $('#form [name="id"]').val(id);
@@ -230,6 +279,7 @@ require_once "end_js.php";
         $('#form [name="data_nascimento"]').val(data_nascimento);
         $('#modal_form').modal('show');
     }
+
 
     function save() {
         $('#btnSave').text('Salvando...').attr('disabled', true);
@@ -254,17 +304,27 @@ require_once "end_js.php";
         });
     }
 
+
     function reload_table() {
         table.ajax.reload(null, false);
     }
+
 
     function setPdf_atributes() {
         var search = '';
         var q = new Array();
 
-        var mes = $('#mes').val();
-        if (mes.length > 0) {
-            q[0] = 'mes=' + mes;
+        if ($('#depto').val().length > 0) {
+            q.push("depto=" + $('#depto').val());
+        }
+        if ($('#area').val().length > 0) {
+            q.push("area=" + $('#area').val());
+        }
+        if ($('#setor').val().length > 0) {
+            q.push("setor=" + $('#setor').val());
+        }
+        if ($('#mes').val().length > 0) {
+            q.push("mes=" + $('#mes').val());
         }
 
         if (table.order()[0] !== undefined) {
@@ -280,8 +340,9 @@ require_once "end_js.php";
         if (q.length > 0) {
             search = '/q?' + q.join('&');
         }
-        $('#pdf').prop('href', "<?= site_url('funcionario/pdfAniversariantes'); ?>" + search);
+        $('#pdf').prop('href', '<?= site_url('funcionario/pdfAniversariantes'); ?>' + search);
     }
+
 </script>
 <?php
 require_once "end_html.php";

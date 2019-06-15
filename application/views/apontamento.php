@@ -147,6 +147,7 @@ require_once 'header.php';
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
                         <li class="active">Apontamentos Diários</li>
+                        <?php $this->load->view('modal_processos', ['url' => 'st/apontamento']); ?>
                     </ol>
                     <div class="row">
                         <div class="col-md-6">
@@ -404,8 +405,12 @@ require_once 'header.php';
                                                 Colaborador(a)
                                             </th>
                                             <th colspan="3" class="warning text-center">Estrutura</th>
-                                            <th rowspan="2" class="warning text-center" style="vertical-align: middle;">Função</th>
-                                            <th rowspan="2" class="warning text-center" style="vertical-align: middle;">Ações</th>
+                                            <th rowspan="2" class="warning text-center" style="vertical-align: middle;">
+                                                Função
+                                            </th>
+                                            <th rowspan="2" class="warning text-center" style="vertical-align: middle;">
+                                                Ações
+                                            </th>
                                         </tr>
                                         <tr>
                                             <th class="warning text-center">Departamento</th>

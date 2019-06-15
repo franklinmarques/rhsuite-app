@@ -108,7 +108,7 @@
 </div>
 
 
-<div class="container">
+<div class="container" style="background-color: rgba(255, 255, 255, 0.81);">
     <?php
     if ($url_empresa) {
         $logo = base_url('imagens/usuarios/' . $logo);

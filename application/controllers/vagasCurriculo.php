@@ -57,12 +57,17 @@ class VagasCurriculo extends CI_Controller
 
     private function getCabecalho()
     {
-        $uri = $this->uri->segment(1);
+        if ($this->session->userdata('logado')) {
+            $indexPage = $this->config->item('index_page');
+            $uri = !empty($indexPage) ? $indexPage : 'ame';
+        } else {
+            $uri = $this->uri->segment(1);
+        }
         $data['logoempresa'] = '';
         $data['logo'] = '';
         $data['cabecalho'] = '';
         $data['imagem_fundo'] = '';
-        if ($uri != 'login') {
+        if ($uri != 'vagasCurriculo') {
             $row = $this->db->query("SELECT u.* FROM usuarios u
                                    WHERE u.url = ?", $uri);
             if ($row->num_rows() > 0) {
@@ -71,7 +76,7 @@ class VagasCurriculo extends CI_Controller
                 $data['cabecalho'] = $row->row()->cabecalho;
                 $data['imagem_fundo'] = $row->row()->imagem_fundo;
             } else {
-//                show_404();
+                show_404();
             }
         }
 

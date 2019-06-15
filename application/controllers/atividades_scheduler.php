@@ -14,15 +14,14 @@ class Atividades_scheduler extends MY_Controller
     }
 
 
-    public function ajaxList()
+    private function getAtividades(array $busca = []): string
     {
-        parse_str($this->input->post('busca'), $busca);
-
         $dias = implode(',', ($busca['dia'] ?? []) + [0]);
         $semanas = implode(',', ($busca['semana'] ?? []) + [0]);
         $meses = implode(',', ($busca['mes'] ?? []) + [0]);
 
-        $sql = "SELECT dia, semana, mes, atividade, objetivos, data_limite,
+        $sql = "SELECT dia, LPAD(semana, 2, 0) AS semana, 
+                       mes, atividade, objetivos, data_limite,
                        envolvidos, observacoes, processo_roteiro,
                        documento_1, documento_2, documento_3, id
                 FROM atividades_scheduler 
@@ -30,10 +29,17 @@ class Atividades_scheduler extends MY_Controller
                       id_usuario = {$this->session->userdata('id')} AND 
                       (dia IN ($dias) OR semana IN ($semanas) OR mes IN ($meses))";
 
+        return $sql;
+    }
+
+
+    public function ajaxList()
+    {
+        parse_str($this->input->post('busca'), $busca);
 
         $this->load->library('dataTables');
 
-        $output = $this->datatables->query($sql);
+        $output = $this->datatables->query($this->getAtividades($busca));
 
         $data = array();
 
@@ -332,6 +338,42 @@ class Atividades_scheduler extends MY_Controller
     private function excluirDocumento($documento)
     {
         @unlink('./arquivos/pdf/' . $documento);
+    }
+
+
+    public function imprimirAtividades()
+    {
+        $this->db->select('foto, foto_descricao');
+        $this->db->where('id', $this->session->userdata('empresa'));
+        $data['empresa'] = $this->db->get('usuarios')->row();
+
+
+        $this->db->select('nome');
+        $this->db->select(["CONCAT_WS('/', depto, area, setor) AS estrutura"], false);
+        $this->db->where('id', $this->session->userdata('id'));
+        $data['usuario'] = $this->db->get('usuarios')->row();
+
+
+        $busca = $this->input->get();
+        $data['rows'] = $this->db->query($this->getAtividades($busca))->result();
+
+
+        $this->load->library('m_pdf');
+
+        $stylesheet = '#scheduler thead th { font-size: 12px; padding: 4px 0px; text-align: center; font-weight: normal; } ';
+        $stylesheet .= '#scheduler thead tr, #frequencia tbody tr { border-width: 5px; border-color: #ddd; } ';
+        $stylesheet .= '#scheduler tbody tr td { font-size: 12px; padding: 4px; 0px; } ';
+        $stylesheet .= '#scheduler tbody tr.dados_paciente td { padding: 0px; 0px; } ';
+        $stylesheet .= '#table thead th { font-size: 12px; padding: 4px; background-color: #f5f5f5;} ';
+        $stylesheet .= '#table tbody td { font-size: 12px; padding: 4px; vertical-align: top; } ';
+        $stylesheet .= '#table tbody td:eq(0), #table tbody tr.active td { background-color: #f5f5f5; } ';
+
+        $this->m_pdf->pdf->AddPage('L');
+        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
+        $this->m_pdf->pdf->writeHTML($this->load->view('atividades_scheduler_pdf', $data, true));
+
+
+        $this->m_pdf->pdf->Output('Sheduler-Atividades - ' . $data['usuario']->nome . '.pdf', 'D');
     }
 
 

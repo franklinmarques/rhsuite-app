@@ -116,6 +116,40 @@ require_once "header.php";
     </section>
     <!--main content end-->
 
+    <div id="modal_scheduler" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Você possui tarefas pendentes</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form_scheduler" action="#" method="POST" autocomplete="off">
+                        <input type="hidden" name="dia" value="<?= $scheduler['dia'] ?>">
+                        <input type="hidden" name="semana" value="<?= $scheduler['semana'] ?>">
+                        <input type="hidden" name="mes" value="<?= $scheduler['mes'] ?>">
+
+                        <?php foreach ($scheduler['atividades'] as $k => $atividades): ?>
+                            <h4><strong>Atividade:</strong> <?= nl2br($atividades->atividade); ?></h4>
+                            <div><strong>Objetivo(s):</strong> <?= nl2br($atividades->objetivos); ?></div>
+                            <?php if ($k < $scheduler['total']): ?>
+                                <hr>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                        <br>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnSaveScheduler" type="button" class="btn btn-warning" onclick="salvar_scheduler();">
+                        Não lembrar novamente
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
     <!-- Grid CSS File (only needed for demo page) -->
     <!--    <link rel="stylesheet" href="--><?php //echo base_url('assets/js/eventCalendar/css/paragridma.css'); ?><!--">-->
 
@@ -176,7 +210,35 @@ require_once "header.php";
             });
 
             //datetime picker end
+
+            if (<?= !empty($scheduler['atividades']) ? 'true' : 'false'; ?>) {
+                $('#modal_scheduler').modal('show');
+            }
         });
+
+        function salvar_scheduler() {
+            $('#btnSaveScheduler').prop('disabled', true);
+            $.ajax({
+                'url': '<?php echo site_url('home/atualizarScheduler') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#form_scheduler').serialize(),
+                'success': function (json) {
+                    if (json.status) {
+                        $('#form_scheduler')[0].reset();
+                        $('#modal_scheduler').modal('hide');
+                    } else if (json.erro) {
+                        alert(json.erro);
+                    }
+                    $('#btnSaveScheduler').prop('disabled', false);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                    $('#btnSaveScheduler').prop('disabled', false);
+                }
+            });
+        }
+
 
         function insereEvento() {
             $('#modalInserir').modal('show');

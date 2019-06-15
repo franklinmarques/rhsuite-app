@@ -784,6 +784,24 @@
                                 <input type="hidden" name="aprovados" value="1">
                                 <div class="row form-group">
                                     <div class="col-md-10 col-md-offset-1">
+                                        <label>Filtrar destinatário por departamento</label>
+                                        <?php echo form_dropdown('', ['' => 'Todos'], '', 'id="email_depto" class="form-control" onchange="filtrar_email()"'); ?>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <label>Filtrar destinatário por área</label>
+                                        <?php echo form_dropdown('', ['' => 'Todas'], '', 'id="email_area" class="form-control" onchange="filtrar_email()"'); ?>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <label>Filtrar destinatário por setor</label>
+                                        <?php echo form_dropdown('', ['' => 'Todos'], '', 'id="email_setor" class="form-control" onchange="filtrar_email()"'); ?>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-10 col-md-offset-1">
                                         <label>E-mail destinatário<span
                                                     class="text-danger"> *</span></label>
                                         <?php echo form_dropdown('emails', ['' => 'selecione...'], '', 'class="form-control"'); ?>
@@ -1305,12 +1323,37 @@
                 'dataType': 'json',
                 'data': {'id': id},
                 'success': function (json) {
+                    $('#email_depto').html($(json.depto).html());
+                    $('#email_area').html($(json.area).html());
+                    $('#email_setor').html($(json.area).html());
                     $('#form_email [name="emails"]').html($(json.emails).html());
                     $('#form_email [name="id"]').val(id);
                     $('#form_email [name="mensagem"]').val(json.mensagem);
                     $('#form_email [name="dados_candidatos"]').val(json.dados);
 
                     $('#modal_email').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+        function filtrar_email() {
+            $.ajax({
+                'url': '<?php echo site_url('requisicaoPessoal/filtrarEmailContratacao') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'depto': $('#email_depto').val(),
+                    'area': $('#email_area').val(),
+                    'setor': $('#email_setor').val(),
+                    'email': $('#form_email [name="emails"]').val()
+                },
+                'success': function (json) {
+                    $('#email_area').html($(json.area).html());
+                    $('#email_setor').html($(json.setor).html());
+                    $('#form_email [name="emails"]').html($(json.emails).html());
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');

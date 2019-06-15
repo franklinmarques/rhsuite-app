@@ -117,6 +117,7 @@ class Atividades extends MY_Controller
                        a.id_mae,
                        a.id_usuario,
                        a.observacoes,
+                       d.nome AS nome_mae,
                        CASE WHEN c.id_usuario IS NULL 
                             THEN a.id 
                             ELSE a.id_mae END AS ordem_mae,
@@ -144,6 +145,8 @@ class Atividades extends MY_Controller
                            b.id = a.id_usuario
                 LEFT JOIN atividades c ON
                           c.id = a.id_mae
+                LEFT JOIN usuarios d ON 
+                          d.id = c.id_usuario
                 WHERE 1";
         if ($post['prioridade']) {
             $sql .= " AND (a.prioridade = {$post['prioridade']} OR c.prioridade = {$post['prioridade']})";
@@ -191,15 +194,15 @@ class Atividades extends MY_Controller
                         $acao .= '<a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_atividade_mae(' . "'" . $row->id . "'" . ',)"><i class="glyphicon glyphicon-pencil"></i></a> ';
                     }
                 }
-                if ($this->session->userdata('tipo') == 'empresa') {
-                    $acao .= ' <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Cadastrar atividade(s) filha(s)" onclick="add_atividade_filha(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i></a>';
-                } else {
+                if ($row->status === '1' or $row->id_mae) {
                     $acao .= ' <button class="btn btn-sm btn-info disabled"><i class="glyphicon glyphicon-plus"></i></button>';
-                }
-                if ($this->session->userdata('tipo') == 'empresa') {
-                    $acao .= ' <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_atividade(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>';
                 } else {
+                    $acao .= ' <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Cadastrar atividade(s) filha(s)" onclick="add_atividade_filha(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i></a>';
+                }
+                if ($row->status === '1') {
                     $acao .= ' <a class="btn btn-sm btn-danger disabled" href="javascript:void(0)" title="Excluir"><i class="glyphicon glyphicon-trash"></i></a>';
+                } else {
+                    $acao .= ' <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_atividade(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>';
                 }
             }
 //            if ($row->status === '0' and $row->filhas_finalizadas === '1') {
@@ -210,7 +213,7 @@ class Atividades extends MY_Controller
             }
 
             $idMae = $row->id_mae ? '' : $row->id;
-            $idFilha = $row->id_mae ? '<strong>(' . $row->id_mae . ')</strong> ' . $row->id . ' - ' : '';
+            $idFilha = $row->id_mae ? '<strong>(' . $row->id_mae . ' - ' . $row->nome_mae . ')</strong><br>' . $row->id . ' - ' : '';
 
             $data[] = array(
                 $idMae,
@@ -249,6 +252,10 @@ class Atividades extends MY_Controller
 
     public function ajax_add()
     {
+
+        $buu = $this->db->insert('atividades', []);
+        var_dump($buu);exit;
+        var_dump($buu);exit;
         $data = $this->input->post();
 
         $data['data_cadastro'] = date('Y-m-d H:i:s');
@@ -276,6 +283,8 @@ class Atividades extends MY_Controller
             }
 
             $this->db->insert_batch('atividades', $arr_data);
+
+            $this->notificar($arr_data);
         } else {
             if (empty($data['id_usuario'])) {
                 $data['id_usuario'] = $this->session->userdata('id');
@@ -286,6 +295,29 @@ class Atividades extends MY_Controller
 
 
         echo json_encode(array("status" => true));
+    }
+
+
+    private function notificar($rows)
+    {
+        $data = array(
+            'nome' => $this->session->userdata('nome'),
+            'email' => $this->session->userdata('email')
+        );
+
+        $this->load->library('email');
+
+        foreach ($rows as $row) {
+            $this->email->from('contato@rhsuite.com.br', 'RhSuite');
+            $this->email->to($row->email);
+            $this->email->subject('LMS - Atribuição de atividade');
+
+            $data['atividade'] = $row->atividade;
+            $data['dataLimite'] = date('d/m/Y', strtotime($row->data_limite));
+
+            $this->email->message($this->load->view('atividades_email', $data, true));
+            $this->email->send();
+        }
     }
 
 
@@ -438,7 +470,7 @@ class Atividades extends MY_Controller
                       LEFT JOIN atividades c ON
                                 c.id = a.id_mae
                       WHERE 1";
-        if (isset($get['prioridade'])) {
+        if (!empty($get['prioridade'])) {
             $sql .= " AND (a.prioridade = {$get['prioridade']} OR c.prioridade = {$get['prioridade']})";
         }
         if (isset($get['status'])) {
@@ -450,23 +482,33 @@ class Atividades extends MY_Controller
                 $sql .= " AND (CURDATE() > a.data_limite OR CURDATE() > c.data_limite)";
             }
         }
-        if (isset($get['data_inicio'])) {
+        if (!empty($get['data_inicio'])) {
             $data_inicio = date('Y-m-d', strtotime('-1 days', strtotime(str_replace('/', '-', $get['data_inicio']))));
             $sql .= " AND (a.data_cadastro > '{$data_inicio}' OR c.data_cadastro > '{$data_inicio}')";
         }
-        if (isset($get['data_termino'])) {
+        if (!empty($get['data_termino'])) {
             $data_termino = date('Y-m-d', strtotime('+1 days', strtotime(str_replace('/', '-', $get['data_termino']))));
             $sql .= " AND (a.data_limite < '{$data_termino}' OR c.data_limite < '{$data_termino}')";
         }
-        if (isset($get['usuario'])) {
-            if ($get['usuario'] == $id) {
-                $sql .= " AND a.id_usuario = {$id}";
-            } elseif ($get['usuario']) {
-                $sql .= " AND c.id_usuario = {$get['usuario']}";
-            } else {
-                $sql .= " AND (a.id_usuario = {$id} OR c.id_usuario = {$id})";
+        if (isset($get['status'])) {
+            if ($get['status'] == 1) {
+                $sql .= " AND (a.status = {$get['status']} OR c.status = {$get['status']})";
+            } elseif ($get['status'] == 2) {
+                $sql .= " AND (CURDATE() BETWEEN a.data_lembrete AND a.data_limite OR CURDATE() BETWEEN c.data_lembrete AND c.data_limite)";
+            } elseif ($get['status'] == 3) {
+                $sql .= " AND (CURDATE() > a.data_limite OR CURDATE() > c.data_limite)";
             }
         }
+        if (!empty($get['usuario'])) {
+            if ($get['usuario'] == $id) {
+                $sql .= " AND a.id_usuario = {$id}";
+            } else {
+                $sql .= " AND c.id_usuario = {$get['usuario']}";
+            }
+        } else {
+            $sql .= " AND (a.id_usuario = {$id} OR c.id_usuario = {$id})";
+        }
+
         $data['rows'] = $this->db->query($sql)->result();
 
         $this->db->select('foto, foto_descricao');
@@ -555,6 +597,7 @@ class Atividades extends MY_Controller
 
     public function ajaxRelatorio()
     {
+        $id = $this->session->userdata('id');
         $get = $this->input->post();
 
 
@@ -597,11 +640,11 @@ class Atividades extends MY_Controller
         if (!empty($get['usuario'])) {
             if ($get['usuario'] == $id) {
                 $this->db->where('a.id_usuario', $id);
-            } elseif ($get['usuario']) {
-                $this->db->where('c.id_usuario', $get['usuario']);
             } else {
-                $this->db->where("(a.id_usuario = {$id} OR c.id_usuario = {$id})", null, false);
+                $this->db->where('c.id_usuario', $get['usuario']);
             }
+        } else {
+            $this->db->where("(a.id_usuario = {$id} OR c.id_usuario = {$id})", null, false);
         }
         $query = $this->db->get('atividades a');
 
@@ -614,7 +657,7 @@ class Atividades extends MY_Controller
 
         foreach ($output->data as $row) {
             $idMae = $row->id_mae ? '' : $row->id;
-            $idFilha = $row->id_mae ? $row->id . ' - ' : '';
+            $idFilha = $row->id_mae ? '<strong>(' . $row->id_mae . ')</strong> ' . $row->id . ' - ' : '';
             $data[] = array(
                 $idMae,
                 $idFilha . $row->nome,

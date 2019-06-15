@@ -148,24 +148,24 @@ class Clientes extends MY_Controller
             exit(json_encode(['erro' => 'Erro ao cadastrar dados']));
         }
 
-        if (isset($_FILES['foto'])) {
-            $config = array(
-                'upload_path' => './imagens/usuarios/',
-                'allowed_types' => 'gif|jpg|png',
-                'file_name' => utf8_decode($_FILES['foto']['name']),
-            );
-
-            $this->load->library('upload', $config);
-
-            if ($this->upload->do_upload('foto') == false) {
-                $this->db->trans_rollback();
-                exit(json_encode(['erro' => $this->upload->display_errors()]));
-            }
-
-            $foto = $this->upload->data();
-
-            $this->cliente->update(['foto' => utf8_encode($foto['file_name'])], ['id' => $id]);
-        }
+//        if (!empty($_FILES['foto'])) {
+//            $config = array(
+//                'upload_path' => './imagens/usuarios/',
+//                'allowed_types' => 'gif|jpg|png',
+//                'file_name' => utf8_decode($_FILES['foto']['name']),
+//            );
+//
+//            $this->load->library('upload', $config);
+//
+//            if ($this->upload->do_upload('foto') == false) {
+//                $this->db->trans_rollback();
+//                exit(json_encode(['erro' => $this->upload->display_errors()]));
+//            }
+//
+//            $foto = $this->upload->data();
+//
+//            $this->cliente->update(['foto' => utf8_encode($foto['file_name'])], ['id' => $id]);
+//        }
 
         $this->db->trans_commit();
 
@@ -200,24 +200,24 @@ class Clientes extends MY_Controller
             exit(json_encode(['erro' => 'Erro ao alterar dados']));
         }
 
-        if (isset($_FILES['foto'])) {
-            $config = array(
-                'upload_path' => './imagens/usuarios/',
-                'allowed_types' => 'gif|jpg|png',
-                'file_name' => utf8_decode($_FILES['foto']['name']),
-            );
-
-            $this->load->library('upload', $config);
-
-            if ($this->upload->do_upload('foto') == false) {
-                $this->db->trans_rollback();
-                exit(json_encode(['erro' => $this->upload->display_errors()]));
-            }
-
-            $foto = $this->upload->data();
-
-            $this->cliente->update(['foto' => utf8_encode($foto['file_name'])], ['id' => $id]);
-        }
+//        if (!empty($_FILES['foto'])) {
+//            $config = array(
+//                'upload_path' => './imagens/usuarios/',
+//                'allowed_types' => 'gif|jpg|png',
+//                'file_name' => utf8_decode($_FILES['foto']['name']),
+//            );
+//
+//            $this->load->library('upload', $config);
+//
+//            if ($this->upload->do_upload('foto') == false) {
+//                $this->db->trans_rollback();
+//                exit(json_encode(['erro' => $this->upload->display_errors()]));
+//            }
+//
+//            $foto = $this->upload->data();
+//
+//            $this->cliente->update(['foto' => utf8_encode($foto['file_name'])], ['id' => $id]);
+//        }
 
         $this->db->trans_commit();
 

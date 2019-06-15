@@ -46,6 +46,8 @@ class OrdensServico extends MY_Controller
 
         $sql = "SELECT a.numero_os,
                        a.data_abertura,
+                       a.data_resolucao_problema,
+                       a.data_fechamento,
                        a.prioridade,
                        (CASE a.status
                              WHEN 'A' THEN 'Aberta'
@@ -53,11 +55,10 @@ class OrdensServico extends MY_Controller
                              WHEN 'P' THEN 'Parcialmente fechada'
                              WHEN 'E' THEN 'Em tratamento'
                              WHEN 'G' THEN 'Tratada - Aguardando aprovação requisitante' END) AS descricao_status,
-                       a.data_fechamento,
                        c.nome AS vistoriador,
-                       CONCAT(c.depto, '/', c.area, '/', c.setor) AS estrutura,
-                       a.descricao_problema,
+                       CONCAT('<strong>Solicitação:</strong>\n', IFNULL(a.descricao_problema, ''), '\n<strong>Andamento:</strong>\n', IFNULL(a.observacoes, '')) AS descricao_problema,
                        DATE_FORMAT(a.data_abertura, '%d/%m/%Y')   AS data_abertura_de,
+                       DATE_FORMAT(a.data_resolucao_problema, '%d/%m/%Y')   AS data_resolucao_problema_de,
                        DATE_FORMAT(a.data_fechamento, '%d/%m/%Y') AS data_fechamento_de,
                        (CASE a.prioridade
                              WHEN 0 THEN 'Nenhuma'
@@ -99,11 +100,12 @@ class OrdensServico extends MY_Controller
             $data[] = array(
                 $row->numero_os,
                 $row->data_abertura_de,
+                $row->data_resolucao_problema_de,
                 $row->data_fechamento_de,
                 $row->descricao_prioridade,
                 $row->descricao_status,
                 $row->vistoriador,
-                $row->descricao_problema,
+                nl2br($row->descricao_problema),
                 '<button class="btn btn-sm btn-info" onclick="edit_os(' . $row->numero_os . ');" title="Editar ordem de serviço"><i class="glyphicon glyphicon-pencil"></i></button>
                  <button class="btn btn-sm btn-danger" onclick="delete_os(' . $row->numero_os . ');" title="Excluir ordem de serviço"><i class="glyphicon glyphicon-trash"></i></button>
                  <a class="btn btn-sm btn-primary" href="' . site_url('facilities/ordensServico/relatorio/' . $row->numero_os) . '" title="Imprimir ordem de serviço"><i class="glyphicon glyphicon-print"></i></a>',
@@ -249,81 +251,109 @@ class OrdensServico extends MY_Controller
     {
         $data = $this->input->post();
 
-        if (strlen($data['data_abertura']) > 0) {
+        if (isset($data['data_abertura'])) {
+            if (strlen($data['data_abertura']) > 0) {
 
-            $dataAbertura = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_abertura'])));
-            if ($data['data_abertura'] != preg_replace('/(\d+)-(\d+)-(\d+)/', '$3/$2/$1', $dataAbertura)) {
-                exit(json_encode(['erro' => 'A data de abertura é inválida.']));
+                $dataAbertura = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_abertura'])));
+                if ($data['data_abertura'] != preg_replace('/(\d+)-(\d+)-(\d+)/', '$3/$2/$1', $dataAbertura)) {
+                    exit(json_encode(['erro' => 'A data de abertura é inválida.']));
+                }
+
+                $data['data_abertura'] = $dataAbertura;
+            } else {
+                exit(json_encode(['erro' => 'A data de abertura é obrigatória.']));
             }
-
-            $data['data_abertura'] = $dataAbertura;
-        } else {
-            exit(json_encode(['erro' => 'A data de abertura é obrigatória.']));
         }
 
 
-        if (strlen($data['data_resolucao_problema']) > 0) {
+        if (isset($data['data_resolucao_problema'])) {
+            if (strlen($data['data_resolucao_problema']) > 0) {
 
-            $dataResolucaoProblema = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_resolucao_problema'])));
-            if ($data['data_resolucao_problema'] != preg_replace('/(\d+)-(\d+)-(\d+)/', '$3/$2/$1', $dataResolucaoProblema)) {
-                exit(json_encode(['erro' => 'A data estimada de solução do problema é inválida.']));
+                $dataResolucaoProblema = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_resolucao_problema'])));
+                if ($data['data_resolucao_problema'] != preg_replace('/(\d+)-(\d+)-(\d+)/', '$3/$2/$1', $dataResolucaoProblema)) {
+                    exit(json_encode(['erro' => 'A data estimada de solução do problema é inválida.']));
+                }
+
+                if (strtotime($dataResolucaoProblema) < strtotime($data['data_resolucao_problema'])) {
+                    exit(json_encode(['erro' => 'A data estimada de solução do problema deve ser maior ou igual à data de abertura.']));
+                }
+
+                $data['data_resolucao_problema'] = $dataResolucaoProblema;
+            } else {
+                $data['data_resolucao_problema'] = null;
             }
+        }
 
-            if (strtotime($dataResolucaoProblema) < strtotime($data['data_abertura'])) {
-                exit(json_encode(['erro' => 'A data estimada de solução do problema deve ser maior ou igual à data de abertura.']));
+
+        if (isset($data['data_fechamento'])) {
+            if (strlen($data['data_fechamento']) > 0) {
+
+                $dataFechamento = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_fechamento'])));
+                if ($data['data_fechamento'] != preg_replace('/(\d+)-(\d+)-(\d+)/', '$3/$2/$1', $dataFechamento)) {
+                    exit(json_encode(['erro' => 'A data de fechamento é inválida.']));
+                }
+
+                if (strtotime($dataFechamento) < strtotime($data['data_fechamento'])) {
+                    exit(json_encode(['erro' => 'A data de fechamento deve ser maior ou igual à data de abertura.']));
+                }
+
+                $data['data_fechamento'] = $dataFechamento;
+            } else {
+                $data['data_fechamento'] = null;
             }
-
-            $data['data_resolucao_problema'] = $dataResolucaoProblema;
-        } else {
-            $data['data_resolucao_problema'] = null;
         }
 
 
-        if (strlen($data['data_fechamento']) > 0) {
-
-            $dataFechamento = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_fechamento'])));
-            if ($data['data_fechamento'] != preg_replace('/(\d+)-(\d+)-(\d+)/', '$3/$2/$1', $dataFechamento)) {
-                exit(json_encode(['erro' => 'A data de fechamento é inválida.']));
+        if (isset($data['id_depto'])) {
+            if (strlen($data['id_depto']) == 0) {
+                $data['id_depto'] = null;
             }
-
-            if (strtotime($dataFechamento) < strtotime($data['data_abertura'])) {
-                exit(json_encode(['erro' => 'A data de fechamento deve ser maior ou igual à data de abertura.']));
+        }
+        if (isset($data['id_area'])) {
+            if (strlen($data['id_area']) == 0) {
+                $data['id_area'] = null;
             }
-
-            $data['data_fechamento'] = $dataFechamento;
-        } else {
-            $data['data_fechamento'] = null;
+        }
+        if (isset($data['id_setor'])) {
+            if (strlen($data['id_setor']) == 0) {
+                $data['id_setor'] = null;
+            }
         }
 
-
-        if (strlen($data['id_depto']) == 0) {
-            $data['id_depto'] = null;
-        }
-        if (strlen($data['id_area']) == 0) {
-            $data['id_area'] = null;
-        }
-        if (strlen($data['id_setor']) == 0) {
-            $data['id_setor'] = null;
+        if (isset($data['id_requisitante'])) {
+            if (strlen($data['id_requisitante']) == 0) {
+                exit(json_encode(['erro' => 'O requisitante é obrigatório.']));
+            }
         }
 
-        if (strlen($data['descricao_problema']) == 0) {
-            $data['descricao_problema'] = null;
+        if (isset($data['descricao_problema'])) {
+            if (strlen($data['descricao_problema']) == 0) {
+                $data['descricao_problema'] = null;
+            }
         }
 
-        if (strlen($data['observacoes']) == 0) {
-            $data['observacoes'] = null;
+        if (isset($data['observacoes'])) {
+            if (strlen($data['observacoes']) == 0) {
+                $data['observacoes'] = null;
+            }
         }
 
-        if (strlen($data['resolucao_satisfatoria']) == 0) {
-            $data['resolucao_satisfatoria'] = null;
+        if (isset($data['resolucao_satisfatoria'])) {
+            if (strlen($data['resolucao_satisfatoria']) == 0) {
+                $data['resolucao_satisfatoria'] = null;
+            }
         }
 
-        if (strlen($data['observacoes_positivas']) == 0) {
-            $data['observacoes_positivas'] = null;
+        if (isset($data['observacoes_positivas'])) {
+            if (strlen($data['observacoes_positivas']) == 0) {
+                $data['observacoes_positivas'] = null;
+            }
         }
 
-        if (strlen($data['observacoes_negativas']) == 0) {
-            $data['observacoes_negativas'] = null;
+        if (isset($data['observacoes_negativas'])) {
+            if (strlen($data['observacoes_negativas']) == 0) {
+                $data['observacoes_negativas'] = null;
+            }
         }
 
         unset($data['numero_os']);
