@@ -140,6 +140,7 @@
                                         <th>Processo</th>
                                         <th>Atividade</th>
                                         <th>Etapa</th>
+                                        <th nowrap>Grau complexidade</th>
                                         <th>Ações</th>
                                     </tr>
                                     </thead>
@@ -163,6 +164,7 @@
                                         <th>Atividade</th>
                                         <th>Etapa</th>
                                         <th>Item</th>
+                                        <th>Descrição</th>
                                         <th>Ações</th>
                                     </tr>
                                     </thead>
@@ -274,6 +276,32 @@
                                         <span class="help-block"></span>
                                     </div>
                                 </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-5">Grau de complexidade da etapa</label>
+                                    <div class="col-md-6">
+                                        <select name="grau_complexidade" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="5">Extremamente alta</option>
+                                            <option value="4">Alta</option>
+                                            <option value="3">Média</option>
+                                            <option value="2">Baixa</option>
+                                            <option value="1">Extremamente baixa</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-5">Tipo de item envolvido na etapa</label>
+                                    <div class="col-md-6">
+                                        <select name="tamanho_item" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="5">Extremamente grande</option>
+                                            <option value="4">Grande</option>
+                                            <option value="3">Médio</option>
+                                            <option value="2">Pequeno</option>
+                                            <option value="1">Extremamente pequeno</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -342,8 +370,6 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-
-
         <!-- End Bootstrap modal -->
 
         <!-- page end-->
@@ -534,7 +560,7 @@
                     'searchable': false
                 }
             ],
-            'rowsGroup': [0, 1],
+            'rowsGroup': [0, 1, 2],
             'drawCallback': function () {
                 if (id_atividade.length === 0) {
                     $('#novo_etapa').addClass('btn-warning').removeClass('btn-info');
@@ -570,8 +596,8 @@
             },
             'columnDefs': [
                 {
-                    'width': '25%',
-                    'targets': [0, 1, 2, 3]
+                    'width': '20%',
+                    'targets': [0, 1, 2, 3, 4]
                 },
                 {
                     'mRender': function (data) {

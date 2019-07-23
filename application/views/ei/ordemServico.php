@@ -17,8 +17,8 @@
                         Copiar O.S. semestre anterior
                     </button>
                     <a id="pdf" class="btn btn-primary" href="<?= site_url('ei/relatorios/pdfMapaCarregamentoOS/'); ?>"
-                       title="Relatório Mapa Escolas X Alunos"><i class="glyphicon glyphicon-print"></i> Mapa Escolas X
-                        Alunos</a>
+                       title="Relatório Mapa Escolas X Alunos" target="_blank"><i class="glyphicon glyphicon-print"></i>
+                        Mapa Escolas X Alunos</a>
                     <button class="btn btn-default" onclick="javascript:history.back()"><i
                                 class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
                     </button>

@@ -139,8 +139,12 @@
                             </div>
                             <div class="row form-group">
                                 <label class="control-label col-md-2">Módulo</label>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <input name="modulo" class="form-control" placeholder="N&ordm; do módulo">
+                                </div>
+                                <label class="control-label col-md-1">Nota</label>
+                                <div class="col-md-2">
+                                    <input name="nota" class="form-control text-center nota" placeholder="0-100">
                                 </div>
                             </div>
                         </div>
@@ -172,6 +176,7 @@
     $(document).ready(function () {
 
         $('.data').mask('00/00/0000');
+        $('.nota').mask('##0,00', {'reverse': true});
 
         table = $('#table').DataTable({
             'info': false,

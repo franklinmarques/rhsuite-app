@@ -496,7 +496,7 @@ class Apontamento extends MY_Controller
         }
 
 
-        $idMes = $mes - ($semestre > 1 ? 7 : 0);
+        $idMes = $mes - ($semestre > 1 ? 6 : 0);
 
 
         $iniciarMapaVisitacao = $this->input->post('possui_mapa_visitacao');
@@ -808,7 +808,9 @@ class Apontamento extends MY_Controller
 
 
         $sql = "SELECT a.id,
-                       a.nome
+                       a.nome,
+                       d.id AS id_escola,
+                       d.nome AS escola
                 FROM ei_ordem_servico a
                 INNER JOIN ei_contratos b 
                            ON b.id = a.id_contrato
@@ -841,15 +843,18 @@ class Apontamento extends MY_Controller
                       AND f.id_usuario = {$data['supervisor']}
                       AND a.ano = {$data['ano']}
                       AND a.semestre = {$data['semestre']}
-                GROUP BY a.id
+                GROUP BY a.id, d.id
                 ORDER BY a.nome ASC";
         $ordemServico = $this->db->query($sql)->result();
 
 
         $options = ['' => 'selecione...'] + array_column($ordemServico, 'nome', 'id');
+        $escolas = array_column($ordemServico, 'escola', 'id_escola');
+        sort($escolas);
 
 
         $data['ordem_servico'] = form_dropdown('ordem_servico', $options, '', 'class="form-control"');
+        $data['escola'] = form_dropdown('escola', ['' => 'selecione...'] + $escolas, '', 'class="form-control"');
 
 
         echo json_encode($data);
@@ -863,6 +868,294 @@ class Apontamento extends MY_Controller
         if (empty($ordemServico)) {
             exit(json_encode(['erro' => 'Selecione uma Ordem de Serviço.']));
         }
+        $escola = $this->input->post('esola');
+        $empresa = $this->session->userdata('empresa');
+        $departamento = $this->input->post('depto');
+        $idDiretoria = $this->input->post('diretoria');
+        $idSupervisor = $this->input->post('supervisor');
+        $ano = $this->input->post('ano');
+        $mes = $this->input->post('mes');
+        $semestre = $this->input->post('semestre');
+
+
+        if (empty($semestre)) {
+            $semestre = $mes > 7 ? '2' : '1';
+        }
+
+
+        $idMes = $mes - ($semestre > 1 ? 6 : 0);
+
+
+        $iniciarMapaVisitacao = $this->input->post('possui_mapa_visitacao');
+
+
+        $ordemServico = $this->input->post('ordem_servico');
+
+
+        $this->db->where('id_empresa', $empresa);
+        $this->db->where('depto', $departamento);
+        $this->db->where('id_diretoria', $idDiretoria);
+        $this->db->where('id_supervisor', $idSupervisor);
+        $this->db->where('ano', $ano);
+        $this->db->where('semestre', $semestre);
+        $alocacao = $this->db->get('ei_alocacao')->row();
+
+
+        $this->db->trans_begin();
+
+
+        if (empty($alocacao)) {
+            exit(json_encode(array('erro' => 'O semestre não foi iniciado.')));
+        }
+
+        $idAlocacao = $alocacao->id;
+
+
+        $this->db->select("'{$idAlocacao}' AS id_alocacao, a.id AS id_os_escola, b.id AS id_escola", false);
+        $this->db->select('b.codigo, b.nome AS escola, b.municipio, c.nome AS ordem_servico, d.contrato', false);
+        $this->db->join('ei_escolas b', 'b.id = a.id_escola');
+        $this->db->join('ei_ordem_servico c', 'c.id = a.id_ordem_servico');
+        $this->db->join('ei_contratos d', 'd.id = c.id_contrato');
+        $this->db->join('ei_diretorias e', 'e.id = d.id_cliente');
+        $this->db->join('ei_supervisores f', 'f.id_escola = b.id');
+        $this->db->join('ei_coordenacao g', 'g.id = f.id_coordenacao AND g.ano = c.ano AND g.semestre = c.semestre');
+        $this->db->join('ei_funcoes_supervisionadas h', 'h.id_supervisor = g.id');
+        $this->db->join('ei_ordem_servico_profissionais i', 'i.id_ordem_servico_escola = a.id');
+        $this->db->join('ei_ordem_servico_horarios j', 'j.id_os_profissional = i.id', 'left');
+        $this->db->where('e.id_empresa', $empresa);
+        $this->db->where('e.depto', $departamento);
+        $this->db->where('e.id', $idDiretoria);
+        $this->db->where('g.id_usuario', $idSupervisor);
+        $this->db->where('c.ano', $ano);
+        $this->db->where('c.semestre', $semestre);
+        $this->db->where('(j.id_funcao = h.funcao OR j.id_funcao IS NULL)', null, false);
+        $this->db->where('c.id', $ordemServico);
+        if ($escola) {
+            $this->db->where('b.id', $escola);
+        }
+        $this->db->group_by('a.id');
+        $this->db->order_by('b.nome', 'asc');
+        $alocacaoEscolas = $this->db->get('ei_ordem_servico_escolas a')->result_array();
+
+
+        if (!$alocacaoEscolas) {
+            $this->db->trans_rollback();
+            exit(json_encode(['erro' => 'Nenhuma escola encontrada.']));
+        }
+
+
+        $this->db->insert_batch('ei_alocacao_escolas', $alocacaoEscolas);
+
+
+        $this->db->select('d.id AS id_alocacao_escola, a.id AS id_os_profissional, a.id_usuario AS id_cuidador, b.nome AS cuidador', false);
+        $this->db->select('a.valor_hora_operacional, a.horas_mensais_custo, a.data_inicio_contrato, a.data_termino_contrato', false);
+        $this->db->select(["ROUND((TIME_TO_SEC(a.horas_mensais_custo) / 3600) * a.valor_hora_operacional, 2) AS valor_total"], false);
+        $this->db->join('usuarios b', 'b.id = a.id_usuario');
+        $this->db->join('ei_ordem_servico_escolas c', 'c.id = a.id_ordem_servico_escola');
+        $this->db->join('ei_alocacao_escolas d', 'd.id_os_escola = c.id');
+        $this->db->join('ei_alocacao e', 'e.id = d.id_alocacao');
+        $this->db->join('ei_supervisores f', 'f.id_escola = d.id_escola');
+        $this->db->join('ei_coordenacao g', 'g.id = f.id_coordenacao AND g.id_usuario = e.id_supervisor AND g.ano = e.ano AND g.semestre = e.semestre');
+        $this->db->join('ei_funcoes_supervisionadas h', 'h.id_supervisor = g.id');
+        $this->db->join('ei_ordem_servico_horarios i', 'i.id_os_profissional = a.id', 'left');
+        $this->db->where('d.id_alocacao', $idAlocacao);
+        $this->db->where_in('c.id', array_column($alocacaoEscolas, 'id_os_escola'));
+        $this->db->where("(a.id_supervisor = {$idSupervisor} OR a.id_supervisor IS NULL)", null, false);
+        $this->db->where('(i.id_funcao = h.funcao OR i.id_funcao IS NULL)', null, false);
+        $this->db->group_by('a.id');
+        $cuidadores = $this->db->get('ei_ordem_servico_profissionais a')->result_array();
+
+
+        if (!$cuidadores) {
+            $this->db->trans_rollback();
+            exit(json_encode(array('erro' => 'Nenhum cuidador encontrado.')));
+        }
+
+
+        $this->db->insert_batch('ei_alocados', $cuidadores);
+
+
+        if ($iniciarMapaVisitacao) {
+            $this->db->select('a.id_alocacao, a.id_escola, a.escola, a.municipio');
+            $this->db->join('ei_alocacao b', 'b.id = a.id_alocacao');
+            $this->db->join('ei_mapa_unidades c', 'c.id_alocacao = b.id AND c.id_escola = a.id_escola', 'left');
+            $this->db->where('b.id', $idAlocacao);
+            $this->db->where('c.id', null);
+            $this->db->group_by(['a.id_escola']);
+            $mapaVisitacao = $this->db->get('ei_alocacao_escolas a')->result_array();
+
+
+            if ($mapaVisitacao) {
+                $this->db->insert_batch('ei_mapa_unidades', $mapaVisitacao);
+            }
+        }
+
+
+        $this->db->select('d.id AS id_alocacao_escola, a.id AS id_os_aluno, a.id_aluno, b.nome AS aluno', false);
+        $this->db->select('b.status, b.hipotese_diagnostica, a.modulo, a.data_inicio, a.data_termino', false);
+        $this->db->select('a.id_aluno_curso, a2.id_curso, a3.nome AS curso', false);
+        $this->db->join('ei_alunos b', 'b.id = a.id_aluno');
+        $this->db->join('ei_ordem_servico_escolas c', 'c.id = a.id_ordem_servico_escola');
+        $this->db->join('ei_alunos_cursos a2', 'a2.id = a.id_aluno_curso AND a2.id_aluno = b.id');
+        $this->db->join('ei_cursos a3', 'a3.id = a2.id_curso');
+        $this->db->join('ei_alocacao_escolas d', 'd.id_os_escola = c.id');
+        $this->db->join('ei_alocacao e', 'e.id = d.id_alocacao');
+        $this->db->join('ei_supervisores f', 'f.id_escola = d.id_escola');
+        $this->db->join('ei_coordenacao g', 'g.id = f.id_coordenacao AND g.ano = e.ano AND g.semestre = e.semestre');
+        $this->db->join('ei_funcoes_supervisionadas h', 'h.id_supervisor = g.id');
+        $this->db->join('ei_ordem_servico_profissionais i', 'i.id_ordem_servico_escola = c.id');
+        $this->db->join('ei_ordem_servico_horarios j', 'j.id_os_profissional = i.id', 'left');
+        $this->db->where('d.id_alocacao', $idAlocacao);
+        $this->db->where_in('c.id', array_column($alocacaoEscolas, 'id_os_escola'));
+        $this->db->where('(j.id_funcao = h.funcao OR j.id_funcao IS NULL)', null, false);
+        $this->db->group_by('a.id');
+        $alunos = $this->db->get('ei_ordem_servico_alunos a')->result_array();
+
+
+        if ($alunos) {
+            $this->db->insert_batch('ei_matriculados', $alunos);
+        }
+
+
+        $mes1 = $semestre > 1 ? '07' : '01';
+        $mes2 = $semestre > 1 ? '08' : '02';
+        $mes3 = $semestre > 1 ? '09' : '03';
+        $mes4 = $semestre > 1 ? '10' : '04';
+        $mes5 = $semestre > 1 ? '11' : '05';
+        $mes6 = $semestre > 1 ? '12' : '06';
+        if ($semestre === '1') {
+            $mes7 = '07';
+        }
+
+
+        $diaIniMes1 = date('Y-m-d', strtotime("{$ano}-{$mes1}-01"));
+        $diaIniMes2 = date('Y-m-d', strtotime("{$ano}-{$mes2}-01"));
+        $diaIniMes3 = date('Y-m-d', strtotime("{$ano}-{$mes3}-01"));
+        $diaIniMes4 = date('Y-m-d', strtotime("{$ano}-{$mes4}-01"));
+        $diaIniMes5 = date('Y-m-d', strtotime("{$ano}-{$mes5}-01"));
+        $diaIniMes6 = date('Y-m-d', strtotime("{$ano}-{$mes6}-01"));
+        if ($semestre === '1') {
+            $diaIniMes7 = date('Y-m-d', strtotime("{$ano}-{$mes7}-01"));
+        }
+
+
+        $diaFimMes1 = date('Y-m-t', strtotime($diaIniMes1));
+        $diaFimMes2 = date('Y-m-t', strtotime($diaIniMes2));
+        $diaFimMes3 = date('Y-m-t', strtotime($diaIniMes3));
+        $diaFimMes4 = date('Y-m-t', strtotime($diaIniMes4));
+        $diaFimMes5 = date('Y-m-t', strtotime($diaIniMes5));
+        $diaFimMes6 = date('Y-m-t', strtotime($diaIniMes6));
+        if ($semestre === '1') {
+            $diaFimMes7 = date('Y-m-t', strtotime($diaIniMes7));
+        }
+
+
+        $this->db->select('c.id AS id_alocado, a.id AS id_os_horario, f.nome AS cargo, e.nome AS funcao');
+        $this->db->select('a.dia_semana, a.periodo');
+        $this->db->select("(CASE WHEN {$mes1} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_inicio END) AS horario_inicio_mes1", false);
+        $this->db->select("(CASE WHEN {$mes2} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_inicio END) AS horario_inicio_mes2", false);
+        $this->db->select("(CASE WHEN {$mes3} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_inicio END) AS horario_inicio_mes3", false);
+        $this->db->select("(CASE WHEN {$mes4} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_inicio END) AS horario_inicio_mes4", false);
+        $this->db->select("(CASE WHEN {$mes5} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_inicio END) AS horario_inicio_mes5", false);
+        $this->db->select("(CASE WHEN {$mes6} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_inicio END) AS horario_inicio_mes6", false);
+        if ($semestre === '1') {
+            $this->db->select("(CASE WHEN {$mes7} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_inicio END) AS horario_inicio_mes7", false);
+        }
+        $this->db->select("(CASE WHEN {$mes1} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_termino END) AS horario_termino_mes1", false);
+        $this->db->select("(CASE WHEN {$mes2} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_termino END) AS horario_termino_mes2", false);
+        $this->db->select("(CASE WHEN {$mes3} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_termino END) AS horario_termino_mes3", false);
+        $this->db->select("(CASE WHEN {$mes4} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_termino END) AS horario_termino_mes4", false);
+        $this->db->select("(CASE WHEN {$mes5} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_termino END) AS horario_termino_mes5", false);
+        $this->db->select("(CASE WHEN {$mes6} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_termino END) AS horario_termino_mes6", false);
+        if ($semestre === '1') {
+            $this->db->select("(CASE WHEN {$mes7} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN a.horario_termino END) AS horario_termino_mes7", false);
+        }
+        $this->db->select("(CASE WHEN {$mes1} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN TIMEDIFF(a.horario_termino, a.horario_inicio) END) AS total_horas_mes1", false);
+        $this->db->select("(CASE WHEN {$mes2} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN TIMEDIFF(a.horario_termino, a.horario_inicio) END) AS total_horas_mes2", false);
+        $this->db->select("(CASE WHEN {$mes3} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN TIMEDIFF(a.horario_termino, a.horario_inicio) END) AS total_horas_mes3", false);
+        $this->db->select("(CASE WHEN {$mes4} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN TIMEDIFF(a.horario_termino, a.horario_inicio) END) AS total_horas_mes4", false);
+        $this->db->select("(CASE WHEN {$mes5} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN TIMEDIFF(a.horario_termino, a.horario_inicio) END) AS total_horas_mes5", false);
+        $this->db->select("(CASE WHEN {$mes6} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN TIMEDIFF(a.horario_termino, a.horario_inicio) END) AS total_horas_mes6", false);
+        if ($semestre === '1') {
+            $this->db->select("(CASE WHEN {$mes7} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)) THEN TIMEDIFF(a.horario_termino, a.horario_inicio) END) AS total_horas_mes7", false);
+        }
+        $this->db->select(['a.data_inicio_contrato, a.data_termino_contrato, a.valor_hora_operacional, a.horas_mensais_custo, l.valor AS valor_hora_funcao'], false);
+        $this->db->select(['IF(a.valor_hora_operacional > 0, a.valor_hora_operacional, l.valor_pagamento) AS valor_hora_operacional'], false);
+        $this->db->select(["IF({$mes1} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)), WEEK(DATE_SUB(IF(MONTH(MAX(h.data_termino)) = {$mes1}, MAX(h.data_termino), '{$diaFimMes1}'), INTERVAL ((7 + DATE_FORMAT(IF(MONTH(MAX(h.data_termino)) = {$mes1}, MAX(h.data_termino), '$diaFimMes1'), '%w') - dia_semana) % 7) DAY)) - WEEK(DATE_ADD(IF(MONTH(MIN(h.data_inicio)) = {$mes1}, MIN(h.data_inicio), '{$diaIniMes1}'), INTERVAL (((7 - DATE_FORMAT(IF(MONTH(MIN(h.data_inicio)) = {$mes1}, MIN(h.data_inicio), '{$diaIniMes1}'), '%w')) + dia_semana) % 7) DAY)) + 1, 0) AS total_semanas_mes1"], false);
+        $this->db->select(["IF({$mes2} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)), WEEK(DATE_SUB(IF(MONTH(MAX(h.data_termino)) = {$mes2}, MAX(h.data_termino), '{$diaFimMes2}'), INTERVAL ((7 + DATE_FORMAT(IF(MONTH(MAX(h.data_termino)) = {$mes2}, MAX(h.data_termino), '$diaFimMes2'), '%w') - dia_semana) % 7) DAY)) - WEEK(DATE_ADD(IF(MONTH(MIN(h.data_inicio)) = {$mes2}, MIN(h.data_inicio), '{$diaIniMes2}'), INTERVAL (((7 - DATE_FORMAT(IF(MONTH(MIN(h.data_inicio)) = {$mes2}, MIN(h.data_inicio), '{$diaIniMes2}'), '%w')) + dia_semana) % 7) DAY)) + 1, 0) AS total_semanas_mes2"], false);
+        $this->db->select(["IF({$mes3} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)), WEEK(DATE_SUB(IF(MONTH(MAX(h.data_termino)) = {$mes3}, MAX(h.data_termino), '{$diaFimMes3}'), INTERVAL ((7 + DATE_FORMAT(IF(MONTH(MAX(h.data_termino)) = {$mes3}, MAX(h.data_termino), '$diaFimMes3'), '%w') - dia_semana) % 7) DAY)) - WEEK(DATE_ADD(IF(MONTH(MIN(h.data_inicio)) = {$mes3}, MIN(h.data_inicio), '{$diaIniMes3}'), INTERVAL (((7 - DATE_FORMAT(IF(MONTH(MIN(h.data_inicio)) = {$mes3}, MIN(h.data_inicio), '{$diaIniMes3}'), '%w')) + dia_semana) % 7) DAY)) + 1, 0) AS total_semanas_mes3"], false);
+        $this->db->select(["IF({$mes4} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)), WEEK(DATE_SUB(IF(MONTH(MAX(h.data_termino)) = {$mes4}, MAX(h.data_termino), '{$diaFimMes4}'), INTERVAL ((7 + DATE_FORMAT(IF(MONTH(MAX(h.data_termino)) = {$mes4}, MAX(h.data_termino), '$diaFimMes4'), '%w') - dia_semana) % 7) DAY)) - WEEK(DATE_ADD(IF(MONTH(MIN(h.data_inicio)) = {$mes4}, MIN(h.data_inicio), '{$diaIniMes4}'), INTERVAL (((7 - DATE_FORMAT(IF(MONTH(MIN(h.data_inicio)) = {$mes4}, MIN(h.data_inicio), '{$diaIniMes4}'), '%w')) + dia_semana) % 7) DAY)) + 1, 0) AS total_semanas_mes4"], false);
+        $this->db->select(["IF({$mes5} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)), WEEK(DATE_SUB(IF(MONTH(MAX(h.data_termino)) = {$mes5}, MAX(h.data_termino), '{$diaFimMes5}'), INTERVAL ((7 + DATE_FORMAT(IF(MONTH(MAX(h.data_termino)) = {$mes5}, MAX(h.data_termino), '$diaFimMes5'), '%w') - dia_semana) % 7) DAY)) - WEEK(DATE_ADD(IF(MONTH(MIN(h.data_inicio)) = {$mes5}, MIN(h.data_inicio), '{$diaIniMes5}'), INTERVAL (((7 - DATE_FORMAT(IF(MONTH(MIN(h.data_inicio)) = {$mes5}, MIN(h.data_inicio), '{$diaIniMes5}'), '%w')) + dia_semana) % 7) DAY)) + 1, 0) AS total_semanas_mes5"], false);
+        $this->db->select(["IF({$mes6} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)), WEEK(DATE_SUB(IF(MONTH(MAX(h.data_termino)) = {$mes6}, MAX(h.data_termino), '{$diaFimMes6}'), INTERVAL ((7 + DATE_FORMAT(IF(MONTH(MAX(h.data_termino)) = {$mes6}, MAX(h.data_termino), '$diaFimMes6'), '%w') - dia_semana) % 7) DAY)) - WEEK(DATE_ADD(IF(MONTH(MIN(h.data_inicio)) = {$mes6}, MIN(h.data_inicio), '{$diaIniMes6}'), INTERVAL (((7 - DATE_FORMAT(IF(MONTH(MIN(h.data_inicio)) = {$mes6}, MIN(h.data_inicio), '{$diaIniMes6}'), '%w')) + dia_semana) % 7) DAY)) + 1, 0) AS total_semanas_mes6"], false);
+        if ($semestre === '1') {
+            $this->db->select(["IF({$mes7} BETWEEN MONTH(MIN(h.data_inicio)) AND MONTH(MAX(h.data_termino)), WEEK(DATE_SUB(IF(MONTH(MAX(h.data_termino)) = {$mes7}, MAX(h.data_termino), '{$diaFimMes7}'), INTERVAL ((7 + DATE_FORMAT(IF(MONTH(MAX(h.data_termino)) = {$mes7}, MAX(h.data_termino), '$diaFimMes7'), '%w') - dia_semana) % 7) DAY)) - WEEK(DATE_ADD(IF(MONTH(MIN(h.data_inicio)) = {$mes7}, MIN(h.data_inicio), '{$diaIniMes7}'), INTERVAL (((7 - DATE_FORMAT(IF(MONTH(MIN(h.data_inicio)) = {$mes7}, MIN(h.data_inicio), '{$diaIniMes7}'), '%w')) + dia_semana) % 7) DAY)) + 1, 0) AS total_semanas_mes7"], false);
+        }
+        $this->db->join('ei_ordem_servico_profissionais b', 'b.id = a.id_os_profissional');
+        $this->db->join('ei_alocados c', 'c.id_os_profissional = b.id');
+        $this->db->join('ei_alocacao_escolas d', 'd.id = c.id_alocacao_escola');
+        $this->db->join('ei_alocacao d2', 'd2.id = d.id_alocacao');
+        $this->db->join('ei_supervisores m', 'm.id_escola = d.id_escola');
+        $this->db->join('ei_coordenacao n', 'n.id = m.id_coordenacao AND n.id_usuario = d2.id_supervisor AND n.ano = d2.ano AND n.semestre = d2.semestre');
+        $this->db->join('ei_funcoes_supervisionadas o', 'o.id_supervisor = n.id', 'left');
+        $this->db->join('empresa_funcoes e', 'e.id = a.id_funcao', 'left');
+        $this->db->join('empresa_cargos f', 'f.id = e.id_cargo', 'left');
+        $this->db->join('ei_ordem_servico_turmas g', 'g.id_os_horario = a.id', 'left');
+        $this->db->join('ei_ordem_servico_alunos h', 'h.id = g.id_os_aluno', 'left');
+        $this->db->join('ei_ordem_servico_escolas i', 'i.id = b.id_ordem_servico_escola', 'left');
+        $this->db->join('ei_ordem_servico j', 'j.id = i.id_ordem_servico', 'left');
+        $this->db->join('ei_contratos k', 'k.id = j.id_contrato', 'left');
+        $this->db->join('ei_valores_faturamento l', 'l.id_contrato = k.id AND l.ano = j.ano AND l.semestre = j.semestre AND l.id_cargo = f.id AND l.id_funcao = e.id', 'left');
+        $this->db->where('d.id_alocacao', $idAlocacao);
+        $this->db->where_in('d.id_os_escola', array_column($alocacaoEscolas, 'id_os_escola'));
+        $this->db->where_in('b.id', array_column($cuidadores, 'id_os_profissional'));
+        $this->db->where('(o.funcao = a.id_funcao OR a.id_funcao IS NULL)', null, false);
+        $this->db->group_by('a.id');
+        $horarios = $this->db->get('ei_ordem_servico_horarios a')->result_array();
+
+
+        $this->db->insert_batch('ei_alocados_horarios', $horarios);
+
+
+        $this->db->select('d.id AS id_matriculado, e.id AS id_alocado_horario');
+        $this->db->join('ei_ordem_servico_alunos b', 'b.id = a.id_os_aluno');
+        $this->db->join('ei_ordem_servico_horarios c', 'c.id = a.id_os_horario');
+        $this->db->join('ei_matriculados d', 'd.id_os_aluno = b.id');
+        $this->db->join('ei_alocados_horarios e', 'e.id_os_horario = c.id');
+        $this->db->join('ei_alocados f', 'f.id = e.id_alocado');
+        $this->db->join('ei_alocacao_escolas g', 'g.id = f.id_alocacao_escola');
+        $this->db->where('g.id_alocacao', $idAlocacao);
+        $this->db->where_in('g.id_os_escola', array_column($alocacaoEscolas, 'id_os_escola'));
+        $this->db->where_in('f.id_os_profissional', array_column($cuidadores, 'id_os_profissional'));
+        $this->db->where_in('d.id_os_aluno', array_column($alunos, 'id_os_aluno'));
+        $this->db->where_in('e.id_os_horario', array_column($horarios, 'id_os_horario'));
+        $turmas = $this->db->get('ei_ordem_servico_turmas a')->result_array();
+
+
+        if ($turmas) {
+            $this->db->insert_batch('ei_matriculados_turmas', $turmas);
+        }
+
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            exit(json_encode(['erro' => 'Erro ao iniciar semestre.']));
+        }
+
+
+        $this->db->trans_commit();
+
+
+        echo json_encode(array('status' => true));
+    }
+
+
+    public function adicionarOSIndividual2()
+    {
+        $ordemServico = $this->input->post('ordem_servico');
+        if (empty($ordemServico)) {
+            exit(json_encode(['erro' => 'Selecione uma Ordem de Serviço.']));
+        }
+        $escola = $this->input->post('esola');
         $empresa = $this->session->userdata('empresa');
         $departamento = $this->input->post('depto');
         $diretoria = $this->input->post('diretoria');
@@ -873,17 +1166,47 @@ class Apontamento extends MY_Controller
 
         $this->db->where('id_empresa', $empresa);
         $this->db->where('depto', $departamento);
-        $this->db->where('diretoria', $diretoria);
-        $this->db->where('supervisor', $supervisor);
+        $this->db->where('id_diretoria', $diretoria);
+        $this->db->where('id_supervisor', $supervisor);
         $this->db->where('ano', $ano);
         $this->db->where('semestre', $semestre);
         $alocacao = $this->db->get('ei_alocacao')->row();
+
         if (empty($alocacao)) {
             exit(json_encode(array('erro' => 'O semestre não foi iniciado.')));
         }
 
 
-        $sqlProfissionais = "SELECT '{$alocacao->id}' AS id_alocacao,
+        $this->db->select("'{$alocacao->id}' AS id_alocacao, a.id AS id_os_escola, b.id AS id_escola", false);
+        $this->db->select('b.codigo, b.nome AS escola, b.municipio, c.nome AS ordem_servico, d.contrato', false);
+        $this->db->join('ei_escolas b', 'b.id = a.id_escola');
+        $this->db->join('ei_ordem_servico c', 'c.id = a.id_ordem_servico');
+        $this->db->join('ei_contratos d', 'd.id = c.id_contrato');
+        $this->db->join('ei_diretorias e', 'e.id = d.id_cliente');
+        $this->db->join('ei_supervisores f', 'f.id_escola = b.id');
+        $this->db->join('ei_coordenacao g', 'g.id = f.id_coordenacao AND g.ano = c.ano AND g.semestre = c.semestre');
+        $this->db->join('ei_funcoes_supervisionadas h', 'h.id_supervisor = g.id');
+        $this->db->join('ei_ordem_servico_profissionais i', 'i.id_ordem_servico_escola = a.id');
+        $this->db->join('ei_ordem_servico_horarios j', 'j.id_os_profissional = i.id', 'left');
+        $this->db->where('e.id_empresa', $empresa);
+        $this->db->where('e.depto', $departamento);
+        $this->db->where('e.id', $diretoria);
+        $this->db->where('g.id_usuario', $supervisor);
+        $this->db->where('c.ano', $ano);
+        $this->db->where('c.semestre', $semestre);
+        $this->db->where('(j.id_funcao = h.funcao OR j.id_funcao IS NULL)', null, false);
+        if ($ordemServico) {
+            $this->db->where('c.id', $ordemServico);
+        }
+        if ($escola) {
+            $this->db->where('b.id', $escola);
+        }
+        $this->db->group_by('a.id');
+        $this->db->order_by('b.nome', 'asc');
+        $alocacaoEscolas = $this->db->get('ei_ordem_servico_escolas a')->result_array();
+
+
+        $sqlProfissionais = "SELECT '{$alocacaoEscolas->id}' AS id_alocacao_escola,
                                     a.id_usuario AS id_cuidador,
                                     a.id AS id_os_profissional,
                                     b.nome AS cuidador,
@@ -1051,6 +1374,10 @@ class Apontamento extends MY_Controller
         if (empty($cuidadores) and empty($horarios) and empty($alunos)) {
             $this->db->trans_rollback();
             exit(json_encode(array('erro' => 'Todos os cuidadores e alunos já foram alocados neste semestre.')));
+        }
+
+        if ($alocacaoEscolas) {
+            $this->db->insert_batch('ei_alocacao_escolas', $alocacaoEscolas);
         }
 
         if ($cuidadores) {
@@ -1603,7 +1930,7 @@ class Apontamento extends MY_Controller
         }
 
         $output = array(
-            'draw' => $this->input->post('draw'),
+            'draw' => intval($this->input->post('draw')),
             'recordsTotal' => 0,
             'recordsFiltered' => 0,
             'meses' => $meses,
@@ -1703,8 +2030,8 @@ class Apontamento extends MY_Controller
         }
 
 
-        $output['recordsTotal'] = $recordsTotal;
-        $output['recordsFiltered'] = $recordsFiltered;
+        $output['recordsTotal'] = intval($recordsTotal);
+        $output['recordsFiltered'] = intval($recordsFiltered);
         $output['data'] = $data;
 
         echo json_encode($output);
@@ -1818,6 +2145,114 @@ class Apontamento extends MY_Controller
 
         $output->semestre = $nomeMeses;
         $output->meses = $meses;
+
+
+        echo json_encode($output);
+    }
+
+    //--------------------------------------------------------------------------
+
+    public function ajaxListBancoHoras()
+    {
+        parse_str($this->input->post('busca'), $busca);
+
+        $idMes = intval($busca['mes']) - ($busca['semestre'] === '2' ? 6 : 0);
+
+
+        $alocacao = $this->db
+            ->select("id, saldo_mes{$idMes} AS saldo_mes", false)
+            ->select('saldo_mes1, saldo_mes2, saldo_mes3, saldo_mes4')
+            ->select('saldo_mes5, saldo_mes6, saldo_mes7')
+            ->where('id_empresa', $this->session->userdata('empresa'))
+            ->where('depto', $busca['depto'])
+            ->where('id_diretoria', $busca['diretoria'])
+            ->where('id_supervisor', $busca['supervisor'])
+            ->where('ano', $busca['ano'])
+            ->where('semestre', $busca['semestre'])
+            ->get('ei_alocacao')
+            ->row();
+
+
+        $query = $this->db
+            ->select('a.data')
+            ->select(["TIME_FORMAT(a.horario_entrada, '%H:%i') AS horario_entrada"], false)
+            ->select(["TIME_FORMAT(a.horario_saida, '%H:%i') AS horario_saida"], false)
+            ->select(["TIME_FORMAT(a.horario_entrada_1, '%H:%i') AS horario_entrada_1"], false)
+            ->select(["TIME_FORMAT(a.horario_saida_1, '%H:%i') AS horario_saida_1"], false)
+            ->select(["TIME_FORMAT(a.total, '%H:%i') AS total"], false)
+            ->select(["TIME_FORMAT(a.saldo_dia, '%H:%i') AS saldo_dia"], false)
+            ->select('a.observacoes, a.id')
+            ->select(["DATE_FORMAT(a.data, '%d/%m/%Y') AS data_de"], false)
+            ->join('ei_alocacao b', 'b.id = a.id_alocacao')
+            ->where('b.id', $alocacao->id ?? null)
+            ->where('MONTH(a.data)', $busca['mes'])
+            ->where('YEAR(a.data)', $busca['ano'])
+            ->get('ei_carga_horaria a');
+
+
+        $this->load->helper('time');
+
+        $this->load->library('dataTables');
+
+        $output = $this->datatables->generate($query);
+
+
+        $data = [];
+
+        foreach ($output->data as $row) {
+            $data[] = array(
+                $row->data_de,
+                $row->horario_entrada,
+                $row->horario_saida,
+                $row->horario_entrada_1,
+                $row->horario_saida_1,
+                $row->total,
+                $row->saldo_dia,
+                nl2br($row->observacoes),
+                '<button class="btn btn-sm btn-info" onclick="edit_banco_hora(' . $row->id . ');" title="Editar evento"><i class="glyphicon glyphicon-pencil"></i></button>
+                 <button class="btn btn-sm btn-danger" onclick="delete_banco_hora(' . $row->id . ');" title="Excluir evento"><i class="glyphicon glyphicon-trash"></i></button>'
+            );
+        }
+
+        $output->data = $data;
+
+        $output->saldo_mes = timeSimpleFormat($alocacao->saldo_mes ?? '');
+
+        $coordenacao = $this->db
+            ->select(["TIME_FORMAT(carga_horaria, '%H:%i') AS carga_horaria"], false)
+            ->select('saldo_acumulado_horas')
+            ->where('id_usuario', $busca['supervisor'])
+            ->where('ano', $busca['ano'])
+            ->where('semestre', $busca['semestre'])
+            ->get('ei_coordenacao')
+            ->row();
+
+        $saldoAcumulado = timeToSec($coordenacao->saldo_acumulado_horas ?? '');
+        switch ($idMes) {
+            case 1:
+                $saldoAcumulado -= timeToSec($alocacao->saldo_mes2);
+            case 2:
+                $saldoAcumulado -= timeToSec($alocacao->saldo_mes3);
+            case 3:
+                $saldoAcumulado -= timeToSec($alocacao->saldo_mes4);
+            case 4:
+                $saldoAcumulado -= timeToSec($alocacao->saldo_mes5);
+            case 5:
+                $saldoAcumulado -= timeToSec($alocacao->saldo_mes6);
+            case 6:
+                $saldoAcumulado -= timeToSec($alocacao->saldo_mes7);
+        }
+
+        $output->saldo_acumulado = secToTime($saldoAcumulado, false);
+
+        $output->carga_horaria = $coordenacao->carga_horaria ?? '';
+
+
+        $dias = array_map(function ($d) {
+            return str_pad($d, 2, '0', 0);
+        }, range(1, date('t', mktime(0, 0, 0, $busca['mes'], 1, $busca['ano']))));
+
+        $output->dias = form_dropdown('', array_combine($dias, $dias), 1);
 
 
         echo json_encode($output);
@@ -3406,6 +3841,9 @@ class Apontamento extends MY_Controller
             $this->input->post('valor_faturado')
         );
 
+        $obs = $this->input->post('observacoes');
+        $dataObs = ["observacoes_mes{$mes}" => strlen($obs) > 0 ? $obs : null];
+
 
         $campos = array(
             'id',
@@ -3414,7 +3852,7 @@ class Apontamento extends MY_Controller
             'funcao',
             "valor_hora_mes{$mes}",
             "total_horas_mes{$mes}",
-            "valor_faturado_mes{$mes}",
+            "valor_faturado_mes{$mes}"
         );
 
 
@@ -3430,6 +3868,8 @@ class Apontamento extends MY_Controller
             } else {
                 $this->db->insert('ei_faturamento_consolidado', $data);
             }
+
+            $this->db->update('ei_alocacao', $dataObs, ['id' => $data['id_alocacao']]);
         }
 
 
@@ -3910,6 +4350,231 @@ class Apontamento extends MY_Controller
 
     //--------------------------------------------------------------------------
 
+    public function ajaxEditCargaHoraria()
+    {
+        $data = $this->db
+            ->where('id', $this->input->post('id'))
+            ->get('ei_carga_horaria')
+            ->row();
+
+        if (empty($data)) {
+            exit(json_encode(['erro' => 'Carga horária não encontrada ou excluída recentemente.']));
+        }
+
+        $data->dia = date('d', strtotime($data->data));
+        if ($data->horario_entrada) {
+            $data->horario_entrada = date('H:i', strtotime($data->horario_entrada));
+        }
+        if ($data->horario_saida) {
+            $data->horario_saida = date('H:i', strtotime($data->horario_saida));
+        }
+        if ($data->horario_entrada_1) {
+            $data->horario_entrada_1 = date('H:i', strtotime($data->horario_entrada_1));
+        }
+        if ($data->horario_saida_1) {
+            $data->horario_saida_1 = date('H:i', strtotime($data->horario_saida_1));
+        }
+        if ($data->carga_horaria) {
+            $data->carga_horaria = date('H:i', strtotime($data->carga_horaria));
+        }
+        if ($data->saldo_dia) {
+            $data->saldo_dia = date('H:i', strtotime($data->saldo_dia));
+        }
+
+        echo json_encode($data);
+    }
+
+    //--------------------------------------------------------------------------
+
+    public function ajaxAddCargaHoraria()
+    {
+        $this->validarCargaHoraria();
+
+        $data = $this->input->post();
+
+        $alocacao = $this->db
+            ->where('id_empresa', $this->session->userdata('empresa'))
+            ->where('depto', $data['depto'])
+            ->where('id_diretoria', $data['diretoria'])
+            ->where('id_supervisor', $data['supervisor'])
+            ->where('ano', $data['ano'])
+            ->where('semestre', $data['semestre'])
+            ->where('depto', $data['depto'])
+            ->get('ei_alocacao')
+            ->row();
+
+        $data['id_alocacao'] = $alocacao->id;
+
+
+        $this->load->helper('time');
+
+        $data['total'] = secToTime(
+            (timeToSec($data['horario_saida']) - timeToSec($data['horario_entrada'])) +
+            (timeToSec($data['horario_saida_1']) - timeToSec($data['horario_entrada_1'])), false);
+
+        $data['data'] = date('Y-m-d', mktime(0, 0, 0, $data['mes'], $data['dia'], $data['ano']));
+
+        $data['saldo_dia'] = secToTime(timeToSec($data['total']) - timeToSec($data['carga_horaria']));
+        $mes = $data['mes'];
+        $semestre = $data['semestre'];
+
+        unset($data['id'], $data['depto'], $data['diretoria'], $data['supervisor']);
+        unset($data['dia'], $data['semestre'], $data['mes'], $data['ano']);
+
+        $this->db->trans_start();
+        $this->db->insert('ei_carga_horaria', $data);
+
+        $this->updateSaldoAcumuladoBancoHoras($alocacao->id, $mes, $semestre);
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === false) {
+            exit(json_encode(['erro' => 'Não foi possível cadastrar a carga horária.']));
+        }
+
+        echo json_encode(['status' => true]);
+    }
+
+    //--------------------------------------------------------------------------
+
+    public function ajaxUpdateCargaHoraria()
+    {
+        $this->validarCargaHoraria();
+
+        $this->load->helper('time');
+
+        $data = $this->input->post();
+        $id = $data['id'];
+        $data['total'] = secToTime(
+            (timeToSec($data['horario_saida']) - timeToSec($data['horario_entrada'])) +
+            (timeToSec($data['horario_saida_1']) - timeToSec($data['horario_entrada_1'])), false);
+
+        $data['data'] = date('Y-m-d', mktime(0, 0, 0, $data['mes'], $data['dia'], $data['ano']));
+        $mes = $data['mes'];
+        $semestre = $data['semestre'];
+        unset($data['id'], $data['depto'], $data['diretoria'], $data['supervisor']);
+        unset($data['dia'], $data['semestre'], $data['mes'], $data['ano']);
+
+        $data['saldo_dia'] = secToTime(timeToSec($data['total']) - timeToSec($data['carga_horaria']));
+
+        $this->db->trans_start();
+        $this->db->update('ei_carga_horaria', $data, ['id' => $id]);
+
+        $this->updateSaldoAcumuladoBancoHoras($data['id_alocacao'], $mes, $semestre);
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === false) {
+            exit(json_encode(['erro' => 'Não foi possível alterar a carga horária.']));
+        }
+
+        echo json_encode(['status' => true]);
+    }
+
+    //--------------------------------------------------------------------------
+
+    private function validarCargaHoraria()
+    {
+        $this->load->library('form_validation');
+
+        $this->form_validation->set_rules('data', '"Data"', 'valid_date');
+        $this->form_validation->set_rules('data_1', '"Data"', 'valid_date');
+        $this->form_validation->set_rules('horario_entrada', '"Horário entrada"', 'valid_time');
+        $this->form_validation->set_rules('horario_saida', '"Horário saída"', 'valid_time');
+        $this->form_validation->set_rules('horario_entrada_1', '"Horário entrada"', 'valid_time');
+        $this->form_validation->set_rules('horario_saida_1', '"Horário saída"', 'valid_time');
+
+        if ($this->form_validation->run() == false) {
+            exit(json_encode(['erro' => $this->form_validation->error_string(' ', ' ')]));
+        }
+    }
+
+    //--------------------------------------------------------------------------
+
+    public function ajaxDeleteCargaHoraria()
+    {
+        $this->db->trans_start();
+
+        $cargaHoraria = $this->db
+            ->select('a.id, a.id_alocacao, MONTH(a.data) AS mes, a.saldo_dia, b.semestre', false)
+            ->join('ei_alocacao b', 'b.id = a.id_alocacao')
+            ->where('a.id', $this->input->post('id'))
+            ->get('ei_carga_horaria a')
+            ->row();
+
+        $this->db->delete('ei_carga_horaria', ['id' => $this->input->post('id')]);
+
+        $this->updateSaldoAcumuladoBancoHoras($cargaHoraria->id_alocacao, $cargaHoraria->mes, $cargaHoraria->semestre);
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === false) {
+            exit(json_encode(['erro' => 'Não foi possível excluir a carga horária.']));
+        }
+
+        echo json_encode(['status' => true]);
+    }
+
+    //--------------------------------------------------------------------------
+    private function updateSaldoAcumuladoBancoHoras($idAlocacao, $mes, $semestre)
+    {
+        $idMes = intval($mes) - ($semestre === '2' ? 6 : 0);
+        $alocacao = $this->db
+            ->select("b.id_supervisor, b.ano, b.semestre, saldo_mes{$idMes} AS antigo_saldo_mes", false)
+            ->select(['SUM(IFNULL(TIME_TO_SEC(a.saldo_dia), 0)) AS novo_saldo_segundos_mes'], false)
+            ->join('ei_alocacao b', 'b.id = a.id_alocacao')
+            ->where('a.id_alocacao', $idAlocacao)
+            ->where('MONTH(a.data)', $mes)
+            ->get('ei_carga_horaria a')
+            ->row();
+
+        if ($this->load->is_loaded('time') === false) {
+            $this->load->helper('time');
+        }
+
+        $data = ['saldo_mes' . $idMes => secToTime($alocacao->novo_saldo_segundos_mes)];
+
+        $this->db->update('ei_alocacao', $data, ['id' => $idAlocacao]);
+
+        $coordenacao = $this->db->select('id, saldo_acumulado_horas AS saldo_acumulado')
+            ->where('id_usuario', $alocacao->id_supervisor)
+            ->where("CONCAT(ano, '.', semestre) >= '{$alocacao->ano}.{$alocacao->semestre}'")
+            ->where('is_supervisor', 1)
+            ->get('ei_coordenacao')
+            ->result();
+
+        foreach ($coordenacao as $row) {
+            $this->db
+                ->set('saldo_acumulado_horas', secToTime(timeToSec($row->saldo_acumulado) - timeToSec($alocacao->antigo_saldo_mes) + $alocacao->novo_saldo_segundos_mes))
+                ->where('id', $row->id)
+                ->update('ei_coordenacao');
+        }
+    }
+
+    //--------------------------------------------------------------------------
+
+    public function salvarCargaHorariaAcumulada()
+    {
+        $alocacao = $this->db
+            ->select('id, saldo_acumulado')
+            ->where('empresa', $this->session->userdata('empresa'))
+            ->get('ei_alocacac')
+            ->row();
+
+        $saldoMes = $this->input->post('saldo_mes');
+        $saldoAcumulado = $this->input->post('saldo_acumulado');
+        $data = [
+            'saldo_mensal' => $saldoMes,
+            'saldo_acumulado' => secToTime(timeToSec($alocacao->saldo_acumulado) + timeToSec($saldoAcumulado))
+        ];
+
+        $this->db->update('ei_alocacao', $data, ['id' => $alocacao->id]);
+
+        echo json_encode(['status' => true]);
+    }
+
+    //--------------------------------------------------------------------------
+
     public function ajaxUpdateVisita()
     {
         $data = $this->input->post();
@@ -3972,7 +4637,7 @@ class Apontamento extends MY_Controller
 
         $this->db->trans_start();
 
-        if ($tipo == '2') {
+        if ($tipo === '2') {
             $this->db->select('b.id, d.aluno');
             $this->db->join('ei_alocados_horarios b', 'b.id_alocado = a.id');
             $this->db->join('ei_matriculados_turmas c', 'c.id_alocado_horario = b.id');
@@ -4005,10 +4670,12 @@ class Apontamento extends MY_Controller
             $this->db->get('ei_alocados a');
 
             $this->db->delete('ei_alocados', ['id' => $id]);
-        } elseif ($tipo == '1') {
+        } elseif ($tipo === '1') {
             $this->db->select('b.escola');
             $this->db->join('ei_alocacao_escolas b', 'b.id = a.id_alocacao_escola');
+            $this->db->join('ei_alocados_horarios c', 'c.id_alocado = a.id');
             $this->db->where('a.id', $id);
+            $this->db->where('c.periodo', $periodo);
             $alocado = $this->db->get('ei_alocados a')->result();
 
             $escolas = array_column($alocado, 'escola') + [0];
@@ -4487,6 +5154,7 @@ class Apontamento extends MY_Controller
 
         $this->db->select("GROUP_CONCAT(DISTINCT a.id ORDER BY a.id SEPARATOR ', ') AS id", false);
         $this->db->select('a.diretoria, null AS valor_hora', false);
+        $this->db->select("a.observacoes_mes{$idMes} AS observacoes", false);
         $this->db->select(["GROUP_CONCAT(DISTINCT b.contrato ORDER BY b.contrato SEPARATOR ', ') AS contratos"], false);
         $this->db->select(["GROUP_CONCAT(DISTINCT b.ordem_servico ORDER BY b.ordem_servico SEPARATOR ', ') AS ordens_servico"], false);
         $this->db->join('ei_alocacao_escolas b', 'b.id_alocacao = a.id');
@@ -4505,7 +5173,7 @@ class Apontamento extends MY_Controller
         $data = $this->db->get('ei_alocacao a')->row();
 
 
-        $subquery = "SELECT c.id_alocacao, 
+        $subquery = "SELECT b.cuidador, c.id_alocacao, 
                             IF(e.data_aprovacao_mes{$idMes}, a.total_horas_mes{$idMes}, NULL) AS total_horas_mes{$idMes}, 
                             d.cargo, d.funcao, d.valor_hora_funcao
                      FROM ei_alocados_totalizacao a
@@ -4541,7 +5209,7 @@ class Apontamento extends MY_Controller
                        s.funcao, 
                        FORMAT(IFNULL(t.valor_hora_mes{$idMes}, s.valor_hora_funcao), 2, 'de_DE') AS valor_hora,
                        TIME_FORMAT(IFNULL(t.total_horas_mes{$idMes}, SEC_TO_TIME(SUM(TIME_TO_SEC(s.total_horas_mes{$idMes})))), '%H:%i') AS total_horas,
-                       t.total_horas_mes{$idMes} AS total_horas_mes,
+                       IFNULL(s.total_horas_mes{$idMes}, t.total_horas_mes{$idMes}) AS total_horas_mes,
                        SUM(TIME_TO_SEC(s.total_horas_mes{$idMes})) AS total_segundos,
                        FORMAT(IFNULL(t.valor_faturado_mes{$idMes}, s.valor_hora_funcao * (SUM(TIME_TO_SEC(s.total_horas_mes{$idMes})) / 3600)), 2, 'de_DE') AS valor_faturado,
                        IFNULL(t.valor_faturado_mes{$idMes}, s.valor_hora_funcao * (SUM(TIME_TO_SEC(s.total_horas_mes{$idMes})) / 3600)) AS valor_total_individual
@@ -4576,6 +5244,7 @@ class Apontamento extends MY_Controller
             'contratos' => $data->contratos,
             'ordensServico' => $data->ordens_servico,
             'mesAno' => ucfirst($this->calendar->get_month_name($mes)) . '/' . $ano,
+            'observacoes' => $data->observacoes,
             'alocados' => $alocados,
             'valor_hora' => $data->valor_hora,
             'total_horas' => secToTime($totalHoras, false),

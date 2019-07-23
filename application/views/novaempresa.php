@@ -24,7 +24,7 @@ require_once "header.php";
                             <div class="row">
                                 <div class="col-md-12">
                                     <div id="alert"></div>
-                                    <?php echo form_open('home/novaempresa_json', 'data-aviso="alert" class="form-horizontal ajax-upload"'); ?>
+                                    <?php echo form_open('home/novaempresa_json', 'data-aviso="alert" class="form-horizontal ajax-upload" autocomplete="off"'); ?>
                                     <div class="box">
                                         <div class="box-title">
                                             <h3></h3>
@@ -226,6 +226,16 @@ require_once "header.php";
                                             </div>
                                         </div>
                                         <div class="form-group">
+                                            <label class="col-sm-3 col-lg-2 control-label"></label>
+                                            <div class="col-sm-9 col-lg-10 controls">
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox" id="visualizacao_pilula_conhecimento"
+                                                           name="visualizacao_pilula_conhecimento" value="1"> Mostrar
+                                                    Pílulas de Conhecimento na tela inicial
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2">
                                                 <button type="submit" name="submit" class="btn btn-primary"><i
                                                             class="fa fa-save"></i> Cadastrar
@@ -391,6 +401,13 @@ require_once "header.php";
                                                     <input type="checkbox" name="hash_acesso[OS]" value="20"><i
                                                             class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
                                                     Ordens de Serviço
+                                                </label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="hash_acesso[GC]" value="26"><i
+                                                            class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
+                                                    Gestão Comercial/Gestão de Contratos
                                                 </label>
                                             </div>
                                             <div class="checkbox">

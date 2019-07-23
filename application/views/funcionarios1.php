@@ -58,7 +58,6 @@ require_once "header.php";
                                         <select name="status" class="form-control input-sm filtro">
                                             <option value="">Todos</option>
                                             <option value="1">Ativos</option>
-                                            <option value="2">Inativos</option>
                                             <option value="3">Em experiência</option>
                                             <option value="4">Em desligamento</option>
                                             <option value="5">Desligado</option>

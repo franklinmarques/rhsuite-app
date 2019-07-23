@@ -13,6 +13,9 @@ class Login extends CI_Controller
         $data['cabecalho'] = '';
         $data['imagem_fundo'] = '';
         $data['video_fundo'] = '';
+        $data['visualizacao_pilula_conhecimento'] = [];
+        $data['area_conhecimento'] = [];
+        $data['tema'] = '';
 
         if ($uri != 'login') {
             $row = $this->db->query("SELECT u.* FROM usuarios u
@@ -23,24 +26,26 @@ class Login extends CI_Controller
                 $data['cabecalho'] = $row->row()->cabecalho;
                 $data['imagem_fundo'] = $row->row()->imagem_fundo;
                 $data['video_fundo'] = $row->row()->video_fundo;
+                $data['visualizacao_pilula_conhecimento'] = $row->row()->visualizacao_pilula_conhecimento;
             } else {
                 show_404();
             }
         }
 
-        $this->db->select('a.id, a.nome');
-        $this->db->join('cursos_pilulas b', 'b.id_area_conhecimento = a.id AND b.publico = 1');
-        $this->db->order_by('a.nome', 'asc');
-        $areasConhecimento = $this->db->get('cursos_pilulas_areas a')->result();
-        $data['area_conhecimento'] = ['' => 'selecione...'] + array_column($areasConhecimento, 'nome', 'id');
+        if ($data['visualizacao_pilula_conhecimento']) {
+            $this->db->select('a.id, a.nome');
+            $this->db->join('cursos_pilulas b', 'b.id_area_conhecimento = a.id AND b.publico = 1');
+            $this->db->order_by('a.nome', 'asc');
+            $areasConhecimento = $this->db->get('cursos_pilulas_areas a')->result();
+            $data['area_conhecimento'] = ['' => 'selecione...'] + array_column($areasConhecimento, 'nome', 'id');
 
-        $this->db->select('a.id, a.nome');
-        $this->db->join('cursos_pilulas b', 'b.id_curso = a.id AND b.publico = 1');
-        $this->db->where('b.id_area_conhecimento', null);
-        $this->db->order_by('a.nome', 'asc');
-        $tema = $this->db->get('cursos a')->result();
-        $data['tema'] = ['' => 'selecione...'] + array_column($tema, 'nome', 'id');
-
+            $this->db->select('a.id, a.nome');
+            $this->db->join('cursos_pilulas b', 'b.id_curso = a.id AND b.publico = 1');
+            $this->db->where('b.id_area_conhecimento', null);
+            $this->db->order_by('a.nome', 'asc');
+            $tema = $this->db->get('cursos a')->result();
+            $data['tema'] = ['' => 'selecione...'] + array_column($tema, 'nome', 'id');
+        }
 
         $this->load->view('login', $data);
     }

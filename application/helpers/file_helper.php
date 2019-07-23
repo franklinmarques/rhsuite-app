@@ -22,7 +22,7 @@ if (!function_exists('uploadConfig')) {
 
         switch ($path) {
             case 'emails':
-                $config['upload_path'] = './imagens/usuarios/';
+                $config['upload_path'] = './imagens/emails/';
                 $config['allowed_types'] = 'gif|jpg|png';
                 break;
             case 'usuarios':
@@ -30,43 +30,43 @@ if (!function_exists('uploadConfig')) {
                 $config['allowed_types'] = 'gif|jpg|png';
                 break;
             case 'ftp':
-                $config['upload_path'] = './imagens/usuarios/';
-                $config['allowed_types'] = 'gif|jpg|png';
+                $config['upload_path'] = './arquivos/usuarios/';
+                $config['allowed_types'] = 'sql';
                 break;
             case 'sql':
-                $config['upload_path'] = './imagens/usuarios/';
-                $config['allowed_types'] = 'gif|jpg|png';
+                $config['upload_path'] = './arquivos/usuarios/';
+                $config['allowed_types'] = 'sql';
                 break;
             case 'csv':
-                $config['upload_path'] = './imagens/usuarios/';
-                $config['allowed_types'] = 'gif|jpg|png';
+                $config['upload_path'] = './arquivos/usuarios/';
+                $config['allowed_types'] = '*';
                 break;
             case 'documentos':
-                $config['upload_path'] = './imagens/usuarios/';
-                $config['allowed_types'] = 'gif|jpg|png';
+                $config['upload_path'] = './arquivos/usuarios/';
+                $config['allowed_types'] = 'pdf';
                 break;
             case 'empresa-docs':
-                $config['upload_path'] = './imagens/usuarios/';
-                $config['allowed_types'] = 'gif|jpg|png';
+                $config['upload_path'] = './arquivos/usuarios/';
+                $config['allowed_types'] = '*';
                 break;
             case 'laudos':
-                $config['upload_path'] = './imagens/usuarios/';
+                $config['upload_path'] = './arquivos/usuarios/';
                 $config['allowed_types'] = 'gif|jpg|png';
                 break;
             case 'media':
-                $config['upload_path'] = './imagens/usuarios/';
+                $config['upload_path'] = './arquivos/usuarios/';
                 $config['allowed_types'] = 'gif|jpg|png';
                 break;
             case 'pdf':
-                $config['upload_path'] = './imagens/usuarios/';
+                $config['upload_path'] = './arquivos/usuarios/';
                 $config['allowed_types'] = 'gif|jpg|png';
                 break;
             case 'temp':
-                $config['upload_path'] = './imagens/usuarios/';
+                $config['upload_path'] = './arquivos/usuarios/';
                 $config['allowed_types'] = 'gif|jpg|png';
                 break;
             case 'videos':
-                $config['upload_path'] = './imagens/usuarios/';
+                $config['upload_path'] = './arquivos/usuarios/';
                 $config['allowed_types'] = 'gif|jpg|png';
                 break;
             default:

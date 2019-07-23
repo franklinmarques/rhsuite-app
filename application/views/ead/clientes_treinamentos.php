@@ -378,26 +378,6 @@
         }
 
 
-        /*function enviar_email() {
-            $.ajax({
-                url: "<?php //echo site_url('ead/cursos_funcionario/enviarEmail') ?>",
-                type: "POST",
-                data: {
-                    id: '<?php //echo $idCliente ?>',
-                    mensagem: $('[name="mensagem"]').val()
-                },
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) {
-                        alert('E-mail de convocação enviado com sucesso');
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Erro ao enviar e-mail de convocação');
-                }
-            });
-        }*/
-
     </script>
 
 <?php require_once APPPATH . 'views/end_html.php'; ?>

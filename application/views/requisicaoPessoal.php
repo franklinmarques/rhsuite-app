@@ -1398,6 +1398,7 @@
             });
         }
 
+
         function enviar_email() {
             $('#btnEnviarEmail').text('Enviando e-mail...').attr('disabled', true);
 

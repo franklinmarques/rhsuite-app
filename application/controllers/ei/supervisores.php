@@ -355,7 +355,13 @@ class Supervisores extends MY_Controller
     public function ajax_edit()
     {
         $id = $this->input->post('id');
-        $data = $this->db->get_where('ei_coordenacao', array('id' => $id))->row();
+
+        $data = $this->db
+            ->select('*', false)
+            ->select("TIME_FORMAT(carga_horaria, '%H:%i') AS carga_horaria_1", false)
+            ->where('id', $id)
+            ->get('ei_coordenacao')
+            ->row();
 
         $busca = array(
             'depto' => $data->depto,
@@ -368,6 +374,8 @@ class Supervisores extends MY_Controller
         $data->area = $campos['area'];
         $data->setor = $campos['setor'];
         $data->id_usuario = $campos['supervisor'];
+        $data->carga_horaria = $data->carga_horaria_1;
+        unset($data->carga_horaria_1);
 
         $this->db->select('a.id, a.nome, d.funcao');
         $this->db->join('empresa_cargos b', 'b.id = a.id_cargo');
@@ -512,7 +520,7 @@ class Supervisores extends MY_Controller
         $funcoesSupervisionadas = $this->db->get('ei_funcoes_supervisionadas')->result();
         $funcoesExistentes = array_column($funcoesSupervisionadas, 'funcao');
 
-        $funcoesNovas = is_array($data['funcoes']) ? array_diff($data['funcoes'], $funcoesExistentes) : [0];
+        $funcoesNovas = is_array($data['funcoes']) ? array_diff($data['funcoes'], $funcoesExistentes) + [0] : [0];
         unset($data['id'], $data['funcoes']);
 
         $this->db->select('id, id_cargo');

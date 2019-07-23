@@ -8,20 +8,31 @@ class CronoAnalises extends MY_Controller
     public function index()
     {
         $data = ['empresa' => $this->session->userdata('empresa')];
+        $this->db->where('id_empresa', $data['empresa']);
+        $processos = $this->db->get('dimensionamento_processos')->result();
+        $data['processos'] = ['' => 'selecione...'] + array_column($processos, 'nome', 'id');
         $this->load->view('dimensionamento/crono_analises', $data);
     }
 
     //==========================================================================
     public function ajaxList()
     {
-        $this->db->select('nome, data_inicio, data_termino, id');
-        $this->db->select(["DATE_FORMAT(data_inicio, '%d/%m/%Y') AS data_inicio_de"], false);
-        $this->db->select(["DATE_FORMAT(data_termino, '%d/%m/%Y') AS data_termino_de"], false);
-        $this->db->where('id_empresa', $this->session->userdata('empresa'));
+        $status = $this->input->post('status');
+
+        $this->db
+            ->select("a.nome, (CASE a.status WHEN 'A' THEN 'Ativa' WHEN 'I' THEN 'Inativa' END) AS status", false)
+            ->select('b.nome AS padrao, a.data_inicio, a.data_termino, a.id, b.id_depto')
+            ->select(["DATE_FORMAT(a.data_inicio, '%d/%m/%Y') AS data_inicio_de"], false)
+            ->select(["DATE_FORMAT(a.data_termino, '%d/%m/%Y') AS data_termino_de"], false)
+            ->join('dimensionamento_processos b', 'b.id = a.id_processo', 'left')
+            ->where('a.id_empresa', $this->session->userdata('empresa'));
         if ($this->input->post('ativos')) {
-            $this->db->where('(NOW() BETWEEN data_inicio AND data_termino)');
+            $this->db->where('(NOW() BETWEEN a.data_inicio AND a.data_termino)');
         }
-        $query = $this->db->get('dimensionamento_crono_analises');
+        if ($status) {
+            $this->db->where('a.status', $status);
+        }
+        $query = $this->db->get('dimensionamento_crono_analises a');
 
         $this->load->library('dataTables');
 
@@ -31,13 +42,15 @@ class CronoAnalises extends MY_Controller
         foreach ($output->data as $row) {
             $data[] = array(
                 $row->nome,
+                $row->status,
+                $row->padrao,
                 $row->data_inicio_de,
                 $row->data_termino_de,
                 '<button class="btn btn-sm btn-info" onclick="edit_crono_analise(' . $row->id . ')" title="Editar crono análise"><i class="glyphicon glyphicon-pencil"></i></button>
                  <button class="btn btn-sm btn-danger" onclick="delete_crono_analise(' . $row->id . ')" title="Excluir crono análise"><i class="glyphicon glyphicon-trash"></i></button>
-                 <button class="btn btn-sm btn-primary" onclick="edit_executores(' . $row->id . ')" title="Gerenciar executores"><i class="glyphicon glyphicon-list"></i> Executores</button>
-                 <button class="btn btn-sm btn-primary" onclick="apontamentos(' . $row->id . ')" title="Gerenciar apontamentos"><i class="glyphicon glyphicon-list"></i> Apontamentos</button>
-                 <button class="btn btn-sm btn-primary" onclick="relatorio(' . $row->id . ')" title="Pelatório de performance"><i class="glyphicon glyphicon-list"></i> Rel. Performance</button>'
+                 <button class="btn btn-sm btn-info" onclick="edit_executores(' . $row->id . ')" title="Gerenciar executores"><i class="glyphicon glyphicon-list"></i> Analisados</button>
+                 <a class="btn btn-sm btn-primary" href="' . site_url('dimensionamento/apontamentos/gerenciar/' . $row->id) . '" target="_blank" title="Gerenciar apontamentos">Apontamentos</a>
+                 <a class="btn btn-sm btn-primary" href="' . site_url('dimensionamento/performance/gerenciar/' . $row->id) . '" target="_blank" title="Análise performance">Rel. performance</a>'
             );
         }
 
@@ -49,14 +62,18 @@ class CronoAnalises extends MY_Controller
     //==========================================================================
     public function ajaxEdit()
     {
-        $this->db->select('id, id_empresa, nome');
-        $this->db->select(["DATE_FORMAT(data_inicio, '%d/%m/%Y') AS data_inicio"], false);
-        $this->db->select(["DATE_FORMAT(data_termino, '%d/%m/%Y') AS data_termino"], false);
-        $this->db->where('id', $this->input->post('id'));
-        $data = $this->db->get('dimensionamento_crono_analises')->row();
+        $data = $this->db
+            ->select('id, id_empresa, id_processo, nome, status, base_tempo, unidade_producao')
+            ->select(["DATE_FORMAT(data_inicio, '%d/%m/%Y') AS data_inicio"], false)
+            ->select(["DATE_FORMAT(data_termino, '%d/%m/%Y') AS data_termino"], false)
+            ->where('id', $this->input->post('id'))
+            ->get('dimensionamento_crono_analises')
+            ->row();
+
         if (empty($data)) {
             exit(json_encode(['erro' => 'Análise não encontrada ou excluída recentemente.']));
         }
+
         echo json_encode($data);
     }
 
@@ -114,15 +131,18 @@ class CronoAnalises extends MY_Controller
         $this->form_validation->set_rules('nome', '"Nome"', 'required|max_length[255]');
         $this->form_validation->set_rules('data_inicio', '"Data Início"', 'required|valid_date');
         $this->form_validation->set_rules('data_termino', '"Data Término"', 'required|valid_date|after_or_equal_date[data_inicio]');
+        $this->form_validation->set_rules('unidade_producao', '"Unidade Produção"', 'max_length[30]');
 
         if ($this->form_validation->run() == false) {
             exit(json_encode(['erro' => $this->form_validation->error_string(' ', ' ')]));
         }
 
-        $this->db->where('id !=', $this->input->post('id'));
-        $this->db->where('id_empresa', $this->input->post('id_empresa'));
-        $this->db->where('nome', $this->input->post('nome'));
-        $count = $this->db->get('dimensionamento_crono_analises')->num_rows();
+        $count = $this->db
+            ->where('id !=', $this->input->post('id'))
+            ->where('id_empresa', $this->input->post('id_empresa'))
+            ->where('nome', $this->input->post('nome'))
+            ->get('dimensionamento_crono_analises')
+            ->num_rows();
 
         if ($count > 0) {
             exit(json_encode(['erro' => 'O campo "Nome" já existe, ele deve ser único.']));
@@ -146,27 +166,56 @@ class CronoAnalises extends MY_Controller
     //==========================================================================
     public function editarExecutores()
     {
-        $this->db->where('id', $this->input->post('id'));
-        $count = $this->db->get('dimensionamento_crono_analises')->num_rows();
-        if ($count == 0) {
+        $cronoAnalise = $this->db
+            ->select('b.id_depto')
+            ->join('dimensionamento_processos b', 'b.id = a.id_processo')
+            ->where('a.id', $this->input->post('id'))
+            ->get('dimensionamento_crono_analises a')
+            ->row();
+
+        if (empty($cronoAnalise)) {
             exit(json_encode(['erro' => 'Análise não encontrada ou excluída recentemente.']));
         }
 
-        $this->db->select('id, nome');
-        $this->db->where('tipo', 'funcionario');
-        $this->db->where('status', 1);
-        $this->db->order_by('nome', 'asc');
-        $usuarios = $this->db->get('usuarios')->result();
 
-        $this->db->select('id_usuario');
-        $this->db->where('id_crono_analise', $this->input->post('id'));
-        $executores = $this->db->get('dimensionamento_executores')->result();
+        $equipes = $this->db
+            ->select("id, CONCAT(nome, ' (', total_componentes, ')') AS nome", false)
+            ->where('id_depto', $cronoAnalise->id_depto)
+            ->order_by('nome', 'asc')
+            ->get('dimensionamento_equipes')
+            ->result();
 
-        $data['executores'] = form_multiselect(
-            '',
-            array_column($usuarios, 'nome', 'id'),
-            array_column($executores, 'id_usuario')
-        );
+
+        $usuarios = $this->db
+            ->select('a.id, a.nome')
+            ->join('empresa_departamentos b', 'b.id = a.id_depto OR b.nome = a.depto')
+            ->where('b.id', $cronoAnalise->id_depto)
+            ->where('a.tipo', 'funcionario')
+            ->where('a.status', 1)
+            ->order_by('a.nome', 'asc')
+            ->get('usuarios a')
+            ->result();
+
+
+        $executores = $this->db
+            ->select('id_equipe, id_usuario')
+            ->where('id_crono_analise', $this->input->post('id'))
+            ->get('dimensionamento_executores')
+            ->result();
+
+        $data = [
+            'equipes' => form_multiselect(
+                '',
+                array_column($equipes, 'nome', 'id'),
+                array_column($executores, 'id_equipe')
+            ),
+            'executores' => form_multiselect(
+                '',
+                array_column($usuarios, 'nome', 'id'),
+                array_column($executores, 'id_usuario')
+            )
+        ];
+
 
         echo json_encode($data);
     }
@@ -175,21 +224,53 @@ class CronoAnalises extends MY_Controller
     public function salvarExecutores()
     {
         $idCronoAnalise = $this->input->post('id_crono_analise');
+        $tipo = $this->input->post('tipo');
+        $equipes = $this->input->post('id_equipe');
         $executores = $this->input->post('id_usuario');
+        if (empty($equipes)) {
+            $equipes = [0];
+        }
+        if (empty($executores)) {
+            $executores = [0];
+        }
 
         $this->db->trans_start();
 
-        $this->db->where('id_crono_analise', $idCronoAnalise);
-        $this->db->where_not_in('id_usuario', $executores);
-        $this->db->delete('dimensionamento_executores');
+        $this->db
+            ->where('id_crono_analise', $idCronoAnalise)
+            ->where('tipo', 'E')
+            ->where_not_in('id_usuario', $equipes)
+            ->delete('dimensionamento_executores');
 
-        $this->db->select("'{$idCronoAnalise}' AS id_crono_analise", false);
-        $this->db->select('a.id AS id_usuario');
-        $this->db->join('dimensionamento_executores b', "b.id_usuario = a.id AND b.id_crono_analise = '{$idCronoAnalise}'", 'left');
-        $this->db->where_in('a.id', $executores);
-        $this->db->where('b.id', null);
-        $this->db->order_by('a.nome', 'asc');
-        $data = $this->db->get('usuarios a')->result_array();
+        $this->db
+            ->where('id_crono_analise', $idCronoAnalise)
+            ->where('tipo', 'C')
+            ->where_not_in('id_usuario', $executores)
+            ->delete('dimensionamento_executores');
+
+        if ($tipo === 'E') {
+            $data = $this->db
+                ->select("'{$idCronoAnalise}' AS id_crono_analise", false)
+                ->select("'{$tipo}' AS tipo", false)
+                ->select('a.id AS id_equipe')
+                ->join('dimensionamento_executores b', "b.id_equipe = a.id AND b.id_crono_analise = '{$idCronoAnalise}'", 'left')
+                ->where_in('a.id', $equipes)
+                ->where('b.id', null)
+                ->order_by('a.nome', 'asc')
+                ->get('dimensionamento_equipes a')
+                ->result_array();
+        } elseif ($tipo === 'C') {
+            $data = $this->db
+                ->select("'{$idCronoAnalise}' AS id_crono_analise", false)
+                ->select("'{$tipo}' AS tipo", false)
+                ->select('a.id AS id_usuario')
+                ->join('dimensionamento_executores b', "b.id_usuario = a.id AND b.id_crono_analise = '{$idCronoAnalise}'", 'left')
+                ->where_in('a.id', $executores)
+                ->where('b.id', null)
+                ->order_by('a.nome', 'asc')
+                ->get('usuarios a')
+                ->result_array();
+        }
 
         if ($data) {
             $this->db->insert_batch('dimensionamento_executores', $data);

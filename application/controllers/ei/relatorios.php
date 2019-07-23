@@ -931,7 +931,8 @@ class Relatorios extends MY_Controller
         $data['alocacao'] = $this->db->get('ei_alocacao a')->row();
 
 
-        $idAlocacoes = isset($data['alocacao']->id) ? explode(',', $data['alocacao']->id) : [0];
+//        $idAlocacoes = isset($data['alocacao']->id) ? explode(',', $data['alocacao']->id) : [0];
+        $idAlocacoes = isset($data['alocacao']->id) ? $data['alocacao']->id : 0;
 
 
         $sql = "SELECT t.id, 
@@ -961,7 +962,7 @@ class Relatorios extends MY_Controller
                       INNER JOIN ei_alocacao_escolas c ON c.id = b.id_alocacao_escola
                       LEFT JOIN ei_alocados_horarios d ON d.id_alocado = b.id AND d.periodo = a.periodo
                       LEFT JOIN ei_faturamento e ON e.id_alocacao = c.id_alocacao AND e.id_escola = c.id_escola
-                      WHERE c.id_alocacao IN ({$data['alocacao']->id})
+                      WHERE c.id_alocacao IN ({$idAlocacoes})
                             AND d.cargo IS NOT NULL 
                             AND d.funcao IS NOT NULL
                       GROUP BY b.id, a.periodo, d.cargo, d.funcao) s
@@ -1116,6 +1117,197 @@ class Relatorios extends MY_Controller
 
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
+
+
+    public function pdfMapaVisitacao()
+    {
+        $empresa = $this->session->userdata('empresa');
+        $this->db->select('foto, foto_descricao');
+        $data['empresa'] = $this->db->get_where('usuarios', ['id' => $this->session->userdata('empresa')])->row();
+
+
+        $depto = $this->input->get('depto');
+        $idDiretoria = $this->input->get('diretoria');
+        $idSupervisor = $this->input->get('supervisor');
+        $ano = $this->input->get('ano');
+        $semestre = $this->input->get('semestre');
+
+
+        $this->db->select('id, diretoria, supervisor');
+        $this->db->where('id_empresa', $empresa);
+        $this->db->where('depto', $depto);
+        $this->db->where('id_diretoria', $idDiretoria);
+        $this->db->where('id_supervisor', $idSupervisor);
+        $this->db->where('ano', $ano);
+        $this->db->where('semestre', $semestre);
+        $alocacao = $this->db->get('ei_alocacao')->row();
+
+
+        $data['departamento'] = $depto;
+        $data['diretoria'] = $alocacao->diretoria;
+        $data['supervisor'] = $alocacao->supervisor;
+        $data['ano'] = $ano;
+        $data['semestre'] = $semestre;
+
+
+        $this->db->select('a.id, a.municipio, a.escola');
+        $this->db->join('ei_mapa_visitacao b', 'b.id_mapa_unidade = a.id', 'left');
+        $this->db->where('a.id_alocacao', $alocacao->id);
+        $this->db->group_by('a.id');
+        $this->db->order_by('a.municipio', 'asc');
+        $this->db->order_by('a.escola', 'asc');
+        $visitas = $this->db->get('ei_mapa_unidades a')->result();
+
+
+        $this->db->select('a.id_mapa_unidade, a.motivo_visita AS status');
+        $this->db->select("MONTH(a.data_visita) - IF(c.semestre = 2, 7, 0) AS mes", false);
+        $this->db->select("DATE_FORMAT(MAX(a.data_visita), '%d/%m/%Y') AS data_visita", false);
+        $this->db->join('ei_mapa_unidades b', 'b.id = a.id_mapa_unidade');
+        $this->db->join('ei_alocacao c', 'c.id = b.id_alocacao');
+        $this->db->where('c.id', $alocacao->id);
+        $this->db->group_by(['b.escola', 'MONTH(a.data_visita)']);
+        $eventos = $this->db->get('ei_mapa_visitacao a')->result();
+
+
+        $status = ['0' => 'warning', '1' => 'success', '2' => 'danger'];
+
+        $mesesVisitados = array();
+        foreach ($eventos as $evento) {
+            $mesesVisitados[$evento->id_mapa_unidade][$evento->mes] = array(
+                'data_visita' => $evento->data_visita,
+                'status' => $status[$evento->status] ?? null
+            );
+        }
+
+
+        $rows = [];
+        foreach ($visitas as $visita) {
+            $row = array(
+                'municipio' => $visita->municipio,
+                'escola' => $visita->escola
+            );
+            for ($a = 1; $a <= 7; $a++) {
+                $row['data_visita_mes' . $a] = $mesesVisitados[$visita->id][$a]['data_visita'] ?? null;
+            }
+            for ($b = 1; $b <= 7; $b++) {
+                $row['status_mes' . $b] = $mesesVisitados[$visita->id][$b]['status'] ?? null;
+            }
+
+            $rows[] = (object)$row;
+        }
+
+        $data['rows'] = $rows;
+
+
+        if ($semestre === '2') {
+            $data['meses'] = [
+                'Julho', 'Agosto', 'Setembro',
+                'Outubro', 'Novembro', 'Dezembro', null
+            ];
+        } else {
+            $data['meses'] = [
+                'Janeiro', 'Fevereiro', 'Março',
+                'Abril', 'Maio', 'Junho', 'Julho'
+            ];
+        }
+
+
+        $this->load->library('m_pdf');
+
+
+        $stylesheet = '#table thead th { font-size: 12px; padding: 5px; background-color: #f5f5f5;} ';
+        $stylesheet .= '#table tbody td { font-size: 14px; padding: 5px; vertical-align: top; } ';
+        $stylesheet .= '#mapa_visitacao thead tr th { padding: 5px; text-align: center; background-color: #f5f5f5; border-color: #ddd; } ';
+        $stylesheet .= '#mapa_visitacao tbody tr td { font-size: 12px; padding: 5px; } ';
+
+
+        $this->m_pdf->pdf->setTopMargin(60);
+        $this->m_pdf->pdf->AddPage('L');
+        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
+        $this->m_pdf->pdf->writeHTML($this->load->view('ei/mapa_visitacao_pdf', $data, true));
+
+
+        $this->m_pdf->pdf->Output('Mapa de Visitação.pdf', 'D');
+    }
+
+
+    public function pdfBancoHoras()
+    {
+        $empresa = $this->session->userdata('empresa');
+        $this->db->select('foto, foto_descricao');
+        $data['empresa'] = $this->db->get_where('usuarios', ['id' => $this->session->userdata('empresa')])->row();
+
+
+        $depto = $this->input->get('depto');
+        $idDiretoria = $this->input->get('diretoria');
+        $idSupervisor = $this->input->get('supervisor');
+        $mes = $this->input->get('mes');
+        $ano = $this->input->get('ano');
+        $semestre = $this->input->get('semestre');
+        $saldoMes = $this->input->post('saldo_mes');
+        $saldoAcumulado = $this->input->post('saldo_acumulado');
+
+
+        $this->db->select('id, diretoria, supervisor');
+        $this->db->where('id_empresa', $empresa);
+        $this->db->where('depto', $depto);
+        $this->db->where('id_diretoria', $idDiretoria);
+        $this->db->where('id_supervisor', $idSupervisor);
+        $this->db->where('ano', $ano);
+        $this->db->where('semestre', $semestre);
+        $alocacao = $this->db->get('ei_alocacao')->row();
+
+
+        $this->load->library('calendar');
+
+
+        $data['departamento'] = $depto;
+        $data['diretoria'] = $alocacao->diretoria;
+        $data['supervisor'] = $alocacao->supervisor;
+        $data['mes'] = $this->calendar->get_month_name($mes);
+        $data['ano'] = $ano;
+        $data['semestre'] = $semestre;
+
+
+        $this->db
+            ->select(["DATE_FORMAT(a.data, '%d/%m/%Y') AS data"], false)
+            ->select(["TIME_FORMAT(a.horario_entrada, '%H:%i') AS horario_entrada"], false)
+            ->select(["TIME_FORMAT(a.horario_saida, '%H:%i') AS horario_saida"], false)
+            ->select(["TIME_FORMAT(a.horario_entrada_1, '%H:%i') AS horario_entrada_1"], false)
+            ->select(["TIME_FORMAT(a.horario_saida_1, '%H:%i') AS horario_saida_1"], false)
+            ->select(["TIME_FORMAT(a.total, '%H:%i') AS total"], false)
+            ->select(["TIME_FORMAT(a.saldo_dia, '%H:%i') AS saldo_dia"], false)
+            ->select('a.observacoes')
+            ->join('ei_alocacao b', 'b.id = a.id_alocacao')
+            ->where('b.id', $alocacao->id);
+        if ($saldoMes) {
+            $this->db->where("TIME_FORMAT(a.saldo_dia, '%H:%i') = '{$saldoMes}'", null, false);
+        }
+        if ($saldoAcumulado) {
+            $this->db->where("TIME_FORMAT(a.saldo_dia, '%H:%i') = '{$saldoAcumulado}'", null, false);
+        }
+        $data['rows'] = $this->db->get('ei_carga_horaria a')->result();
+
+
+        $this->load->library('m_pdf');
+
+
+        $stylesheet = '#table thead th { font-size: 12px; padding: 5px; background-color: #f5f5f5;} ';
+        $stylesheet .= '#table tbody td { font-size: 14px; padding: 5px; vertical-align: top; } ';
+        $stylesheet .= '#banco_horas thead tr th { padding: 5px; text-align: center; background-color: #f5f5f5; border-color: #ddd; } ';
+        $stylesheet .= '#banco_horas tbody tr td { font-size: 12px; padding: 5px; } ';
+
+
+        $this->m_pdf->pdf->setTopMargin(68);
+        $this->m_pdf->pdf->AddPage('L');
+        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
+        $this->m_pdf->pdf->writeHTML($this->load->view('ei/banco_horas_pdf', $data, true));
+
+        $this->calendar->month_type = 'short';
+
+        $this->m_pdf->pdf->Output('Banco de Horas - ' . $this->calendar->get_month_name($mes) . '_' . $data['ano'] . '.pdf', 'D');
+    }
+
 
     public function pdfCuidadores()
     {
@@ -1955,7 +2147,6 @@ class Relatorios extends MY_Controller
     public function pdfMapaCarregamentoOS()
     {
         $get = $this->input->get('busca');
-        $idMes = intval($get['mes']) - ($get['semestre'] > 1 ? 7 : 0);
 
         $empresa = $this->session->userdata('empresa');
         $this->load->library('m_pdf');
@@ -2072,8 +2263,8 @@ class Relatorios extends MY_Controller
                                   WHEN '5' THEN ' a 6&ordf;'
                                   WHEN '6' THEN ' a Sáb'
                                   END AS max_semana,
-                             TIME_FORMAT(MIN(i.horario_inicio_mes{$idMes}), '%H:%i') AS horario_inicio,
-                             TIME_FORMAT(MAX(i.horario_termino_mes{$idMes}), '%H:%i') AS horario_termino,
+                             TIME_FORMAT(MIN(i.horario_inicio), '%H:%i') AS horario_inicio,
+                             TIME_FORMAT(MAX(i.horario_termino), '%H:%i') AS horario_termino,
                              DATE_FORMAT(MIN(d.data_inicio), '%d/%m/%Y') AS data_inicio,
                              DATE_FORMAT(MAX(d.data_termino), '%d/%m/%Y') AS data_termino,
                              d.modulo,
@@ -2091,7 +2282,7 @@ class Relatorios extends MY_Controller
                       LEFT JOIN ei_ordem_servico_profissionais h ON h.id = i.id_os_profissional AND h.id_ordem_servico_escola = b.id
                       LEFT JOIN empresa_funcoes k ON k.id = i.id_funcao
                       WHERE a.id IN ({$ordensServico})
-                      GROUP BY a.id, b.id_escola, e.id, k.id, i.horario_inicio_mes{$idMes}, i.horario_termino_mes{$idMes}
+                      GROUP BY a.id, b.id_escola, e.id, k.id, i.horario_inicio, i.horario_termino
                       ORDER BY IF(CHAR_LENGTH(c.codigo) > 0, c.codigo, CAST(c.nome AS DECIMAL)) ASC, c.municipio ASC, c.nome ASC, COALESCE(funcao, 'zzz') ASC, 
                       a.nome ASC, e.nome ASC) s
                 GROUP BY s.ordem_servico, s.escola, s.aluno
@@ -2170,6 +2361,22 @@ class Relatorios extends MY_Controller
         $this->db->order_by('c.cuidador', 'asc');
         $this->db->order_by('b.escola', 'asc');
         $data['rows'] = $this->db->get('ei_alocacao a')->result();
+
+
+        $totalHoras = 0;
+        $valorTotal = 0;
+
+        $this->load->helper('time');
+
+        foreach ($data['rows'] as $row) {
+            $totalHoras += timeToSec($row->total_horas);
+            $valorTotal += str_replace(['.', ','], ['', '.'], $row->valor_total);
+        }
+
+        $data['total'] = [
+            'horas' => round(secToTime($totalHoras, false), 2),
+            'valor' => number_format($valorTotal, 2, ',', '.')
+        ];
 
 
         return $data;
@@ -2391,6 +2598,17 @@ class Relatorios extends MY_Controller
         $this->db->order_by('c.cuidador', 'asc');
         $this->db->order_by('d2.funcao', 'asc');
         $data['rows'] = $this->db->get('ei_alocacao a')->result();
+
+
+        $totalHoras = 0;
+
+        $this->load->helper('time');
+
+        foreach ($data['rows'] as $row) {
+            $totalHoras += timeToSec($row->total_horas);
+        }
+
+        $data['total_horas'] = round(secToTime($totalHoras, false), 2);
 
 
         return $data;

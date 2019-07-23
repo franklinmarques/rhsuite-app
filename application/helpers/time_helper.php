@@ -56,6 +56,7 @@ if (!function_exists('timeToSec')) {
             return $time;
         }
 
+        $negative = strpos($time, '-') !== false ? -1 : 1; //Verifica se é um valor negativo
         $arrTime = explode(':', $time);
 
         $horas = ($arrTime[0] ?? 0) * 3600;
@@ -66,6 +67,33 @@ if (!function_exists('timeToSec')) {
             return $horas - $minutos - $segundos;
         }
 
-        return $horas + $minutos + $segundos;
+        return ($horas + $minutos + $segundos) * ($negative);
+    }
+}
+// ------------------------------------------------------------------------
+
+/**
+ * timeSimpleFormat
+ *
+ * Remove os segundos de uma string de horas
+ * Substitui a sequência de funções timeToSec e secToTime
+ *
+ * @access    public
+ * @param string    time
+ * @param string    secs
+ * @return    string
+ */
+if (!function_exists('timeSimpleFormat')) {
+    function timeSimpleFormat($time = '')
+    {
+        if (strlen($time) == 0) {
+            return $time;
+        }
+
+        $arrTime = explode(':', $time);
+
+        $data = array_slice($arrTime, 0, 2);
+
+        return implode(':', $data);
     }
 }

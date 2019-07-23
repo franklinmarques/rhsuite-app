@@ -225,10 +225,6 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                                         Facilities</a>
                                 </li>
                             <?php endif; ?>
-                            <li>
-                                <a href="<?php echo site_url('facilities/ordensServico'); ?>">Gerenciar Ordens de
-                                    Serviço</a>
-                            </li>
                             <?php if (in_array($this->session->userdata('nivel'), array(7, 8, 17, 18))): ?>
                                 <li>
                                     <a href="<?php echo site_url('facilities/fornecedoresPrestadores'); ?>">Gerenciar
@@ -238,6 +234,13 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                         </ul>
                     </li>
                 <?php endif; ?>
+
+                <li>
+                    <a href="<?php echo site_url('facilities/ordensServico'); ?>">
+                        <i class="fa fa-sticky-note-o"></i>
+                        <span>Gerenciar Ordens de Serviço</span>
+                    </a>
+                </li>
 
                 <?php if (in_array($this->uri->rsegment(2), array('acessarcurso'))): ?>
                     <li class="sub-menu" id="menu-curso">

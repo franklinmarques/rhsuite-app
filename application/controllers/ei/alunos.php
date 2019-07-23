@@ -335,6 +335,8 @@ class Alunos extends MY_Controller
         $this->db->join('ei_escolas b', 'b.id = a.id_escola');
         $data = $this->db->get_where('ei_alunos_cursos a', array('a.id' => $id))->row();
 
+        $data->nota_geral = str_replace('.', ',', $data->nota_geral);
+
         echo json_encode($data);
     }
 
@@ -590,6 +592,11 @@ class Alunos extends MY_Controller
         }
         if (empty($data['id_curso'])) {
             exit('O campo Curso é obrigatório');
+        }
+        if (strlen($data['nota_geral'])) {
+            $data['nota_geral'] = str_replace(',', '.', $data['nota_geral']);
+        } else {
+            $data['nota_geral'] = null;
         }
 
         $status = $this->db->update('ei_alunos_cursos', $data, array('id' => $id));

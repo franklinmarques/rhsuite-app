@@ -268,6 +268,9 @@
                                 <li role="presentation" style="font-size: 13px; font-weight: bolder"><a
                                             href="#dias_letivos" aria-controls="dias_letivos" role="tab"
                                             data-toggle="tab">Dias letivos</a></li>
+                                <li role="presentation" style="font-size: 13px; font-weight: bolder"><a
+                                            href="#banco_horas" aria-controls="banco_horas" role="tab"
+                                            data-toggle="tab">Banco de Horas</a></li>
                             </ul>
 
                             <div class="tab-content" style="border: 1px solid #ddd; border-top-width: 0;">
@@ -471,6 +474,56 @@
                                         </tbody>
                                     </table>
                                 </div>
+
+                                <div role="tabpane" class="tab-pane" id="banco_horas">
+                                    <br>
+                                    <div class="row" style="margin: 0 2px;">
+                                        <div class="col-sm-3">
+                                            <button type="button" class="btn btn-sm btn-info"
+                                                    id="btnAddCargaHoraria" onclick="add_banco_hora();"><i
+                                                        class="glyphicon glyphicon-plus"></i> Cadastrar carga horária
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-5 form-inline">
+                                            <div class="form-group">
+                                                <label>Saldo do mês</label>
+                                                <input type="text" class="form-control text-center input-sm hora"
+                                                       id="saldo_mes" placeholder="hh:mm" style="width: 70px;" readonly>
+                                            </div>&emsp;
+                                            <div class="form-group">
+                                                <label>Saldo acumulado</label>
+                                                <input type="text" class="form-control text-center input-sm hora"
+                                                       id="saldo_acumulado" placeholder="hh:mm" style="width: 70px;"
+                                                       readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 text-right">
+                                            <button type="button" class="btn btn-sm btn-info" id="pdfBancoHoras"
+                                                    onclick="imprimir_banco_horas();"><i
+                                                        class="glyphicon glyphicon-print"></i> Imprimir relatório do mês
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <table id="table_banco_horas"
+                                           class="table table-hover table-condensed table-bordered" cellspacing="0"
+                                           width="100%" style="border-radius: 0 !important;">
+                                        <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Entrada</th>
+                                            <th>Saída</th>
+                                            <th>Entrada</th>
+                                            <th>Saída</th>
+                                            <th>Total</th>
+                                            <th>Saldo</th>
+                                            <th>Observações</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -627,6 +680,12 @@
                                     <label class="control-label col-md-3">Ordem de serviço</label>
                                     <div class="col-md-8">
                                         <?php echo form_dropdown('ordem_servico', array('' => 'selecione...'), '', 'class="form-control"'); ?>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-3">Escola</label>
+                                    <div class="col-md-8">
+                                        <?php echo form_dropdown('escola', ['' => 'selecione...'], '', 'class="form-control"'); ?>
                                     </div>
                                 </div>
                             </form>
@@ -1756,6 +1815,116 @@
                 </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
 
+            <!-- Bootstrap modal -->
+            <div class="modal fade" id="modal_banco_horas" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Cadastro de banco de horas</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <form action="#" id="form_banco_horas" class="form-horizontal">
+                                <input type="hidden" value="" name="id"/>
+                                <input type="hidden" value="" name="id_alocacao"/>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Dia</label>
+                                    <div class="col-md-5">
+                                        <label>
+                                            <select name="dia" class="form-control">
+                                                <option value="01">01</option>
+                                                <option value="02">02</option>
+                                                <option value="03">03</option>
+                                                <option value="04">04</option>
+                                                <option value="05">05</option>
+                                                <option value="06">06</option>
+                                                <option value="07">07</option>
+                                                <option value="08">08</option>
+                                                <option value="09">09</option>
+                                                <option value="10">10</option>
+                                                <option value="11">11</option>
+                                                <option value="12">12</option>
+                                                <option value="13">13</option>
+                                                <option value="14">14</option>
+                                                <option value="15">15</option>
+                                                <option value="16">16</option>
+                                                <option value="17">17</option>
+                                                <option value="18">18</option>
+                                                <option value="19">19</option>
+                                                <option value="20">20</option>
+                                                <option value="21">21</option>
+                                                <option value="22">22</option>
+                                                <option value="23">23</option>
+                                                <option value="24">24</option>
+                                                <option value="25">25</option>
+                                                <option value="26">26</option>
+                                                <option value="27">27</option>
+                                                <option value="28">28</option>
+                                                <option value="29">29</option>
+                                                <option value="30">30</option>
+                                                <option value="31">31</option>
+                                            </select>
+                                        </label>
+                                        <span id="banco_horas_mes_ano" class="help-inline">de Junho de 2019</span>
+                                    </div>
+                                    <div class="col-sm-5 text-right text-nowrap">
+                                        <button type="button" class="btn btn-success" id="btnSaveVisitas"
+                                                onclick="save_banco_hora();">
+                                            Salvar
+                                        </button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Entrada</label>
+                                    <div class="col-md-3">
+                                        <input name="horario_entrada" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                    <label class="control-label col-md-1">Saída</label>
+                                    <div class="col-md-3">
+                                        <input name="horario_saida" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Entrada</label>
+                                    <div class="col-md-3">
+                                        <input name="horario_entrada_1" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                    <label class="control-label col-md-1">Saída</label>
+                                    <div class="col-md-3">
+                                        <input name="horario_saida_1" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Saldo</label>
+                                    <div class="col-md-3">
+                                        <input name="saldo_dia" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm" readonly>
+                                    </div>
+                                    <label class="control-label col-md-3 text-nowrap">Carga horária padrão</label>
+                                    <div class="col-md-3">
+                                        <input name="carga_horaria" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm" readonly>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Observações</label>
+                                    <div class="col-md-9">
+                                        <textarea name="observacoes" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
         </section>
     </section>
     <!--main content end-->
@@ -1784,7 +1953,7 @@
 
     <script>
 
-        var table, table_faturamento, table_controle_materiais, table_visitas, table_dias_letivos;
+        var table, table_faturamento, table_controle_materiais, table_visitas, table_dias_letivos, table_banco_horas;
         var busca, save_method, demo1;
         var edicaoEvento = true;
 
@@ -2442,6 +2611,9 @@
             });
 
             table_visitas = $('#table_visitas').DataTable({
+                'dom': "<'row'<'col-sm-5'l><'#pdf_visitas.col-sm-3'><'col-sm-4'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
                 'processing': true,
                 'serverSide': true,
                 'iDisplayLength': 50,
@@ -2476,6 +2648,12 @@
                             table_visitas.column(8).visible(false);
                         } else {
                             table_visitas.column(8).visible(true);
+                        }
+
+                        if (json.draw === 1) {
+                            $("#pdf_visitas").html('<button title="Imprimir" style="margin: 15px 10px 0;" class="btn btn-info btn-sm" onclick="imprimir_mapa_visitacao();">' +
+                                '<i class="fa fa-print"></i> <span class="hidden-xs"> Imprimir relatório</span>' +
+                                '</button>');
                         }
 
                         return json.data;
@@ -2594,6 +2772,54 @@
                     }
                 ]
             });
+
+            table_banco_horas = $('#table_banco_horas').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 50,
+                'language': {
+                    'url': language
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('ei/apontamento/ajaxListBancoHoras') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
+                        d.busca = busca;
+                        return d;
+                    },
+                    'dataSrc': function (json) {
+                        $('#saldo_mes').val(json.saldo_mes);
+                        $('#saldo_acumulado').val(json.saldo_acumulado);
+
+                        return json.data;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'className': 'text-center',
+                        'searchable': false,
+                        'targets': [0, 1, 2, 3, 4, 5, 6]
+                    },
+                    {
+                        'width': '100%',
+                        'targets': [7]
+                    },
+                    {
+                        'className': 'text-center',
+                        'searchable': false,
+                        'orderable': false,
+                        'targets': [-1]
+                    }
+                ],
+                'preDrawCallback': function () {
+                    $('#btnAddCargaHoraria, #pdfBancoHoras').prop('disabled', ($('#busca [name="depto"]').val() === '' || $('#busca [name="diretoria"]').val() === '' || $('#busca [name="supervisor"]').val() === ''));
+                },
+                'drawCallback': function (a) {
+                    $('#form_banco_horas [name="dia"]').html($(a.json.dias).html());
+                }
+            });
+
 
             $('input.toggle-vis').on('change', function (e) {
                 ocultar_mes($(this).val());
@@ -2969,6 +3195,7 @@
                     $('#form_os_individual [name="semestre"]').val(json.semestre);
 
                     $('#form_os_individual [name="ordem_servico"]').html($(json.ordem_servico).html());
+                    $('#form_os_individual [name="escola"]').html($(json.escola).html());
                     $('#modal_os_individual').modal('show');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -3031,6 +3258,24 @@
                     }
                 });
             }
+        }
+
+
+        function add_banco_hora() {
+            save_method = 'add';
+            $('#form_banco_horas')[0].reset();
+            $('#form_banco_horas input[type="hidden"]').val('');
+            $('.form-group').removeClass('has-error');
+            $('.help-block').empty();
+            $('#banco_horas_mes_ano').html('&nbsp;de ' + moment({
+                'year': $('#busca [name="ano"]').val(),
+                'month': $('#busca [name="mes"]').val() - 1,
+                'day': 1
+            }).locale('pt-br').format('MMMM YYYY').replace(' ', ' de '));
+            $('#form_banco_horas [name="carga_horaria"]').val(table_banco_horas.context[0].json.carga_horaria);
+            $('#modal_banco_horas').modal('show');
+            $('.modal-title').text('Cadastro de horas');
+            $('.combo_nivel1').hide();
         }
 
 
@@ -3247,6 +3492,94 @@
                         $('#btnDeleteAlocados').text('Excluir').attr('disabled', false);
                     }
                 });
+            }
+        }
+
+
+        function edit_banco_hora(id) {
+            save_method = 'update';
+            $('#form_banco_horas')[0].reset();
+            $('.form-group').removeClass('has-error');
+            $('.help-block').empty();
+
+            $.ajax({
+                'url': '<?php echo site_url('ei/apontamento/ajaxEditCargaHoraria') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
+                    $.each(json, function (key, value) {
+                        $('#form_banco_horas [name="' + key + '"]').val(value);
+                    });
+                    $('#banco_horas_mes_ano').html('&nbsp;de ' + moment(json.data).locale('pt-br').format('MMMM YYYY').replace(' ', ' de '));
+
+                    $('#modal_banco_horas').modal('show');
+                    $('.modal-title').text('Editar medição');
+
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function save_banco_hora() {
+            $('#btnSaveBancoHoras').text('Salvando...').attr('disabled', true);
+            var url;
+
+            if (save_method === 'add') {
+                url = '<?php echo site_url('ei/apontamento/ajaxAddCargaHoraria') ?>';
+            } else {
+                url = '<?php echo site_url('ei/apontamento/ajaxUpdateCargaHoraria') ?>';
+            }
+
+            $.ajax({
+                'url': url,
+                'type': 'POST',
+                'data': $('#form_banco_horas, #busca').serialize(),
+                'dataType': 'json',
+                'success': function (json) {
+                    if (json.status) {
+                        $('#modal_banco_horas').modal('hide');
+                        reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
+                    }
+
+                    $('#btnSaveBancoHoras').text('Salvar').attr('disabled', false);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                    $('#btnSaveBancoHoras').text('Salvar').attr('disabled', false);
+                }
+            });
+        }
+
+
+        function delete_banco_hora(id) {
+            if (confirm('Deseja remover?')) {
+                $.ajax({
+                    'url': '<?php echo site_url('ei/apontamento/ajaxDeleteCargaHoraria') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else if (json.erro) {
+                            alert(json.erro);
+                        }
+                    },
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert('Error deleting data');
+                    }
+                });
+
             }
         }
 
@@ -4340,15 +4673,15 @@
 
 
         function medicao() {
-            if ($('#busca [name="mes"]').val() === '' || $('#busca [name="ano"]').val() === '' || $('#busca [name="semestre"]').val() === '') {
-                alert('Para gerar o relatório, ajuste os filtros de Mês, Ano e Semestre.');
+            if ($('#busca [name="mes"]').val() === '' || $('#busca [name="ano"]').val() === '') {
+                alert('Para gerar o relatório, ajuste os filtros de Mês e Ano.');
                 return false;
             }
 
             var q = new Array();
             q.push("mes=" + $('#busca [name="mes"]').val());
             q.push("ano=" + $('#busca [name="ano"]').val());
-            q.push("semestre=" + $('#busca [name="semestre"]').val());
+            q.push("semestre=" + $('#busca [name="semestre"]:checked').val());
 
             window.open('<?php echo site_url('ei/relatorios/medicao'); ?>/q?' + q.join('&'), '_blank');
         }
@@ -4372,6 +4705,37 @@
         }
 
 
+        function imprimir_mapa_visitacao() {
+            var q = new Array();
+            q.push("depto=" + $('#busca [name="depto"]').val());
+            q.push("diretoria=" + $('#busca [name="diretoria"]').val());
+            q.push("supervisor=" + $('#busca [name="supervisor"]').val());
+            q.push("ano=" + $('#busca [name="ano"]').val());
+            q.push("semestre=" + $('#busca [name="semestre"]:checked').val());
+
+            window.open('<?php echo site_url('ei/relatorios/pdfMapaVisitacao'); ?>/q?' + q.join('&'), '_blank');
+        }
+
+
+        function imprimir_banco_horas() {
+            if ($('#busca [name="depto"]').val() === '' || $('#busca [name="diretoria"]').val() === '' ||
+                $('#busca [name="supervisor"]').val() === '' || $('#busca [name="ano"]').val() === '') {
+                alert('Para gerar o relatório, ajuste os filtros de Departamento, Diretoria, Supervisor, Mês e Ano.');
+                return false;
+            }
+
+            var q = new Array();
+            q.push("depto=" + $('#busca [name="depto"]').val());
+            q.push("diretoria=" + $('#busca [name="diretoria"]').val());
+            q.push("supervisor=" + $('#busca [name="supervisor"]').val());
+            q.push("mes=" + $('#busca [name="mes"]').val());
+            q.push("ano=" + $('#busca [name="ano"]').val());
+            q.push("semestre=" + $('#busca [name="semestre"]:checked').val());
+
+            window.open('<?php echo site_url('ei/relatorios/pdfBancoHoras'); ?>/q?' + q.join('&'), '_blank');
+        }
+
+
         function reload_table(reset = false) {
             edicaoEvento = false;
             $('#mes_ano').append('&ensp;(Processando - Aguarde...)');
@@ -4387,6 +4751,7 @@
             table_controle_materiais.ajax.reload(stmt, reset);
             table_visitas.ajax.reload(stmt, reset);
             table_dias_letivos.ajax.reload(stmt, reset);
+            table_banco_horas.ajax.reload(stmt, reset);
         }
 
     </script>

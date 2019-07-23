@@ -116,7 +116,7 @@
                 <th width="25%">Função</th>
                 <th class="text-nowrap">Aprovação faturamento</th>
                 <th class="text-center text-nowrap">Qtde. dias</th>
-                <th class="text-center text-nowrap">Qtde. horas</th>
+                <th class="text-center text-nowrap">Qtde. horas<br>(<?= $total_horas; ?>)</th>
             </tr>
             </thead>
             <tbody>

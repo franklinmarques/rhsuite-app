@@ -463,7 +463,7 @@ class Funcionario extends MY_Controller
         $data['tipo_vinculo'] = array('1' => 'CLT', '2' => 'MEI', '3' => 'PJ', '4' => 'Autônomo');
         $data['status'] = array(
             '1' => 'Ativo',
-            '2' => 'Inativo',
+//            '2' => 'Inativo',
             '3' => 'Em experiência',
             '4' => 'Em desligamento',
             '5' => 'Desligado',
@@ -879,6 +879,7 @@ class Funcionario extends MY_Controller
         $this->db->join('empresa_areas c', 'c.id = a.id_area OR c.nome = a.area', 'left');
         $this->db->join('empresa_setores d', 'd.id = a.id_setor OR d.nome = a.setor', 'left');
         $this->db->where('a.tipo', 'funcionario');
+        $this->db->where('a.status', 1);
         if ($depto) {
             $this->db->where('b.id', $depto);
         }

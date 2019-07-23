@@ -117,8 +117,8 @@
                 <th>CNPJ</th>
                 <th width="20%">Unidade Ensino</th>
                 <th class="text-nowrap">Liberação pagamento</th>
-                <th class="text-center">Horas</th>
-                <th class="text-center text-nowrap">Valor (R$)</th>
+                <th class="text-center">Horas<br>(<?= $total['horas'] ?>)</th>
+                <th class="text-center text-nowrap">Valor (R$)<br>(<?= $total['valor'] ?>)</th>
             </tr>
             </thead>
             <tbody>

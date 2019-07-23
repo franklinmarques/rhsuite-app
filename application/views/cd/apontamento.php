@@ -133,7 +133,7 @@ require_once APPPATH . "views/header.php";
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
                         <li class="active">Apontamentos Diários</li>
-                        <?php $this->load->view('modal_processos', ['url' => 'cd/apontamento']); ?>
+<!--                        --><?php //$this->load->view('modal_processos', ['url' => 'cd/apontamento']); ?>
                     </ol>
                     <div class="row">
                         <div class="col-md-6">
@@ -227,10 +227,10 @@ require_once APPPATH . "views/header.php";
                                                     novo(a) aluno(a)</a></li>
                                             <li><a href="<?= site_url('cd/relatorios/index/'); ?>" id="pdf"
                                                    target="_blank"><i class="glyphicon glyphicon-list text-primary"></i>
-                                                    Medição escolas</a></li>
+                                                    Medição funcionários</a></li>
                                             <li><a href="<?= site_url('cd/relatorios/escolas/'); ?>" id="pdfEscolas"
                                                    target="_blank"><i class="glyphicon glyphicon-list text-primary"></i>
-                                                    Medição funcionários</a></li>
+                                                    Medição escolas</a></li>
                                             <li><a href="<?= site_url('cd/relatorios/insumos/'); ?>" id="pdfInsumos"
                                                    target="_blank"><i class="glyphicon glyphicon-list text-primary"></i>
                                                     Rel. controle materiais</a></li>
@@ -1858,7 +1858,7 @@ require_once APPPATH . "views/end_js.php";
                                     'data-target': '#modal_form',
                                     'data-tooltip': 'tooltip',
                                     'data-placement': 'top',
-                                    'title': rowData[4] + '\n' + $(table.column(col).header()).attr('title') +
+                                    'title': rowData[4][0] + '\n' + $(table.column(col).header()).attr('title') +
                                         '\nEvento: ' + (rowData[col][7] === 'AA' ? 'Aluno ausente' :
                                             rowData[col][7] === 'FA' ? 'Falta com atestado' :
                                                 rowData[col][7] === 'FS' ? 'Falta sem atestado' :
@@ -1921,7 +1921,7 @@ require_once APPPATH . "views/end_js.php";
                                             $('#btnApagar').hide();
                                             selecionar_status('FA');
                                         }
-                                        $('#nome').html(rowData[4]);
+                                        $('#nome').html(rowData[4][0]);
                                         $('#escola').html(rowData[2]);
                                         switch (rowData[3]) {
                                             case 'M':

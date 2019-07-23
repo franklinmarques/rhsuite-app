@@ -249,7 +249,6 @@ require_once "header.php";
                                                 <div class="col-xs-6 controls">
                                                     <select name="status" class="form-control">
                                                         <option value="1">Ativo</option>
-                                                        <option value="2">Inativo</option>
                                                         <option value="3">Em experiência</option>
                                                         <option value="4">Em desligamento</option>
                                                         <option value="5">Desligado</option>

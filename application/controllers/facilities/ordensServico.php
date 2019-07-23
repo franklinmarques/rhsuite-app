@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class OrdensServico extends MY_Controller
 {
-
+    //==========================================================================
     public function index()
     {
         $idUsuario = $this->session->userdata('id');
@@ -18,8 +18,7 @@ class OrdensServico extends MY_Controller
         $this->load->view('facilities/ordens_servico', $data);
     }
 
-    // -------------------------------------------------------------------------
-
+    //==========================================================================
     public function montarEstrutura()
     {
         $post = $this->input->post();
@@ -35,8 +34,7 @@ class OrdensServico extends MY_Controller
         echo json_encode($data);
     }
 
-    // -------------------------------------------------------------------------
-
+    //==========================================================================
     public function ajaxList()
     {
         $post = $this->input->post();
@@ -47,6 +45,7 @@ class OrdensServico extends MY_Controller
         $sql = "SELECT a.numero_os,
                        a.data_abertura,
                        a.data_resolucao_problema,
+                       a.data_tratamento,
                        a.data_fechamento,
                        a.prioridade,
                        (CASE a.status
@@ -56,9 +55,10 @@ class OrdensServico extends MY_Controller
                              WHEN 'E' THEN 'Em tratamento'
                              WHEN 'G' THEN 'Tratada - Aguardando aprovação requisitante' END) AS descricao_status,
                        c.nome AS vistoriador,
-                       CONCAT('<strong>Solicitação:</strong>\n', IFNULL(a.descricao_problema, ''), '\n<strong>Andamento:</strong>\n', IFNULL(a.observacoes, '')) AS descricao_problema,
+                       CONCAT('<strong>Solicitação/andamento:</strong>\n', IFNULL(a.descricao_problema, ''),'\n<strong>Solicitação/complemento:</strong>\n', IFNULL(a.complemento, ''), '\n<strong>Andamento:</strong>\n', IFNULL(a.observacoes, '')) AS descricao_problema,
                        DATE_FORMAT(a.data_abertura, '%d/%m/%Y')   AS data_abertura_de,
                        DATE_FORMAT(a.data_resolucao_problema, '%d/%m/%Y')   AS data_resolucao_problema_de,
+                       DATE_FORMAT(a.data_tratamento, '%d/%m/%Y')   AS data_tratamento_de,
                        DATE_FORMAT(a.data_fechamento, '%d/%m/%Y') AS data_fechamento_de,
                        (CASE a.prioridade
                              WHEN 0 THEN 'Nenhuma'
@@ -97,18 +97,35 @@ class OrdensServico extends MY_Controller
         $data = array();
 
         foreach ($rows->data as $row) {
+            if ($this->session->userdata('nivel') === '17') {
+//                if ($row->status === 'G') {
+                $acoes = '<button class="btn btn-sm btn-info" onclick="edit_os(' . $row->numero_os . ');" title="Editar ordem de serviço"><i class="glyphicon glyphicon-pencil"></i></button>
+                              <button class="btn btn-sm btn-danger" onclick="delete_os(' . $row->numero_os . ');" title="Excluir ordem de serviço"><i class="glyphicon glyphicon-trash"></i></button>
+                              <a class="btn btn-sm btn-primary" href="' . site_url('facilities/ordensServico/relatorio/' . $row->numero_os) . '" title="Imprimir ordem de serviço"><i class="glyphicon glyphicon-print"></i></a>
+                              <button class="btn btn-sm btn-warning notificarFechamento" onclick="notificar_fechamento(' . $row->numero_os . ');" title="Notificar fechamento de O. S."><i class="glyphicon glyphicon-envelope"></i></button>';
+//                } else {
+//                    $acoes = '<button class="btn btn-sm btn-info" onclick="edit_os(' . $row->numero_os . ');" title="Editar ordem de serviço"><i class="glyphicon glyphicon-pencil"></i></button>
+//                              <button class="btn btn-sm btn-danger" onclick="delete_os(' . $row->numero_os . ');" title="Excluir ordem de serviço"><i class="glyphicon glyphicon-trash"></i></button>
+//                              <a class="btn btn-sm btn-primary" href="' . site_url('facilities/ordensServico/relatorio/' . $row->numero_os) . '" title="Imprimir ordem de serviço"><i class="glyphicon glyphicon-print"></i></a>
+//                              <button class="btn btn-sm btn-warning disabled" title="Notificar fechamento de O. S."><i class="glyphicon glyphicon-envelope"></i></button>';
+//                }
+            } else {
+                $acoes = '<button class="btn btn-sm btn-info" onclick="edit_os(' . $row->numero_os . ');" title="Editar ordem de serviço"><i class="glyphicon glyphicon-pencil"></i></button>
+                          <button class="btn btn-sm btn-danger" onclick="delete_os(' . $row->numero_os . ');" title="Excluir ordem de serviço"><i class="glyphicon glyphicon-trash"></i></button>
+                          <a class="btn btn-sm btn-primary" href="' . site_url('facilities/ordensServico/relatorio/' . $row->numero_os) . '" title="Imprimir ordem de serviço"><i class="glyphicon glyphicon-print"></i></a>';
+            }
+
             $data[] = array(
                 $row->numero_os,
                 $row->data_abertura_de,
                 $row->data_resolucao_problema_de,
+                $row->data_tratamento_de,
                 $row->data_fechamento_de,
                 $row->descricao_prioridade,
                 $row->descricao_status,
                 $row->vistoriador,
                 nl2br($row->descricao_problema),
-                '<button class="btn btn-sm btn-info" onclick="edit_os(' . $row->numero_os . ');" title="Editar ordem de serviço"><i class="glyphicon glyphicon-pencil"></i></button>
-                 <button class="btn btn-sm btn-danger" onclick="delete_os(' . $row->numero_os . ');" title="Excluir ordem de serviço"><i class="glyphicon glyphicon-trash"></i></button>
-                 <a class="btn btn-sm btn-primary" href="' . site_url('facilities/ordensServico/relatorio/' . $row->numero_os) . '" title="Imprimir ordem de serviço"><i class="glyphicon glyphicon-print"></i></a>',
+                $acoes,
                 $row->prioridade,
                 $row->status
             );
@@ -130,8 +147,7 @@ class OrdensServico extends MY_Controller
         echo json_encode($rows);
     }
 
-    // -------------------------------------------------------------------------
-
+    //==========================================================================
     public function ajaxNovo()
     {
         $this->db->select('IFNULL(MAX(numero_os), 0) + 1 AS numero_os', false);
@@ -160,8 +176,7 @@ class OrdensServico extends MY_Controller
         echo json_encode($data);
     }
 
-    // -------------------------------------------------------------------------
-
+    //==========================================================================
     public function ajaxEdit()
     {
         $data = $this->getData($this->input->post('numero_os'));
@@ -179,32 +194,127 @@ class OrdensServico extends MY_Controller
         echo json_encode($output);
     }
 
-    // -------------------------------------------------------------------------
-
+    //==========================================================================
     public function ajaxAdd()
     {
         $data = $this->setData();
         $status = $this->db->insert('facilities_ordens_servico', $data);
 
+        $this->enviarEmail($this->db->insert_id());
+
         echo json_encode(array("status" => $status !== false));
     }
 
-    // -------------------------------------------------------------------------
-
+    //==========================================================================
     public function ajaxUpdate()
     {
         $numeroOS = $this->input->post('numero_os');
 
+        $osAntiga = $this->db
+            ->select('status')
+            ->where('numero_os', $numeroOS)
+            ->get('facilities_ordens_servico')
+            ->row();
+
+        if (empty($osAntiga)) {
+            exit(json_encode(['erro' => 'Ordem de Serviço não encontrada ou excluída recentemente.']));
+        }
+
         $data = $this->setData();
+
         $this->db->set($data);
         $this->db->where('numero_os', $numeroOS);
         $status = $this->db->update('facilities_ordens_servico');
 
+        if ($osAntiga->status !== $data['status']) {
+            $this->enviarEmail($numeroOS);
+        }
+
         echo json_encode(array("status" => $status !== false));
     }
 
-    // -------------------------------------------------------------------------
+    //==========================================================================
+    private function enviarEmail($numeroOS, $msgPadrao = '')
+    {
+        $os = $this->db
+            ->select('a.status, b.email AS email_requisitante')
+            ->join('usuarios b', 'b.id = a.id_requisitante')
+            ->where('numero_os', $numeroOS)
+            ->get('facilities_ordens_servico a')
+            ->row();
 
+
+        switch ($os->status) {
+            case 'A':
+                $emailDestinatario = null;
+                $titulo = 'Nova Ordem de Serviço de Faciities aberta';
+                $msg = "A Ordem de Serviço de Faciities n&ordm; {$numeroOS} foi aberta, favor verificar.";
+                break;
+            case 'E':
+                $emailDestinatario = $os->email_requisitante;
+                $titulo = 'Ordem de Serviço de Faciities iniciada';
+                $msg = "A Ordem de Serviço de Faciities n&ordm; {$numeroOS} foi iniciada, favor verificar.";
+                break;
+            case 'G':
+                $emailDestinatario = $os->email_requisitante;
+                $titulo = 'Ordem de Serviço de Faciities tratada';
+                $msg = "A Ordem de Serviço de Faciities n&ordm; {$numeroOS} aguarda aprovação, favor verificar.";
+                break;
+            case 'F':
+                $emailDestinatario = null;
+                $titulo = 'Ordem de Serviço de Faciities fechada';
+                $msg = "A Ordem de Serviço de Faciities n&ordm; {$numeroOS} foi fechada, favor verificar.";
+                break;
+            case 'P':
+                $emailDestinatario = null;
+                $titulo = 'Ordem de Serviço de Faciities parcialmente fechada';
+                $msg = "A Ordem de Serviço de Faciities n&ordm; {$numeroOS} foi parcialmente fechada, favor verificar.";
+                break;
+            default:
+                return;
+        }
+
+        if (empty($emailDestinatario)) {
+            $vistoriadores = $this->db
+                ->select('email')
+                ->where('empresa', $this->session->userdata('empresa'))
+                ->where('tipo', 'funcionario')
+                ->where('nivel_acesso', 17)
+                ->get('usuarios')
+                ->result();
+
+            if (empty($vistoriadores)) {
+                return;
+            }
+
+            $emailDestinatario = array_column($vistoriadores, 'email');
+        }
+
+        $this->load->library('email');
+
+        $this->email
+            ->from('contato@rhsuite.com.br', 'RhSuite')
+            ->to($emailDestinatario)
+            ->subject($titulo)
+            ->message(strlen($msgPadrao) > 0 ? $msgPadrao : $msg)
+            ->send();
+    }
+
+    //==========================================================================
+    public function notificarFechamento()
+    {
+        if ($this->session->userdata('nivel_acesso') !== '17') {
+            exit(json_encode(['erro', 'Você não tem permissão para notificar o requisitante.']));
+        }
+
+        $msg = 'Sua solicitação de serviço foi realizada; por favor verifique se a resolução está plenamente atendida e feche a OS';
+
+        $this->enviarEmail($this->input->post('numero_os'), $msg);
+
+        echo json_encode(['status' => true]);
+    }
+
+    //==========================================================================
     public function ajaxDelete()
     {
         $numeroOS = $this->input->post('numero_os');
@@ -236,6 +346,10 @@ class OrdensServico extends MY_Controller
 
         if ($os->data_resolucao_problema) {
             $os->data_resolucao_problema = date('d/m/Y', strtotime($os->data_resolucao_problema));
+        }
+
+        if ($os->data_tratamento) {
+            $os->data_tratamento = date('d/m/Y', strtotime($os->data_tratamento));
         }
 
         if ($os->data_fechamento) {
@@ -285,6 +399,25 @@ class OrdensServico extends MY_Controller
         }
 
 
+        if (isset($data['data_tratamento'])) {
+            if (strlen($data['data_tratamento']) > 0) {
+
+                $dataTratamento = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_tratamento'])));
+                if ($data['data_tratamento'] != preg_replace('/(\d+)-(\d+)-(\d+)/', '$3/$2/$1', $dataTratamento)) {
+                    exit(json_encode(['erro' => 'A data de tratamento é inválida.']));
+                }
+
+                if (strtotime($dataTratamento) < strtotime($data['data_tratamento'])) {
+                    exit(json_encode(['erro' => 'A data de tratamento deve ser maior ou igual à data de abertura.']));
+                }
+
+                $data['data_tratamento'] = $dataTratamento;
+            } else {
+                $data['data_tratamento'] = null;
+            }
+        }
+
+
         if (isset($data['data_fechamento'])) {
             if (strlen($data['data_fechamento']) > 0) {
 
@@ -329,6 +462,12 @@ class OrdensServico extends MY_Controller
         if (isset($data['descricao_problema'])) {
             if (strlen($data['descricao_problema']) == 0) {
                 $data['descricao_problema'] = null;
+            }
+        }
+
+        if (isset($data['complemento'])) {
+            if (strlen($data['complemento']) == 0) {
+                $data['complemento'] = null;
             }
         }
 

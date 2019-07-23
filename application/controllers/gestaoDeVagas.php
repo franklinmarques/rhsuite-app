@@ -5,6 +5,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class GestaoDeVagas extends MY_Controller
 {
 
+    //==========================================================================
+
     public function index()
     {
         $data['cargos'] = $this->getCargos();
@@ -23,7 +25,7 @@ class GestaoDeVagas extends MY_Controller
         $this->load->view('gestao_de_vagas', $data);
     }
 
-    // -------------------------------------------------------------------------
+    //==========================================================================
 
     public function getCargos()
     {
@@ -33,7 +35,7 @@ class GestaoDeVagas extends MY_Controller
         return ['' => 'selecione...'] + array_column($cargos, 'nome', 'id');
     }
 
-    // -------------------------------------------------------------------------
+    //==========================================================================
 
     public function getFuncoes($idCargo = '')
     {
@@ -46,11 +48,12 @@ class GestaoDeVagas extends MY_Controller
         return ['' => 'selecione...'] + array_column($funcoes, 'nome', 'id');
     }
 
-    // -------------------------------------------------------------------------
+    //==========================================================================
 
     public function ajaxList()
     {
-        $this->db->select("a.codigo, (CASE WHEN a.status = 1 THEN 'Aberta' WHEN a.status = 0 THEN 'Fechada' END) AS status", false);
+        $this->db->select('a.codigo, a.id_requisicao_pessoal');
+        $this->db->select("(CASE WHEN a.status = 1 THEN 'Aberta' WHEN a.status = 0 THEN 'Fechada' END) AS status", false);
         $this->db->select(["a.data_abertura, CONCAT(b.nome, '/', c.nome) AS cargo_funcao"], false);
         $this->db->select('a.quantidade, a.cidade_vaga, a.bairro_vaga, b.nome AS cargo, c.nome AS funcao');
         $this->db->select(["DATE_FORMAT(a.data_abertura, '%d/%m/%Y') AS data_abertura_de"], false);
@@ -71,6 +74,7 @@ class GestaoDeVagas extends MY_Controller
         foreach ($output->data as $row) {
             $data[] = array(
                 $row->codigo,
+                $row->id_requisicao_pessoal,
                 $row->status,
                 $row->data_abertura_de,
                 $row->cargo_funcao,
@@ -87,7 +91,7 @@ class GestaoDeVagas extends MY_Controller
         echo json_encode($output);
     }
 
-    // -------------------------------------------------------------------------
+    //==========================================================================
 
     public function ajaxNova()
     {
@@ -100,7 +104,7 @@ class GestaoDeVagas extends MY_Controller
         echo json_encode($data);
     }
 
-    // -------------------------------------------------------------------------
+    //==========================================================================
 
     public function ajaxEdit()
     {
@@ -122,7 +126,7 @@ class GestaoDeVagas extends MY_Controller
         echo json_encode($data);
     }
 
-    // -------------------------------------------------------------------------
+    //==========================================================================
 
     public function atualizarFuncoes()
     {
@@ -133,7 +137,7 @@ class GestaoDeVagas extends MY_Controller
         echo json_encode($data);
     }
 
-    // -------------------------------------------------------------------------
+    //==========================================================================
 
     public function ajaxAdd()
     {
@@ -148,7 +152,7 @@ class GestaoDeVagas extends MY_Controller
         echo json_encode(['status' => $status !== false]);
     }
 
-    // -------------------------------------------------------------------------
+    //==========================================================================
 
     public function ajaxUpdate()
     {
@@ -164,7 +168,7 @@ class GestaoDeVagas extends MY_Controller
         echo json_encode(['status' => $status !== false]);
     }
 
-    // -------------------------------------------------------------------------
+    //==========================================================================
 
     public function ajaxDelete()
     {

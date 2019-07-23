@@ -120,6 +120,7 @@
                             <thead>
                             <tr>
                                 <th>Código</th>
+                                <th nowrap>N&ordm; requisição</th>
                                 <th>Status</th>
                                 <th>Data abertura</th>
                                 <th>Cargo/Função</th>
@@ -324,15 +325,15 @@
                 'columnDefs': [
                     {
                         'className': 'text-center',
-                        'targets': [1, 2, 4]
+                        'targets': [2, 5, 6]
                     },
                     {
                         'width': '34%',
-                        'targets': [3]
+                        'targets': [4]
                     },
                     {
                         'width': '33%',
-                        'targets': [5, 6]
+                        'targets': [6, 7]
                     },
                     {
                         'className': 'text-center text-nowrap',

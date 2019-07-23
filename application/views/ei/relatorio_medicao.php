@@ -215,7 +215,7 @@
                             <th><input name="resultado[]" type="text" value="<?= $funcao->resultado; ?>"
                                        class="form-control text-center valor" autocomplete="off"></th>
                             <th><input name="resultado_percentual[]"
-                                       value="<?= number_format($funcao->pagamentos_efetuados / ($funcao->valor_hora * ($funcao->total_secs_projetados / 3600)) * 100, 1, ',', ''); ?>"
+                                       value="<?= number_format($funcao->pagamentos_efetuados / ($funcao->valor_hora * max($funcao->total_secs_projetados / 3600, 1)) * 100, 1, ',', ''); ?>"
                                        type="text"
                                        class="form-control text-center porcentagem" autocomplete="off"></th>
                         <?php endif; ?>

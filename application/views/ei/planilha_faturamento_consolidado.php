@@ -100,19 +100,42 @@
         </thead>
     </table>
 
-    <p>
-        Solicitamos ao departamento Administrativo-Financeiro promover a emissão de nota fiscal e faturamento conforme
-        dados abaixo.
-    </p>
-    <p>
-        <strong>Cliente:</strong> <?= $diretoria; ?><br>
-        <strong>Contrato(s):</strong> <?= $contratos; ?><br>
-        <strong>Ordens de Serviço:</strong> <?= $ordensServico; ?><br>
-        <strong>Mês/ano de referência:</strong> <?= $mesAno; ?><br>
-        <!--        <strong>Total de escolas:</strong> --><? //= $totalEscolas; ?><!--<br>-->
-        <!--        <strong>Total de alunos:</strong> --><? //= $totalAlunos; ?><!--<br>-->
-        <!--        <strong>Total de profissionais:</strong> --><? //= $totalProfissionais; ?>
-    </p>
+
+    <table width="100%">
+        <tr>
+            <td colspan="2">
+                <p>
+                    Solicitamos ao departamento Administrativo-Financeiro promover a emissão de nota fiscal e
+                    faturamento conforme
+                    dados abaixo.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top; padding-right: 10px;" width="50%">
+                <p>
+                    <strong>Cliente:</strong> <?= $diretoria; ?><br>
+                    <strong>Contrato(s):</strong> <?= $contratos; ?><br>
+                    <strong>Ordens de Serviço:</strong> <?= $ordensServico; ?><br>
+                    <strong>Mês/ano de referência:</strong> <?= $mesAno; ?><br>
+                    <!--        <strong>Total de escolas:</strong> --><? //= $totalEscolas; ?><!--<br>-->
+                    <!--        <strong>Total de alunos:</strong> --><? //= $totalAlunos; ?><!--<br>-->
+                    <!--        <strong>Total de profissionais:</strong> --><? //= $totalProfissionais; ?>
+                </p>
+            </td>
+            <td style="vertical-align: top; padding-left: 10px;" width="50%">
+                <?php if ($is_pdf == false): ?>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="control-label" style="font-weight: bold;">Observações:</label>
+                            <textarea id="observacoes" class="form-control" rows="4"><?= $observacoes; ?></textarea>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </td>
+        </tr>
+
+    </table>
     <br>
 
     <div>

@@ -82,15 +82,19 @@
                            width="100%">
                         <thead>
                         <tr>
-                            <th nowrap>O.S.</th>
+                            <th rowspan="2" nowrap>O.S.</th>
+                            <th colspan="4" class="text-center">Datas</th>
+                            <th rowspan="2">Prioridade</th>
+                            <th rowspan="2">Status</th>
+                            <th rowspan="2">Requisitante</th>
+                            <th rowspan="2">Problema/solicitação</th>
+                            <th rowspan="2">Ações</th>
+                        </tr>
+                        <tr>
                             <th>Abertura</th>
                             <th>Estimada</th>
+                            <th>Tratada</th>
                             <th>Fechamento</th>
-                            <th>Prioridade</th>
-                            <th>Status</th>
-                            <th>Requisitante</th>
-                            <th>Problema/solicitação</th>
-                            <th>Ações</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -188,6 +192,7 @@
                                         </div>
                                     </div>
                                     <br>
+                                    <span id="alert_fechada" class="help-block text-primary"></span>
                                     <ul id="dados" class="nav nav-tabs" role="tablist">
                                         <li role="presentation" class="active">
                                             <a href="#dados_os" aria-controls="dados_os" role="tab"
@@ -241,6 +246,11 @@
                                                     <input name="data_abertura" class="form-control text-center date"
                                                            type="text">
                                                 </div>
+                                                <label class="control-label col-md-2">Data tratamento</label>
+                                                <div class="col-md-2">
+                                                    <input name="data_tratamento" class="form-control text-center date"
+                                                           type="text">
+                                                </div>
                                                 <label class="control-label col-md-2">Data fechamento</label>
                                                 <div class="col-md-2">
                                                     <input name="data_fechamento" class="form-control text-center date"
@@ -276,6 +286,13 @@
                                                 <div class="col-md-10 col-md-offset-1">
                                                     <label>Problema/solicitação</label>
                                                     <textarea name="descricao_problema"
+                                                              class="form-control" <?= $vistoriador ? 'disabled' : ''; ?> rows="6"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col-md-10 col-md-offset-1">
+                                                    <label>Solicitação/complemento</label>
+                                                    <textarea name="complemento"
                                                               class="form-control" <?= $vistoriador ? 'disabled' : ''; ?> rows="6"></textarea>
                                                 </div>
                                             </div>
@@ -402,50 +419,50 @@ require_once APPPATH . 'views/end_js.php';
                 'columnDefs': [
                     {
                         'className': 'text-center',
-                        'targets': [0, 1, 2, 3]
+                        'targets': [0, 1, 2, 3, 4]
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
-                            if (rowData[9] === '4' || rowData[9] === '3') {
+                            if (rowData[10] === '4' || rowData[10] === '3') {
                                 // $(td).addClass('danger');
                                 $(td).css({'background-color': '#f00', 'color': '#fff'});
-                            } else if (rowData[9] === '2') {
+                            } else if (rowData[10] === '2') {
                                 // $(td).addClass('warning');
                                 $(td).css('background-color', '#ffad1c');
-                            } else if (rowData[9] === '1') {
+                            } else if (rowData[10] === '1') {
                                 // $(td).addClass('warning');
                                 $(td).css('background-color', '#ff0');
-                            }
-                        },
-                        'className': 'text-center',
-                        'targets': [4]
-                    },
-                    {
-                        'createdCell': function (td, cellData, rowData, row, col) {
-                            if (rowData[10] === 'A') {
-                                // $(td).addClass('danger');
-                                $(td).css({'background-color': '#f00', 'color': '#fff'});
-                            } else if (rowData[10] === 'P' || rowData[10] === 'G') {
-                                // $(td).addClass('warning');
-                                $(td).css('background-color', '#ff0');
-                            } else if (rowData[10] === 'E') {
-                                // $(td).addClass('info');
-                                $(td).css({'background-color': '#2ba8ff', 'color': '#fff'});
-                            } else if (rowData[10] === 'F') {
-                                // $(td).addClass('success');
-                                $(td).css({'background-color': '#0c0', 'color': '#fff'});
                             }
                         },
                         'className': 'text-center',
                         'targets': [5]
                     },
                     {
-                        'width': '40%',
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (rowData[11] === 'A') {
+                                // $(td).addClass('danger');
+                                $(td).css({'background-color': '#f00', 'color': '#fff'});
+                            } else if (rowData[11] === 'P' || rowData[11] === 'G') {
+                                // $(td).addClass('warning');
+                                $(td).css('background-color', '#ff0');
+                            } else if (rowData[11] === 'E') {
+                                // $(td).addClass('info');
+                                $(td).css({'background-color': '#2ba8ff', 'color': '#fff'});
+                            } else if (rowData[11] === 'F') {
+                                // $(td).addClass('success');
+                                $(td).css({'background-color': '#0c0', 'color': '#fff'});
+                            }
+                        },
+                        'className': 'text-center',
                         'targets': [6]
                     },
                     {
-                        'width': '60%',
+                        'width': '40%',
                         'targets': [7]
+                    },
+                    {
+                        'width': '60%',
+                        'targets': [8]
                     },
                     {
                         'className': 'text-nowrap',
@@ -465,8 +482,15 @@ require_once APPPATH . 'views/end_js.php';
             }
             var value = $(this).data('value');
             $('#form [name="status"], #status_atual').val(value);
-            if (value === 'F' && $('#form [name="data_fechamento"]').val().length === 0) {
+            if (value === 'G' && $('#form [name="data_tratamento"]').val().length === 0) {
+                $('#form [name="data_tratamento"]').prop('disabled', false).val(moment().format('DD/MM/YYYY'));
+            } else if (value === 'F' && $('#form [name="data_fechamento"]').val().length === 0) {
                 $('#form [name="data_fechamento"]').prop('disabled', false).val(moment().format('DD/MM/YYYY'));
+            }
+
+            if (value === 'F') {
+                alert('Para finalizar a Ordem de Serviço preencha a pesquisa de satisfação.');
+                $('#dados li').eq(1).find('a').tab('show');
             }
         })
 
@@ -554,23 +578,45 @@ require_once APPPATH . 'views/end_js.php';
                         }
                     });
 
-                    $('#form select, #form textarea, #form input[name!="numero_os"]').prop('disabled', true);
+                    $('#form select, #form textarea, #form input.date').prop('disabled', true);
+                    // $('#form input[type="hidden"]').prop('disabled', false);
                     $('#status li').removeClass('active').addClass('disable');
+                    if ('<?= $vistoriador; ?>' !== '1') {
+                        $('[name="complemento"]').prop('disabled', false);
+                    }
                     switch (json.data.status) {
+                        case 'A':
+                            $('#status li').eq(0).removeClass('disable');
+                            if ('<?= $vistoriador; ?>' !== '1') {
+                                $('[name="descricao_problema"]').prop('disabled', false);
+                            }
                         case 'E':
+                            if ('<?= $vistoriador; ?>' === '1') {
+                                $('[name="data_resolucao_problema"]').prop('disabled', false);
+                            }
                         case 'G':
-                            $('#status li').eq(1).removeClass('disable');
-                            $('#status li').eq(2).removeClass('disable');
-                            $('#dados li').eq(1).removeClass('active').addClass('disable');
+                            // $('#dados li').eq(1).removeClass('active').addClass('disable');
+                            if ('<?= $vistoriador; ?>' === '1') {
+                                $('#status li').eq(1).removeClass('disable');
+                                $('#status li').eq(2).removeClass('disable');
+                                $('[name="observacoes"]').prop('disabled', false);
+                            } else {
+                                $('#status li').eq(3).removeClass('disable');
+                                $('#status li').eq(4).removeClass('disable');
+                                $('#dados li').eq(1).removeClass('disable');
+                                $('[name="resolucao_satisfatoria"],[name="observacoes_positivas"],[name="observacoes_negativas"]').prop('disabled', false);
+                            }
                             break;
                         case 'F':
                             $('[name="data_fechamento"]').prop('disabled', false);
+                        // $('#dados li').eq(1).addClass('active');
                         case 'P':
                             if ('<?= $vistoriador; ?>' !== '1') {
+                                $('#status li').eq(3).removeClass('disable');
+                                $('#status li').eq(4).removeClass('disable');
+                                $('#dados li').eq(1).removeClass('disabled');
                                 $('[name="resolucao_satisfatoria"],[name="observacoes_positivas"],[name="observacoes_negativas"]').prop('disabled', false);
                             }
-                            $('#status li').eq(3).removeClass('disable');
-                            $('#status li').eq(4).removeClass('disable');
                             $('#dados li').eq(1).removeClass('disable');
                             break;
                     }
@@ -692,6 +738,32 @@ require_once APPPATH . 'views/end_js.php';
                     }
                 });
             }
+        }
+
+
+        function notificar_fechamento(numero_os) {
+            $.ajax({
+                'url': '<?php echo site_url('facilities/ordensServico/notificarFechamento') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'numero_os': numero_os},
+                'beforeSend': function () {
+                    $('.notificarFechamento').prop('disabled', true);
+                },
+                'success': function () {
+                    if (json.status) {
+                        alert('Notificação enviada com sucesso.');
+                    } else if (json.erro) {
+                        alert(json.erro);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error deleting data');
+                },
+                'complete': function () {
+                    $('.notificarFechamento').prop('disabled', false);
+                }
+            });
         }
 
     </script>

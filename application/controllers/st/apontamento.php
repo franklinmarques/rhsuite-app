@@ -5,6 +5,107 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Apontamento extends MY_Controller
 {
 
+    //==========================================================================
+    public function index()
+    {
+        $modo_privilegiado = true;
+
+        $empresa = $this->session->userdata('empresa');
+        if ($this->session->userdata('tipo') == 'funcionario' and in_array($this->session->userdata('nivel'), array(9, 10, 11))) {
+            if (in_array($this->session->userdata('nivel'), array(10, 11))) {
+                $modo_privilegiado = false;
+            }
+
+            $this->db->select('depto, area, setor');
+            $this->db->where('id', $this->session->userdata('id'));
+            $this->db->like('depto', 'servicos terceirizados');
+            $filtro = $this->db->get('usuarios')->row();
+
+            if (in_array($this->session->userdata('nivel'), array(9, 10))) {
+                $data = $this->get_filtros_usuarios($filtro->depto);
+                $data['depto'] = array($filtro->depto => $filtro->depto);
+            } else {
+                $data = $this->get_filtros_usuarios($filtro->depto, $filtro->area, $filtro->setor);
+                $data['depto'] = array($filtro->depto => $filtro->depto);
+                $data['area'] = array($filtro->area => $filtro->area);
+                $data['setor'] = array($filtro->setor => $filtro->setor);
+            }
+        } else {
+            $this->db->select('depto');
+            $this->db->where('empresa', $empresa);
+            $this->db->like('depto', 'servicos terceirizados');
+            $filtro = $this->db->get('usuarios')->row();
+            $data = $this->get_filtros_usuarios($filtro->depto ?? 'servicos terceirizados');
+        }
+
+        $data['modo_privilegiado'] = $modo_privilegiado;
+        $data['area_colaborador'] = $data['area'];
+        $data['area_colaborador'][''] = 'selecione...';
+        $data['setor_colaborador'] = $data['setor'];
+        $data['setor_colaborador'][''] = 'selecione...';
+
+        $this->db->select('DISTINCT(contrato) AS nome', false);
+        $this->db->where('empresa', $empresa);
+        $this->db->where('CHAR_LENGTH(contrato) >', 0);
+        $contratos = $this->db->get('usuarios')->result();
+        $data['contrato'] = array('' => 'selecione...');
+        foreach ($contratos as $contrato) {
+            $data['contrato'][$contrato->nome] = $contrato->nome;
+        }
+
+        $data['meses'] = array(
+            '01' => 'Janeiro',
+            '02' => 'Fevereiro',
+            '03' => 'Março',
+            '04' => 'Abril',
+            '05' => 'Maio',
+            '06' => 'Junho',
+            '07' => 'Julho',
+            '08' => 'Agosto',
+            '09' => 'Setembro',
+            '10' => 'Outubro',
+            '11' => 'Novembro',
+            '12' => 'Dezembro'
+        );
+        $data['mes'] = $data['meses'][date('m')];
+
+        if ($this->session->userdata('tipo') == 'funcionario' and in_array($this->session->userdata('nivel'), array(9, 10, 11))) {
+            if (in_array($this->session->userdata('nivel'), array(9, 10))) {
+                $this->db->select("depto, '' AS area, '' AS setor", false);
+            } else {
+                $this->db->select('depto, area, setor');
+            }
+            $this->db->where('id', $this->session->userdata('id'));
+        } else {
+            $this->db->select("depto, '' AS area, '' AS setor", false);
+            $this->db->like('depto', 'serviços terceirizados');
+        }
+        $status = $this->db->get('usuarios')->row();
+        $data['depto_atual'] = $status->depto;
+        $data['area_atual'] = $status->area;
+        $data['setor_atual'] = $status->setor;
+
+        $this->db->select('id');
+        $this->db->where('id_empresa', $empresa);
+        $this->db->where("DATE_FORMAT(data, '%m/%Y') =", date('m/Y'));
+        $alocacao = $this->db->get('alocacao')->row();
+        $data['id_alocacao'] = $alocacao->id ?? '';
+
+        $data['usuarios'] = array('' => 'selecione...');
+
+        $this->db->select('id, codigo, nome');
+        $this->db->where('id_empresa', $empresa);
+        $this->db->order_by('codigo', 'asc');
+        $detalhes = $this->db->get('alocacao_eventos')->result();
+        $data['detalhes'] = array('' => 'selecione...');
+        foreach ($detalhes as $detalhe) {
+            $data['detalhes'][$detalhe->id] = $detalhe->codigo . ' - ' . $detalhe->nome;
+        }
+
+        $this->load->view('st/apontamento', $data);
+    }
+
+    //==========================================================================
     private function getAlocacao()
     {
         $post = $this->input->post();
@@ -40,6 +141,7 @@ class Apontamento extends MY_Controller
         return $alocacao;
     }
 
+    //==========================================================================
     public function ajaxList()
     {
         parse_str($this->input->post('busca'), $busca);
@@ -183,104 +285,6 @@ class Apontamento extends MY_Controller
     }
 
 
-    public function index()
-    {
-        $modo_privilegiado = true;
-
-        $empresa = $this->session->userdata('empresa');
-        if ($this->session->userdata('tipo') == 'funcionario' and in_array($this->session->userdata('nivel'), array(9, 10, 11))) {
-            if (in_array($this->session->userdata('nivel'), array(10, 11))) {
-                $modo_privilegiado = false;
-            }
-
-            $this->db->select('depto, area, setor');
-            $this->db->where('id', $this->session->userdata('id'));
-            $this->db->like('depto', 'servicos terceirizados');
-            $filtro = $this->db->get('usuarios')->row();
-
-            if (in_array($this->session->userdata('nivel'), array(9, 10))) {
-                $data = $this->get_filtros_usuarios($filtro->depto);
-                $data['depto'] = array($filtro->depto => $filtro->depto);
-            } else {
-                $data = $this->get_filtros_usuarios($filtro->depto, $filtro->area, $filtro->setor);
-                $data['depto'] = array($filtro->depto => $filtro->depto);
-                $data['area'] = array($filtro->area => $filtro->area);
-                $data['setor'] = array($filtro->setor => $filtro->setor);
-            }
-        } else {
-            $this->db->select('depto');
-            $this->db->where('empresa', $empresa);
-            $this->db->like('depto', 'servicos terceirizados');
-            $filtro = $this->db->get('usuarios')->row();
-            $data = $this->get_filtros_usuarios($filtro->depto ?? 'servicos terceirizados');
-        }
-
-        $data['modo_privilegiado'] = $modo_privilegiado;
-        $data['area_colaborador'] = $data['area'];
-        $data['area_colaborador'][''] = 'selecione...';
-        $data['setor_colaborador'] = $data['setor'];
-        $data['setor_colaborador'][''] = 'selecione...';
-
-        $this->db->select('DISTINCT(contrato) AS nome', false);
-        $this->db->where('empresa', $empresa);
-        $this->db->where('CHAR_LENGTH(contrato) >', 0);
-        $contratos = $this->db->get('usuarios')->result();
-        $data['contrato'] = array('' => 'selecione...');
-        foreach ($contratos as $contrato) {
-            $data['contrato'][$contrato->nome] = $contrato->nome;
-        }
-
-        $data['meses'] = array(
-            '01' => 'Janeiro',
-            '02' => 'Fevereiro',
-            '03' => 'Março',
-            '04' => 'Abril',
-            '05' => 'Maio',
-            '06' => 'Junho',
-            '07' => 'Julho',
-            '08' => 'Agosto',
-            '09' => 'Setembro',
-            '10' => 'Outubro',
-            '11' => 'Novembro',
-            '12' => 'Dezembro'
-        );
-        $data['mes'] = $data['meses'][date('m')];
-
-        if ($this->session->userdata('tipo') == 'funcionario' and in_array($this->session->userdata('nivel'), array(9, 10, 11))) {
-            if (in_array($this->session->userdata('nivel'), array(9, 10))) {
-                $this->db->select("depto, '' AS area, '' AS setor", false);
-            } else {
-                $this->db->select('depto, area, setor');
-            }
-            $this->db->where('id', $this->session->userdata('id'));
-        } else {
-            $this->db->select("depto, '' AS area, '' AS setor", false);
-            $this->db->like('depto', 'serviços terceirizados');
-        }
-        $status = $this->db->get('usuarios')->row();
-        $data['depto_atual'] = $status->depto;
-        $data['area_atual'] = $status->area;
-        $data['setor_atual'] = $status->setor;
-
-        $this->db->select('id');
-        $this->db->where('id_empresa', $empresa);
-        $this->db->where("DATE_FORMAT(data, '%m/%Y') =", date('m/Y'));
-        $alocacao = $this->db->get('alocacao')->row();
-        $data['id_alocacao'] = $alocacao->id ?? '';
-
-        $data['usuarios'] = array('' => 'selecione...');
-
-        $this->db->select('id, codigo, nome');
-        $this->db->where('id_empresa', $empresa);
-        $this->db->order_by('codigo', 'asc');
-        $detalhes = $this->db->get('alocacao_eventos')->result();
-        $data['detalhes'] = array('' => 'selecione...');
-        foreach ($detalhes as $detalhe) {
-            $data['detalhes'][$detalhe->id] = $detalhe->codigo . ' - ' . $detalhe->nome;
-        }
-
-        $this->load->view('st/apontamento', $data);
-    }
 
     public function atualizar_filtro()
     {

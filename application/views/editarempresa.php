@@ -260,6 +260,17 @@ require_once "header.php";
                                            class="form-control"/>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 col-lg-2 control-label"></label>
+                                <div class="col col-lg-9">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="visualizacao_pilula_conhecimento"
+                                               name="visualizacao_pilula_conhecimento"
+                                               value="1"<?php echo($row->visualizacao_pilula_conhecimento ? ' checked' : ''); ?>>
+                                        Mostrar Pílulas de Conhecimento na tela inicial
+                                    </label>
+                                </div>
+                            </div>
                             <div id="box-progresso" style="display: none;">
                                 <div class="form-group">
                                     <label class="col-sm-3 col-lg-2 control-label">&nbsp;</label>
@@ -367,6 +378,13 @@ require_once "header.php";
                                             <input type="checkbox" name="hash_acesso[OS]" value="20"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
                                             Ordens de Serviço
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="hash_acesso[GC]" value="26"><i
+                                                    class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
+                                            Gestão Comercial/Gestão de Contratos
                                         </label>
                                     </div>
                                     <div class="checkbox">

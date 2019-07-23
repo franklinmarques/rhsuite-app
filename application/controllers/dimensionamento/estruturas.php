@@ -42,22 +42,26 @@ class Estruturas extends MY_Controller
         $data['indice'] = $indice;
 
         if ($this->session->userdata('tipo') == 'funcionario') {
-            $this->db->select('b.id AS id_depto, c.id AS id_area, d.id AS id_setor');
-            $this->db->select('b.nome AS depto, c.nome AS area, d.nome AS setor');
-            $this->db->join('empresa_departamentos b', 'b.id = a.id_depto OR b.nome = a.depto');
-            $this->db->join('empresa_areas c', 'c.id = a.id_area OR c.nome = a.area');
-            $this->db->join('empresa_setores d', 'd.id = a.id_setor OR d.nome = a.setor');
-            $this->db->where('a.id', $this->session->userdata('id'));
-            $usuario = $this->db->get('usuarios a')->row();
+            $usuario = $this->db
+                ->select('b.id AS id_depto, c.id AS id_area, d.id AS id_setor')
+                ->select('b.nome AS depto, c.nome AS area, d.nome AS setor')
+                ->join('empresa_departamentos b', 'b.id = a.id_depto OR b.nome = a.depto')
+                ->join('empresa_areas c', 'c.id = a.id_area OR c.nome = a.area')
+                ->join('empresa_setores d', 'd.id = a.id_setor OR d.nome = a.setor')
+                ->where('a.id', $this->session->userdata('id'))
+                ->get('usuarios a')
+                ->row();
 
             $data['depto'] = [$usuario->id_depto => $usuario->depto];
             $data['area'] = [$usuario->id_area => $usuario->area];
             $data['setor'] = [$usuario->id_setor => $usuario->setor];
         } else {
-            $this->db->select('id, nome');
-            $this->db->where('id_empresa', $this->session->userdata('empresa'));
-            $this->db->order_by('nome', 'asc');
-            $deptos = $this->db->get('empresa_departamentos')->result();
+            $deptos = $this->db
+                ->select('id, nome')
+                ->where('id_empresa', $this->session->userdata('empresa'))
+                ->order_by('nome', 'asc')
+                ->get('empresa_departamentos')
+                ->result();
 
             $data['depto'] = ['' => 'Todos'] + array_column($deptos, 'nome', 'id');
             $data['area'] = ['' => 'Todas'];
@@ -74,22 +78,28 @@ class Estruturas extends MY_Controller
         $area = $this->input->post('area');
         $setor = $this->input->post('setor');
 
-        $this->db->select('a.id, a.nome');
-        $this->db->join('empresa_departamentos b', 'b.id = a.id_departamento');
-        $this->db->where('b.id_empresa', $this->session->userdata('empresa'));
-        $this->db->where('b.id', $depto);
-        $this->db->order_by('a.nome', 'asc');
-        $rowAreas = $this->db->get('empresa_areas a')->result();
+        $rowAreas = $this->db
+            ->select('a.id, a.nome')
+            ->join('empresa_departamentos b', 'b.id = a.id_departamento')
+            ->where('b.id_empresa', $this->session->userdata('empresa'))
+            ->where('b.id', $depto)
+            ->order_by('a.nome', 'asc')
+            ->get('empresa_areas a')
+            ->result();
+
         $areas = array_column($rowAreas, 'nome', 'id');
 
-        $this->db->select('a.id, a.nome');
-        $this->db->join('empresa_areas b', 'b.id = a.id_area');
-        $this->db->join('empresa_departamentos c', 'c.id = b.id_departamento');
-        $this->db->where('c.id_empresa', $this->session->userdata('empresa'));
-        $this->db->where('c.id', $depto);
-        $this->db->where('b.id', $area);
-        $this->db->order_by('a.nome', 'asc');
-        $rowSetores = $this->db->get('empresa_setores a')->result();
+        $rowSetores = $this->db
+            ->select('a.id, a.nome')
+            ->join('empresa_areas b', 'b.id = a.id_area')
+            ->join('empresa_departamentos c', 'c.id = b.id_departamento')
+            ->where('c.id_empresa', $this->session->userdata('empresa'))
+            ->where('c.id', $depto)
+            ->where('b.id', $area)
+            ->order_by('a.nome', 'asc')
+            ->get('empresa_setores a')
+            ->result();
+
         $setores = array_column($rowSetores, 'nome', 'id');
 
         $data['area'] = form_dropdown('', ['' => 'Todas'] + $areas, $area);
@@ -200,7 +210,13 @@ class Estruturas extends MY_Controller
         $idProcesso = $this->input->post('id_processo');
         $idAtividade = $this->input->post('id_atividade');
 
-        $this->db->select('a.nome AS processo, b.nome AS atividade, c.nome, c.id');
+        $this->db->select('a.nome AS processo, b.nome AS atividade, c.nome');
+        $this->db->select("(CASE c.grau_complexidade WHEN 1 THEN 'Extremamente baixa'
+                                                     WHEN 2 THEN 'Baixa'
+                                                     WHEN 3 THEN 'Média'
+                                                     WHEN 4 THEN 'Alta'
+                                                     WHEN 5 THEN 'Extremamente alta'
+                                                     END) AS grau_complexidade, c.id", false);
         $this->db->join('dimensionamento_atividades b', 'b.id_processo = a.id');
         $this->db->join('dimensionamento_etapas c', 'c.id_atividade = b.id', 'left');
         $this->db->where('a.id_empresa', $this->session->userdata('empresa'));
@@ -242,6 +258,7 @@ class Estruturas extends MY_Controller
                 $row->processo,
                 $row->atividade,
                 $row->nome,
+                $row->grau_complexidade,
                 $acoes
             );
         }
@@ -261,7 +278,7 @@ class Estruturas extends MY_Controller
         $idAtividade = $this->input->post('id_atividade');
         $idEtapa = $this->input->post('id_etapa');
 
-        $this->db->select('a.nome AS processo, b.nome AS atividade, c.nome AS etapa, d.nome, d.id');
+        $this->db->select('a.nome AS processo, b.nome AS atividade, c.nome AS etapa, d.nome, d.descricao, d.id');
         $this->db->join('dimensionamento_atividades b', 'b.id_processo = a.id');
         $this->db->join('dimensionamento_etapas c', 'c.id_atividade = b.id');
         $this->db->join('dimensionamento_itens d', 'd.id_etapa = c.id', 'left');
@@ -306,6 +323,7 @@ class Estruturas extends MY_Controller
                 $row->atividade,
                 $row->etapa,
                 $row->nome,
+                $row->descricao,
                 $acoes
             );
         }

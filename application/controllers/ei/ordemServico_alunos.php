@@ -120,6 +120,7 @@ class OrdemServico_alunos extends MY_Controller
         $data = $this->db->get('ei_ordem_servico_alunos')->row();
         $data->data_inicio = date('d/m/Y', strtotime(str_replace('-', '/', $data->data_inicio)));
         $data->data_termino = date('d/m/Y', strtotime(str_replace('-', '/', $data->data_termino)));
+        $data->nota = str_replace('.', ',', $data->nota);
 
         $alunoCursos = $this->getAlunoCursos($data->id_aluno);
 
@@ -163,8 +164,15 @@ class OrdemServico_alunos extends MY_Controller
         }
         $data['data_inicio'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_inicio'])));
         $data['data_termino'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_termino'])));
+        if (strlen($data['nota'])) {
+            $data['nota'] = str_replace(',', '.', $data['nota']);
+        } else {
+            $data['nota'] = null;
+        }
 
         $status = $this->db->insert('ei_ordem_servico_alunos', $data);
+
+        $this->atualizarNotaGeral($data['id_aluno_curso']);
 
         echo json_encode(array('status' => $status !== false));
     }
@@ -205,19 +213,49 @@ class OrdemServico_alunos extends MY_Controller
         }
         $data['data_inicio'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_inicio'])));
         $data['data_termino'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_termino'])));
-
+        if (strlen($data['nota'])) {
+            $data['nota'] = str_replace(',', '.', $data['nota']);
+        } else {
+            $data['nota'] = null;
+        }
 
         $status = $this->db->update('ei_ordem_servico_alunos', $data, array('id' => $id));
+
+        $this->atualizarNotaGeral($data['id_aluno_curso']);
 
         echo json_encode(array('status' => $status !== false));
     }
 
     public function ajaxDelete()
     {
-        $id = $this->input->post('id');
-        $status = $this->db->delete('ei_ordem_servico_alunos', array('id' => $id));
+        $osAluno = $this->db
+            ->select('id, id_aluno_curso')
+            ->where('id', $this->input->post('id'))
+            ->get('ei_ordem_servico_alunos')
+            ->row();
+
+        if (empty($osAluno)) {
+            exit(json_encode(['erro' => 'Não foi possível excluir a O.S. do aluno.']));
+        }
+
+        $status = $this->db->delete('ei_ordem_servico_alunos', ['id' => $osAluno->id]);
+
+        $this->atualizarNotaGeral($osAluno->id_aluno_curso);
 
         echo json_encode(array('status' => $status !== false));
+    }
+
+    private function atualizarNotaGeral($idAlunoCurso = null)
+    {
+        $osAluno = $this->db
+            ->select_avg('nota')
+            ->where('id_aluno_curso', $idAlunoCurso)
+            ->get('ei_ordem_servico_alunos')
+            ->row();
+
+        $notaGeral = $osAluno->nota ?? null;
+
+        $this->db->update('ei_alunos_cursos', ['nota_geral' => $notaGeral], ['id' => $idAlunoCurso]);
     }
 
     /*

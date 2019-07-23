@@ -312,6 +312,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
 
         $post = $this->input->post();
 
+
         $sql = "SELECT s.id, 
                        s.candidato,
                        s.telefone,
@@ -425,14 +426,14 @@ class RecrutamentoPresencial_cargos extends MY_Controller
                                   END AS aproveitamento1,
                              AVG(f.nota_aproveitamento) AS aproveitamento2
                       FROM requisicoes_pessoal a
-                      INNER JOIN empresa_cargos b
-                                 ON b.id = a.id_cargo
-                      INNER JOIN empresa_funcoes c
-                                 ON c.id = a.id_funcao
                       INNER JOIN requisicoes_pessoal_candidatos d
-                                ON d.id_requisicao = a.id
-                      LEFT JOIN recrutamento_usuarios e
+                                 ON d.id_requisicao = a.id
+                      INNER JOIN recrutamento_usuarios e
                                 ON e.id = d.id_usuario
+                      LEFT JOIN empresa_cargos b
+                                 ON b.id = a.id_cargo
+                      LEFT JOIN empresa_funcoes c
+                                 ON c.id = a.id_funcao
                       LEFT JOIN requisicoes_pessoal_testes f
                                 ON f.id_candidato = d.id
                       LEFT JOIN recrutamento_modelos g
@@ -590,7 +591,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         $this->db->select('a.id, b.id AS id_usuario, a.nome, f.municipio, g.tipo AS deficiencia');
         $this->db->select('a.telefone, a.email, a.fonte_contratacao, a.status, a.observacoes, b.id_requisicao, h.id AS id_usuario_google');
         $this->db->join('requisicoes_pessoal_candidatos b', "b.id_usuario = a.id AND b.id_requisicao = '{$busca['id_requisicao']}'", 'left');
-        $this->db->join('requisicoes_pessoal c', "c.id = b.id_requisicao",'left');
+        $this->db->join('requisicoes_pessoal c', "c.id = b.id_requisicao", 'left');
         $this->db->join('empresa_cargos d', 'd.id = c.id_cargo', 'left');
         $this->db->join('empresa_funcoes e', 'e.id = c.id_funcao', 'left');
         $this->db->join('municipios f', 'f.cod_mun = a.cidade', 'left');

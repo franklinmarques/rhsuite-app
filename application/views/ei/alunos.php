@@ -92,7 +92,8 @@
                                 <div class="form-body">
                                     <div id="pesquisar_aluno">
                                         <div class="row form-group">
-                                            <label class="control-label col-md-4 text-danger"><strong>Pesquisar se aluno já é cadastrado</strong></label>
+                                            <label class="control-label col-md-4 text-danger"><strong>Pesquisar se aluno
+                                                    já é cadastrado</strong></label>
                                             <div class="col-md-5">
                                                 <?php echo form_dropdown('', $alunos, '', 'class="combobox form-control"'); ?>
                                             </div>
@@ -245,6 +246,14 @@
                                             <input name="semestre_final" placeholder="s/aaaa"
                                                    class="form-control text-center semestre" type="text">
                                         </div>
+                                        <label class="control-label col-md-1">Nota</label>
+                                        <div class="col-md-2">
+                                            <input name="nota_geral" class="form-control text-center" type="text"
+                                                   readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Status</label>
                                         <div class="col-md-1">
                                             <div class="checkbox">
                                                 <label>

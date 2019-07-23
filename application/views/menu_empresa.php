@@ -36,6 +36,30 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                     </a>
                 </li>
 
+                <li class="sub-menu">
+                    <a href="javascript:void(0);"<?= (in_array($this->uri->rsegment(2), array('estruturas', 'cargo_funcao')) ? ' class="active"' : ''); ?>>
+                        <i class="fa fa-industry"> </i>
+                        <span>Estrutura Organizacional</span>
+                    </a>
+                    <ul class="sub">
+                        <li class="<?php echo(in_array($this->uri->rsegment(2), array('estruturas')) ? 'active' : ''); ?>">
+                            <a href="<?php echo site_url('estruturas'); ?>">Gerenciar Estruturas</a>
+                        </li>
+                        <li class="<?php echo(in_array($this->uri->rsegment(2), array('cargo_funcao')) ? 'active' : ''); ?>">
+                            <a href="<?php echo site_url('cargo_funcao'); ?>">Gerenciar Cargos/Funções</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <?php if (isset($hash_acesso['JD'])): ?>
+                    <li>
+                        <a href="<?php echo site_url('jobDescriptor'); ?>"<?php echo($this->uri->rsegment(2) == 'jobDescriptor' ? 'class="active"' : ''); ?>>
+                            <i class="glyphicon glyphicon-briefcase"> </i>
+                            <span>jobDescriptor</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
                 <?php if (isset($hash_acesso['GP'])): ?>
                     <li class="sub-menu">
                         <a href="javascript:void(0);"<?= (in_array($this->uri->rsegment(2), array('home', 'funcionarios', 'cursosfuncionario', 'novocursofuncionario', 'novofuncionario', 'editarfuncionario')) ? ' class="active"' : ''); ?>>
@@ -85,29 +109,9 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                             <li style="border-bottom: solid 1px rgba(255,255,255,0.2);"><a
                                         href="<?php echo site_url('home/funcionarios'); ?>">PDIs - Planos Desenv.
                                     Individuais</a></li>
-                            <?php if (isset($hash_acesso['JD'])): ?>
-                                <li class="<?php echo($this->uri->rsegment(2) == 'jobDescriptor' ? 'active' : ''); ?>"
-                                    style="border-bottom: solid 1px rgba(255,255,255,0.2);"><a
-                                            href="<?php echo site_url('jobDescriptor'); ?>">Job Descriptor</a></li>
-                            <?php endif; ?>
                         </ul>
                     </li>
                 <?php endif; ?>
-
-                <li class="sub-menu">
-                    <a href="javascript:void(0);"<?= (in_array($this->uri->rsegment(2), array('estruturas', 'cargo_funcao')) ? ' class="active"' : ''); ?>>
-                        <i class="fa fa-industry"> </i>
-                        <span>Estrutura Organizacional</span>
-                    </a>
-                    <ul class="sub">
-                        <li class="<?php echo(in_array($this->uri->rsegment(2), array('estruturas')) ? 'active' : ''); ?>">
-                            <a href="<?php echo site_url('estruturas'); ?>">Gerenciar Estruturas</a>
-                        </li>
-                        <li class="<?php echo(in_array($this->uri->rsegment(2), array('cargo_funcao')) ? 'active' : ''); ?>">
-                            <a href="<?php echo site_url('cargo_funcao'); ?>">Gerenciar Cargos/Funções</a>
-                        </li>
-                    </ul>
-                </li>
 
                 <?php if (isset($hash_acesso['PS'])): ?>
                     <?php
@@ -305,12 +309,46 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                     </li>
                 <?php endif; ?>
 
-                <li>
-                    <a href="<?php echo site_url('manutencao'); ?>">
-                        <i class="glyphicons glyphicons-list"> </i>
-                        <span>Relatórios de Gestão</span>
-                    </a>
-                </li>
+                <?php if (isset($hash_acesso['GC'])): ?>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-institution"></i>
+                            <span>Gestão Comercial</span>
+                        </a>
+                        <ul class="sub">
+                            <li>
+                                <a href="<?php echo site_url('icom/produtos'); ?>">Gerenciar produtos</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo site_url('icom/clientes'); ?>">Gerenciar clientes</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo site_url('icom/propostas'); ?>">Gerenciar propostas</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-institution"></i>
+                            <span>Gestão de Contratos</span>
+                        </a>
+                        <ul class="sub">
+                            <li>
+                                <a href="<?php echo site_url('icom/contratos'); ?>">Gerenciar contratos</a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+
+                <?php if (isset($hash_acesso['RG'])): ?>
+                    <li>
+                        <a href="<?php echo site_url('manutencao'); ?>">
+                            <i class="glyphicons glyphicons-list"> </i>
+                            <span>Relatórios de Gestão</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
 
                 <?php if (in_array($this->uri->rsegment(2), array('acessarcurso'))): ?>
                     <li class="sub-menu" id="menu-curso">

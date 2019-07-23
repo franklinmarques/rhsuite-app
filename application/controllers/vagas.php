@@ -5,6 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Vagas extends CI_Controller
 {
 
+    //==========================================================================
     public function index()
     {
         if ($this->session->userdata('logado')) {
@@ -34,19 +35,20 @@ class Vagas extends CI_Controller
         $this->load->view('vagas', $data);
     }
 
-
+    //==========================================================================
     public function listar()
     {
-        $this->db->select(["a.codigo, a.data_abertura, CONCAT(b.nome, '/', c.nome) AS cargo_funcao"], false);
+        $this->db->select(["a.codigo, a.id_requisicao_pessoal, a.data_abertura, CONCAT(b.nome, '/', c.nome) AS cargo_funcao"], false);
         $this->db->select('a.quantidade, a.cidade_vaga, a.bairro_vaga, a.id_empresa, b.nome AS cargo, c.nome AS funcao');
         $this->db->select(["DATE_FORMAT(a.data_abertura, '%d/%m/%Y') AS data_abertura_de"], false);
         $this->db->join('empresa_cargos b', 'b.id = a.id_cargo');
         $this->db->join('empresa_funcoes c', 'c.id = a.id_funcao AND c.id_cargo = b.id');
+        $this->db->join('requisicoes_pessoal d', 'd.id = a.id_requisicao_pessoal');
         $this->db->where('a.status', 1);
         $query = $this->db->get('gestao_vagas a');
 
         $config = array(
-            'search' => ['codigo', 'cidade_vaga', 'bairro_vaga', 'cargo', 'funcao']
+            'search' => ['codigo', 'id_requisicao_pessoal', 'cidade_vaga', 'bairro_vaga', 'cargo', 'funcao']
         );
 
         $this->load->library('dataTables', $config);
@@ -57,13 +59,15 @@ class Vagas extends CI_Controller
         $logado = (bool)$this->session->userdata('logado');
         foreach ($output->data as $row) {
             if ($logado) {
-                $acoes = '<button class="btn btn-sm btn-info" title="Detalhes da vaga" onclick="visualizar_vaga(' . $row->codigo . ')">Detalhes da vaga</button>';
+                $acoes = '<button class="btn btn-sm btn-info" title="Detalhes da vaga" onclick="visualizar_vaga(' . $row->codigo . ')">Detalhes da vaga</button>
+                          <button class="btn btn-sm btn-primary" title="Candidatar-se!" onclick="candidatar(' . $row->codigo . ')">Candidatar-se!</button>';
             } else {
                 $acoes = '<button class="btn btn-sm btn-info" title="Detalhes da vaga" onclick="visualizar_vaga(' . $row->codigo . ')">Detalhes da vaga</button>
                           <button class="btn btn-sm btn-primary" title="Candidatar-se!" onclick="candidatar(' . $row->codigo . ')">Candidatar-se!</button>';
             }
             $data[] = array(
                 $row->codigo,
+                $row->id_requisicao_pessoal,
                 $row->data_abertura_de,
                 $row->cargo_funcao,
                 $row->quantidade,
@@ -78,7 +82,7 @@ class Vagas extends CI_Controller
         echo json_encode($output);
     }
 
-
+    //==========================================================================
     public function visualizarDetalhes()
     {
         $codigo = $this->input->get('codigo');
@@ -98,7 +102,7 @@ class Vagas extends CI_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function novoCandidato($codigo)
     {
         $cabecalho = $this->getCabecalho();
@@ -150,7 +154,7 @@ class Vagas extends CI_Controller
         $this->load->view('vagas_curriculo', $data);
     }
 
-
+    //==========================================================================
     private function getCabecalho()
     {
         $codigo = $this->uri->rsegment(3);
@@ -177,7 +181,7 @@ class Vagas extends CI_Controller
         return $data;
     }
 
-
+    //==========================================================================
     public function consultarCEP()
     {
         $cep = $this->input->get('cep');
@@ -221,7 +225,7 @@ class Vagas extends CI_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function salvarCandidato()
     {
         $data = $this->input->post();
@@ -324,7 +328,7 @@ class Vagas extends CI_Controller
         echo json_encode(['status' => true, 'id_usuario' => $id]);
     }
 
-
+    //==========================================================================
     public function salvarFormacaoCandidato()
     {
         $rows = $this->input->post();
@@ -384,7 +388,7 @@ class Vagas extends CI_Controller
         echo json_encode(['status' => true]);
     }
 
-
+    //==========================================================================
     public function salvarHistoricoProfissional()
     {
         $rows = $this->input->post();

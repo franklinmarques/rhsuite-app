@@ -7,12 +7,13 @@ class Apontamento extends MY_Controller
 
     private function getAlocacao($busca, $consolidado = '')
     {
-        $this->db->select('id, data, mes_bloqueado, NULL as id_anterior, NULL AS data_abertura', false);
+       $this->db->select('id, data, mes_bloqueado, NULL as id_anterior, NULL AS data_abertura', false);
         $this->db->select("NULLIF(dia_fechamento, 0) AS dia_fechamento", false);
-        $this->db->where("DATE_FORMAT(data, '%Y-%m') =", "{$busca['ano']}-{$busca['mes']}");
         $this->db->where('depto', $busca['depto']);
         $this->db->where('area', $busca['area']);
         $this->db->where('setor', $busca['setor']);
+        $this->db->where('MONTH(data)', $busca['mes']);
+        $this->db->where('YEAR(data)', $busca['ano']);
         $alocacao = $this->db->get('alocacao')->row();
 
         if (empty($alocacao)) {
@@ -155,11 +156,11 @@ class Apontamento extends MY_Controller
                       ORDER BY a.nome ASC) s
                 GROUP BY s.id_usuario";
 
-        $alocados = $this->db->query($sql);
+//        $alocados = $this->db->query($sql);
 
 
         $this->load->library('dataTables');
-        $output = $this->datatables->generate($alocados);
+        $output = $this->datatables->query($sql);
 
 
         $this->load->library('Calendar');
@@ -226,7 +227,7 @@ class Apontamento extends MY_Controller
         } else {
             $this->db->where('a.id_alocacao', $alocacao->id);
         }
-        $this->db->where_in('a.id_usuario', array_column($alocados->result(), 'id_usuario') + [0]);
+        $this->db->where_in('a.id_usuario', array_column($output->data, 'id_usuario') + [0]);
         $this->db->where("e.data BETWEEN '{$alocacao->data_abertura}' AND '{$alocacao->data_fechamento}'");
         $eventos = $this->db->get('alocacao_apontamento e')->result();
 

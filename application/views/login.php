@@ -186,11 +186,13 @@
             Consultar vagas | Cadastrar currículo
         </button>
         <br>
-        <button type="button" class="btn btn-primary form-control"
-                style="margin-top: 3px; box-shadow: 1px 2px 4px rgba(0, 0, 0, .15);"
-                data-toggle="modal" data-target="#modal_pilulas_conhecimento">
-            Pílulas de Conhecimento
-        </button>
+        <?php if ($visualizacao_pilula_conhecimento): ?>
+            <button type="button" class="btn btn-primary form-control"
+                    style="margin-top: 3px; box-shadow: 1px 2px 4px rgba(0, 0, 0, .15);"
+                    data-toggle="modal" data-target="#modal_pilulas_conhecimento">
+                Pílulas de Conhecimento
+            </button>
+        <?php endif; ?>
 
         <!--<div class="row">
             <div class="col-sm-6" style="padding-right: 5px;">

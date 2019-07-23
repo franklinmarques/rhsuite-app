@@ -112,7 +112,7 @@ require_once APPPATH . "views/header.php";
 
             <!-- Bootstrap modal -->
             <div class="modal fade" id="modal_form" role="dialog">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -124,45 +124,50 @@ require_once APPPATH . "views/header.php";
                                 <input type="hidden" name="id" value="">
                                 <input type="hidden" name="is_supervisor" value="1">
                                 <div class="row form-group">
-                                    <label class="control-label col-md-3">Departamento<span
+                                    <label class="control-label col-md-2">Departamento<span
                                                 class="text-danger"> *</span></label>
-                                    <div class="col-md-8">
+                                    <div class="col-md-9">
                                         <?php echo form_dropdown('depto', $deptos, '', 'id="depto" class="form-control"'); ?>
                                     </div>
                                 </div>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-3">Área<span
+                                    <label class="control-label col-md-2">Área<span
                                                 class="text-danger"> *</span></label>
-                                    <div class="col-md-8">
+                                    <div class="col-md-9">
                                         <?php echo form_dropdown('area', $areas, '', 'id="area" class="form-control"'); ?>
                                     </div>
                                 </div>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-3">Setor<span
+                                    <label class="control-label col-md-2">Setor<span
                                                 class="text-danger"> *</span></label>
-                                    <div class="col-md-8">
+                                    <div class="col-md-9">
                                         <?php echo form_dropdown('setor', $setores, '', 'id="setor" class="form-control"'); ?>
                                     </div>
                                 </div>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-3">Supervisor<span class="text-danger"> *</span></label>
-                                    <div class="col-md-8">
+                                    <label class="control-label col-md-2">Supervisor<span class="text-danger"> *</span></label>
+                                    <div class="col-md-9">
                                         <?php echo form_dropdown('id_usuario', $supervisores, '', 'id="supervisor" class="form-control"'); ?>
                                     </div>
                                 </div>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-3">Ano<span class="text-danger"> *</span></label>
+                                    <label class="control-label col-md-2">Ano<span class="text-danger"> *</span></label>
                                     <div class="col-md-2">
                                         <input name="ano" class="form-control text-center ano" placeholder="aaaa"
                                                type="text">
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-3">
                                         <label class="radio-inline">
                                             <input type="radio" name="semestre" value="1" checked> 1&ordm; semestre
                                         </label>
                                         <label class="radio-inline">
                                             <input type="radio" name="semestre" value="2"> 2&ordm; semestre
                                         </label>
+                                    </div>
+                                    <label class="control-label col-md-2">Carga horária</label>
+                                    <div class="col-md-2">
+                                        <input name="carga_horaria" class="form-control text-center hora"
+                                               placeholder="hh:mm" type="text">
                                     </div>
                                 </div>
                                 <div class="row form-group">
@@ -260,6 +265,7 @@ require_once APPPATH . "views/end_js.php";
         var table, demo1, demo2;
 
         $('.ano').mask('0000');
+        $('.hora').mask('00:00');
 
         $(document).ready(function () {
 
@@ -447,6 +453,7 @@ require_once APPPATH . "views/end_js.php";
                     $('#form [name="id"]').val(json.id);
                     $('#form [name="is_supervisor"]').val(json.is_supervisor);
                     $('#form [name="ano"]').val(json.ano);
+                    $('#form [name="carga_horaria"]').val(json.carga_horaria);
                     $('#form [name="semestre"][value="' + json.semestre + '"]').prop('checked', true);
                     $('#funcoes').html($(json.cargos).html());
                     demo1.bootstrapDualListbox('refresh', true);

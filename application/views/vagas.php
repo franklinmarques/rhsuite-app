@@ -113,13 +113,14 @@
                     <thead>
                     <tr class="active">
                         <th>Código</th>
+                        <th nowrap>N&ordm; requisição</th>
                         <th>Abertura</th>
                         <th>Cargo/Função</th>
                         <th nowrap>N&ordm; vagas</th>
                         <th>Cidade</th>
                         <th>Bairro</th>
                         <?php if ($this->session->userdata('logado')): ?>
-                            <th>Ação</th>
+                            <th>Ações</th>
                         <?php else: ?>
                             <th>Ações</th>
                         <?php endif; ?>
@@ -301,15 +302,15 @@
             'columnDefs': [
                 {
                     'className': 'text-center',
-                    'targets': [1, 3]
+                    'targets': [2, 4]
                 },
                 {
                     'width': '34%',
-                    'targets': [2]
+                    'targets': [3]
                 },
                 {
                     'width': '33%',
-                    'targets': [4, 5]
+                    'targets': [5, 6]
                 },
                 {
                     'className': 'text-center text-nowrap',

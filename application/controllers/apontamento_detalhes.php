@@ -21,7 +21,7 @@ class Apontamento_detalhes extends MY_Controller
                       WHERE a.id_empresa = {$this->session->userdata('empresa')}) s";
 
         $recordsTotal = $this->db->query($sql)->num_rows();
-        print_r($this->db->conn_id);exit;
+//        print_r($this->db->conn_id);exit;
         $data['empresa'] = $this->session->userdata('empresa');
         $this->load->view('apontamento_detalhes', $data);
     }
