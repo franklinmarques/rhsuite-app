@@ -49,8 +49,8 @@ class CronoAnalises extends MY_Controller
                 '<button class="btn btn-sm btn-info" onclick="edit_crono_analise(' . $row->id . ')" title="Editar crono análise"><i class="glyphicon glyphicon-pencil"></i></button>
                  <button class="btn btn-sm btn-danger" onclick="delete_crono_analise(' . $row->id . ')" title="Excluir crono análise"><i class="glyphicon glyphicon-trash"></i></button>
                  <button class="btn btn-sm btn-info" onclick="edit_executores(' . $row->id . ')" title="Gerenciar executores"><i class="glyphicon glyphicon-list"></i> Analisados</button>
-                 <a class="btn btn-sm btn-primary" href="' . site_url('dimensionamento/apontamentos/gerenciar/' . $row->id) . '" target="_blank" title="Gerenciar apontamentos">Apontamentos</a>
-                 <a class="btn btn-sm btn-primary" href="' . site_url('dimensionamento/performance/gerenciar/' . $row->id) . '" target="_blank" title="Análise performance">Rel. performance</a>'
+                 <a class="btn btn-sm btn-primary" href="' . site_url('dimensionamento/medicoes/gerenciar/' . $row->id) . '" target="_blank" title="Gerenciar apontamentos">Medições</a>
+                 <a class="btn btn-sm btn-primary" href="' . site_url('dimensionamento/performance/gerenciar/' . $row->id) . '" target="_blank" title="Análise performance">Análise performance</a>'
             );
         }
 

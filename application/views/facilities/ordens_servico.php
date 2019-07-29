@@ -611,7 +611,12 @@ require_once APPPATH . 'views/end_js.php';
                             $('[name="data_fechamento"]').prop('disabled', false);
                         // $('#dados li').eq(1).addClass('active');
                         case 'P':
-                            if ('<?= $vistoriador; ?>' !== '1') {
+                            if ('<?= $vistoriador; ?>' === '1') {
+                                $('#status li').eq(1).removeClass('disable');
+                                $('#status li').eq(2).removeClass('disable');
+                                $('#dados li').eq(0).removeClass('disabled');
+                                $('[name="resolucao_satisfatoria"],[name="observacoes_positivas"],[name="observacoes_negativas"]').prop('disabled', true);
+                            } else {
                                 $('#status li').eq(3).removeClass('disable');
                                 $('#status li').eq(4).removeClass('disable');
                                 $('#dados li').eq(1).removeClass('disabled');
@@ -750,7 +755,7 @@ require_once APPPATH . 'views/end_js.php';
                 'beforeSend': function () {
                     $('.notificarFechamento').prop('disabled', true);
                 },
-                'success': function () {
+                'success': function (json) {
                     if (json.status) {
                         alert('Notificação enviada com sucesso.');
                     } else if (json.erro) {

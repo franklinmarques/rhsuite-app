@@ -115,10 +115,11 @@
                                         <div class="col-md-6">
                                             <select name="tipo_usuario" class="form-control">
                                                 <option value="">selecione...</option>
-                                                <option value="4">Administrador</option>
                                                 <option value="1">Selecionador</option>
                                                 <option value="2">Departamento de Pessoal</option>
                                                 <option value="3">Gestão de Pessoas</option>
+                                                <option value="4">Administrador</option>
+                                                <option value="5">Gestor</option>
                                             </select>
                                         </div>
                                     </div>

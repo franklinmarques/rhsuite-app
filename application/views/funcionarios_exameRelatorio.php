@@ -70,6 +70,10 @@ require_once "header.php";
                                     <input type="radio" name="realizados" value="0" checked="" onchange="buscar()"
                                            autocomplete="off"> Somente não-realizados
                                 </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="realizados" value="2"="" onchange="buscar()" autocomplete=
+                                    "off"> Data não-programada
+                                </label>
                             </div>
                             <div class="col-sm-5 text-right">
                                 <?php if ($is_pdf == false): ?>
@@ -88,6 +92,16 @@ require_once "header.php";
                                 <?php endif; ?>
                             </div>
                         </div>
+                        <div class="row form-group">
+                            <label class="control-label col-sm-2">Departamento</label>
+                            <div class="col-sm-4">
+                                <?php echo form_dropdown('', $deptos, '', 'id="id_depto" onchange="filtrar_estrutura();" class="form-control input-sm" autocomplete="off"'); ?>
+                            </div>
+                            <label class="control-label col-sm-1">Área</label>
+                            <div class="col-sm-4">
+                                <?php echo form_dropdown('', $areas, '', 'id="id_area" onchange="filtrar_estrutura();" class="form-control input-sm" autocomplete="off"'); ?>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Texto de e-mail</label>
@@ -102,7 +116,7 @@ require_once "header.php";
             </table>
 
             <!--<div class="table-responsive">-->
-            <table id="table" class="exame table table-bordered table-condensed">
+            <table id="table" class="exame table table-bordered table-condensed" width="100%">
                 <thead>
                 <tr>
                     <th>Funcionário</th>
@@ -144,68 +158,111 @@ require_once "end_js.php";
 <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
 
 <script>
+    var table;
+
     $(document).ready(function () {
         document.title = 'CORPORATE RH - LMS - Exames Médicos Periódicos';
 
         //datatables
         table = $('#table').DataTable({
-            dom: "<'row'<'#tipo_vinculo.col-sm-2'><'#status.col-sm-3'><'#mes_ano.col-sm-4'><'col-sm-3'f>>" +
+            'dom': "<'row'<'#tipo_vinculo.col-sm-2'><'#status.col-sm-3'><'#mes_ano.col-sm-4'><'col-sm-3'f>>" +
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-            "processing": true, //Feature control the processing indicator.
-            "serverSide": true, //Feature control DataTables' server-side processing mode.
-            iDisplayLength: -1,
-            lengthChange: false,
-            ordering: false,
-            paging: false,
-            "language": {
-                "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>",
+            'processing': true,
+            'serverSide': true,
+            'iDisplayLength': -1,
+            'lengthChange': false,
+            'ordering': false,
+            'paging': false,
+            'language': {
+                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>',
                 'searchPlaceholder': 'Nome/matrícula'
             },
-            // Load data for the table's content from an Ajax source
-            "ajax": {
-                "url": "<?php echo site_url('examePeriodico/ajax_relatorio/') ?>",
-                "type": "POST",
-                timeout: 9000,
-                data: function (d) {
+            'ajax': {
+                'url': '<?php echo site_url('examePeriodico/ajax_relatorio') ?>',
+                'type': 'POST',
+                'timeout': 9000,
+                'data': function (d) {
+                    d.id_depto = $('#id_depto').val();
+                    d.id_area = $('#id_area').val();
                     d.realizados = $('[name="realizados"]:checked').val();
                     d.mes = $('#mes_ano [name="mes"]').val();
                     d.ano = $('#mes_ano [name="ano"]').val();
                     d.tipo_vinculo = $('#tipo_vinculo [name="tipo_vinculo"]').val();
                     d.status = $('#status [name="status"]').val();
+
                     return d;
                 },
-                "dataSrc": function (json) {
-                    if (json.draw === '1') {
-                        $("#mes_ano").append('<br>Mês/ano ' + json.mes);
-                        $("#mes_ano").append(' &emsp;' + json.ano);
-                        $("#tipo_vinculo").append('<br>Vínculo ' + json.tipo_vinculo);
-                        $("#status").append('<br>Status ' + json.status);
+                'dataSrc': function (json) {
+                    if (json.draw === 1) {
+                        $('#mes_ano').append('<br>Mês/ano ' + json.mes);
+                        $('#mes_ano').append(' &emsp;' + json.ano);
+                        $('#tipo_vinculo').append('<br>Vínculo ' + json.tipo_vinculo);
+                        $('#status').append('<br>Status ' + json.status);
                     }
+
                     return json.data;
                 }
             },
-            //Set column definition initialisation properties.
-            "columnDefs": [
+            'columnDefs': [
                 {
-                    width: '30%',
-                    targets: [0, 3, 7]
+                    'width': '30%',
+                    'targets': [0, 3, 7]
                 },
                 {
-                    className: 'text-center',
-                    targets: [6, 8, 9, 10, 11]
+                    'className': 'text-center',
+                    'targets': [6, 8, 9, 10, 11]
                 },
                 {
-                    className: "text-nowrap",
-                    "targets": [-1], //last column
-                    "orderable": false, //set not orderable
-                    "searchable": false //set not orderable
+                    'createdCell': function (td, cellData, rowData, row, col) {
+                        if (rowData[col] === null || rowData[col] === '') {
+                            $(td).css('background-color', '#ff0');
+                        }
+                    },
+                    'targets': [1, 8]
+                },
+                {
+                    'className': 'text-nowrap',
+                    'orderable': false,
+                    'targets': [-1]
                 }
             ],
-            rowsGroup: [0, 1, 2, 3, 4, 5, -1]
+            'rowsGroup': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, -1]
         });
 
     });
+
+
+    function filtrar_estrutura() {
+        var id_depto = $('#id_depto').val();
+        var id_area = $('#id_area').val();
+
+        $.ajax({
+            'url': '<?php echo site_url('examePeriodico/filtrarEstrutura') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'id_depto': id_depto,
+                'id_area': id_area
+            },
+            'beforeSend': function () {
+                $('#id_depto, #id_area').prop('disabled', true);
+            },
+            'success': function (json) {
+                $('#id_area').html(json.areas);
+
+                $('#id_depto, #id_area').prop('disabled', false);
+                buscar();
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Error get data from ajax');
+            },
+            'complete': function () {
+                $('#id_depto, #id_area').prop('disabled', false);
+            }
+        });
+    }
+
 
     function enviar_email(id_usuario = null, nome_usuario = '') {
         var msg = 'Deseja enviar e-mail de convocação à ' + nome_usuario + '?';
@@ -279,6 +336,8 @@ require_once "end_js.php";
         var search = '';
         var q = new Array();
         q.push("realizados=" + $('[name="realizados"]:checked').val());
+        q.push("id_depto=" + $('#id_depto').val());
+        q.push("id_area=" + $('#id_area').val());
         q.push("mes=" + $('#mes_ano [name="mes"]').val());
         q.push("ano=" + $('#mes_ano [name="ano"]').val());
         q.push("tipo_vinculo=" + $('#tipo_vinculo [name="tipo_vinculo"]').val());

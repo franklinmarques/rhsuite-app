@@ -44,7 +44,7 @@
                 <div class="col-md-12">
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
-                        <li class="active">Gerenciar Apontamentos</li>
+                        <li class="active">Gerenciar Medições</li>
                     </ol>
                     <div class="row">
                         <div class="col-md-4">
@@ -264,7 +264,7 @@
     <!-- Js -->
     <script>
         $(document).ready(function () {
-            document.title = 'CORPORATE RH - LMS - Gerenciar Apontamentos';
+            document.title = 'CORPORATE RH - LMS - Gerenciar Medições';
         });
     </script>
 
@@ -294,7 +294,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('dimensionamento/apontamentos/ajaxList/') ?>',
+                    'url': '<?php echo site_url('dimensionamento/medicoes/ajaxList/') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.id_processo = $('#processo').val();
@@ -368,7 +368,7 @@
 
         function filtrar_estrutura() {
             $.ajax({
-                'url': '<?php echo site_url('dimensionamento/apontamentos/filtrarEstrutura') ?>',
+                'url': '<?php echo site_url('dimensionamento/medicoes/filtrarEstrutura') ?>',
                 'type': 'POST',
                 'data': {
                     'processo': $('#processo').val(),
@@ -428,7 +428,7 @@
             $('.help-block').empty();
 
             $.ajax({
-                'url': '<?php echo site_url('dimensionamento/apontamentos/ajaxEdit') ?>',
+                'url': '<?php echo site_url('dimensionamento/medicoes/ajaxEdit') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
@@ -476,9 +476,9 @@
             var url;
 
             if (save_method === 'add') {
-                url = '<?php echo site_url('dimensionamento/apontamentos/ajaxAdd') ?>';
+                url = '<?php echo site_url('dimensionamento/medicoes/ajaxAdd') ?>';
             } else {
-                url = '<?php echo site_url('dimensionamento/apontamentos/ajaxUpdate') ?>';
+                url = '<?php echo site_url('dimensionamento/medicoes/ajaxUpdate') ?>';
             }
 
             $.ajax({
@@ -507,7 +507,7 @@
         function delete_medicao(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    'url': '<?php echo site_url('dimensionamento/apontamentos/ajaxDelete') ?>',
+                    'url': '<?php echo site_url('dimensionamento/medicoes/ajaxDelete') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {'id': id},

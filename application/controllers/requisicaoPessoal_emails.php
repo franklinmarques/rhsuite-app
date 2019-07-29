@@ -17,7 +17,7 @@ class RequisicaoPessoal_emails extends MY_Controller
     public function ajaxList()
     {
         $this->db->select('email, colaborador');
-        $this->db->select("(CASE tipo_usuario WHEN 1 THEN 'Selecionador' WHEN 2 THEN 'Departamento de Pessoal' WHEN 3 THEN 'Gestão de Pessoas' WHEN 4 THEN 'Administrador' END) AS tipo_usuario", false);
+        $this->db->select("(CASE tipo_usuario WHEN 1 THEN 'Selecionador' WHEN 2 THEN 'Departamento de Pessoal' WHEN 3 THEN 'Gestão de Pessoas' WHEN 4 THEN 'Administrador' WHEN 5 THEN 'Gestor' END) AS tipo_usuario", false);
         $this->db->select("(CASE tipo_email WHEN 1 THEN 'Nova Requisição de Pessoal' WHEN 2 THEN 'Solicitação de agendamento Exame Médico' WHEN 3 THEN 'Nova requisição + Solicitação de agendamento' WHEN 4 THEN 'Administrador' END) AS tipo_email, id", false);
         $query = $this->db->get('requisicoes_pessoal_emails');
 

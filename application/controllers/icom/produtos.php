@@ -27,7 +27,7 @@ class Produtos extends MY_Controller
         $data = [
             'empresa' => $empresa,
             'tipos' => ['' => 'selecione...'] + $this->produtos::tipo(),
-            'tiposPreco' => ['' => 'selecione...'] + $this->produtos::tipoPreco(),
+            'tiposCobranca' => ['' => 'selecione...'] + $this->produtos::tipoCobranca(),
             'deptos' => ['' => 'Todos'] + array_column($deptos, 'nome', 'id'),
             'areas' => ['' => 'Todas'],
             'setores' => ['' => 'Todos'],
@@ -46,6 +46,39 @@ class Produtos extends MY_Controller
         $area = $this->input->post('id_area');
         $setor = $this->input->post('id_setor');
 
+        $data = $this->carregarEstrutura($depto, $area, $setor);
+
+        $data['deptos'][''] = 'Todos';
+        $data['areas'][''] = 'Todas';
+        $data['setores'][''] = 'Todos';
+
+        echo json_encode($data);
+    }
+
+    //==========================================================================
+    public function montarEstrutura()
+    {
+        $depto = $this->input->post('id_depto');
+        $area = $this->input->post('id_area');
+        $setor = $this->input->post('id_setor');
+
+        $data = $this->carregarEstrutura($depto, $area, $setor);
+
+        echo json_encode($data);
+    }
+
+    //==========================================================================
+    private function carregarEstrutura($depto = 0, $area = 0, $setor = 0)
+    {
+        $rowDeptos = $this->db
+            ->select('id, nome')
+            ->where('id_empresa', $this->session->userdata('empresa'))
+            ->order_by('nome', 'asc')
+            ->get('empresa_departamentos')
+            ->result();
+
+        $deptos = ['' => 'selecione...'] + array_column($rowDeptos, 'nome', 'id');
+
         $rowAreas = $this->db
             ->select('id, nome')
             ->where('id_departamento', $depto)
@@ -53,7 +86,7 @@ class Produtos extends MY_Controller
             ->get('empresa_areas')
             ->result();
 
-        $areas = ['' => 'Todas'] + array_column($rowAreas, 'nome', 'id');
+        $areas = ['' => 'selecione...'] + array_column($rowAreas, 'nome', 'id');
 
         $rowSetores = $this->db
             ->select('a.id, a.nome')
@@ -64,14 +97,15 @@ class Produtos extends MY_Controller
             ->get('empresa_setores a')
             ->result();
 
-        $setores = ['' => 'Todos'] + array_column($rowSetores, 'nome', 'id');
+        $setores = ['' => 'selecione...'] + array_column($rowSetores, 'nome', 'id');
 
         $data = [
+            'deptos' => form_dropdown('id_depto', $deptos, $depto, 'onchange="filtrar_alocacao();" class="form-control input-sm"'),
             'areas' => form_dropdown('id_area', $areas, $area, 'onchange="filtrar_alocacao();" class="form-control input-sm"'),
             'setores' => form_dropdown('id_setor', $setores, $setor, 'class="form-control input-sm"')
         ];
 
-        echo json_encode($data);
+        return $data;
     }
 
     //==========================================================================
@@ -81,6 +115,7 @@ class Produtos extends MY_Controller
 
         $this->db
             ->select('a.*', false)
+            ->select('d.nome AS depto, c.nome AS area, b.nome AS setor')
             ->join('empresa_setores b', 'b.id = a.id_setor', 'left')
             ->join('empresa_areas c', 'c.id = b.id_area', 'left')
             ->join('empresa_departamentos d', 'd.id = c.id_departamento', 'left');
@@ -98,7 +133,7 @@ class Produtos extends MY_Controller
             ->get($this->produtos::table() . ' a');
 
         $config = [
-            'select' => ['nome', 'tipo', 'id'],
+            'select' => ['nome', 'depto', 'area', 'setor', 'preco', 'tipo_cobranca', 'tipo', 'id'],
             'search' => ['codigo', 'nome']
         ];
 
@@ -111,6 +146,11 @@ class Produtos extends MY_Controller
         foreach ($output->data as $row) {
             $data[] = array(
                 $row->nome,
+                $row->depto,
+                $row->area,
+                $row->setor,
+                str_replace('.', ',', $row->preco),
+                $this->produtos::tipoCobranca($row->tipo_cobranca),
                 $this->produtos::tipo($row->tipo),
                 '<button class="btn btn-sm btn-info" onclick="edit_produto(' . $row->id . ')" title="Editar produto"><i class="glyphicon glyphicon-pencil"></i></button>
                  <button class="btn btn-sm btn-danger" onclick="delete_produto(' . $row->id . ')" title="Excluir produto"><i class="glyphicon glyphicon-trash"></i></button>'
@@ -125,13 +165,28 @@ class Produtos extends MY_Controller
     //==========================================================================
     public function editar()
     {
-        $data = $this->produtos->find($this->input->post('id'));
+//        $data = $this->produtos->find($this->input->post('id'));
+        $data = $this->db
+            ->select('a.*, b.id_area, c.id_departamento', false)
+            ->join('empresa_setores b', 'b.id = a.id_setor', 'left')
+            ->join('empresa_areas c', 'c.id = b.id_area', 'left')
+            ->where('a.id', $this->input->post('id'))
+            ->get('icom_produtos a')
+            ->row();
 
         if (empty($data)) {
-            exit(json_encode(['erro' => $this->produtos->errors()]));
+//            exit(json_encode(['erro' => $this->produtos->errors()]));
+            exit(json_encode(['erro' => 'Produto não encontrado ou excluído recentemente.']));
         }
 
         $data->preco = number_format($data->preco, 2, ',', '.');
+
+
+        $estrutura = $this->carregarEstrutura($data->id_departamento, $data->id_area, $data->id_setor);
+
+        $data->deptos = $estrutura['deptos'];
+        $data->areas = $estrutura['areas'];
+        $data->setores = $estrutura['setores'];
 
         echo json_encode($data);
     }
@@ -143,11 +198,24 @@ class Produtos extends MY_Controller
 
         $data = $this->entities->create('icomProdutos', $this->input->post());
 
+        $this->produtos->setValidationRule('id_empresa', '');
+        $this->produtos->setValidationRule('id_depto', 'required|is_natural_no_zero|max_length[11]');
+        $this->produtos->setValidationRule('id_area', 'required|is_natural_no_zero|max_length[11]');
+
         $this->produtos->setValidationLabel('codigo', 'Código');
         $this->produtos->setValidationLabel('nome', 'Nome');
         $this->produtos->setValidationLabel('tipo', 'Tipo');
         $this->produtos->setValidationLabel('preco', 'Preço de Locação');
-        $this->produtos->setValidationLabel('tipo_preco', 'Tipo Preço');
+        $this->produtos->setValidationLabel('tipo_cobranca', 'Tipo de Cobrança');
+        $this->produtos->setValidationLabel('id_depto', 'Departamento');
+        $this->produtos->setValidationLabel('id_area', 'Área');
+        $this->produtos->setValidationLabel('id_setor', 'Setor');
+
+        $this->produtos->validate($data) or exit(json_encode(['erro' => $this->produtos->errors()]));
+
+        unset($data->id_depto, $data->id_area, $data->id_setor);
+
+        $this->produtos->skipValidation();
 
         $this->produtos->save($data) or exit(json_encode(['erro' => $this->produtos->errors()]));
 

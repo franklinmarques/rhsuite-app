@@ -363,6 +363,9 @@ class Estruturas extends MY_Controller
         if (empty($data)) {
             exit(json_encode(['erro' => 'Etapa não encontrada ou excluída recentemente.']));
         }
+
+        $data->peso_item = str_replace('.', ',', $data->peso_item);
+
         echo json_encode($data);
     }
 
@@ -371,9 +374,13 @@ class Estruturas extends MY_Controller
     {
         $this->db->where('id', $this->input->post('id'));
         $data = $this->db->get('dimensionamento_itens')->row();
+
         if (empty($data)) {
             exit(json_encode(['erro' => 'Item não encontrado ou excluído recentemente.']));
         }
+
+        $data->valor = str_replace('.', ',', $data->valor);
+
         echo json_encode($data);
     }
 
@@ -411,6 +418,14 @@ class Estruturas extends MY_Controller
     public function ajaxAddEtapa()
     {
         $this->validarNome('etapas', $this->input->post('nome'));
+
+        $data = $this->input->post();
+        if (strlen($data['peso_item'])) {
+            $data['peso_item'] = str_replace(',', '.', $data['peso_item']);
+        } else {
+            $data['peso_item'] = null;
+        }
+
         $this->db->trans_start();
         $this->db->insert('dimensionamento_etapas', $this->input->post());
         $this->db->trans_complete();
@@ -426,8 +441,16 @@ class Estruturas extends MY_Controller
     public function ajaxAddItem()
     {
         $this->validarNome('itens', $this->input->post('nome'));
+
+        $data = $this->input->post();
+        if (strlen($data['valor'])) {
+            $data['valor'] = str_replace(['.', ','], ['', '.'], $data['valor']);
+        } else {
+            $data['valor'] = null;
+        }
+
         $this->db->trans_start();
-        $this->db->insert('dimensionamento_itens', $this->input->post());
+        $this->db->insert('dimensionamento_itens', $data);
         $this->db->trans_complete();
 
         if ($this->db->trans_status() === false) {
@@ -479,7 +502,15 @@ class Estruturas extends MY_Controller
     public function ajaxUpdateEtapa()
     {
         $data = $this->input->post();
+
         $this->validarNome('etapas', $data['nome']);
+
+        if (strlen($data['peso_item'])) {
+            $data['peso_item'] = str_replace(',', '.', $data['peso_item']);
+        } else {
+            $data['peso_item'] = null;
+        }
+
         $id = $this->input->post('id');
         unset($data['id']);
 
@@ -499,6 +530,13 @@ class Estruturas extends MY_Controller
     {
         $data = $this->input->post();
         $this->validarNome('itens', $data['nome']);
+
+        if (strlen($data['valor'])) {
+            $data['valor'] = str_replace(['.', ','], ['', '.'], $data['valor']);
+        } else {
+            $data['valor'] = null;
+        }
+
         $id = $this->input->post('id');
         unset($data['id']);
 

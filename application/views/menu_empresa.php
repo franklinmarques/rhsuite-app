@@ -325,15 +325,6 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                             <li>
                                 <a href="<?php echo site_url('icom/propostas'); ?>">Gerenciar propostas</a>
                             </li>
-                        </ul>
-                    </li>
-
-                    <li class="sub-menu">
-                        <a href="javascript:;">
-                            <i class="fa fa-institution"></i>
-                            <span>Gestão de Contratos</span>
-                        </a>
-                        <ul class="sub">
                             <li>
                                 <a href="<?php echo site_url('icom/contratos'); ?>">Gerenciar contratos</a>
                             </li>

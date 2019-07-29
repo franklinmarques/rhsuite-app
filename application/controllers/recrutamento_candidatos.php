@@ -348,7 +348,8 @@ class Recrutamento_candidatos extends MY_Controller
                 $row->bairro,
                 '<a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_candidatos/perfil/' . $row->id) . '" title="Editar cadastro sumário"><i class="glyphicon glyphicon-pencil"></i></a>
                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_candidato(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                 <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento/candidatos/' . $row->id) . '" title="Ver processo"><i class="glyphicon glyphicon-list-alt"></i> Avaliações</a>'
+                 <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento/candidatos/' . $row->id) . '" title="Ver processo">Avaliações</a>
+                 <button class="btn btn-sm btn-info" onclick="visualizar_processos(' . $row->id . ')" title="Visualizar histórico de processos"><i class="glyphicon glyphicon-list-alt"></i> Histórico</button>'
             );
         }
 
@@ -357,6 +358,79 @@ class Recrutamento_candidatos extends MY_Controller
 
         echo json_encode($output);
     }
+
+
+    public function ajax_list_processos()
+    {
+        $query = $this->db
+            ->select('a.id_requisicao')
+            ->select(['IFNULL(c.nome, b.cargo_externo) AS cargo'], false)
+            ->select(['IFNULL(d.nome, b.funcao_externa) AS funcao'], false)
+            ->select('a.data_selecao, a.resultado_selecao')
+            ->select('a.data_requisitante, a.resultado_requisitante')
+            ->select('a.antecedentes_criminais, a.restricoes_financeiras')
+            ->select('a.data_exame_admissional, a.resultado_exame_admissional, a.data_admissao, a.observacoes')
+            ->select(["DATE_FORMAT(a.data_selecao, '%d/%m/%Y') AS data_selecao_de"], false)
+            ->select(["DATE_FORMAT(a.data_requisitante, '%d/%m/%Y') AS data_requisitante_de"], false)
+            ->select(["DATE_FORMAT(a.data_exame_admissional, '%d/%m/%Y') AS data_exame_admissional_de"], false)
+            ->select(["DATE_FORMAT(a.data_admissao, '%d/%m/%Y') AS data_admissao_de"], false)
+            ->join('requisicoes_pessoal b', 'b.id = a.id_requisicao')
+            ->join('empresa_cargos c', 'c.id = b.id_cargo', 'left')
+            ->join('empresa_funcoes d', 'd.id = b.id_funcao', 'left')
+            ->where('a.id_usuario', $this->input->post('id_candidato'))
+            ->where('b.id_empresa', $this->session->userdata('empresa'))
+            ->get('requisicoes_pessoal_candidatos a');
+
+        $this->load->library('dataTables');
+
+        $output = $this->datatables->generate($query);
+
+        $resutadoSelecao = [
+            'A' => 'Selecionado',
+            'D' => 'Desistiu',
+            'N' => 'Não compareceu',
+            'X' => 'Aprovado',
+            'R' => 'Reprovado',
+            'S' => 'Stand by'
+        ];
+        $resultadoRequisitante = [
+            'A' => 'Selecionado',
+            'C' => 'Aprovado',
+            'D' => 'Desistiu',
+            'N' => 'Não compareceu',
+            'X' => 'Aprovado',
+            'R' => 'Reprovado',
+            'S' => 'Stand by'
+        ];
+        $antecedentesCriminais = ['1' => 'Antecedentes', '0' => 'Nada consta'];
+        $restricoesFinanceiras = ['1' => 'Com restrições', '0' => 'Sem restrições'];
+
+        $data = [];
+
+        foreach ($output->data as $row) {
+            $data[] = [
+                $row->id_requisicao,
+                $row->cargo,
+                $row->funcao,
+                $row->data_selecao_de,
+                $resutadoSelecao[$row->resultado_selecao] ?? '',
+                $row->data_requisitante_de,
+                $resultadoRequisitante[$row->resultado_requisitante] ?? '',
+                $antecedentesCriminais[$row->antecedentes_criminais] ?? '',
+                $restricoesFinanceiras[$row->restricoes_financeiras] ?? '',
+                $row->data_exame_admissional_de,
+                $row->resultado_exame_admissional,
+                $row->data_admissao_de,
+                $row->observacoes
+            ];
+        }
+
+        $output->data = $data;
+
+        echo json_encode($output);
+
+    }
+
 
     public function ajax_edit($id)
     {
@@ -367,6 +441,7 @@ class Recrutamento_candidatos extends MY_Controller
 
         echo json_encode($data);
     }
+
 
     public function ajax_add()
     {
@@ -839,6 +914,18 @@ class Recrutamento_candidatos extends MY_Controller
         array_splice($data['historicoProfissional'], 0, count($expProfissional), $expProfissional);
 
         $this->load->view('recrutamento_perfil_visualizacao', $data);
+    }
+
+
+    public function visualizarHistorico()
+    {
+        $data = $this->db
+            ->select('id AS idCandidato, nome AS nomeCandidato')
+            ->where('id', $this->uri->rsegment(3))
+            ->get('recrutamento_usuarios')
+            ->row();
+
+        $this->load->view('recrutamento_historico_visualizacao', $data);
     }
 
 }

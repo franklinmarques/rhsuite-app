@@ -247,28 +247,28 @@ class OrdensServico extends MY_Controller
         switch ($os->status) {
             case 'A':
                 $emailDestinatario = null;
-                $titulo = 'Nova Ordem de Serviço de Faciities aberta';
-                $msg = "A Ordem de Serviço de Faciities n&ordm; {$numeroOS} foi aberta, favor verificar.";
+                $titulo = 'Nova Ordem de Serviço de Facilities aberta';
+                $msg = "A Ordem de Serviço de Facilities n&ordm; {$numeroOS} foi aberta, favor verificar.";
                 break;
             case 'E':
                 $emailDestinatario = $os->email_requisitante;
-                $titulo = 'Ordem de Serviço de Faciities iniciada';
-                $msg = "A Ordem de Serviço de Faciities n&ordm; {$numeroOS} foi iniciada, favor verificar.";
+                $titulo = 'Ordem de Serviço de Facilities iniciada';
+                $msg = "A Ordem de Serviço de Facilities n&ordm; {$numeroOS} foi visualizada e seu tratamento foi iniciado, favor verificar.";
                 break;
             case 'G':
                 $emailDestinatario = $os->email_requisitante;
-                $titulo = 'Ordem de Serviço de Faciities tratada';
-                $msg = "A Ordem de Serviço de Faciities n&ordm; {$numeroOS} aguarda aprovação, favor verificar.";
+                $titulo = 'Ordem de Serviço de Facilities tratada';
+                $msg = "A Ordem de Serviço de Facilities n&ordm; {$numeroOS} teve o seu tratamento finalizado e aguarda aprovação do requisitante, favor verificar.";
                 break;
             case 'F':
                 $emailDestinatario = null;
-                $titulo = 'Ordem de Serviço de Faciities fechada';
-                $msg = "A Ordem de Serviço de Faciities n&ordm; {$numeroOS} foi fechada, favor verificar.";
+                $titulo = 'Ordem de Serviço de Facilities fechada';
+                $msg = "A Ordem de Serviço de Facilities n&ordm; {$numeroOS} foi fechada pelo requisitante, favor verificar a pesquisa de satisfação.";
                 break;
             case 'P':
                 $emailDestinatario = null;
-                $titulo = 'Ordem de Serviço de Faciities parcialmente fechada';
-                $msg = "A Ordem de Serviço de Faciities n&ordm; {$numeroOS} foi parcialmente fechada, favor verificar.";
+                $titulo = 'Ordem de Serviço de Facilities parcialmente fechada';
+                $msg = "A Ordem de Serviço de Facilities n&ordm; {$numeroOS} foi parcialmente fechada, favor verificar.";
                 break;
             default:
                 return;
@@ -303,8 +303,8 @@ class OrdensServico extends MY_Controller
     //==========================================================================
     public function notificarFechamento()
     {
-        if ($this->session->userdata('nivel_acesso') !== '17') {
-            exit(json_encode(['erro', 'Você não tem permissão para notificar o requisitante.']));
+        if ($this->session->userdata('nivel') !== '17') {
+            exit(json_encode(['erro' => 'Você não tem permissão para notificar o requisitante.']));
         }
 
         $msg = 'Sua solicitação de serviço foi realizada; por favor verifique se a resolução está plenamente atendida e feche a OS';

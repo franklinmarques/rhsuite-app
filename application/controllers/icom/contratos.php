@@ -236,6 +236,29 @@ class Contratos extends MY_Controller
     }
 
     //==========================================================================
+
+    public function pdf()
+    {
+        $this->load->library('m_pdf');
+
+        $stylesheet = '#contratos thead tr th { font-size: 12px; padding: 5px; text-align: center; font-weight: normal; } ';
+        $stylesheet .= '#contratos thead tr, #medicao tbody tr { border-width: 5px; border-color: #ddd; } ';
+        $stylesheet .= '#contratos tbody td { font-size: 11px; padding: 5px; } ';
+        $stylesheet .= '#table thead th { font-size: 12px; padding: 5px; background-color: #f5f5f5;} ';
+        $stylesheet .= '#table tbody td { font-size: 12px; padding: 5px; vertical-align: top; } ';
+
+        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
+        $this->m_pdf->pdf->writeHTML($this->relatorio(true));
+
+        $this->load->library('Calendar');
+
+        $mes_ano = $this->calendar->get_month_name(date('m')) . '/' . date('Y');
+
+        $this->m_pdf->pdf->Output('Mapa de Contratos_' . $mes_ano . '.pdf', 'D');
+    }
+
+    //==========================================================================
+
     public function relatorio($isPdf = false)
     {
         $data = $this->db
@@ -279,27 +302,6 @@ class Contratos extends MY_Controller
         }
 
         $this->load->view('icom/relatorio_contratos', $data);
-    }
-
-    //==========================================================================
-    public function pdf()
-    {
-        $this->load->library('m_pdf');
-
-        $stylesheet = '#contratos thead tr th { font-size: 12px; padding: 5px; text-align: center; font-weight: normal; } ';
-        $stylesheet .= '#contratos thead tr, #medicao tbody tr { border-width: 5px; border-color: #ddd; } ';
-        $stylesheet .= '#contratos tbody td { font-size: 11px; padding: 5px; } ';
-        $stylesheet .= '#table thead th { font-size: 12px; padding: 5px; background-color: #f5f5f5;} ';
-        $stylesheet .= '#table tbody td { font-size: 12px; padding: 5px; vertical-align: top; } ';
-
-        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
-        $this->m_pdf->pdf->writeHTML($this->relatorio(true));
-
-        $this->load->library('Calendar');
-
-        $mes_ano = $this->calendar->get_month_name(date('m')) . '/' . date('Y');
-
-        $this->m_pdf->pdf->Output('Mapa de Contratos_' . $mes_ano . '.pdf', 'D');
     }
 
 }

@@ -171,8 +171,50 @@ require_once "header.php";
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Salvar</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                            <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            <!-- Bootstrap modal -->
+            <div class="modal fade" id="modal_historico" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" style="float:right;">
+                                Fechar
+                            </button>
+                            <h3 class="modal-title">Histórico de Processos</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <div class="table-responsive">
+                                <table id="table_historico" class="table table-striped table-bordered" cellspacing="0"
+                                       width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th rowspan="2">RP</th>
+                                        <th rowspan="2">Cargo</th>
+                                        <th rowspan="2">Função</th>
+                                        <th colspan="2" class="text-center">Seleção</th>
+                                        <th colspan="2" class="text-center">Requisitante</th>
+                                        <th class="text-center">Antecedentes criminais</th>
+                                        <th class="text-center">Restrições financeiras</th>
+                                        <th rowspan="2">Observações</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center">Data</th>
+                                        <th class="text-center">Resultado</th>
+                                        <th class="text-center">Data</th>
+                                        <th class="text-center">Resultado</th>
+                                        <th class="text-center">Resultado</th>
+                                        <th class="text-center">Resultado</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
@@ -201,7 +243,8 @@ require_once "end_js.php";
     <script>
 
         var save_method; //for save method string
-        var table;
+        var table, tabe_historico;
+        var id_candidato;
 
         $(document).ready(function () {
 
@@ -258,7 +301,39 @@ require_once "end_js.php";
                 ]
             });
 
+            table_historico = $('#table_historico').DataTable({
+                'info': false,
+                'lengthChange': false,
+                'searching': false,
+                'paging': false,
+                'processing': true,
+                'serverSide': true,
+                'order': [['1', 'asc']],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('recrutamento_candidatos/ajax_list_processos') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
+                        d.id_candidato = id_candidato;
+                        return d;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'width': '18%',
+                        'targets': [1, 2, 7, 8, 9]
+                    },
+                    {
+                        'className': 'text-center',
+                        'targets': [0, 3, 4, 5, 6, 7, 8]
+                    }
+                ]
+            });
+
         });
+
 
         $('.filtro').on('change', function () {
             reload_table();
@@ -367,8 +442,10 @@ require_once "end_js.php";
             }
         }
 
-        function ver_modelos() {
-            location.href = "<?php echo site_url('recrutamento_candidatos_modelos'); ?>";
+        function visualizar_processos(id) {
+            id_candidato = id;
+            table_historico.ajax.reload(null, false);
+            $('#modal_historico').modal('show');
         }
 
     </script>

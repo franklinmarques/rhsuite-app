@@ -172,7 +172,7 @@ class PlanoTrabalho extends MY_Controller
         $data['atividade'] = form_dropdown('', ['' => 'selecione...'] + $atividades, $idAtividade);
         $data['complexidade'] = form_dropdown('', ['' => 'Todas'] + $grausComplexidade, $complexidade);
         $data['tipo_item'] = form_dropdown('', ['' => 'Todos'] + $tamanhoItens, $tipoItem);
-        $data['etapa'] = form_dropdown('', ['' => 'selecione...'] + $etapas, $idEtapa);
+        $data['etapa'] = form_dropdown('', ['' => 'Todas'] + $etapas, $idEtapa);
 
 
         $rowCronoAnalises = $this->db
@@ -223,8 +223,8 @@ class PlanoTrabalho extends MY_Controller
 
 
         $data['crono_analise'] = form_dropdown('', ['' => 'selecione...'] + $cronoAnalises, $idCronoAnalise);
-        $data['equipe'] = form_dropdown('', ['' => 'selecione...'] + $equipes, $idEquipe);
-        $data['colaborador'] = form_dropdown('', ['' => 'selecione...'] + $colaboradores, $idColaborador);
+        $data['equipe'] = form_multiselect('', $equipes, [$idEquipe]);
+        $data['colaborador'] = form_multiselect('', $colaboradores, [$idColaborador]);
 
 
         echo json_encode($data);
@@ -336,13 +336,23 @@ class PlanoTrabalho extends MY_Controller
     {
         parse_str($this->input->post('busca'), $busca);
 
-        $idExecutor = ['E' => $busca['equipe'], 'C' => $busca['colaborador']];
+
+        $idJob = $this->input->post('id_job');
+
+
+        $idExecutores = ['E' => $busca['equipe'] ?? [0], 'C' => $busca['colaborador'] ?? [0]];
+
 
         $this->db
-            ->select("b.id, (CASE b.tipo WHEN 'E' THEN g.nome WHEN 'C' THEN h.nome END) AS nome", false)
-            ->select(["a.tempo_unidade, CONCAT(e.nome, '/', d.nome) AS atividade_etapa"], false)
+            ->select("b.id, (CASE b.tipo WHEN 'E' THEN CONCAT(g.nome, ' (', COUNT(i.id), ')') WHEN 'C' THEN h.nome END) AS nome", false)
+            ->select(["a.tempo_unidade, a.indice_mao_obra, CONCAT(e.nome, '/', d.nome) AS atividade_etapa"], false)
             ->select("IF(a.medicao_calculada, 'Cálculo', 'Medição') AS medicao_calculada", false)
             ->select('a.valor_min_calculado, a.valor_medio_calculado, a.valor_max_calculado')
+            ->select('a.mao_obra_min_calculada, a.mao_obra_media_calculada, a.mao_obra_max_calculada')
+            ->select('j.volume_trabalho')
+            ->select('(j.qtde_horas_disponiveis / a.tempo_unidade) AS qtde_horas_necessarias')
+            ->select('j.qtde_horas_disponiveis')
+            ->select('(j.qtde_horas_disponiveis / a.indice_mao_obra) AS qtde_recursos_necessarios')
             ->join('dimensionamento_executores b', 'b.id = a.id_executor')
             ->join('dimensionamento_crono_analises c', 'c.id = b.id_crono_analise')
             ->join('dimensionamento_etapas d', 'd.id = a.id_etapa')
@@ -350,29 +360,40 @@ class PlanoTrabalho extends MY_Controller
             ->join('dimensionamento_processos f', 'f.id = e.id_processo AND f.id = c.id_processo')
             ->join('dimensionamento_equipes g', 'g.id = b.id_equipe', 'left')
             ->join('usuarios h', 'h.id = b.id_usuario', 'left')
+            ->join('dimensionamento_equipes_membros i', 'i.id_equipe = g.id', 'left')
+            ->join('dimensionamento_programas j', "j.id_executor = b.id AND j.id_job = '{$idJob}'", 'left')
             ->where('c.id_empresa', $this->session->userdata('empresa'))
             ->where('f.id', $busca['processo'])
             ->where('e.id', $busca['atividade'])
-            ->where('d.id', $busca['etapa'])
             ->where('c.id', $busca['crono_analise'])
             ->where('b.tipo', $busca['tipo'])
-            ->where('b.id', $idExecutor[$busca['tipo']] ?? null)
+            ->where_in('b.id', $idExecutores[$busca['tipo']] ?? [0])
             ->where('a.medicao_calculada', 1);
+
+        if ($busca['etapa']) {
+            $this->db->where('d.id', $busca['etapa']);
+        }
+
         if ($busca['depto']) {
             $this->db->where('f.id_depto', $busca['depto']);
         }
+
         if ($busca['area']) {
             $this->db->where('f.id_area', $busca['area']);
         }
+
         if ($busca['setor']) {
             $this->db->where('f.id_setor', $busca['setor']);
         }
+
         if ($busca['complexidade']) {
             $this->db->where('d.grau_complexidade', $busca['complexidade']);
         }
+
         if ($busca['tipo_item']) {
             $this->db->where('d.tamanho_item', $busca['tipo_item']);
         }
+
         $query = $this->db
             ->group_by('a.id')
             ->get('dimensionamento_medicoes a');
@@ -383,18 +404,53 @@ class PlanoTrabalho extends MY_Controller
         $output = $this->datatables->generate($query);
 
 
-        $data = array();
+        if ($busca['crono_analise']) {
+            $cronoAnalise = $this->db
+                ->select('base_tempo, unidade_producao')
+                ->where('id', $busca['crono_analise'])
+                ->get('dimensionamento_crono_analises')
+                ->row();
+        }
+
+        $baseTempo = [
+            '' => '',
+            'S' => 'Segundo',
+            'I' => 'Minuto',
+            'H' => 'Hora',
+            'D' => 'Dias',
+            'W' => 'Semana',
+            'Q' => 'Quinzena',
+            'M' => 'Mês',
+            'B' => 'Bimestre',
+            'T' => 'Trimestre',
+            'E' => 'Semestre',
+            'Y' => 'Ano'
+        ];
+
+        $output->base_tempo = $baseTempo[$cronoAnalise->base_tempo ?? ''];
+        $output->unidade_producao = $cronoAnalise->unidade_producao ?? '';
+
+        $data = [];
 
         foreach ($output->data as $row) {
             $data[] = array(
-//                '<div class="radio"><label><input type="radio" onchange="preencher_dados_programa(' . $row->id . ')"></label></div>',
                 $row->id,
                 $row->nome,
-                $row->atividade_etapa,
-                $row->medicao_calculada,
                 str_replace('.', ',', round($row->valor_min_calculado, 3)),
                 str_replace('.', ',', round($row->valor_medio_calculado, 3)),
-                str_replace('.', ',', round($row->valor_max_calculado, 3))
+                str_replace('.', ',', round($row->valor_max_calculado, 3)),
+                str_replace('.', ',', round($row->mao_obra_min_calculada, 3)),
+                str_replace('.', ',', round($row->mao_obra_media_calculada, 3)),
+                str_replace('.', ',', round($row->mao_obra_max_calculada, 3)),
+                $row->tempo_unidade,
+                $row->indice_mao_obra,
+                $row->volume_trabalho,
+                $row->qtde_horas_necessarias,
+                $row->qtde_horas_disponiveis,
+                $row->qtde_recursos_necessarios,
+                $row->atividade_etapa,
+                $row->medicao_calculada,
+
             );
         }
 
@@ -446,11 +502,14 @@ class PlanoTrabalho extends MY_Controller
     public function ajaxEditPrograma()
     {
         $data = $this->db
-            ->select('a.id, a.status, a.id_job, a.id_executor')
+            ->select('a.*', false)
             ->select('b.tipo, IFNULL(c.nome, d.nome) AS nome_executor', false)
+            ->select('e.valor_min_calculado, e.valor_medio_calculado, e.valor_max_calculado', false)
+            ->select('e.mao_obra_min_calculada, e.mao_obra_media_calculada, e.mao_obra_max_calculada', false)
             ->join('dimensionamento_executores b', 'b.id = a.id_executor')
             ->join('dimensionamento_equipes c', 'c.id = b.id_equipe', 'left')
             ->join('usuarios d', 'd.id = b.id_usuario', 'left')
+            ->join('dimensionamento_medicoes e', "e.id_executor = b.id AND e.medicao_calculada = 1", 'left')
             ->select(["TIME_FORMAT(a.horario_inicio_projetado, '%H:%i') AS horario_inicio_projetado"], false)
             ->select(["TIME_FORMAT(a.horario_termino_projetado, '%H:%i') AS horario_termino_projetado"], false)
             ->select(["TIME_FORMAT(a.horario_inicio_real, '%H:%i') AS horario_inicio_real"], false)
@@ -462,6 +521,23 @@ class PlanoTrabalho extends MY_Controller
 
         if (empty($data)) {
             exit(json_encode(['erro' => 'Programa não encontrado ou excluído recentemente.']));
+        }
+
+        $data->valor_min_calculado = str_replace('.', ',', round($data->valor_min_calculado, 3));
+        $data->valor_medio_calculado = str_replace('.', ',', round($data->valor_medio_calculado, 3));
+        $data->valor_max_calculado = str_replace('.', ',', round($data->valor_max_calculado, 3));
+        $data->mao_obra_min_calculada = str_replace('.', ',', round($data->mao_obra_min_calculada, 3));
+        $data->mao_obra_media_calculada = str_replace('.', ',', round($data->mao_obra_media_calculada, 3));
+        $data->mao_obra_max_calculada = str_replace('.', ',', round($data->mao_obra_max_calculada, 3));
+        $data->volume_trabalho = str_replace('.', ',', round($data->volume_trabalho, 3));
+        $data->qtde_horas_disponiveis = str_replace('.', ',', round($data->qtde_horas_disponiveis, 3));
+        $data->carga_horaria_necessaria = str_replace('.', ',', round($data->carga_horaria_necessaria, 3));
+        $data->qtde_recursos_necessarios = str_replace('.', ',', round($data->qtde_recursos_necessarios, 3));
+        if ($data->tipo_valor) {
+
+        }
+        if ($data->tipo_mao_obra) {
+
         }
 
         echo json_encode($data);
@@ -501,8 +577,13 @@ class PlanoTrabalho extends MY_Controller
     public function ajaxAddPrograma()
     {
         $this->validarPrograma();
+        $data = $this->input->post();
+        foreach ($data as &$row) {
+            $row = str_replace(',', '.', $row);
+        }
+
         $this->db->trans_start();
-        $this->db->insert('dimensionamento_programas', $this->input->post());
+        $this->db->insert('dimensionamento_programas', $data);
         $this->db->trans_complete();
 
         if ($this->db->trans_status() === false) {
@@ -557,6 +638,9 @@ class PlanoTrabalho extends MY_Controller
         $data = $this->input->post();
         $id = $this->input->post('id');
         unset($data['id']);
+        foreach ($data as &$row) {
+            $row = str_replace(',', '.', $row);
+        }
 
         $this->db->trans_start();
         $this->db->update('dimensionamento_programas', $data, ['id' => $id]);

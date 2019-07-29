@@ -291,6 +291,8 @@ class ExamePeriodico extends MY_Controller
     {
         $empresa = $this->session->userdata('empresa');
         $realizados = $this->input->get('realizados');
+        $idDepto = $this->input->get('id_depto');
+        $idArea = $this->input->get('id_area');
         $mes = $this->input->get('mes');
         $ano = $this->input->get('ano');
         $tipoVinculo = $this->input->get('tipo_vinculo');
@@ -317,11 +319,21 @@ class ExamePeriodico extends MY_Controller
         $this->db->select("DATE_FORMAT(a.data_entrega_copia, '%d/%m/%Y') AS data_entrega_copia", false);
         $this->db->select("DATE_FORMAT(a.data_entrega, '%d/%m/%Y') AS data_entrega", false);
         $this->db->join('usuarios b', 'b.id = a.id_usuario');
+        $this->db->join('empresa_departamentos c', 'c.id = b.id_depto OR c.nome = b.depto', 'left');
+        $this->db->join('empresa_areas d', 'd.id = b.id_area OR d.nome = b.area', 'left');
         $this->db->where('b.empresa', $empresa);
         if ($realizados === '0') {
             $this->db->where('a.data_realizacao IS NULL');
         } elseif ($realizados === '1') {
             $this->db->where('a.data_realizacao IS NOT NULL');
+        } elseif ($realizados === '2') {
+            $this->db->where('a.data_programada IS NULL');
+        }
+        if ($idDepto) {
+            $this->db->where('c.id', $idDepto);
+        }
+        if ($idArea) {
+            $this->db->where('d.id', $idArea);
         }
         if ($mes) {
             $this->db->where("DATE_FORMAT(a.data_programada, '%m') =", $mes);
@@ -339,13 +351,43 @@ class ExamePeriodico extends MY_Controller
                 $this->db->where('b.status', $status);
             }
         }
-        $data['funcionarios'] = $this->db->get('usuarios_exame_periodico a')->result();
+        $data['funcionarios'] = $this->db
+            ->group_by('a.id')
+            ->order_by('b.nome', 'asc')
+            ->get('usuarios_exame_periodico a')->result();
         $data['is_pdf'] = $pdf;
+
+        $deptos = $this->db
+            ->select('id, nome')
+            ->where('id_empresa', $empresa)
+            ->order_by('nome', 'asc')
+            ->get('empresa_departamentos')
+            ->result();
+
+        $data['deptos'] = ['' => 'Todos'] + array_column($deptos, 'nome', 'id');
+        $data['areas'] = ['' => 'Todas'];
 
         if ($pdf) {
             return $this->load->view('funcionarios_examePdf', $data, true);
         }
         $this->load->view('funcionarios_exameRelatorio', $data);
+    }
+
+
+    public function filtrarEstrutura()
+    {
+        $rowAreas = $this->db
+            ->select('id, nome')
+            ->where('id_departamento', $this->input->post('id_depto'))
+            ->order_by('nome', 'asc')
+            ->get('empresa_areas')
+            ->result();
+
+        $areas = ['' => 'Todas'] + array_column($rowAreas, 'nome', 'id');
+
+        $data['areas'] = form_dropdown('', $areas, $this->input->post('id_area'));
+
+        echo json_encode($data);
     }
 
     // -------------------------------------------------------------------------
@@ -358,6 +400,173 @@ class ExamePeriodico extends MY_Controller
      * @access public
      */
     public function ajax_relatorio()
+    {
+        $post = $this->input->post();
+
+        if ($post['draw'] === '1') {
+            $post['tipo_vinculo'] = '01';
+            $post['status'] = 1;
+            $post['mes'] = '';
+            $post['ano'] = date('Y');
+        }
+
+        $this->db
+            ->select('b.id, b.nome, b.cpf, b.funcao, a.local_exame, b.municipio, b.matricula')
+            ->select(["IF(b.status > 0 AND b.status < 10, b.status, '-1') AS status"], false)
+            ->select(["CONCAT_WS('/', b.depto, b.area, b.setor) AS estrutura"], false)
+            ->select(["DATE_FORMAT(a.data_programada,'%d/%m/%Y') AS data_programada_de"], false)
+            ->select(["DATE_FORMAT(a.data_realizacao,'%d/%m/%Y') AS data_realizacao_de"], false)
+            ->select(["DATE_FORMAT(a.data_entrega_copia,'%d/%m/%Y') AS data_entrega_copia_de"], false)
+            ->select(["DATE_FORMAT(a.data_entrega,'%d/%m/%Y') AS data_entrega_de"], false)
+            ->join('usuarios b', 'b.id = a.id_usuario')
+            ->join('empresa_departamentos c', 'c.id = b.id_depto OR c.nome = b.depto', 'left')
+            ->join('empresa_areas d', 'd.id = b.id_area OR d.nome = b.area', 'left')
+            ->where('b.empresa', $this->session->userdata('empresa'));
+        if (!empty($post['id_depto'])) {
+            $this->db->where('c.id', $post['id_depto']);
+        }
+        if (!empty($post['id_area'])) {
+            $this->db->where('d.id', $post['id_area']);
+        }
+        if ($post['realizados'] === '0') {
+            $this->db->where('a.data_realizacao', null);
+        } elseif ($post['realizados'] === '1') {
+            $this->db->where('a.data_realizacao IS NOT NULL');
+        } elseif ($post['realizados'] === '2') {
+            $this->db->where('a.data_programada', null);
+        }
+        if (!empty($post['mes'])) {
+            $this->db->where('MONTH(a.data_programada)', $post['mes']);
+        }
+        if (!empty($post['ano'])) {
+            $this->db->where('YEAR(a.data_programada)', $post['ano']);
+        }
+        if (!empty($post['tipo_vinculo'])) {
+            $this->db->where('b.tipo_vinculo', $post['tipo_vinculo']);
+        }
+        if (!empty($post['status'])) {
+            if ($post['status'] < 0) {
+                $this->db->where('(b.status < 1 OR b.status > 9)');
+            } else {
+                $this->db->where('b.status', $post['status']);
+            }
+        }
+        $query = $this->db
+            ->group_by('a.id')
+            ->order_by('b.nome', 'asc')
+            ->get('usuarios_exame_periodico a');
+
+        $config = ['search' => ['nome']];
+
+        $this->load->library('dataTables', $config);
+
+        $output = $this->datatables->generate($query);
+
+        $nomeStatus = [
+            '1' => 'Ativo',
+            '2' => 'Inativo',
+            '3' => 'Em experiência',
+            '4' => 'Em desligamento',
+            '5' => 'Desligado',
+            '6' => 'Afastado (maternidade)',
+            '7' => 'Afastado (aposentadoria)',
+            '8' => 'Afastado (doença)',
+            '9' => 'Afastado (acidente)'
+        ];
+
+        if ($output->draw === 1) {
+            $meses = array(
+                '' => 'Todos',
+                '01' => 'Janeiro',
+                '02' => 'Fevereiro',
+                '03' => 'Março',
+                '04' => 'Abril',
+                '05' => 'Maio',
+                '06' => 'Junho',
+                '07' => 'Julho',
+                '08' => 'Agosto',
+                '09' => 'Setembro',
+                '10' => 'Outubro',
+                '11' => 'Novembro',
+                '12' => 'Dezembro'
+            );
+            $output->mes = form_dropdown('mes', $meses, '', 'class="form-control input-sm" onchange="buscar()"');
+
+            $this->db->select("DATE_FORMAT(data_programada, '%Y') AS ano", false);
+            $this->db->order_by('data_programada', 'asc');
+            $examePeriodico = $this->db->get('usuarios_exame_periodico')->result();
+            $anos = array('' => 'Todos');
+            foreach ($examePeriodico as $data_programada) {
+                $anos[$data_programada->ano] = $data_programada->ano;
+            }
+            $output->ano = form_dropdown('ano', $anos, $post['ano'], 'class="form-control input-sm" onchange="buscar()"');
+            $tipo_vinculo = array(
+                '' => 'Todos',
+                '01' => 'CLT',
+                '02' => 'MEI',
+                '03' => 'PJ'
+            );
+            $output->tipo_vinculo = form_dropdown('tipo_vinculo', $tipo_vinculo, $post['tipo_vinculo'] ?? '', 'class="form-control input-sm" onchange="buscar()"');
+
+            $arrStatus = [
+                '' => 'Todos',
+                '1' => 'Ativos',
+                '2' => 'Inativos',
+                '3' => 'Em experiência',
+                '4' => 'Em desligamento',
+                '5' => 'Desligados',
+                '6' => 'Afastados (maternidade)',
+                '7' => 'Afastados (aposentadoria)',
+                '8' => 'Afastados (doença)',
+                '9' => 'Afastados (acidente)',
+                '-1' => 'Indefinidos'
+            ];
+
+            $status = array_intersect_key($arrStatus, ['' => 'Todos'] + array_column($output->data, 'status', 'status'));
+
+            $output->status = form_dropdown('status', $status, $post['status'] ?? '', 'class="form-control input-sm" onchange="buscar()"');
+        } else {
+            $output->mes = '';
+            $output->ano = '';
+            $output->tipo_vinculo = '';
+            $output->status = '';
+        }
+
+        $data = [];
+
+
+        foreach ($output->data as $row) {
+            $data[] = [
+                $row->nome,
+                $row->cpf,
+                $row->funcao,
+                $row->local_exame,
+                $row->municipio,
+                $row->matricula,
+                $nomeStatus[$row->status] ?? 'Indefinido',
+                $row->estrutura,
+                $row->data_programada_de,
+                $row->data_realizacao_de,
+                $row->data_entrega_copia_de,
+                $row->data_entrega_de,
+                '<a class="btn btn-success btn-sm" href="' . site_url('funcionario/editar/' . $row->id) . '" title="Prontuário de colaborador">
+                      <i class="glyphicon glyphicon-plus"></i> Prontuário
+                 </a>
+                 <button class="btn btn-warning btn-sm" onclick="enviar_email(' . $row->id . ', ' . $row->nome . ')" title="Enviar e-mail de convocação">
+                      <i class="glyphicon glyphicon-envelope"></i>
+                 </button>
+                 <button class="btn btn-danger btn-sm" onclick="delete_prontuario(' . $row->id . ')" title="Excluir prontuário">
+                      <i class="glyphicon glyphicon-trash"></i>
+                 </button>'
+            ];
+        }
+
+        $output->data = $data;
+
+        echo json_encode($output);
+    }
+
+    public function ajax_relatorio1()
     {
         $post = $this->input->post();
 
@@ -414,11 +623,21 @@ class ExamePeriodico extends MY_Controller
                       FROM usuarios_exame_periodico a
                       INNER JOIN usuarios b
                                  ON b.id = a.id_usuario
+                      LEFT JOIN empresa_departamentos c ON c.id = b.id_depto OR c.nome = b.depto
+                      LEFT JOIN empresa_areas d ON d.id = b.id_area OR d.nome = b.area
                       WHERE b.empresa = {$this->session->userdata('empresa')}";
+        if (!empty($post['id_depto'])) {
+            $sql .= " AND c.id = '{$post['id_depto']}'";
+        }
+        if (!empty($post['id_area'])) {
+            $sql .= " AND d.id = '{$post['id_area']}'";
+        }
         if ($post['realizados'] === '0') {
             $sql .= ' AND a.data_realizacao IS NULL';
         } elseif ($post['realizados'] === '1') {
             $sql .= ' AND a.data_realizacao IS NOT NULL';
+        } elseif ($post['realizados'] === '2') {
+            $sql .= ' AND a.data_programada IS NULL';
         }
         if (!empty($post['mes'])) {
             $sql .= " AND DATE_FORMAT(a.data_programada, '%m') = '{$post['mes']}'";
@@ -464,14 +683,16 @@ class ExamePeriodico extends MY_Controller
         }
         $recordsFiltered = $this->db->query($sql)->num_rows();
 
-        if (isset($post['order'])) {
-            $orderBy = array();
-            foreach ($post['order'] as $order) {
-                $orderBy[] = ($order['column'] + 2) . ' ' . $order['dir'];
-            }
-            $sql .= ' 
-                    ORDER BY ' . implode(', ', $orderBy);
-        }
+//        if (isset($post['order'])) {
+//            $orderBy = array();
+//            foreach ($post['order'] as $order) {
+//                $orderBy[] = ($order['column'] + 2) . ' ' . $order['dir'];
+//            }
+//            $sql .= '
+//                    ORDER BY ' . implode(', ', $orderBy);
+//        }
+        $sql .= ' 
+                    ORDER BY s.nome ASC';
         if ($post['length'] > 0) {
             $sql .= " 
                 LIMIT {$post['start']}, {$post['length']}";

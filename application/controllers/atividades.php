@@ -240,23 +240,67 @@ class Atividades extends MY_Controller
 
     public function ajax_edit()
     {
-        $id = $this->input->post('id');
-        $this->db->select('id, id_usuario, atividade, prioridade, tipo, observacoes, id_mae');
-        $this->db->select("DATE_FORMAT(data_limite, '%d/%m/%Y') AS data_limite", false);
-        $this->db->select("DATEDIFF(data_limite, data_lembrete) AS data_lembrete", false);
-        $data = $this->db->get_where('atividades', array('id' => $id))->row();
+        $data = $this->db
+            ->select('id, id_usuario, atividade, prioridade, tipo, observacoes, id_mae')
+            ->select(["DATE_FORMAT(data_limite, '%d/%m/%Y') AS data_limite"], false)
+            ->select(["DATEDIFF(data_limite, data_lembrete) AS data_lembrete"], false)
+            ->where('id', $this->input->post('id'))
+            ->get('atividades')
+            ->row();
+
+        if (empty($data)) {
+            exit(json_encode(['erro' => 'Atividade não encontrada ou excluída recentemente.']));
+        }
 
         echo json_encode($data);
     }
 
 
-    public function ajax_add()
+    public function ajax_add_mae()
     {
-
-        $buu = $this->db->insert('atividades', []);
-        var_dump($buu);exit;
-        var_dump($buu);exit;
         $data = $this->input->post();
+
+        if (empty($data['id_usuario'])) {
+            $data['id_usuario'] = $this->session->userdata('id');
+        }
+
+        $data['id_mae'] = null;
+
+        $data['data_cadastro'] = date('Y-m-d H:i:s');
+        if ($data['data_limite'] and $data['data_lembrete']) {
+            $data_limite = strtotime(str_replace('/', '-', $data['data_limite']));
+            $data['data_limite'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $data['data_limite'] . ' 23:59:59')));
+            $data['data_lembrete'] = date('Y-m-d', strtotime("-{$data['data_lembrete']} days", $data_limite));
+        }
+
+        if (strlen($data['observacoes']) == 0) {
+            $data['observacoes'] = null;
+        }
+
+        $this->db->trans_start();
+        $this->db->insert('atividades', $data);
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === false) {
+            exit(json_encode(['erro' => 'Não foi possível cadastrar a atividade mãe.']));
+        }
+
+        echo json_encode(['status' => true]);
+    }
+
+
+    public function ajax_add_filha()
+    {
+        $data = $this->input->post();
+
+        if (empty($data['id_mae'])) {
+            exit(json_encode(['erro' => 'Atividade mãe inválida ou excluída recentemente.']));
+        }
+
+        if (!isset($data['id_usuario'])) {
+            exit(json_encode(['erro' => 'Nenhum(a) colaborador(a) selecionado(a).']));
+        }
+
 
         $data['data_cadastro'] = date('Y-m-d H:i:s');
         if ($data['data_limite'] and $data['data_lembrete']) {
@@ -269,54 +313,62 @@ class Atividades extends MY_Controller
             $data['observacoes'] = null;
         }
 
-        if (empty($data['id_mae'])) {
-            $data['id_mae'] = null;
+        $arr_usuario = $data['id_usuario'];
+
+        $arr_data = [];
+        foreach ($arr_usuario as $id_usuario) {
+            $data['id_usuario'] = $id_usuario;
+            $arr_data[] = $data;
         }
 
-        if (is_array($data['id_usuario'])) {
-            $arr_usuario = $data['id_usuario'];
+        $this->db->trans_start();
+        $this->db->insert_batch('atividades', $arr_data);
+        $this->db->trans_complete();
 
-            $arr_data = array();
-            foreach ($arr_usuario as $id_usuario) {
-                $data['id_usuario'] = $id_usuario;
-                $arr_data[] = $data;
-            }
-
-            $this->db->insert_batch('atividades', $arr_data);
-
-            $this->notificar($arr_data);
-        } else {
-            if (empty($data['id_usuario'])) {
-                $data['id_usuario'] = $this->session->userdata('id');
-            }
-
-            $this->db->insert('atividades', $data);
+        if ($this->db->trans_status() === false) {
+            exit(json_encode(['erro' => 'Não foi possível cadastrar a atividade filha.']));
         }
 
+        $this->notificar($arr_data);
 
-        echo json_encode(array("status" => true));
+        echo json_encode(['status' => true]);
     }
 
 
-    private function notificar($rows)
+    private function notificar(array $rows)
     {
-        $data = array(
+        if (empty($rows)) {
+            return;
+        }
+
+        $usuarios = $this->db->select('id, email')
+            ->where_in('id', array_column($rows, 'id_usuario'))
+            ->get('usuarios')
+            ->result();
+
+        $emails = [];
+
+        foreach ($usuarios as $usuario) {
+            $emails[$usuario->id] = $usuario->email;
+        }
+
+        $data = [
             'nome' => $this->session->userdata('nome'),
             'email' => $this->session->userdata('email')
-        );
+        ];
 
         $this->load->library('email');
 
         foreach ($rows as $row) {
-            $this->email->from('contato@rhsuite.com.br', 'RhSuite');
-            $this->email->to($row->email);
-            $this->email->subject('LMS - Atribuição de atividade');
+            $data['atividade'] = $row['atividade'];
+            $data['dataLimite'] = date('d/m/Y', strtotime($row['data_limite']));
 
-            $data['atividade'] = $row->atividade;
-            $data['dataLimite'] = date('d/m/Y', strtotime($row->data_limite));
-
-            $this->email->message($this->load->view('atividades_email', $data, true));
-            $this->email->send();
+            $this->email
+                ->from('contato@rhsuite.com.br', 'RhSuite')
+                ->to($emails[$row['id_usuario']])
+                ->subject('LMS - Atribuição de atividade')
+                ->message($this->load->view('atividades_email', $data, true))
+                ->send();
         }
     }
 
@@ -325,39 +377,58 @@ class Atividades extends MY_Controller
     {
         $data = $this->input->post();
 
+        if (empty($data['id_mae'])) {
+            $data['id_mae'] = null;
+        }
+
         if ($data['data_limite'] and $data['data_lembrete']) {
             $data_limite = strtotime(str_replace('/', '-', $data['data_limite']));
             $data['data_limite'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $data['data_limite'] . ' 23:59:59')));
             $data['data_lembrete'] = date('Y-m-d', strtotime("-{$data['data_lembrete']} days", $data_limite));
         }
-        if (!empty($data['observacoes']) == false) {
+
+        if (strlen($data['observacoes']) == 0) {
             $data['observacoes'] = null;
         }
-        if (empty($data['id_mae'])) {
-            $data['id_mae'] = null;
+
+        $this->db->trans_start();
+        $this->db->update('atividades', $data, ['id' => $data['id']]);
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === false) {
+            exit(json_encode(['erro' => 'Não foi possível alterar a atividade.']));
         }
 
-        $this->db->update('atividades', $data, array('id' => $data['id']));
-
-        echo json_encode(array("status" => true));
+        echo json_encode(['status' => true]);
     }
 
 
     public function ajax_delete()
     {
-        $id = $this->input->post('id');
-        $this->db->delete('atividades', array('id' => $id));
+        $this->db->trans_start();
+        $this->db->delete('atividades', ['id' => $this->input->post('id')]);
+        $this->db->trans_complete();
 
-        echo json_encode(array("status" => true));
+        if ($this->db->trans_status() === false) {
+            exit(json_encode(['erro' => 'Não foi possível excluir a atividade.']));
+        }
+
+        echo json_encode(['status' => true]);
     }
 
 
     public function ajax_finalizar()
     {
         $id = $this->input->post('id');
-        $this->db->update('atividades', array('data_fechamento' => date('Y-m-d H:i:s'), 'status' => 1), array('id' => $id));
 
-        echo json_encode(array("status" => true));
+        $this->db->trans_start();
+        $this->db->update('atividades', ['data_fechamento' => date('Y-m-d H:i:s'), 'status' => 1], ['id' => $id]);
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === false) {
+            exit(json_encode(['erro' => 'Não foi possível finalizar a atividade.']));
+        }
+        echo json_encode(['status' => true]);
     }
 
 

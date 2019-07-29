@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Apontamentos extends MY_Controller
+class Medicoes extends MY_Controller
 {
     //==========================================================================
     public function index()
@@ -34,7 +34,7 @@ class Apontamentos extends MY_Controller
 
 
         $cronoAnalises = $this->db
-            ->select('id, nome, base-tempo, unidade_producao')
+            ->select('id, nome, base_tempo, unidade_producao')
             ->where('id_empresa', $this->session->userdata('empresa'))
             ->order_by('nome', 'asc')
             ->get('dimensionamento_crono_analises')
@@ -67,7 +67,7 @@ class Apontamentos extends MY_Controller
         ];
 
 
-        $this->load->view('dimensionamento/apontamentos', $data);
+        $this->load->view('dimensionamento/medicoes', $data);
     }
 
     //==========================================================================
@@ -152,7 +152,7 @@ class Apontamentos extends MY_Controller
         ];
 
 
-        $this->load->view('dimensionamento/apontamentos', $data);
+        $this->load->view('dimensionamento/medicoes', $data);
     }
 
     //==========================================================================

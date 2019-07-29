@@ -384,7 +384,7 @@ require_once "header.php";
                                         <label>
                                             <input type="checkbox" name="hash_acesso[GC]" value="26"><i
                                                     class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;
-                                            Gestão Comercial/Gestão de Contratos
+                                            Gestão Comercial
                                         </label>
                                     </div>
                                     <div class="checkbox">

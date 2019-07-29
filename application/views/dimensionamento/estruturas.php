@@ -290,7 +290,8 @@
                                     </div>
                                 </div>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-5">Tipo de item envolvido na etapa</label>
+                                    <label class="control-label col-md-5 text-nowrap">Volume/tamanho do item
+                                        envolvido</label>
                                     <div class="col-md-6">
                                         <select name="tamanho_item" class="form-control">
                                             <option value="">selecione...</option>
@@ -300,6 +301,16 @@
                                             <option value="2">Pequeno</option>
                                             <option value="1">Extremamente pequeno</option>
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-5">Peso do item envolvido</label>
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <input name="peso_item" class="form-control peso" type="text"
+                                                   class="form-control" aria-describedby="basic-addon">
+                                            <span class="input-group-addon" id="basic-addon">Kg</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -353,9 +364,7 @@
                                     </div>
                                     <label class="control-label col-md-1">Valor</label>
                                     <div class="col-md-4">
-                                        <input name="valor" class="form-control valor" type="text" maxlength="13"
-                                               readonly>
-                                        <span class="help-block"></span>
+                                        <input name="valor" class="form-control valor" type="text" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -404,7 +413,8 @@
     var id_atividade = '';
     var id_etapa = '';
 
-    $('.valor').mask('##.###.##0,00', {'reverse': true});
+    $('.valor').mask('#######0,00', {'reverse': true});
+    $('.peso').mask('#####0,000', {'reverse': true});
 
     var steps = $('#wizard').steps({
         'headerTag': 'h6',

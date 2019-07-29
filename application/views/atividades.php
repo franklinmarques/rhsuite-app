@@ -235,10 +235,18 @@ require_once "header.php";
                                 <input type="hidden" value="" name="id"/>
                                 <input type="hidden" value="" name="id_mae"/>
                                 <div class="form-body">
-                                    <div class="row form-group" id="id_atividade_mae">
-                                        <label class="control-label col-md-2">ID atividade mãe</label>
-                                        <div class="col-md-2">
-                                            <input class="form-control" type="text" value="" readonly>
+                                    <div class="row form-group">
+                                        <div id="id">
+                                            <label class="control-label col-md-2">ID</label>
+                                            <div class="col-md-2">
+                                                <input class="form-control" type="text" value="" readonly>
+                                            </div>
+                                        </div>
+                                        <div id="id_atividade_mae">
+                                            <label class="control-label col-md-2">ID atividade mãe</label>
+                                            <div class="col-md-2">
+                                                <input class="form-control" type="text" value="" readonly>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row form-group" id="colaborador">
@@ -276,8 +284,8 @@ require_once "header.php";
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Data limite</label>
                                         <div class="col-md-3">
-                                            <input name="data_limite" id="data_limite" placeholder="dd/mm/aaaa"
-                                                   class="form-control text-center empresa" type="text">
+                                            <input name="data_limite" placeholder="dd/mm/aaaa"
+                                                   class="form-control text-center date empresa" type="text">
                                             <span class="help-block"></span>
                                         </div>
                                         <label class="control-label col-md-3">Lembrar dias antes</label>
@@ -320,8 +328,13 @@ require_once "header.php";
                         </div>
                         <div class="modal-body form">
                             <form action="#" id="form_filha" class="form-horizontal">
-                                <input type="hidden" value="" name="id_mae"/>
                                 <div class="form-body">
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">ID atividade mãe</label>
+                                        <div class="col-md-2">
+                                            <input name="id_mae" class="form-control" type="text" value="" readonly>
+                                        </div>
+                                    </div>
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Atividade</label>
                                         <div class="col-md-9">
@@ -351,8 +364,8 @@ require_once "header.php";
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Data limite</label>
                                         <div class="col-md-3">
-                                            <input name="data_limite" id="data_limite_filha" placeholder="dd/mm/aaaa"
-                                                   class="form-control text-center" type="text">
+                                            <input name="data_limite" placeholder="dd/mm/aaaa"
+                                                   class="form-control text-center date" type="text">
                                             <span class="help-block"></span>
                                         </div>
                                         <label class="control-label col-md-3">Lembrar dias antes</label>
@@ -409,8 +422,9 @@ require_once "end_js.php";
         var id_atividade = null;
         var table;
 
+        $('.date').mask('00/00/0000');
+
         $(document).ready(function () {
-            $('#data_limite, #data_limite_filha').mask('00/00/0000');
 
             table = $('#table').DataTable({
                 'iDisplayLength': -1,
@@ -507,9 +521,9 @@ require_once "end_js.php";
                     },
                     {
                         'className': 'text-nowrap',
-                        'targets': [8],
                         'orderable': false,
-                        'searchable': false
+                        'searchable': false,
+                        'targets': [8]
                     }
                 ]
             });
@@ -528,11 +542,13 @@ require_once "end_js.php";
         });
 
         function add_atividade() {
-            $('#form')[0].reset(); // reset form on modals
-            $('#form input[type="hidden"]').val(''); // reset hidden input form on modals
-            $('#form .form-group').removeClass('has-error'); // clear error class
+            $('#form')[0].reset();
+            $('#form input[type="hidden"]').val('');
+            $('#form .form-group').removeClass('has-error');
             $('#form .help-block').empty();
-            $('#colaborador').hide();
+            $('#colaborador, #id, #id_atividade_mae').hide();
+            $('input.empresa, textarea.empresa').prop('readonly', false);
+            $('select.empresa').prop('disabled', false);
             $('#modal_form .modal-title').text('Cadastrar atividade mãe');
             $('#modal_form').modal('show');
             save_method = 'add';
@@ -543,9 +559,14 @@ require_once "end_js.php";
                 'url': '<?php echo site_url('atividades/ajax_edit') ?>',
                 'type': 'POST',
                 'dataType': 'json',
-                'data': {id: id},
-                'success': function (data) {
-                    if (data.id_usuario === '<?= $id ?>') {
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
+
+                    if (json.id_usuario === '<?= $id ?>') {
                         $('#colaborador').hide();
                     } else {
                         $('#colaborador').show();
@@ -553,59 +574,22 @@ require_once "end_js.php";
                     $('input.empresa, textarea.empresa').prop('readonly', '<?= $tipo ?>' !== 'empresa');
                     $('select.empresa').prop('disabled', '<?= $tipo ?>' !== 'empresa');
 
-                    $('#modal_form [name="id"]').val(data.id);
-                    $('#modal_form [name="id_usuario"]').val(data.id_usuario);
-                    $('#modal_form [name="id_mae"]').val(data.id_mae);
-                    $('#modal_form [name="id_usuario"]').val(data.id_usuario);
-                    $('#modal_form [name="atividade"]').val(data.atividade);
-                    $('#modal_form [name="prioridade"]').val(data.prioridade);
-                    $('#modal_form [name="tipo"]').val(data.tipo);
-                    $('#modal_form [name="data_limite"]').val(data.data_limite);
-                    $('#modal_form [name="data_lembrete"]').val(data.data_lembrete);
-                    $('#modal_form [name="observacoes"]').val(data.observacoes);
-                    $('#id_atividade_mae').hide().find('input').val(data.id_mae);
+                    $('#modal_form [name="id"]').val(json.id);
+                    $('#modal_form [name="id_usuario"]').val(json.id_usuario);
+                    $('#modal_form [name="id_mae"]').val(json.id_mae);
+                    $('#modal_form [name="id_usuario"]').val(json.id_usuario);
+                    $('#modal_form [name="atividade"]').val(json.atividade);
+                    $('#modal_form [name="prioridade"]').val(json.prioridade);
+                    $('#modal_form [name="tipo"]').val(json.tipo);
+                    $('#modal_form [name="data_limite"]').val(json.data_limite);
+                    $('#modal_form [name="data_lembrete"]').val(json.data_lembrete);
+                    $('#modal_form [name="observacoes"]').val(json.observacoes);
+                    $('#id').show().find('input').val(json.id);
+                    $('#id_atividade_mae').hide().find('input').val(json.id_mae);
 
                     $('#modal_form .modal-title').text('Editar atividade mãe');
                     $('#modal_form').modal('show');
-                    $('#modal_form .modal-title'); // Set title to Bootstrap modal title
-                    save_method = 'update';
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
-                }
-            });
-        }
-
-        function edit_atividade_filha(id) {
-            $.ajax({
-                'url': '<?php echo site_url('atividades/ajax_edit') ?>',
-                'type': 'POST',
-                'dataType': 'json',
-                'data': {id: id},
-                'success': function (data) {
-                    if (data.id_usuario === '<?= $id ?>') {
-                        $('#colaborador').hide();
-                    } else {
-                        $('#colaborador').show();
-                    }
-                    $('input.empresa, textarea.empresa').prop('readonly', '<?= $tipo ?>' !== 'empresa');
-                    $('select.empresa').prop('disabled', '<?= $tipo ?>' !== 'empresa');
-
-                    $('#modal_form [name="id"]').val(data.id);
-                    $('#modal_form [name="id_usuario"]').val(data.id_usuario);
-                    $('#modal_form [name="id_mae"]').val(data.id_mae);
-                    $('#modal_form [name="id_usuario"]').val(data.id_usuario);
-                    $('#modal_form [name="atividade"]').val(data.atividade);
-                    $('#modal_form [name="prioridade"]').val(data.prioridade);
-                    $('#modal_form [name="tipo"]').val(data.tipo);
-                    $('#modal_form [name="data_limite"]').val(data.data_limite);
-                    $('#modal_form [name="data_lembrete"]').val(data.data_lembrete);
-                    $('#modal_form [name="observacoes"]').val(data.observacoes);
-                    $('#id_atividade_mae').show().find('input').val(data.id_mae);
-
-                    $('#modal_form .modal-title').text('Editar atividade filha');
-                    $('#modal_form').modal('show');
-                    $('#modal_form .modal-title'); // Set title to Bootstrap modal title
+                    $('#modal_form .modal-title');
                     save_method = 'update';
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -623,19 +607,72 @@ require_once "end_js.php";
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
-                'success': function (data) {
-                    $('#modal_form_filha [name="id_mae"]').val(data.id);
-                    $('#modal_form_filha [name="atividade"]').val(data.atividade);
-                    $('#modal_form_filha [name="prioridade"]').val(data.prioridade);
-                    $('#modal_form_filha [name="tipo"]').val(data.tipo);
-                    $('#modal_form_filha [name="data_limite"]').val(data.data_limite);
-                    $('#modal_form_filha [name="data_lembrete"]').val(data.data_lembrete);
-                    $('#modal_form_filha [name="observacoes"]').val(data.observacoes);
+                'beforeSend': function () {
+                    $('input.empresa, textarea.empresa').prop('readonly', false);
+                    $('select.empresa').prop('disabled', false);
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
+
+                    $('#modal_form_filha [name="id_mae"]').val(json.id);
+                    $('#modal_form_filha [name="atividade"]').val(json.atividade);
+                    $('#modal_form_filha [name="prioridade"]').val(json.prioridade);
+                    $('#modal_form_filha [name="tipo"]').val(json.tipo);
+                    $('#modal_form_filha [name="data_limite"]').val(json.data_limite);
+                    $('#modal_form_filha [name="data_lembrete"]').val(json.data_lembrete);
+                    $('#modal_form_filha [name="observacoes"]').val(json.observacoes);
                     demo2.bootstrapDualListbox('refresh', true);
 
                     $('#modal_form_filha').modal('show');
-                    $('#modal_form_filha .modal-title'); // Set title to Bootstrap modal title
+                    $('#modal_form_filha .modal-title');
                     save_method = 'add';
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+        function edit_atividade_filha(id) {
+            $.ajax({
+                'url': '<?php echo site_url('atividades/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
+
+                    if (json.id_usuario === '<?= $id ?>') {
+                        $('#colaborador').hide();
+                    } else {
+                        $('#colaborador').show();
+                    }
+                    $('input.empresa, textarea.empresa').prop('readonly', '<?= $tipo ?>' !== 'empresa');
+                    $('select.empresa').prop('disabled', '<?= $tipo ?>' !== 'empresa');
+
+                    $('#modal_form [name="id"]').val(json.id);
+                    $('#modal_form [name="id_usuario"]').val(json.id_usuario);
+                    $('#modal_form [name="id_mae"]').val(json.id_mae);
+                    $('#modal_form [name="id_usuario"]').val(json.id_usuario);
+                    $('#modal_form [name="atividade"]').val(json.atividade);
+                    $('#modal_form [name="prioridade"]').val(json.prioridade);
+                    $('#modal_form [name="tipo"]').val(json.tipo);
+                    $('#modal_form [name="data_limite"]').val(json.data_limite);
+                    $('#modal_form [name="data_lembrete"]').val(json.data_lembrete);
+                    $('#modal_form [name="observacoes"]').val(json.observacoes);
+                    $('#id').show().find('input').val(json.id);
+                    $('#id_atividade_mae').show().find('input').val(json.id_mae);
+
+                    $('#modal_form .modal-title').text('Editar atividade filha');
+                    $('#modal_form').modal('show');
+                    $('#modal_form .modal-title');
+                    save_method = 'update';
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -653,76 +690,87 @@ require_once "end_js.php";
         });
 
         function reload_table() {
-            table.ajax.reload(null, false); //reload datatable ajax
+            table.ajax.reload(null, false);
         }
 
         function save() {
-            $('#btnSave, #btnSave1').text('Salvando...').attr('disabled', true); //set button disable
             var url = '';
             if (save_method === 'add') {
-                url = "<?php echo site_url('atividades/ajax_add') ?>";
+                url = "<?php echo site_url('atividades/ajax_add_mae') ?>";
             } else if (save_method === 'update') {
                 url = "<?php echo site_url('atividades/ajax_update') ?>";
             }
 
-            // ajax adding data to database
             $.ajax({
                 'url': url,
                 'type': 'POST',
                 'data': $('#form').serialize(),
                 'dataType': 'json',
-                'success': function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'beforeSend': function () {
+                    $('#btnSave, #btnSave1').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    }
+
+                    if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSave, #btnSave1').text('Salvar').attr('disabled', false); //set button enable
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave, #btnSave1').text('Salvar').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSave, #btnSave1').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
         function save_filha() {
-            $('#btnSaveFilha, #btnSaveFilha1').text('Salvando...').attr('disabled', true); //set button disable
-
-            // ajax adding data to database
             $.ajax({
-                'url': '<?php echo site_url('atividades/ajax_add') ?>',
+                'url': '<?php echo site_url('atividades/ajax_add_filha') ?>',
                 'type': 'POST',
                 'data': $('#form_filha').serialize(),
                 'dataType': 'json',
-                'success': function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'beforeSend': function () {
+                    $('#btnSaveFilha, #btnSaveFilha1').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    }
+
+                    if (json.status) {
                         $('#modal_form_filha').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveFilha, #btnSaveFilha1').attr('disabled', false); //set button enable
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveFilha, #btnSaveFilha1').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveFilha, #btnSaveFilha1').attr('disabled', false);
                 }
             });
         }
 
         function delete_atividade(id) {
             if (confirm('Deseja remover?')) {
-                // ajax delete data to database
                 $.ajax({
                     'url': '<?php echo site_url('atividades/ajax_delete') ?>',
                     'type': 'POST',
                     'dataType': 'json',
-                    'data': {id: id},
-                    'success': function (data) {
-                        $('#modal_form').modal('hide');
-                        reload_table();
+                    'data': {'id': id},
+                    'success': function (json) {
+                        if (json.erro) {
+                            alert(json.erro);
+                        }
+
+                        if (json.status) {
+                            reload_table();
+                        }
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
@@ -733,14 +781,19 @@ require_once "end_js.php";
 
         function finaliza_atividade(id) {
             if (confirm('Deseja finalizar a atividade?')) {
-                // ajax delete data to database
                 $.ajax({
                     'url': '<?php echo site_url('atividades/ajax_finalizar') ?>',
                     'type': 'POST',
                     'dataType': 'json',
-                    'data': {id: id},
-                    'success': function (data) {
-                        reload_table();
+                    'data': {'id': id},
+                    'success': function (json) {
+                        if (json.erro) {
+                            alert(json.erro);
+                        }
+
+                        if (json.status) {
+                            reload_table();
+                        }
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');

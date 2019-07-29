@@ -132,13 +132,27 @@ class MY_Model extends CI_Model
     }
 
     //==========================================================================
-    public function setValidationRule(string $field, $rule)
+    public function setValidationRule(string $field, $rules)
     {
-        if (is_array($rule)) {
-            $rule = implode('|', $rule);
+        if (is_array($rules)) {
+            $rules = implode('|', $rules);
         }
 
-        $this->validationRules[$field] = $rule;
+        if (strlen($rules) > 0) {
+            $this->validationRules[$field] = $rules;
+        } else {
+            $reflection = new ReflectionClass(get_called_class());
+
+            $reflectionProperty = $reflection->getProperty('validationRules');
+            $reflectionProperty->setAccessible(true);
+            $propertyValidationRules = $reflectionProperty->getValue(new static);
+
+            if (in_array($field, $propertyValidationRules)) {
+                $this->validationRules[$field] = $propertyValidationRules[$field];
+            } else {
+                unset($this->validationRules[$field]);
+            }
+        }
     }
 
     //==========================================================================
@@ -150,6 +164,7 @@ class MY_Model extends CI_Model
     //==========================================================================
     public function setValidationLabel(string $field, string $label)
     {
+        unset($this->validationLabels[$field]);
         $this->validationLabels[$field] = $label;
     }
 
@@ -176,6 +191,10 @@ class MY_Model extends CI_Model
             $this->load->library('form_validation');
         }
 
+        if ($data instanceof Entity) {
+            $data = $data->toArray();
+        }
+
         $originalData = $data;
 
         foreach ($data as $column => $value) {
@@ -184,9 +203,19 @@ class MY_Model extends CI_Model
             }
         }
 
+        $validationRules = array_replace($this->validationLabels, $this->validationRules);
+
+        if (static::$autoIncrement) {
+            $autoIncrementValue = $data->{static::$primaryKey} ?? ($data[static::$primaryKey] ?? null);
+
+            if (empty(trim($autoIncrementValue))) {
+                unset($validationRules[static::$primaryKey]);
+            }
+        }
+
         $config = [];
 
-        foreach ($this->validationRules as $field => $rules) {
+        foreach ($validationRules as $field => $rules) {
             $config[] = [
                 'field' => $field,
                 'label' => $this->validationLabels[$field] ?? $field,
@@ -244,18 +273,16 @@ class MY_Model extends CI_Model
         static::$insertID = 0;
 
         if ($data instanceof Entity) {
-            unset($data->{static::$primaryKey});
             $data = $data->toArray();
         }
 
+        if (is_object($data)) {
+            unset($data->{static::$primaryKey});
+        } elseif (is_array($data)) {
+            unset($data[static::$primaryKey]);
+        }
+
         if ($this->skipValidation === false) {
-            $validationPK = explode('|', $this->validationRules[static::$primaryKey] ?? []);
-
-            if (self::$autoIncrement and in_array('required', $validationPK)) {
-                $validationPK = array_diff($validationPK, ['required']);
-                $this->setValidationRule(static::$primaryKey, $validationPK);
-            }
-
             if ($this->validate($data) === false) {
                 return false;
             }
@@ -303,17 +330,12 @@ class MY_Model extends CI_Model
         if (is_numeric($id) || is_string($id)) {
             $id = [$id];
         }
+
         if ($data instanceof Entity) {
             $data = $data->toArray();
         }
 
         if ($this->skipValidation === false) {
-            $validationPK = explode('|', $this->validationRules[static::$primaryKey] ?? []);
-
-            if (self::$autoIncrement and $validationPK) {
-                array_unshift($validationPK, 'required');
-                $this->setValidationRule(static::$primaryKey, array_unique($validationPK));
-            }
             if ($this->validate($data) === false) {
                 return false;
             }

@@ -6,6 +6,7 @@ class IcomClientes extends Entity
 {
     protected $id;
     protected $id_empresa;
+    protected $id_setor;
     protected $nome;
     protected $contato_principal;
     protected $telefone_principal;
@@ -17,6 +18,7 @@ class IcomClientes extends Entity
     protected $casts = [
         'id' => 'int',
         'id_empresa' => 'int',
+        'id_setor' => 'int',
         'nome' => 'string',
         'contrato_principal' => '?string',
         'telefone_principal' => '?string',

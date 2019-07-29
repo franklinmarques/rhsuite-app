@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Clientes extends MY_Controller
 {
-    //==========================================================================
+
     public function __construct()
     {
         parent::__construct();
@@ -13,9 +13,11 @@ class Clientes extends MY_Controller
     }
 
     //==========================================================================
+
     public function index()
     {
         $empresa = $this->session->userdata('empresa');
+
 
         $deptos = $this->db
             ->select('id, nome')
@@ -23,6 +25,7 @@ class Clientes extends MY_Controller
             ->order_by('nome', 'asc')
             ->get('empresa_departamentos')
             ->result();
+
 
         $data = [
             'empresa' => $empresa,
@@ -34,15 +37,18 @@ class Clientes extends MY_Controller
             'setor_atual' => ''
         ];
 
+
         $this->load->view('icom/clientes', $data);
     }
 
     //==========================================================================
+
     public function filtrarEstrutura()
     {
         $depto = $this->input->post('id_depto');
         $area = $this->input->post('id_area');
         $setor = $this->input->post('id_setor');
+
 
         $rowAreas = $this->db
             ->select('id, nome')
@@ -52,6 +58,7 @@ class Clientes extends MY_Controller
             ->result();
 
         $areas = ['' => 'Todas'] + array_column($rowAreas, 'nome', 'id');
+
 
         $rowSetores = $this->db
             ->select('a.id, a.nome')
@@ -64,36 +71,45 @@ class Clientes extends MY_Controller
 
         $setores = ['' => 'Todos'] + array_column($rowSetores, 'nome', 'id');
 
+
         $data = [
             'areas' => form_dropdown('id_area', $areas, $area, 'onchange="filtrar_alocacao();" class="form-control input-sm"'),
             'setores' => form_dropdown('id_setor', $setores, $setor, 'class="form-control input-sm"')
         ];
 
+
         echo json_encode($data);
     }
 
     //==========================================================================
+
     public function listar()
     {
         parse_str($this->input->post('busca'), $busca);
+
 
         $this->db
             ->select('a.*', false)
             ->join('empresa_setores b', 'b.id = a.id_setor', 'left')
             ->join('empresa_areas c', 'c.id = b.id_area', 'left')
             ->join('empresa_departamentos d', 'd.id = c.id_departamento', 'left');
+
         if ($busca['id_depto']) {
             $this->db->where('d.id', $busca['id_depto']);
         }
+
         if ($busca['id_area']) {
             $this->db->where('c.id', $busca['id_area']);
         }
+
         if ($busca['id_setor']) {
             $this->db->where('b.id', $busca['id_setor']);
         }
+
         $query = $this->db
             ->where('a.id_empresa', $this->session->userdata('empresa'))
             ->get($this->clientes::table() . ' a');
+
 
         $config = [
             'select' => ['nome', 'contato_principal', 'telefone_principal', 'email_principal', 'id'],
@@ -103,6 +119,7 @@ class Clientes extends MY_Controller
         $this->load->library('dataTables', $config);
 
         $output = $this->datatables->generate($query);
+
 
         $data = [];
 
@@ -119,10 +136,12 @@ class Clientes extends MY_Controller
 
         $output->data = $data;
 
+
         echo json_encode($output);
     }
 
     //==========================================================================
+
     public function editar()
     {
         $data = $this->clientes->find($this->input->post('id'));
@@ -135,11 +154,13 @@ class Clientes extends MY_Controller
     }
 
     //==========================================================================
+
     public function salvar()
     {
         $this->load->library('entities');
 
         $data = $this->entities->create('icomClientes', $this->input->post());
+
 
         $this->clientes->setValidationLabel('nome', 'Nome Cliente');
         $this->clientes->setValidationLabel('contato_principal', 'Contato Principal');
@@ -149,12 +170,15 @@ class Clientes extends MY_Controller
         $this->clientes->setValidationLabel('telefone_secundario', 'Telefone Secundario');
         $this->clientes->setValidationLabel('email_secundario', 'E-mail Secundario');
 
+
         $this->clientes->save($data) or exit(json_encode(['erro' => $this->clientes->errors()]));
+
 
         echo json_encode(['status' => true]);
     }
 
     //==========================================================================
+
     public function excluir()
     {
         $this->clientes->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->clientes->errors()]));
@@ -163,6 +187,29 @@ class Clientes extends MY_Controller
     }
 
     //==========================================================================
+
+    public function pdf()
+    {
+        $this->load->library('m_pdf');
+
+        $stylesheet = '#clientes thead tr th { font-size: 12px; padding: 5px; text-align: center; font-weight: normal; } ';
+        $stylesheet .= '#clientes thead tr, #medicao tbody tr { border-width: 5px; border-color: #ddd; } ';
+        $stylesheet .= '#clientes tbody td { font-size: 11px; padding: 5px; } ';
+        $stylesheet .= '#table thead th { font-size: 12px; padding: 5px; background-color: #f5f5f5;} ';
+        $stylesheet .= '#table tbody td { font-size: 12px; padding: 5px; vertical-align: top; } ';
+
+        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
+        $this->m_pdf->pdf->writeHTML($this->relatorio(true));
+
+        $this->load->library('Calendar');
+
+        $mes_ano = $this->calendar->get_month_name(date('m')) . '/' . date('Y');
+
+        $this->m_pdf->pdf->Output('Mapa de Clientes/Prospects_' . $mes_ano . '.pdf', 'D');
+    }
+
+    //==========================================================================
+
     public function relatorio($isPdf = false)
     {
         $data = $this->db
@@ -200,27 +247,6 @@ class Clientes extends MY_Controller
         }
 
         $this->load->view('icom/relatorio_clientes', $data);
-    }
-
-    //==========================================================================
-    public function pdf()
-    {
-        $this->load->library('m_pdf');
-
-        $stylesheet = '#clientes thead tr th { font-size: 12px; padding: 5px; text-align: center; font-weight: normal; } ';
-        $stylesheet .= '#clientes thead tr, #medicao tbody tr { border-width: 5px; border-color: #ddd; } ';
-        $stylesheet .= '#clientes tbody td { font-size: 11px; padding: 5px; } ';
-        $stylesheet .= '#table thead th { font-size: 12px; padding: 5px; background-color: #f5f5f5;} ';
-        $stylesheet .= '#table tbody td { font-size: 12px; padding: 5px; vertical-align: top; } ';
-
-        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
-        $this->m_pdf->pdf->writeHTML($this->relatorio(true));
-
-        $this->load->library('Calendar');
-
-        $mes_ano = $this->calendar->get_month_name(date('m')) . '/' . date('Y');
-
-        $this->m_pdf->pdf->Output('Mapa de Clientes/Prospects_' . $mes_ano . '.pdf', 'D');
     }
 
 }

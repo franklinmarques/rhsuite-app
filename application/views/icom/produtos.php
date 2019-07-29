@@ -58,19 +58,24 @@
                             </div>
                             <div class="col-md-4">
                                 <label>Filtrar por setor</label>
-                                <?php echo form_dropdown('id_setor', $setores, $setor_atual, 'onchange="checar_setor();"class="form-control input-sm"'); ?>
+                                <?php echo form_dropdown('id_setor', $setores, $setor_atual, 'onchange="reload_table();"class="form-control input-sm"'); ?>
                             </div>
                         </div>
                     </form>
                     <hr>
-                    <button id="btnAdd" type="button" class="btn btn-info" onclick="add_produto()" autocomplete="off"
-                            disabled><i class="glyphicon glyphicon-plus"></i> Novo produto
+                    <button id="btnAdd" type="button" class="btn btn-info" onclick="add_produto()" autocomplete="off"><i
+                                class="glyphicon glyphicon-plus"></i> Novo produto
                     </button>
                     <br>
                     <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                         <tr>
                             <th>Identificação do produto</th>
+                            <th>Departamento</th>
+                            <th>Área</th>
+                            <th>Setor</th>
+                            <th>Preço</th>
+                            <th nowrap>Tipo de cobrança</th>
                             <th nowrap>Tipo de produto</th>
                             <th>Ações</th>
                         </tr>
@@ -129,9 +134,30 @@
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Tipo preço</label>
+                                            <label class="control-label col-md-3">Tipo de cobrança</label>
                                             <div class="col-md-5">
-                                                <?php echo form_dropdown('tipo_preco', $tiposPreco, '', 'class="form-control"'); ?>
+                                                <?php echo form_dropdown('tipo_cobranca', $tiposCobranca, '', 'class="form-control"'); ?>
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="control-label col-md-3">Departamento</label>
+                                            <div class="col-md-8">
+                                                <?php echo form_dropdown('id_depto', $deptos, '', 'id="id_depto" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="control-label col-md-3">Área</label>
+                                            <div class="col-md-8">
+                                                <?php echo form_dropdown('id_area', $areas, '', 'id="id_area" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="control-label col-md-3">Setor</label>
+                                            <div class="col-md-8">
+                                                <?php echo form_dropdown('id_setor', $setores, '', 'id="id_setor" class="form-control estrutura"'); ?>
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
@@ -195,12 +221,12 @@
                 },
                 'columnDefs': [
                     {
-                        'width': '100%',
-                        'targets': [0]
+                        'width': '25%',
+                        'targets': [0, 1, 2, 3]
                     },
                     {
                         'className': 'text-center',
-                        'targets': [1]
+                        'targets': [5, 6]
                     },
                     {
                         'className': 'text-nowrap',
@@ -240,15 +266,9 @@
                     alert('Error get data from ajax');
                 },
                 'complete': function () {
-                    $('#btnAdd').prop('disabled', $('#estrutura [name="id_setor"]').val().length === 0);
                     $('#estrutura select').prop('disabled', false);
                 }
             });
-        }
-
-        function checar_setor() {
-            $('#btnAdd').prop('disabled', $('#estrutura [name="id_setor"]').val().length === 0);
-            reload_table();
         }
 
 
@@ -256,6 +276,8 @@
             save_method = 'add';
             $('#form')[0].reset();
             $('#form [name="id"]').val('');
+            $('#id_area, #id_setor').html('<option value="">selecione...</option>');
+            $('.estrutura').val('');
             $('#modal_form').modal('show');
             $('.modal-title').text('Adicionar produto');
             $('.combo_nivel1').hide();
@@ -279,6 +301,10 @@
                         alert(json.erro);
                         return false;
                     }
+                    $('#id_depto').html($(json.deptos).html());
+                    $('#id_area').html($(json.areas).html());
+                    $('#id_setor').html($(json.setores).html());
+
                     $.each(json, function (key, value) {
                         $('#form [name="' + key + '"]').val(value);
                     });
@@ -288,6 +314,41 @@
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function montar_estrutura() {
+            var id_depto = $('#id_depto').val();
+            var id_area = $('#id_area').val();
+            var id_setor = $('#id_setor').val();
+
+            $.ajax({
+                'url': '<?php echo site_url('icom/produtos/montarEstrutura') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_depto': id_depto,
+                    'id_area': id_area,
+                    'id_setor': id_setor
+                },
+                'beforeSend': function () {
+                    $('.estrutura, #btnSave').prop('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        $('#id_area').html(json.areas);
+                        $('#id_setor').html(json.setores);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                },
+                'complete': function () {
+                    $('.estrutura, #btnSave').prop('disabled', false);
                 }
             });
         }

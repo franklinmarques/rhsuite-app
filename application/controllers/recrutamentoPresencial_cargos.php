@@ -483,17 +483,18 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         $data = array();
         foreach ($list as $requisicao) {
             $row = array();
+            $btnObs = $requisicao->observacoes ? 'btn-warning' : 'btn-info';
             if ($requisicao->candidato) {
                 $row[] = '
                           <button class="btn btn-sm btn-info" href="javascript:void(0)" onclick="documentos(' . $requisicao->id_candidato . ');" title="Gerenciar documentos"><i class="glyphicon glyphicon-file"></i></button>
                           <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir candidato" onclick="delete_candidato(' . "'" . $requisicao->id_candidato . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                          <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar observações" onclick="edit_observacoes(\'' . $requisicao->candidato . '\',' . $requisicao->id_candidato . ', \'' . $requisicao->observacoes . '\')">Obs.</a>
+                          <a class="btn btn-sm  ' . $btnObs . '" href="javascript:void(0)" title="Editar observações" onclick="edit_observacoes(\'' . $requisicao->candidato . '\',' . $requisicao->id_candidato . ', \'' . $requisicao->observacoes . '\')">Obs.</a>
                           ';
             } else {
                 $row[] = '
                           <button class="btn btn-sm btn-info disabled" title="Gerenciar documentos"><i class="glyphicon glyphicon-file"></i></button>
                           <button class="btn btn-sm btn-danger disabled" title="Excluir candidato"><i class="glyphicon glyphicon-trash"></i></button>
-                          <button class="btn btn-sm btn-info disabled" title="Editar observações">Obs.</button>
+                          <button class="btn btn-sm ' . $btnObs . ' disabled" title="Editar observações">Obs.</button>
                          ';
             }
             if ($requisicao->id_usuario) {
@@ -589,7 +590,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
 
 
         $this->db->select('a.id, b.id AS id_usuario, a.nome, f.municipio, g.tipo AS deficiencia');
-        $this->db->select('a.telefone, a.email, a.fonte_contratacao, a.status, a.observacoes, b.id_requisicao, h.id AS id_usuario_google');
+        $this->db->select('a.telefone, a.email, a.fonte_contratacao, a.status, b.id_requisicao, h.id AS id_usuario_google');
         $this->db->join('requisicoes_pessoal_candidatos b', "b.id_usuario = a.id AND b.id_requisicao = '{$busca['id_requisicao']}'", 'left');
         $this->db->join('requisicoes_pessoal c', "c.id = b.id_requisicao", 'left');
         $this->db->join('empresa_cargos d', 'd.id = c.id_cargo', 'left');
@@ -631,7 +632,8 @@ class RecrutamentoPresencial_cargos extends MY_Controller
 
 
         $config = array(
-            'search' => ['nome', 'telefone', 'email', 'fonte_contratacao', 'observacoes']
+            'search' => ['nome', 'telefone', 'email', 'fonte_contratacao']
+//            'search' => ['nome', 'telefone', 'email', 'fonte_contratacao', 'observacoes']
         );
 
         $this->load->library('dataTables', $config);
@@ -642,17 +644,19 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         $data = array();
 
         foreach ($output->data as $row) {
-            if ($row->id_requisicao or $row->id_usuario_google) {
-                $btn = '<button type="button" class="btn btn-sm btn-success disabled" title="Incluído"><i class="glyphicon glyphicon-ok"></i></button>
-                        <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')"><i class="glyphicon glyphicon-info-sign"></i></button>';
-            } else {
-                $btn = '<button type="button" class="btn btn-sm btn-success" onclick="salvar_banco_novo(' . $row->id . ');" title="Incluir"><i class="glyphicon glyphicon-plus"></i></button>
-                        <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')"><i class="glyphicon glyphicon-info-sign"></i></button>';
-            }
+//            if ($row->id_requisicao or $row->id_usuario_google) {
+//                $btn = '<button type="button" class="btn btn-sm btn-success disabled" title="Incluído"><i class="glyphicon glyphicon-ok"></i></button>
+//                        <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')">CV</button>
+//                        <button type="button" class="btn btn-sm btn-primary" title="Histórico" onclick="historico_candidato(' . $row->id . ')">Hist.</button>';
+//            } else {
+//                $btn = '<button type="button" class="btn btn-sm btn-success" onclick="salvar_banco_novo(' . $row->id . ');" title="Incluir"><i class="glyphicon glyphicon-plus"></i></button>
+//                        <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')">CV</button>
+//                        <button type="button" class="btn btn-sm btn-primary" title="Histórico" onclick="historico_candidato(' . $row->id . ')">Hist.</button>';
+//            }
             $data[] = array(
-                $btn,
-                null,
-                null,
+                '<button type="button" class="btn btn-sm btn-success" onclick="salvar_banco_novo(' . $row->id . ');" title="Incluir"><i class="glyphicon glyphicon-plus"></i></button>
+                 <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')">CV</button>
+                 <button type="button" class="btn btn-sm btn-primary" title="Histórico" onclick="historico_candidato(' . $row->id . ')">Hist.</button>',
                 $row->municipio,
                 $row->nome,
                 $row->deficiencia,
@@ -660,11 +664,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
                 $row->email,
                 $row->fonte_contratacao,
                 $row->status,
-                null,
-                null,
-                null,
-                null,
-                $row->observacoes,
+//                $row->observacoes,
                 $row->id
             );
         }
@@ -1434,74 +1434,6 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         $this->load->view('pesquisa_status', $data);
     }
 
-    public function relatorio($pesquisa, $pdf = false)
-    {
-        if (empty($pesquisa)) {
-            $pesquisa = $this->uri->rsegment(3);
-        }
-
-        $sql = "SELECT a.id, 
-                       b.nome, 
-                       b.tipo, 
-                       '{
-                $this->input->get('depto')}' AS depto,
-                       '{
-                $this->input->get('area')}' AS area,
-                       '{
-                $this->input->get('setor')}' AS setor,
-                       DATE_FORMAT(a.data_inicio, '%d/%m/%Y') AS data_inicio, 
-                       DATE_FORMAT(a.data_termino, '%d/%m/%Y') AS data_termino
-                FROM pesquisa a 
-                INNER JOIN pesquisa_modelos b ON 
-                           b.id = a.id_modelo 
-                WHERE a.id = {$pesquisa}";
-        $row = $this->db->query($sql)->row();
-        $data['pesquisa'] = $row;
-
-        $sql2 = "SELECT a.alternativa
-                 FROM pesquisa_alternativas a 
-                 INNER JOIN pesquisa_modelos b ON 
-                            b.id = a.id_modelo 
-                 INNER JOIN pesquisa c ON
-                            c.id_modelo = b.id
-                 WHERE c.id = {$row->id} AND 
-                       a.id_pergunta IS NULL";
-        $alternativas = $this->db->query($sql2)->result();
-        $data['alternativas'] = $alternativas;
-
-        foreach (array('depto', 'area', 'setor') as $field) {
-            $sql3 = "SELECT DISTINCT(c.{$field})  
-                     FROM pesquisa_avaliadores a 
-                     INNER JOIN pesquisa b ON 
-                                b.id = a.id_pesquisa 
-                     INNER JOIN usuarios c ON 
-                                c.id = a.id_avaliador
-                     WHERE a.id_pesquisa = {$row->id} AND 
-                           c.{$field} IS NOT NULL";
-            $rows = $this->db->query($sql3)->result();
-            $data[$field] = array();
-            foreach ($rows as $row2) {
-                $data[$field][$row2->$field] = $row2->$field;
-            }
-        }
-
-        $data['is_pdf'] = $pdf;
-
-        if ($pdf) {
-
-            $depto = $this->input->get('depto');
-            $area = $this->input->get('area');
-            $setor = $this->input->get('setor');
-
-            $data['data'] = $this->get_relatorio($pesquisa, $depto, $area, $setor);
-
-            return $this->load->view('getpesquisa_relatorio', $data, true);
-        } else {
-
-            $this->load->view('pesquisa_relatorio', $data);
-        }
-    }
-
     public function ajax_relatorio($id)
     {
         $depto = $this->input->post('depto');
@@ -1636,6 +1568,74 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         $row = $this->db->query($sql)->row();
 
         $this->m_pdf->pdf->Output($row->nome . '.pdf', 'D');
+    }
+
+    public function relatorio($pesquisa, $pdf = false)
+    {
+        if (empty($pesquisa)) {
+            $pesquisa = $this->uri->rsegment(3);
+        }
+
+        $sql = "SELECT a.id, 
+                       b.nome, 
+                       b.tipo, 
+                       '{
+                $this->input->get('depto')}' AS depto,
+                       '{
+                $this->input->get('area')}' AS area,
+                       '{
+                $this->input->get('setor')}' AS setor,
+                       DATE_FORMAT(a.data_inicio, '%d/%m/%Y') AS data_inicio, 
+                       DATE_FORMAT(a.data_termino, '%d/%m/%Y') AS data_termino
+                FROM pesquisa a 
+                INNER JOIN pesquisa_modelos b ON 
+                           b.id = a.id_modelo 
+                WHERE a.id = {$pesquisa}";
+        $row = $this->db->query($sql)->row();
+        $data['pesquisa'] = $row;
+
+        $sql2 = "SELECT a.alternativa
+                 FROM pesquisa_alternativas a 
+                 INNER JOIN pesquisa_modelos b ON 
+                            b.id = a.id_modelo 
+                 INNER JOIN pesquisa c ON
+                            c.id_modelo = b.id
+                 WHERE c.id = {$row->id} AND 
+                       a.id_pergunta IS NULL";
+        $alternativas = $this->db->query($sql2)->result();
+        $data['alternativas'] = $alternativas;
+
+        foreach (array('depto', 'area', 'setor') as $field) {
+            $sql3 = "SELECT DISTINCT(c.{$field})  
+                     FROM pesquisa_avaliadores a 
+                     INNER JOIN pesquisa b ON 
+                                b.id = a.id_pesquisa 
+                     INNER JOIN usuarios c ON 
+                                c.id = a.id_avaliador
+                     WHERE a.id_pesquisa = {$row->id} AND 
+                           c.{$field} IS NOT NULL";
+            $rows = $this->db->query($sql3)->result();
+            $data[$field] = array();
+            foreach ($rows as $row2) {
+                $data[$field][$row2->$field] = $row2->$field;
+            }
+        }
+
+        $data['is_pdf'] = $pdf;
+
+        if ($pdf) {
+
+            $depto = $this->input->get('depto');
+            $area = $this->input->get('area');
+            $setor = $this->input->get('setor');
+
+            $data['data'] = $this->get_relatorio($pesquisa, $depto, $area, $setor);
+
+            return $this->load->view('getpesquisa_relatorio', $data, true);
+        } else {
+
+            $this->load->view('pesquisa_relatorio', $data);
+        }
     }
 
 }

@@ -497,50 +497,50 @@
                                                 <div class="form-inline">
                                                     <label class="control-label">Ocultar as colunas abaixo:
                                                         &nbsp;</label>
+<!--                                                    <label class="checkbox-inline">-->
+<!--                                                        <input type="checkbox" class="toggle-vis" value="1"-->
+<!--                                                               autocomplete="off"> Cliente-->
+<!--                                                    </label>-->
+<!--                                                    <label class="checkbox-inline">-->
+<!--                                                        <input type="checkbox" class="toggle-vis" value="1"-->
+<!--                                                               autocomplete="off"> Cargo-->
+<!--                                                    </label>-->
                                                     <label class="checkbox-inline">
                                                         <input type="checkbox" class="toggle-vis" value="1"
-                                                               autocomplete="off"> Cliente
-                                                    </label>
-                                                    <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="2"
-                                                               autocomplete="off"> Cargo
-                                                    </label>
-                                                    <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="3"
                                                                autocomplete="off"> Cidade
                                                     </label>
                                                     <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="5"
+                                                        <input type="checkbox" class="toggle-vis" value="3"
                                                                autocomplete="off"> Deficiência
                                                     </label>
                                                     <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="6"
+                                                        <input type="checkbox" class="toggle-vis" value="4"
                                                                autocomplete="off"> Telefone
                                                     </label>
                                                     <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="7"
+                                                        <input type="checkbox" class="toggle-vis" value="5"
                                                                autocomplete="off"> E-mail
                                                     </label>
                                                     <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="8"
+                                                        <input type="checkbox" class="toggle-vis" value="6"
                                                                autocomplete="off"> Fonte
                                                     </label>
                                                     <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="9"
+                                                        <input type="checkbox" class="toggle-vis" value="7"
                                                                autocomplete="off"> Status
                                                     </label>
-                                                    <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="10"
-                                                               autocomplete="off"> Data entrevista RH
-                                                    </label>
-                                                    <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="12"
-                                                               autocomplete="off"> Data entrevista cliente
-                                                    </label>
-                                                    <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="14"
-                                                               autocomplete="off"> Observações
-                                                    </label>
+<!--                                                    <label class="checkbox-inline">-->
+<!--                                                        <input type="checkbox" class="toggle-vis" value="10"-->
+<!--                                                               autocomplete="off"> Data entrevista RH-->
+<!--                                                    </label>-->
+<!--                                                    <label class="checkbox-inline">-->
+<!--                                                        <input type="checkbox" class="toggle-vis" value="12"-->
+<!--                                                               autocomplete="off"> Data entrevista cliente-->
+<!--                                                    </label>-->
+<!--                                                    <label class="checkbox-inline">-->
+<!--                                                        <input type="checkbox" class="toggle-vis" value="14"-->
+<!--                                                               autocomplete="off"> Observações-->
+<!--                                                    </label>-->
                                                 </div>
                                                 <hr style="margin-top: 10px; margin-bottom: 0px;">
                                                 <table id="table_ame" class="table table-striped table-condensed"
@@ -548,8 +548,8 @@
                                                     <thead>
                                                     <tr>
                                                         <th>Ação</th>
-                                                        <th>Cliente</th>
-                                                        <th>Cargo</th>
+<!--                                                        <th>Cliente</th>-->
+<!--                                                        <th>Cargo</th>-->
                                                         <th>Cidade</th>
                                                         <th>Nome do candidato</th>
                                                         <th>Deficiência</th>
@@ -557,11 +557,11 @@
                                                         <th>E-mail</th>
                                                         <th>Fonte</th>
                                                         <th>Status</th>
-                                                        <th>Data entrevista RH</th>
-                                                        <th>Resultado entrevista RH</th>
-                                                        <th>Data entrevista cliente</th>
-                                                        <th>Resultado entrevista cliente</th>
-                                                        <th>Observações</th>
+<!--                                                        <th>Data entrevista RH</th>-->
+<!--                                                        <th>Resultado entrevista RH</th>-->
+<!--                                                        <th>Data entrevista cliente</th>-->
+<!--                                                        <th>Resultado entrevista cliente</th>-->
+<!--                                                        <th>Observações</th>-->
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -2327,7 +2327,16 @@
         function detalhes_candidato(id) {
             var logado = <?php echo $this->session->userdata('logado') ? 'true' : 'false'; ?>;
             if (logado) {
-                window.open("<?php echo site_url('recrutamento_candidatos/visualizarPerfil'); ?>/" + id, 'Candidato', 'STATUS=NO, TOOLBAR=NO, LOCATION=NO, DIRECTORIES=NO, RESISABLE=NO, SCROLLBARS=YES, TOP=80, LEFT=180, WIDTH=1130, HEIGHT=560');
+                window.open("<?php echo site_url('recrutamento_candidatos/visualizarPerfil'); ?>/" + id, 'Candidato', 'TITLEBAR=NO,LOCATION=NO,STATUS=NO, TOOLBAR=NO, LOCATION=NO, DIRECTORIES=NO, RESISABLE=NO, SCROLLBARS=YES, TOP=80, LEFT=180, WIDTH=1130, HEIGHT=560');
+            } else {
+                window.open("<?php echo site_url('home/sair'); ?>");
+            }
+        }
+
+        function historico_candidato(id) {
+            var logado = <?php echo $this->session->userdata('logado') ? 'true' : 'false'; ?>;
+            if (logado) {
+                window.open("<?php echo site_url('recrutamento_candidatos/visualizarHistorico'); ?>/" + id, 'Candidato', 'TITLEBAR=NO,LOCATION=NO,STATUS=NO, TOOLBAR=NO, LOCATION=NO, DIRECTORIES=NO, RESISABLE=NO, SCROLLBARS=YES, TOP=80, LEFT=180, WIDTH=1130, HEIGHT=560');
             } else {
                 window.open("<?php echo site_url('home/sair'); ?>");
             }

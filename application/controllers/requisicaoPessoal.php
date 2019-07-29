@@ -1279,15 +1279,17 @@ PIS (2)';
 
     private function notificarApoio($id)
     {
-        $this->db->select('id, nome, email');
-        $this->db->where('id', $this->session->userdata('id'));
-        $remetente = $this->db->get('usuarios')->row();
+        $this->db->select('a.id, a.nome, a.email, b.id AS id_depto');
+        $this->db->join('empresa_departamentos b', 'b.id = a.id_depto OR b.nome = a.depto', 'left');
+        $this->db->where('a.id', $this->session->userdata('id'));
+        $remetente = $this->db->get('usuarios a')->row();
 
 
         $this->db->select('b.id, a.email');
         $this->db->join('usuarios b', 'b.email = a.email', 'left');
+        $this->db->join('empresa_departamentos c', 'c.id = b.id_depto OR c.nome = b.depto', 'left');
         $this->db->where('a.id_empresa', $this->session->userdata('empresa'));
-        $this->db->where_in('a.tipo_email', [1, 3, 4]);
+        $this->db->where("(a.tipo_email IN (1, 3, 4) OR (a.tipo_email = 5 AND c.id = '{$remetente->id_depto}'))");
         $destinatarios = $this->db->get('requisicoes_pessoal_emails a')->result();
 
 
@@ -1437,18 +1439,19 @@ PIS (2)';
 
     public function enviarEmail()
     {
-        $this->db->select('id, nome, email');
-        $this->db->where('id', $this->session->userdata('id'));
-        $remetente = $this->db->get('usuarios')->row();
+        $remetente = $this->db
+            ->select('id, nome, email')
+            ->where('id', $this->session->userdata('id'))
+            ->get('usuarios')
+            ->row();
 
-        $sql = "SELECT b.id, a.email, a.colaborador, a.tipo_email
-                FROM requisicoes_pessoal_emails a
-                LEFT JOIN usuarios b ON b.email = a.email
-                WHERE a.id = '{$this->input->post('emails')}' AND 
-                    
-                      a.tipo_email IN (2, 3, 4)";
-
-        $destinatarios = $this->db->query($sql)->result();
+        $destinatarios = $this->db
+            ->select('b.id, a.email, a.colaborador, a.tipo_email')
+            ->join('usuarios b', 'b.email = a.email', 'left')
+            ->where('a.id', $this->input->post('emails'))
+            ->where_in('a.tipo_email', [2, 3, 4])
+            ->get('requisicoes_pessoal_email a')
+            ->result();
 
         $filename = 'arquivos/temp/Requisição - ' . $this->input->post('id') . '.pdf';
         $this->pdf();

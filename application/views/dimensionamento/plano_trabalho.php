@@ -320,9 +320,9 @@
                                                 <label for="atividade">Atividade</label>
                                                 <?php echo form_dropdown('atividade', ['' => 'selecione...'], '', 'id="atividade" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
                                             </div>
-                                            <div class="col-md-3">
-                                                <label for="complexidade">Grau de complexidade</label>
-                                                <?php echo form_dropdown('complexidade', ['' => 'Todos'], '', 'id="complexidade" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
+                                            <div class="col-md-4">
+                                                <label for="etapa">Etapa</label>
+                                                <?php echo form_dropdown('etapa', ['' => 'Todas'], '', 'id="etapa" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -330,9 +330,9 @@
                                                 <label for="tipo_item">Tipo de item</label>
                                                 <?php echo form_dropdown('tipo_item', ['' => 'Todos'], '', 'id="tipo_item" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label for="etapa">Etapa</label>
-                                                <?php echo form_dropdown('etapa', ['' => 'selecione...'], '', 'id="etapa" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
+                                            <div class="col-md-3">
+                                                <label for="complexidade">Grau de complexidade</label>
+                                                <?php echo form_dropdown('complexidade', ['' => 'Todos'], '', 'id="complexidade" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="crono_analise">Crono Análise</label>
@@ -357,11 +357,11 @@
                                             <div class="col-md-5">
                                                 <div id="equipes">
                                                     <label for="equipe">Equipes</label>
-                                                    <?php echo form_dropdown('equipe', ['' => 'selecione...'], '', 'id="equipe" class="form-control input-sm" onchange="reload_table_medicoes();"'); ?>
+                                                    <?php echo form_multiselect('equipe[]', [], [], 'id="equipe" class="form-control input-sm" onchange="reload_table_medicoes();"'); ?>
                                                 </div>
                                                 <div id="colaboradores" style="display: none;">
                                                     <label for="colaborador">Colaborador(a)</label>
-                                                    <?php echo form_dropdown('colaborador', ['' => 'selecione...'], '', 'id="colaborador" class="form-control input-sm" onchange="reload_table_medicoes();"'); ?>
+                                                    <?php echo form_multiselect('colaborador[]', [], [], 'id="colaborador" class="form-control input-sm" onchange="reload_table_medicoes();"'); ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -376,12 +376,17 @@
                                        width="100%">
                                     <thead>
                                     <tr>
-                                        <th>Ação</th>
-                                        <th>Colaborador(a)</th>
-                                        <th>Atividade/etapa</th>
-                                        <th>Tipo medição</th>
+                                        <th rowspan="2">Ação</th>
+                                        <th rowspan="2">Equipe/Colaborador(a)</th>
+                                        <th colspan="3" class="text-center">Ind.Produção</th>
+                                        <th colspan="3" class="text-center">Ind.MãoObra</th>
+                                    </tr>
+                                    <tr>
                                         <th>Menor</th>
-                                        <th>Médio</th>
+                                        <th>Média</th>
+                                        <th>Maior</th>
+                                        <th>Menor</th>
+                                        <th>Média</th>
                                         <th>Maior</th>
                                     </tr>
                                     </thead>
@@ -394,6 +399,7 @@
                                     <input type="hidden" name="id_job" value="">
                                     <input type="hidden" name="id_executor" value="">
                                     <input type="hidden" name="unidades" value="">
+                                    <input type="hidden" name="mao_obra" value="">
                                     <h4>Dados da programação do job</h4>
                                     <div class="row form-group">
                                         <label id="label_executor" class="control-label col-md-3 text-nowrap">Equipe
@@ -411,10 +417,16 @@
                                             </button>
                                         </div>
                                     </div>
+                                    <hr>
                                     <div class="row form-group">
-                                        <div class="col-md-1 text-right">
-                                            <br>
-                                            <label class="control-label">IHd/Un</label>
+                                        <div class="col-md-3">
+                                            <label class="control-label">Ind.Produção a ser calculado</label>
+                                            <select name="tipo_valor" class="form-control">
+                                                <option value="P">Menor</option>
+                                                <option value="M">Médio</option>
+                                                <option value="G">Maior</option>
+                                                <option value="">Personalizado</option>
+                                            </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label for="tipo_valor_menor" class="control-label">Menor</label>
@@ -433,15 +445,6 @@
                                                    class="control-label">Personalizado</label>
                                             <input id="tipo_valor_personalizado" class="form-control valor" type="text">
                                         </div>
-                                        <div class="col-md-3">
-                                            <label class="control-label">Valor a ser calculado</label>
-                                            <select name="tipo_valor" class="form-control">
-                                                <option value="P">Menor</option>
-                                                <option value="M">Médio</option>
-                                                <option value="G">Maior</option>
-                                                <option value="">Personalizado</option>
-                                            </select>
-                                        </div>
                                     </div>
                                     <div class="row form-group">
                                         <label class="control-label col-md-3">Volume de trabalho</label>
@@ -459,6 +462,53 @@
                                             </button>
                                         </div>
                                     </div>
+                                    <hr>
+                                    <div class="row form-group">
+                                        <div class="col-md-3">
+                                            <label class="control-label">Ind.MãoObra a ser calculado</label>
+                                            <select name="tipo_mao_obra" class="form-control">
+                                                <option value="P">Menor</option>
+                                                <option value="M">Média</option>
+                                                <option value="G">Maior</option>
+                                                <option value="">Personalizado</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="tipo_mao_obra_menor" class="control-label">Menor</label>
+                                            <input id="tipo_mao_obra_menor" class="form-control" type="text" readonly>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="tipo_mao_obra_medio" class="control-label">Média</label>
+                                            <input id="tipo_mao_obra_medio" class="form-control" type="text" readonly>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="tipo_mao_obra_maior" class="control-label">Maior</label>
+                                            <input id="tipo_mao_obra_maior" class="form-control" type="text" readonly>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="tipo_mao_obra_personalizado"
+                                                   class="control-label">Personalizado</label>
+                                            <input id="tipo_mao_obra_personalizado" class="form-control valor"
+                                                   type="text">
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-3">Qtde. horas disponíveis</label>
+                                        <div class="col-md-2">
+                                            <input name="qtde_horas_disponiveis" class="form-control valor" type="text">
+                                        </div>
+                                        <label class="control-label col-md-3">Qtde. recursos necessários</label>
+                                        <div class="col-md-2">
+                                            <input name="qtde_recursos_necessarios" class="form-control valor"
+                                                   type="text">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-info" id="btnCalcularMaoObraMedicao"
+                                                    onclick="calcular_mao_obra_medicao()">Calcular
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <hr>
                                     <div class="row form-group">
                                         <label class="control-label col-md-3">Horario de início projetado</label>
                                         <div class="col-md-2">
@@ -588,19 +638,37 @@
                     'data': function (d) {
                         d.id = $('[name="id_medicao"]:checked').val();
                         d.busca = $('#form_medicao').serialize();
+                        d.id_job = $('#form_programa [name="id_job"]').val();
 
                         return d;
+                    },
+                    'dataSrc': function (json) {
+                        var ind_producao = 'Ind.Produção'
+                        var ind_mao_obra = 'Ind.MãoObra'
+                        if (json.base_tempo && json.unidade_producao) {
+                            ind_producao = 'Ind.Produção (' + json.unidade_producao + '/H.' + json.base_tempo + ')';
+                            ind_mao_obra = 'Ind.MãoObra (' + 'H.' + json.base_tempo + '/' + json.unidade_producao + ')';
+                        }
+
+                        $('#table_medicoes thead tr:eq(0) th:eq(2)').html(ind_producao);
+                        $('#table_medicoes thead tr:eq(0) th:eq(3)').html(ind_mao_obra);
+
+                        return json.data;
                     }
                 },
                 'columnDefs': [
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
                             var radio = '<input type="radio" ' +
+                                'name="id" ' +
                                 'data-id="' + rowData[0] + '" ' +
                                 'data-nome="' + rowData[1] + '" ' +
-                                'data-menor="' + rowData[4] + '" ' +
-                                'data-medio="' + rowData[5] + '" ' +
-                                'data-maior="' + rowData[6] + '" ' +
+                                'data-valor_menor="' + rowData[2] + '" ' +
+                                'data-valor_medio="' + rowData[3] + '" ' +
+                                'data-valor_maior="' + rowData[4] + '" ' +
+                                'data-mao_obra_menor="' + rowData[5] + '" ' +
+                                'data-mao_obra_medio="' + rowData[6] + '" ' +
+                                'data-mao_obra_maior="' + rowData[7] + '" ' +
                                 'onchange="selecionar_medicao(this);">';
                             $(td).html('<div class="radio"><label>' + radio + '</label></div>');
                         },
@@ -609,12 +677,12 @@
                         'targets': [0]
                     },
                     {
-                        'width': '50%',
-                        'targets': [1, 2]
+                        'width': '100%',
+                        'targets': [1]
                     },
                     {
                         'className': 'text-center',
-                        'targets': [3, 4, 5, 6]
+                        'targets': [2, 3, 4, 5, 6]
                     }
                 ]
             });
@@ -633,17 +701,26 @@
             selecionar_tipo_valor();
         });
 
+        $('#form_programa [name="tipo_mao_obra"], #tipo_mao_obra_personalizado').on('change', function () {
+            selecionar_tipo_mao_obra();
+        });
+
 
         function selecionar_medicao(elem) {
+            $('#form_programa')[0].reset();
             var data = $(elem).data();
             $('#form_programa [name="id_executor"]').val(data.id);
             $('#nome_executor').val(data.nome);
-            $('#tipo_valor_menor').val(data.menor);
-            $('#tipo_valor_medio').val(data.medio);
-            $('#tipo_valor_maior').val(data.maior);
+            $('#tipo_valor_menor').val(data.valor_menor);
+            $('#tipo_valor_medio').val(data.valor_medio);
+            $('#tipo_valor_maior').val(data.valor_maior);
+            $('#tipo_mao_obra_menor').val(data.mao_obra_menor);
+            $('#tipo_mao_obra_medio').val(data.mao_obra_medio);
+            $('#tipo_mao_obra_maior').val(data.mao_obra_maior);
             $('#tipo_valor_personalizado').val('');
 
             selecionar_tipo_valor();
+            selecionar_tipo_mao_obra();
         }
 
 
@@ -668,6 +745,27 @@
         }
 
 
+        function selecionar_tipo_mao_obra() {
+            var tipo_mao_obra = $('#form_programa [name="tipo_mao_obra"]').val();
+            var mao_obra = '';
+            switch (tipo_mao_obra) {
+                case 'P':
+                    mao_obra = $('#tipo_mao_obra_menor').val();
+                    break;
+                case 'M':
+                    mao_obra = $('#tipo_mao_obra_medio').val();
+                    break;
+                case 'G':
+                    mao_obra = $('#tipo_mao_obra_maior').val();
+                    break;
+                case '':
+                    mao_obra = $('#tipo_mao_obra_personalizado').val();
+            }
+
+            $('#form_programa [name="mao_obra"]').val(mao_obra);
+        }
+
+
         function calcular_valor_medicao() {
             var volume_trabaho = $('#form_programa [name="volume_trabalho"]').val();
             var unidades = $('#form_programa [name="unidades"]').val();
@@ -680,6 +778,21 @@
             }
 
             $('#form_programa [name="carga_horaria_necessaria"]').val(carga_horaria);
+        }
+
+
+        function calcular_mao_obra_medicao() {
+            var horas_disponiveis = $('#form_programa [name="qtde_horas_disponiveis"]').val();
+            var mao_obra = $('#form_programa [name="mao_obra"]').val();
+            var qtde_recursos = '';
+
+            if (mao_obra.length > 0 && horas_disponiveis.length > 0) {
+                horas_disponiveis = parseFloat(horas_disponiveis.replace(',', '.'));
+                mao_obra = parseFloat(mao_obra.replace(',', '.'));
+                qtde_recursos = (horas_disponiveis * mao_obra).toString().replace('.', ',')
+            }
+
+            $('#form_programa [name="qtde_recursos_necessarios"]').val(qtde_recursos);
         }
 
 
@@ -706,7 +819,7 @@
                 'data': form,
                 'dataType': 'json',
                 'beforeSend': function () {
-                    $('#form_medicao select, #btnSavePrograma, #btnCalcularValorMedicao').prop('disabled', true);
+                    $('#form_medicao select, #btnSavePrograma, #btnCalcularValorMedicao, #btnCalcularMaoObraMedicao').prop('disabled', true);
                 },
                 'success': function (json) {
                     $.each(json, function (id, element) {
@@ -720,7 +833,7 @@
                     alert('Error adding / update data');
                 },
                 'complete': function () {
-                    $('#form_medicao select, #btnSavePrograma, #btnCalcularValorMedicao').prop('disabled', false);
+                    $('#form_medicao select, #btnSavePrograma, #btnCalcularValorMedicao, #btnCalcularMaoObraMedicao').prop('disabled', false);
                 }
             });
         }
@@ -762,6 +875,7 @@
             $('.form-group').removeClass('has-error');
             $('.help-block').empty();
             selecionar_tipo_valor();
+            selecionar_tipo_mao_obra();
             $('#modal_programa').modal('show');
             $('.modal-title').text('Adicionar programa');
             $('.combo_nivel1').hide();
@@ -793,6 +907,7 @@
                     $('#nome_atividade').text(json.atividade);
                     $('#nome_etapa').text(json.etapa);
                     $('#nome_crono_analise').text(json.crono_analise);
+
 
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar plano de trabalho');
@@ -875,8 +990,22 @@
                     });
 
                     $('#nome_executor').val(json.nome_executor);
+                    $('#tipo_valor_menor').val(json.valor_min_calculado);
+                    $('#tipo_valor_medio').val(json.valor_medio_calculado);
+                    $('#tipo_valor_maior').val(json.valor_max_calculado);
+                    if (json.tipo_valor === null || json.tipo_valor === '') {
+                        $('#tipo_valor_personalizado').val(json.unidades);
+                    }
+
+                    $('#tipo_mao_obra_menor').val(json.mao_obra_min_calculada);
+                    $('#tipo_mao_obra_medio').val(json.mao_obra_media_calculada);
+                    $('#tipo_mao_obra_maior').val(json.mao_obra_max_calculada);
+                    if (json.tipo_mao_obra === null || json.tipo_mao_obra === '') {
+                        $('#tipo_mao_obra_personalizado').val(json.mao_obra);
+                    }
 
                     selecionar_tipo_valor();
+                    selecionar_tipo_mao_obra();
 
                     $('#modal_programa').modal('show');
                     $('.modal-title').text('Editar programa');
