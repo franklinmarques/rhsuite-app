@@ -7,15 +7,15 @@ class Atividades extends MY_Controller
 
     public function index()
     {
-        $this->db->select('nome, id');
-        $this->db->where('empresa', $this->session->userdata('empresa'));
-        $this->db->order_by('nome', 'ASC');
-        $avaliadores = $this->db->get('usuarios')->result();
+        $avaliadores = $this->db
+            ->select('nome, id')
+            ->where('empresa', $this->session->userdata('empresa'))
+            ->where('status', 1)
+            ->order_by('nome', 'ASC')
+            ->get('usuarios')
+            ->result();
 
-        $data['id_usuario'] = array();
-        foreach ($avaliadores as $avaliador) {
-            $data['id_usuario'][$avaliador->id] = $avaliador->nome;
-        }
+        $data['id_usuario'] = array_column($avaliadores, 'nome', 'id');
 
         $sql = "SELECT a.prioridade, 
                        a.status, 
@@ -343,6 +343,7 @@ class Atividades extends MY_Controller
 
         $usuarios = $this->db->select('id, email')
             ->where_in('id', array_column($rows, 'id_usuario'))
+            ->where('status', 1)
             ->get('usuarios')
             ->result();
 
@@ -366,7 +367,7 @@ class Atividades extends MY_Controller
             $this->email
                 ->from('contato@rhsuite.com.br', 'RhSuite')
                 ->to($emails[$row['id_usuario']])
-                ->subject('LMS - Atribuição de atividade')
+                ->subject('SGRH - Atribuição de atividade')
                 ->message($this->load->view('atividades_email', $data, true))
                 ->send();
         }
@@ -428,6 +429,26 @@ class Atividades extends MY_Controller
         if ($this->db->trans_status() === false) {
             exit(json_encode(['erro' => 'Não foi possível finalizar a atividade.']));
         }
+
+        $email = $this->db
+            ->select("CONCAT(a.id, ' - ', a.atividade) AS atividade, b.nome, b.email AS remetente", false)
+            ->select("IFNULL(d.email, 'contato@rhsuite.com.br') AS destinatario", false)
+            ->join('usuarios b', 'b.id = a.id_usuario')
+            ->join('atividades c', 'c.id = a.id_mae', 'left')
+            ->join('usuarios d', 'd.id = c.id_usuario', 'left')
+            ->where('a.id', $id)
+            ->get('atividades a')
+            ->row();
+
+        $this->load->library('email');
+
+        $this->email
+            ->from($email->remetente, 'RhSuite')
+            ->to($email->destinatario)
+            ->subject('SGRH - Finalização de atividade')
+            ->message('Tarefa realizada: ' . $email->atividade . '<br>Responsável:' . $email->nome)
+            ->send();
+
         echo json_encode(['status' => true]);
     }
 

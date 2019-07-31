@@ -120,7 +120,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label for="tipo_item">Tipo item</label>
+                            <label for="tipo_item">Volume</label>
                             <select id="tipo_item" class="form-control input-sm" onchange="reset_valores();"
                                     autocomplete="off">
                                 <option value="">Todos</option>
@@ -130,6 +130,10 @@
                                 <option value="4">Grande</option>
                                 <option value="5">Extremamente grande</option>
                             </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="tipo_item">Peso/massa</label>
+                            <?php echo form_dropdown('', $pesoItem, '', 'id="peso_item" class="form-control input-sm" onchange="reload_table();" autocomplete="off"'); ?>
                         </div>
                     </div>
                     <hr>
@@ -381,6 +385,7 @@
                         }
                         d.complexidade = $('#complexidade').val();
                         d.tipo_item = $('#tipo_item').val();
+                        d.peso_item = $('#peso_item').val();
                         d.medicao_calculada = $('.tipo_medicao:checked').val();
 
                         return d;

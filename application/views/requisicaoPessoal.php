@@ -395,7 +395,7 @@
                                     </div>
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Selecione responsável pela aprovação <span
-                                                    class="text-primary" id="aprovado_por"
+                                                    class="text-danger" id="aprovado_por"
                                                     style="display:none;">*</span></label>
                                         <div class="col-md-9">
                                             <select name="aprovado_por" class="form-control">
@@ -525,91 +525,133 @@
                                     </div>
 
                                     <hr>
-                                    <h5><strong>Benefícios</strong></h5>
                                     <div class="row">
-                                        <div class="col-sm-9">
-                                            <div class="row" style="margin-bottom: 15px;">
-                                                <label class="control-label col-md-3">Vale transporte</label>
-                                                <div class="col-lg-3">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <input type="checkbox" name="vale_transporte" value="1"
-                                                                   class="beneficio">
-                                                        </span>
-                                                        <input name="valor_vale_transporte" type="text"
-                                                               class="form-control text-right valor_beneficio">
-                                                    </div>
-                                                </div>
-                                                <label class="control-label col-md-3">Vale alimentação</label>
-                                                <div class="col-lg-3">
-                                                    <div class="input-group">
-                                                <span class="input-group-addon">
+                                        <div class="col-sm-3">
+                                            <h5><strong>Benefícios</strong></h5>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="vale_transporte" value="1"
+                                                           class="beneficio"> Vale transporte
+                                                </label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
                                                     <input type="checkbox" name="vale_alimentacao" value="1"
-                                                           class="beneficio">
-                                                </span>
-                                                        <input name="valor_vale_alimentacao" type="text"
-                                                               class="form-control text-right valor_beneficio">
-                                                    </div>
-                                                </div>
+                                                           class="beneficio"> Vale alimentação
+                                                </label>
                                             </div>
-                                            <div class="row" style="margin-bottom: 15px;">
-                                                <label class="control-label col-md-3">Vale refeição</label>
-                                                <div class="col-lg-3">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <input type="checkbox" name="vale_refeicao" value="1"
-                                                                   class="beneficio">
-                                                        </span>
-                                                        <input name="valor_vale_refeicao" type="text"
-                                                               class="form-control text-right valor_beneficio">
-                                                    </div>
-                                                </div>
-                                                <label class="control-label col-md-3">Cesta básica</label>
-                                                <div class="col-lg-3">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <input type="checkbox" name="cesta_basica" value="1"
-                                                                   class="beneficio">
-                                                        </span>
-                                                        <input name="valor_cesta_basica" type="text"
-                                                               class="form-control text-right valor_beneficio">
-                                                    </div>
-                                                </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="vale_refeicao" value="1"
+                                                           class="beneficio"> Vale refeição
+                                                </label>
                                             </div>
-                                            <div class="row" style="margin-bottom: 15px;">
-                                                <label class="control-label col-md-3">Assistência médica</label>
-                                                <div class="col-lg-3">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <input type="checkbox" name="assistencia_medica" value="1"
-                                                                   class="beneficio">
-                                                        </span>
-                                                        <input name="valor_assistencia_medica" type="text"
-                                                               class="form-control text-right valor_beneficio">
-                                                    </div>
-                                                </div>
-                                                <label class="control-label col-md-3">Plano odontológico</label>
-                                                <div class="col-lg-3">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <input type="checkbox" name="plano_odontologico" value="1"
-                                                                   class="beneficio">
-                                                        </span>
-                                                        <input name="valor_plano_odontologico" type="text"
-                                                               class="form-control text-right valor_beneficio">
-                                                    </div>
-                                                </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="cesta_basica" value="1"
+                                                           class="beneficio"> Cesta básica
+                                                </label>
                                             </div>
-                                            <div class="row" style="margin-bottom: 15px;">
-                                                <label class="control-label col-md-3">Participação em resultados</label>
-                                                <div class="col-lg-3">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <input type="checkbox" name="participacao_resultados"
-                                                                   value="1" class="beneficio">
-                                                        </span>
-                                                        <input name="valor_participacao_resultados" type="text"
-                                                               class="form-control text-right valor_beneficio">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="assistencia_medica" value="1"
+                                                           class="beneficio"> Assistência médica
+                                                </label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="plano_odontologico" value="1"
+                                                           class="beneficio"> Plano odontológico
+                                                </label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="participacao_resultados" value="1"
+                                                           class="beneficio"> Ajuda de custo
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <h5><strong>Valor dos benefícios (opcional)</strong></h5>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="row" style="margin-bottom: 15px;">
+                                                        <label class="control-label col-md-3">Vale transporte</label>
+                                                        <div class="col-lg-3">
+                                                            <div class="input-group">
+                                                            <span class="input-group-addon"
+                                                                  id="basic-addon-vt">R$</span>
+                                                                <input name="valor_vale_transporte" type="text"
+                                                                       class="form-control valor_beneficio"
+                                                                       aria-describedby="basic-addon-vt">
+                                                            </div>
+                                                        </div>
+                                                        <label class="control-label col-md-3">Assistência médica</label>
+                                                        <div class="col-lg-3">
+                                                            <div class="input-group">
+                                                            <span class="input-group-addon"
+                                                                  id="basic-addon-am">R$</span>
+                                                                <input name="valor_assistencia_medica" type="text"
+                                                                       class="form-control valor_beneficio"
+                                                                       aria-describedby="basic-addon-am">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="margin-bottom: 15px;">
+                                                        <label class="control-label col-md-3">Vale alimentação</label>
+                                                        <div class="col-lg-3">
+                                                            <div class="input-group">
+                                                            <span class="input-group-addon"
+                                                                  id="basic-addon-va">R$</span>
+                                                                <input name="valor_vale_alimentacao" type="text"
+                                                                       class="form-control valor_beneficio"
+                                                                       aria-describedby="basic-addon-va">
+                                                            </div>
+                                                        </div>
+                                                        <label class="control-label col-md-3">Plano odontológico</label>
+                                                        <div class="col-lg-3">
+                                                            <div class="input-group">
+                                                            <span class="input-group-addon"
+                                                                  id="basic-addon-po">R$</span>
+                                                                <input name="valor_plano_odontologico" type="text"
+                                                                       class="form-control valor_beneficio"
+                                                                       aria-describedby="basic-addon-po">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="margin-bottom: 15px;">
+                                                        <label class="control-label col-md-3">Vale refeição</label>
+                                                        <div class="col-lg-3">
+                                                            <div class="input-group">
+                                                            <span class="input-group-addon"
+                                                                  id="basic-addon-vr">R$</span>
+                                                                <input name="valor_vale_refeicao" type="text"
+                                                                       class="form-control valor_beneficio"
+                                                                       aria-describedby="basic-addon-vr">
+                                                            </div>
+                                                        </div>
+                                                        <label class="control-label col-md-3">Ajuda de custo</label>
+                                                        <div class="col-lg-3">
+                                                            <div class="input-group">
+                                                            <span class="input-group-addon"
+                                                                  id="basic-addon-ac">R$</span>
+                                                                <input name="valor_participacao_resultados" type="text"
+                                                                       class="form-control valor_beneficio"
+                                                                       aria-describedby="basic-addon-ac">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="margin-bottom: 15px;">
+                                                        <label class="control-label col-md-3">Cesta básica</label>
+                                                        <div class="col-lg-3">
+                                                            <div class="input-group">
+                                                            <span class="input-group-addon"
+                                                                  id="basic-addon-cb">R$</span>
+                                                                <input name="valor_cesta_basica" type="text"
+                                                                       class="form-control valor_beneficio"
+                                                                       aria-describedby="basic-addon-cb">
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -862,28 +904,39 @@
         $(document).ready(function () {
 
             $('.data').mask('00/00/0000');
-            $('.rg').mask('00.000.000-0');
+            $('.rg').mask('#00.000.000-ZZ', {
+                'reverse': true,
+                'translation': {
+                    '#': {
+                        'pattern': /[0-9]/, 'optional': true
+                    },
+                    'Z': {
+                        'pattern': /[0-9A-Za-z]/, 'optional': true
+                    }
+                }
+            });
             $('.cpf').mask('000.000.000-00');
             $('.pis').mask('00.000.000.000');
             $('.valor').mask('##.###.##0,00', {reverse: true});
             $('.valor_beneficio').mask('##.##0,00', {reverse: true});
 
+
             table = $('#table').DataTable({
-                dom: "<'row'<'col-sm-4'l><'#dt_filtro.col-sm-4'><'col-sm-4'f>>" +
+                'dom': "<'row'<'col-sm-4'l><'#dt_filtro.col-sm-4'><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                processing: true,
-                serverSide: true,
-                iDisplayLength: -1,
-                lengthMenu: [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
-                order: [[0, 'desc']],
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
+                'order': [[0, 'desc']],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('requisicaoPessoal/ajax_list/') ?>',
-                    type: 'POST',
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('requisicaoPessoal/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.status = $('#status').val();
                         d.estagio = $('#estagio').val();
                         d.municipio = $('#municipio').val();
@@ -895,7 +948,7 @@
                         return d;
                     },
                     'dataSrc': function (json) {
-                        if (json.draw === '1') {
+                        if (json.draw === 1) {
                             if (tipo_empresa) {
                                 $("#dt_filtro").html('<br>Mostrar:&ensp;<label class="checkbox-inline">' +
                                     '<input type="checkbox" onchange="toggle_vis(3)"> Estágio' +
@@ -912,63 +965,63 @@
                         return json.data;
                     }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        visible: false,
-                        targets: tipo_empresa ? [3, 7, 9, 11, 12, 13] : [2, 3, 9, 11]
+                        'visible': false,
+                        'targets': tipo_empresa ? [3, 7, 9, 11, 12, 13] : [2, 3, 9, 11]
                     },
                     {
-                        createdCell: function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[2] === 'Aguardando aprovação' && rowData[15] === 'A' && rowData[16] === null) {
                                 $(td).css({'background-color': '#f00', 'color': '#fff'});
                             }
                         },
-                        searchable: false,
-                        targets: [2]
+                        'searchable': false,
+                        'targets': [2]
                     },
                     {
-                        visible: (nivel === true ? false : true),
-                        targets: [12, 13]
+                        'visible': (nivel === true ? false : true),
+                        'targets': [12, 13]
                     },
                     {
-                        createdCell: function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[col] === null) {
                                 $(td).css('background-color', '#ff0');
                             }
                         },
-                        targets: [4]
+                        'targets': [4]
                     },
                     {
-                        width: '20%',
-                        targets: [3, 10]
+                        'width': '20%',
+                        'targets': [3, 10]
                     },
                     {
-                        width: '30%',
-                        targets: [4, 8]
+                        'width': '30%',
+                        'targets': [4, 8]
                     },
                     {
-                        searchable: false,
-                        targets: [1, 3, 9, 10, 11, 12, 13, 14]
+                        'searchable': false,
+                        'targets': [1, 3, 9, 10, 11, 12, 13, 14]
                     },
                     {
-                        className: 'text-nowrap',
-                        targets: [-1],
-                        orderable: false
+                        'className': 'text-nowrap',
+                        'targets': [-1],
+                        'orderable': false
                     }
                 ]
             });
 
             table_aprovados = $('#table_aprovados').DataTable({
-                ordering: false,
-                searching: false,
-                paging: false,
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'ordering': false,
+                'searching': false,
+                'paging': false,
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('requisicaoPessoal/ajax_listAprovados/') ?>',
-                    type: 'POST',
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('requisicaoPessoal/ajax_listAprovados') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.id = id_requisicao;
                         return d;
                     },
@@ -980,24 +1033,26 @@
                         return json.data;
                     }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        width: '100%',
-                        targets: [0]
+                        'width': '100%',
+                        'targets': [0]
                     },
                     {
-                        className: 'text-center',
-                        targets: [1, 2, 3, 4, 5]
+                        'className': 'text-center',
+                        'targets': [1, 2, 3, 4, 5]
                     }
                 ]
             });
 
         });
 
+
         function toggle_vis(e) {
             var column = table.column(e);
             column.visible(!column.visible());
         }
+
 
         $('[name="tipo_vaga"]').on('change', function () {
             if (this.value === 'I') {
@@ -1012,6 +1067,7 @@
                 // $('.estrutura, [name="justificativa_contratacao"]').val('').prop('disabled', true);
             }
         });
+
 
         $('[name="status"]').on('change', function () {
             // $('#form [name="data_fechamento"]').prop('disabled', this.value !== 'F');
@@ -1055,9 +1111,11 @@
             }
         });
 
+
         $('[name="id_cargo"]').on('change', function () {
             atualizarFuncao();
         });
+
 
         $('[name="justificativa_contratacao"]').on('change', function () {
             if (this.value === 'S') {
@@ -1074,7 +1132,7 @@
             // }
             if (this.value === 'A') {
                 $('#aprovado_por').show();
-                $('#aprovado_por').parent('label').css('font-weight', 'bold').addClass('text-primary');
+                $('#aprovado_por').parent('label').css('font-weight', 'bold').addClass('text-danger');
                 ;
                 $('[name="aprovado_por"], [name="data_aprovacao"]').prop('disabled', false);
                 $('[name="aprovado_por"]').prop('disabled', false);
@@ -1089,7 +1147,7 @@
                     $('[name="status"]').val('G');
                 }
             } else {
-                $('#aprovado_por').parent('label').css('font-weight', 'normal').removeClass('text-primary');
+                $('#aprovado_por').parent('label').css('font-weight', 'normal').removeClass('text-danger');
                 $('#aprovado_por').hide();
                 if (save_method === 'add') {
                     $('[name="status"]').val('A');
@@ -1099,6 +1157,7 @@
                 $('#btnAprovarContratacao, #btnAprovarContratacao2').hide();
             }
         });
+
 
         $('#possui_indicacao').on('change', function () {
             if (this.checked) {
@@ -1120,20 +1179,27 @@
             }
         });
 
+
         $('.beneficio').on('change', function () {
-            if (this.checked === true) {
-                $(this).parent()
-            }
+            habilitar_valor_beneficio(this);
         });
+
+
+        function habilitar_valor_beneficio(elem) {
+            $('#form [name="valor_' + elem.name + '"]').prop('disabled', elem.checked === false);
+        }
+
 
         $('.filtro').on('change', function () {
             reload_table();
         });
 
+
         $('#limpa_filtro').on('click', function () {
             $('.filtro').val('');
             reload_table();
         });
+
 
         function aprovar_contratacao() {
             $('[name="status"]').val('A');
@@ -1143,9 +1209,10 @@
             }
         }
 
+
         function atualizarEstrutura() {
             $.ajax({
-                'url': '<?php echo site_url('requisicaoPessoal/atualizarEstrutura/') ?>',
+                'url': '<?php echo site_url('requisicaoPessoal/atualizarEstrutura') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('.estrutura, [name="tipo_vaga"], [name="requisitante_interno"], [name="requisitante_externo"]').serialize(),
@@ -1162,9 +1229,10 @@
             });
         }
 
+
         function atualizarFuncao() {
             $.ajax({
-                'url': '<?php echo site_url('requisicaoPessoal/atualizarFuncao/') ?>',
+                'url': '<?php echo site_url('requisicaoPessoal/atualizarFuncao') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('[name="id_cargo"], [name="id_funcao"]').serialize(),
@@ -1177,9 +1245,10 @@
             });
         }
 
+
         function atualizarMunicipio() {
             $.ajax({
-                'url': '<?php echo site_url('requisicaoPessoal/atualizarMunicipio/') ?>',
+                'url': '<?php echo site_url('requisicaoPessoal/atualizarMunicipio') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -1194,6 +1263,7 @@
             });
         }
 
+
         function add_requisicao() {
             save_method = 'add';
             $('#form')[0].reset();
@@ -1204,7 +1274,7 @@
             $('[name="tipo_vaga"] option[value="E"]').hide();
 
             $.ajax({
-                'url': '<?php echo site_url('requisicaoPessoal/ajax_nextId/') ?>',
+                'url': '<?php echo site_url('requisicaoPessoal/ajax_nextId') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'success': function (json) {
@@ -1216,6 +1286,7 @@
                     $('#interno, #cargo_interno, #funcao_interna, .cargo_funcao_alternativo').show();
                     $('[name="selecionador"], [name="spa"]').prop('disabled', true);
                     $('.estrutura').prop('disabled', false);
+                    $('.beneficio').trigger('change');
                     $('#dados_cuidadores').hide();
                     $('#dados_cuidadores input').val('');
                     $('[name="aprovado_por"]').html($(json.aprovado_por).html());
@@ -1236,6 +1307,7 @@
             });
         }
 
+
         function edit_requisicao(id) {
             save_method = 'update';
             $('#form')[0].reset();
@@ -1246,7 +1318,7 @@
             $('[name="tipo_vaga"] option[value="E"]').show();
 
             $.ajax({
-                'url': '<?php echo site_url('requisicaoPessoal/ajax_edit/') ?>',
+                'url': '<?php echo site_url('requisicaoPessoal/ajax_edit') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
@@ -1276,6 +1348,7 @@
                     // } else if (data.tipo_vaga === 'E') {
                     // }
                     $('[name="aprovado_por"]').html($(input.aprovado_por).html());
+                    $('.beneficio').trigger('change');
 
                     $('.estrutura, [name="justificativa_contratacao"], #possui_indicacao').trigger('change');
 
@@ -1308,12 +1381,14 @@
             });
         }
 
+
         function mostrar_aprovados(id) {
             id_requisicao = id;
             table_aprovados.ajax.reload(function () {
                 $('#modal_aprovados').modal('show')
             });
         }
+
 
         function edit_email(id) {
             $('#form')[0].reset();
@@ -1339,6 +1414,7 @@
             });
         }
 
+
         function filtrar_email() {
             $.ajax({
                 'url': '<?php echo site_url('requisicaoPessoal/filtrarEmailContratacao') ?>',
@@ -1361,14 +1437,14 @@
             });
         }
 
+
         function reload_table() {
             table.ajax.reload(null, false);
         }
 
-        function save() {
-            $('#btnSave').text('Salvando...').attr('disabled', true);
-            var url;
 
+        function save() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('requisicaoPessoal/ajax_add') ?>';
             } else {
@@ -1380,6 +1456,9 @@
                 'type': 'POST',
                 'data': $('#form').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
@@ -1388,37 +1467,40 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSave').text('Salvar').attr('disabled', false); //set button enable
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
 
         function enviar_email() {
-            $('#btnEnviarEmail').text('Enviando e-mail...').attr('disabled', true);
-
             $.ajax({
                 'url': '<?php echo site_url('requisicaoPessoal/enviarEmail') ?>',
                 'type': 'POST',
                 'data': $('#form_email').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnEnviarEmail').text('Enviando e-mail...').attr('disabled', true);
+                },
                 'success': function (json) {
                     // if (json.status) {
                     //     $('#modal_email').modal('hide');
                     // }
-                    $('#btnEnviarEmail').text('Enviar e-mail').attr('disabled', false); //set button enable
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnEnviarEmail').text('Enviar e-mail').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnEnviarEmail').text('Enviar e-mail').attr('disabled', false);
                 }
             });
         }
+
 
         function delete_requisicao(id) {
             if (confirm('Deseja remover?')) {
@@ -1427,8 +1509,7 @@
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {'id': id},
-                    'success': function (data) {
-                        //if success reload ajax table
+                    'success': function (json) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     },

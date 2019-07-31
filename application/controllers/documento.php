@@ -352,7 +352,7 @@ class Documento extends MY_Controller
             if (!empty($_FILES['arquivo']) && $_FILES['arquivo']['error'] == 0) {
                 $config['upload_path'] = './arquivos/documentos/colaborador/';
                 $config['allowed_types'] = 'pdf';
-                $config['max_size'] = '102400';
+                $config['max_size'] = '012400';
 
                 $this->load->library('upload', $config);
                 $_FILES['arquivo']['name'] = $this->removeCaracterEspecial($_FILES['arquivo']['name']);
@@ -386,6 +386,25 @@ class Documento extends MY_Controller
         } else {
             redirect('documento/colaborador');
         }
+    }
+
+    public function visualizacaoRapida()
+    {
+        $data = $this->db
+            ->select('arquivo')
+            ->where('id', $this->input->post('id'))
+            ->get('documentos')
+            ->row();
+
+        if (empty($data)) {
+            exit(json_encode(['erro' => 'Documento não encontrado']));
+        }
+
+        $data->url_arquivo = 'https://docs.google.com/gview?embedded=true&url=' .
+            base_url('arquivos/documentos/colaborador/' . convert_accented_characters($data->arquivo));
+        unset($data->arquivo);
+
+        echo json_encode($data);
     }
 
     public function colaborador()
@@ -493,10 +512,10 @@ class Documento extends MY_Controller
             $row[] = $documento->tipo_descricao;
 
             $row[] = '
-                      <button class="btn btn-sm btn-primary" onclick="edit_documento(' . $documento->id . ');"><i class="glyphicon glyphicon-pencil"></i></button>
-                      <button class="btn btn-sm btn-danger" onclick="delete_documento(' . $documento->id . ');"><i class="glyphicon glyphicon-trash"></i></button>
-                      <a class="btn btn-sm btn-info" href="' . site_url('pdi/pdfRelatorio/' . $documento->id) . '"><i class="fa fa-eye"></i> Visualizar</a>
-                      <button class="btn btn-sm btn-info" onclick="baixar_documento(' . $documento->id . ');"><i class="fa fa-download"></i> Download</button>
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_documento(' . $documento->id . ');"><i class="glyphicon glyphicon-pencil"></i></button>
+                      <button type="button" class="btn btn-sm btn-danger" onclick="delete_documento(' . $documento->id . ');"><i class="glyphicon glyphicon-trash"></i></button>
+                      <button type="button" class="btn btn-sm btn-info" onclick="visualizar_documento(' . $documento->id . ');"><i class="fa fa-eye"></i> Visualizar</button>
+                      <button type="button" class="btn btn-sm btn-info" onclick="baixar_documento(' . $documento->id . ');"><i class="fa fa-download"></i> Download</button>
                      ';
 
             $data[] = $row;

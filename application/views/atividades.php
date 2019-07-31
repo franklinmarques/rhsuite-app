@@ -796,7 +796,7 @@ require_once "end_js.php";
                         }
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
+                        alert('Error update data');
                     }
                 });
             }

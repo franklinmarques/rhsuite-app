@@ -94,6 +94,36 @@
                             <?php echo form_dropdown('', $status, '', 'id="status" class="form-control input-sm" onchange="reload_table();" autocomplete="off"'); ?>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="complexidade">Complexidade</label>
+                            <select id="complexidade" class="form-control input-sm" onchange="reload_table();"
+                                    autocomplete="off">
+                                <option value="">Todas</option>
+                                <option value="1">Extremamente baixa</option>
+                                <option value="2">Baixas</option>
+                                <option value="3">Média</option>
+                                <option value="4">Alta</option>
+                                <option value="5">Extremamente alta</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="tipo_item">Volume</label>
+                            <select id="tipo_item" class="form-control input-sm" onchange="reload_table();"
+                                    autocomplete="off">
+                                <option value="">Todos</option>
+                                <option value="1">Extremamente pequeno</option>
+                                <option value="2">Pequeno</option>
+                                <option value="3">Médio</option>
+                                <option value="4">Grande</option>
+                                <option value="5">Extremamente grande</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="tipo_item">Peso/massa</label>
+                            <?php echo form_dropdown('', $pesoItem, '', 'id="peso_item" class="form-control input-sm" onchange="reload_table();" autocomplete="off"'); ?>
+                        </div>
+                    </div>
                     <br>
                     <div id="esconder_itens" class="form-inline">
                         <button id="btnAdd" class="btn btn-info" onclick="add_medicao()"><i
@@ -137,7 +167,8 @@
                             <th nowrap>Ind.Produção (<?= $unidadeProducao; ?>/H.<?= $baseTempo; ?>)</th>
                             <th nowrap>Ind.MãoObra (H.<?= $baseTempo; ?>/<?= $unidadeProducao; ?>)</th>
                             <th>Complexidade</th>
-                            <th nowrap>Tipo item</th>
+                            <th nowrap>Volume</th>
+                            <th nowrap>Peso/massa (Kg.)</th>
                             <th>Ações</th>
                         </tr>
                         </thead>
@@ -307,6 +338,9 @@
                             d.id_executor = $('#colaborador').val();
                         }
                         d.id_crono_analise = $('#crono_analise').val();
+                        d.complexidade = $('#complexidade').val();
+                        d.tipo_item = $('#tipo_item').val();
+                        d.peso_item = $('#peso_item').val();
                         d.status = $('#status').val();
 
                         return d;

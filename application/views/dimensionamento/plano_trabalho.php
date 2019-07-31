@@ -327,14 +327,18 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-3">
-                                                <label for="tipo_item">Tipo de item</label>
+                                                <label for="tipo_item">Volume</label>
                                                 <?php echo form_dropdown('tipo_item', ['' => 'Todos'], '', 'id="tipo_item" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
                                             </div>
                                             <div class="col-md-3">
                                                 <label for="complexidade">Grau de complexidade</label>
                                                 <?php echo form_dropdown('complexidade', ['' => 'Todos'], '', 'id="complexidade" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
+                                                <label for="complexidade">Peso/massa</label>
+                                                <?php echo form_dropdown('peso_item', ['' => 'Todos'], '', 'id="peso_item" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
+                                            </div>
+                                            <div class="col-md-3">
                                                 <label for="crono_analise">Crono Análise</label>
                                                 <?php echo form_dropdown('crono_analise', ['' => 'selecione...'], '', 'id="crono_analise" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
                                             </div>

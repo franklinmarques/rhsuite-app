@@ -9,82 +9,71 @@ class RequisicaoPessoal extends MY_Controller
         $this->initialize();
     }
 
-    //==========================================================================
     public function admFin()
     {
         $this->initialize('ADM-FIN');
     }
 
-    //==========================================================================
     public function cd()
     {
         $this->initialize('CD');
     }
 
-    //==========================================================================
     public function cdh()
     {
         $this->initialize('CDH');
     }
 
-    //==========================================================================
     public function ei()
     {
         $this->initialize('EI');
     }
 
-    //==========================================================================
     public function gexec()
     {
         $this->initialize('GExec');
     }
 
-    //==========================================================================
     public function icom()
     {
         $this->initialize('ICOM');
     }
 
-    //==========================================================================
     public function papd()
     {
         $this->initialize('PAPD');
     }
 
-    //==========================================================================
     public function st()
     {
         $this->initialize('ST');
     }
 
-    //==========================================================================
-    private function initialize($modulo = null)
+    public function initialize($modulo = null)
     {
         $id = $this->session->userdata('id');
         $empresa = $this->session->userdata('empresa');
         $tipo = $this->session->userdata('tipo');
         $nivelAcesso = $this->session->userdata('nivel');
 
-        $data = [
+        $data = array(
             'tipo' => $tipo,
             'nivel' => $nivelAcesso,
             'depto' => '',
             'id_depto' => '',
             'usuario' => $this->db->select('depto')->where('id', $id)->get('usuarios')->row_array(),
-            'deptos' => [],
-            'areas' => [],
-            'setores' => [],
-            'cargos' => ['' => 'selecione...'],
-            'funcoes' => ['' => 'selecione...'],
+            'deptos' => array(),
+            'areas' => array(),
+            'setores' => array(),
+            'cargos' => array('' => 'selecione...'),
+            'funcoes' => array('' => 'selecione...'),
             'modulo' => ''
-        ];
+        );
 
 
-        $usuario = $this->db
-            ->select('depto, id_depto, area, setor')
-            ->where('id', $id)
-            ->get('usuarios')
-            ->row();
+        $this->db->select('depto, id_depto, area, setor');
+        $this->db->where('id', $id);
+        $usuario = $this->db->get('usuarios')->row();
 
         if ($tipo != 'empresa') {
             $data['depto'] = $usuario->depto;
@@ -92,10 +81,10 @@ class RequisicaoPessoal extends MY_Controller
         }
 
 
-        $data['deptos'] = ['' => 'Todos'];
+        $data['deptos'] = array('' => 'Todos');
         if ($tipo != 'funcionario') {
-            $data['areas'] = ['' => 'Todas'];
-            $data['setores'] = ['' => 'Todos'];
+            $data['areas'] = array('' => 'Todas');
+            $data['setores'] = array('' => 'Todos');
         }
 
         switch ($modulo) {
@@ -118,56 +107,50 @@ class RequisicaoPessoal extends MY_Controller
                 $data['modulo'] = '';
                 break;
             case 'PAPD':
-                $data['modulo'] = 'Programa de Apoio a Pessoa com Deficiência';
+                $data['modulo'] = 'Pacientes';
                 break;
             case 'ST':
                 $data['modulo'] = 'Serviços Terceirizados';
         }
 
         $this->db->select('id, nome');
+        $this->db->where('id_empresa', $empresa);
         if ($tipo == 'funcionario' and !in_array($nivelAcesso, [7, 8, 18])) {
             $this->db->where('nome', $usuario->depto);
         }
-        $deptos = $this->db
-            ->where('id_empresa', $empresa)
-            ->order_by('nome', 'asc')
-            ->get('empresa_departamentos')
-            ->result();
-
-        $data['deptos'] += array_column($deptos, 'nome', 'id');
-
+        $this->db->order_by('nome', 'asc');
+        $deptos = $this->db->get('empresa_departamentos')->result();
+        foreach ($deptos as $depto) {
+            $data['deptos'][$depto->id] = $depto->nome;
+        }
 
         $this->db->select('a.id, a.nome');
         $this->db->join('empresa_departamentos b', 'b.id = a.id_departamento');
+        $this->db->where('b.id_empresa', $empresa);
         if ($tipo == 'funcionario' and !in_array($nivelAcesso, [7, 8, 18])) {
             $this->db->where('b.nome', $usuario->depto);
             $this->db->where('a.nome', $usuario->area);
         }
-        $areas = $this->db
-            ->where('b.id_empresa', $empresa)
-            ->order_by('a.nome', 'asc')
-            ->get('empresa_areas a')
-            ->result();
-
-        $data['areas'] += array_column($areas, 'nome', 'id');
-
+        $this->db->order_by('a.nome', 'asc');
+        $areas = $this->db->get('empresa_areas a')->result();
+        foreach ($areas as $area) {
+            $data['areas'][$area->id] = $area->nome;
+        }
 
         $this->db->select('a.id, a.nome');
         $this->db->join('empresa_areas b', 'b.id = a.id_area');
         $this->db->join('empresa_departamentos c', 'c.id = b.id_departamento');
+        $this->db->where('c.id_empresa', $empresa);
         if ($tipo == 'funcionario' and !in_array($nivelAcesso, [7, 8, 18])) {
             $this->db->where('c.nome', $usuario->depto);
             $this->db->where('b.nome', $usuario->area);
             $this->db->where('a.nome', $usuario->setor);
         }
-        $setores = $this->db
-            ->where('c.id_empresa', $empresa)
-            ->order_by('a.nome', 'asc')
-            ->get('empresa_setores a')
-            ->result();
-
-        $data['setores'] += array_column($setores, 'nome', 'id');
-
+        $this->db->order_by('a.nome', 'asc');
+        $setores = $this->db->get('empresa_setores a')->result();
+        foreach ($setores as $setor) {
+            $data['setores'][$setor->id] = $setor->nome;
+        }
 
         $this->db->select('id, nome');
         $this->db->where('empresa', $empresa);
@@ -175,14 +158,13 @@ class RequisicaoPessoal extends MY_Controller
         if ($tipo == 'funcionario' and !in_array($nivelAcesso, [7, 8, 18])) {
             $this->db->where('id', $id);
         } else {
-            $data['requisitantes'] = ['' => 'selecione...'];
+            $data['requisitantes'] = array('' => 'selecione...');
         }
         $this->db->order_by('nome', 'asc');
         $requisitantes = $this->db->get('usuarios')->result();
         foreach ($requisitantes as $requisitante) {
             $data['requisitantes'][$requisitante->id] = $requisitante->nome;
         }
-
 
         $this->db->select('id, nome');
         $this->db->where('id_empresa', $empresa);
@@ -191,7 +173,6 @@ class RequisicaoPessoal extends MY_Controller
         foreach ($cargos as $cargo) {
             $data['cargos'][$cargo->id] = $cargo->nome;
         }
-
 
         $this->db->select('a.id, a.nome');
         $this->db->join('empresa_cargos b', 'b.id = a.id_cargo');
@@ -202,14 +183,12 @@ class RequisicaoPessoal extends MY_Controller
             $data['funcoes'][$funcao->id] = $funcao->nome;
         }
 
-
         $this->db->select('DISTINCT(municipio) AS municipio', false);
         $this->db->where('id_empresa', $empresa);
         $this->db->where('CHAR_LENGTH(municipio) > 0', null, false);
         $this->db->order_by('municipio', 'asc');
         $municipios = $this->db->get('requisicoes_pessoal')->result();
         $data['municipios'] = ['' => 'Todos'] + array_column($municipios, 'municipio', 'municipio');
-
 
         $this->db->select('a.id_usuario AS id, b.nome');
         $this->db->join('usuarios b', 'b.id = a.id_usuario');
@@ -219,15 +198,12 @@ class RequisicaoPessoal extends MY_Controller
         $aprovadores = ['' => 'selecione...'] + array_column($sqlAprovadores, 'nome', 'id');
         $data['aprovado_por'] = form_dropdown('aprovado_por', $aprovadores, '');
 
-
         $data['idUsuario'] = $tipo == 'funcionario' ? $id : '';
         $data['aprovadores'] = true;
-
 
         $this->load->view('requisicaoPessoal', $data);
     }
 
-    //==========================================================================
     public function atualizarEstrutura($retorno = false)
     {
         $id = $this->session->userdata('id');
@@ -261,10 +237,10 @@ class RequisicaoPessoal extends MY_Controller
 
 
         $filtro = array(
-            'deptos' => ['' => 'Todos'],
-            'areas' => ['' => 'Todas'],
-            'setores' => ['' => 'Todos'],
-            'requisitantes' => ['' => 'selecione...']
+            'deptos' => array('' => 'Todos'),
+            'areas' => array('' => 'Todas'),
+            'setores' => array('' => 'Todos'),
+            'requisitantes' => array('' => 'selecione...')
         );
 
         $this->db->select('id, nome');
@@ -302,8 +278,8 @@ class RequisicaoPessoal extends MY_Controller
         $this->db->join('empresa_areas c', 'c.nome = a.area', 'left');
         $this->db->join('empresa_setores d', 'd.nome = a.setor', 'left');
         $this->db->where('a.empresa', $empresa);
-        $this->db->where_in('a.tipo', ['funcionario', 'selecionador']);
-        $this->db->where_in('a.nivel_acesso', [7, 8, 9, 10, 18, 19]); #Presidente, Gerente, Coordenador, Diretor e supervisor
+        $this->db->where_in('a.tipo', array('funcionario', 'selecionador'));
+        $this->db->where_in('a.nivel_acesso', array(7, 8, 9, 10, 18, 19)); #Presidente, Gerente, Coordenador, Diretor e supervisor
         if ($tipo == 'funcionari') {
             $this->db->where('a.id', $id);
         } else {
@@ -316,7 +292,7 @@ class RequisicaoPessoal extends MY_Controller
             if ($idSetor) {
 //                $this->db->where('d.id', $idSetor);
             }
-            $filtro['requisitantes'] = ['' => 'selecione...'];
+            $filtro['requisitantes'] = array('' => 'selecione...');
         }
         $this->db->order_by('a.nome', 'asc');
         $requisitantes = $this->db->get('usuarios a')->result();
@@ -337,7 +313,6 @@ class RequisicaoPessoal extends MY_Controller
         echo json_encode($data);
     }
 
-    //==========================================================================
     public function atualizarFuncao($retorno = false)
     {
         $empresa = $this->session->userdata('empresa');
@@ -365,249 +340,337 @@ class RequisicaoPessoal extends MY_Controller
         echo json_encode($data);
     }
 
-    //==========================================================================
     public function atualizarMunicipio()
     {
-        $rows = $this->db
-            ->select('DISTINCT(municipio) AS municipio', false)
-            ->where('id_empresa', $this->session->userdata('empresa'))
-            ->where('CHAR_LENGTH(municipio) > 0', null, false)
-            ->order_by('municipio', 'asc')
-            ->get('requisicoes_pessoal')
-            ->result();
+        $municipio = $this->input->post('municipio');
+        $this->db->select('DISTINCT(municipio) AS municipio', false);
+        $this->db->where('id_empresa', $this->session->userdata('empresa'));
+        $this->db->where('CHAR_LENGTH(municipio) > 0', null, false);
+        $this->db->order_by('municipio', 'asc');
+        $municipios = $this->db->get('requisicoes_pessoal')->result();
+        $municipios = ['' => 'Todos'] + array_column($municipios, 'municipio', 'municipio');
 
-        $municipios = ['' => 'Todos'] + array_column($rows, 'municipio', 'municipio');
-
-        $data['municipios'] = form_dropdown('', $municipios, $this->input->post('municipio'));
+        $data['municipios'] = form_dropdown('', $municipios, $municipio);
 
         echo json_encode($data);
     }
 
-    //==========================================================================
     public function ajax_list()
     {
         $post = $this->input->post();
         $tipoUsuario = $this->session->userdata('tipo');
         $nivelUsuario = $this->session->userdata('nivel');
         $representante = $this->session->userdata('id');
+        $post['status'] = implode("' OR a.status = '", explode(',', $post['status']));
 
-        $usuario = $this->db->select('nome, depto')->where('id', $representante)->get('usuarios')->row_array();
+        $this->db->select('nome, depto');
+        $this->db->where('id', $representante);
+        $usuario = $this->db->get('usuarios')->row_array();
 
-        $this->db
-            ->select('a.id, a.numero, a.data_abertura, a.status, a.estagio, a.selecionador')
-            ->select(["IFNULL(b.nome, a.cargo_funcao_alternativo) AS cargo"], false)
-            ->select(["CONCAT(b.nome, '/', c.nome) AS cargo_funcao"], false)
-            ->select(["CONCAT(d.nome, '/', e.nome) AS depto_area"], false)
-            ->select('a.numero_vagas, a.previsao_inicio, a.tipo_vaga')
-            ->select('a.numero_vagas AS numero_vagas_fechadas, NULL AS numero_vagas_abertas', false)
-            ->select(["DATE_FORMAT(a.data_abertura, '%d/%m/%Y') AS data_abertura_de"], false)
-            ->select(["DATE_FORMAT(a.previsao_inicio, '%d/%m/%Y') AS previsao_inicio_de"], false)
-            ->select(["CONCAT(d.nome, '/', e.nome, ' - ', f.nome) AS estrutura"], false)
-            ->select(["IF(a.tipo_vaga = 'I', g.nome, h.nome) AS requisitante"], false)
-            ->select('a.requisitante_interno, a.justificativa_contratacao, a.aprovado_por, a.data_aprovacao')
-            ->join('empresa_cargos b', 'b.id = a.id_cargo', 'left')
-            ->join('empresa_funcoes c', 'c.id = a.id_funcao', 'left')
-            ->join('empresa_departamentos d', 'd.id = a.id_depto', 'left')
-            ->join('empresa_areas e', 'e.id = a.id_area', 'left')
-            ->join('empresa_setores f', 'f.id = a.id_setor', 'left')
-            ->join('usuarios g', 'g.id = a.requisitante_interno', 'left')
-            ->join('usuarios h', 'h.id = a.requisitante_externo', 'left')
-            ->where('a.id_empresa', $this->session->userdata('empresa'))
-            ->where("(CASE WHEN '{$nivelUsuario}' = 9 
-                           THEN (a.requisitante_interno = '{$representante}' OR a.requisitante_externo = '{$representante}') 
-                           WHEN '{$nivelUsuario}' IN (0, 3, 6, 7, 8, 9, 10, 19) THEN  1 END)");
-        if ($post['status']) {
-            $this->db->where_in('a.status', explode(',', $post['status']));
-        }
-        if ($post['estagio']) {
-            $this->db->where('a.estagio', $post['estagio']);
-        }
-        if ($post['municipio']) {
-            $this->db->where('a.municipio', $post['municipio']);
-        }
-        if ($post['depto']) {
-            $this->db->where('a.id_depto', $post['depto']);
-        }
-        if ($post['cargo']) {
-            $this->db->where('a.id_cargo', $post['cargo']);
-        }
+
+        $sql = "SELECT s.id, 
+                       s.numero,
+                       s.data_abertura,
+                       s.status,
+                       s.estagio,
+                       s.selecionador,
+                       s.cargo,
+                       s.cargo_funcao,
+                       s.depto_area,
+                       s.numero_vagas,
+                       s.previsao_inicio, 
+                       s.tipo_vaga, 
+                       s.numero_vagas_fechadas, 
+                       s.numero_vagas_abertas, 
+                       s.data_abertura_de, 
+                       s.previsao_inicio_de,
+                       s.estrutura,
+                       s.requisitante,
+                       s.requisitante_interno,
+                       s.justificativa_contratacao,
+                       s.aprovado_por,
+                       s.data_aprovacao
+                FROM (SELECT a.id, 
+                             a.numero,
+                             a.data_abertura,
+                             a.selecionador,
+                             IFNULL(b.nome, a.cargo_funcao_alternativo) AS cargo,
+                             CASE a.status
+                                  WHEN 'A' THEN 'Ativa'
+                                  WHEN 'S' THEN 'Suspensa'
+                                  WHEN 'C' THEN 'Cancelada'
+                                  WHEN 'G' THEN 'Aguardando aprovação'
+                                  WHEN 'F' THEN 'Fechada'
+                                  WHEN 'P' THEN 'Fechada parcialmente'
+                                  END AS status,
+                             CASE a.estagio 
+                                  WHEN 1 THEN '01/10 - Alinhando perfil' 
+                                  WHEN 2 THEN '02/10 - Divulgando vagas' 
+                                  WHEN 3 THEN '03/10 - Triando currículos' 
+                                  WHEN 4 THEN '04/10 - Convocando candidatos' 
+                                  WHEN 5 THEN '05/10 - Entrevistando candidatos' 
+                                  WHEN 6 THEN '06/10 - Elaborando pareceres' 
+                                  WHEN 7 THEN '07/10 - Aguardando gestor' 
+                                  WHEN 8 THEN '08/10 - Entrevista solicitante' 
+                                  WHEN 9 THEN '09/10 - Exame adissional' 
+                                  WHEN 10 THEN '10/10 - Entrega documentos' 
+                                  WHEN 11 THEN 'Faturamento' 
+                                  WHEN 12 THEN 'Processo finalizado' 
+                                  END AS estagio,
+                             CONCAT(b.nome, '/', c.nome) AS cargo_funcao,
+                             CONCAT(d.nome, '/', e.nome) AS depto_area,
+                             CONCAT(e.nome, '/', f.nome) AS area_setor,
+                             CONCAT(d.nome, '/', e.nome, ' - ', f.nome) AS estrutura,
+                             IF(a.tipo_vaga = 'I', g.nome, h.nome) AS requisitante,
+                             a.numero_vagas,
+                             CASE a.tipo_vaga
+                                  WHEN 'I' THEN 'Interna'
+                                  WHEN 'E' THEN 'Externa'
+                                  ELSE 'Indefinido' END AS tipo_vaga,
+                             a.numero_vagas AS numero_vagas_fechadas,
+                             NULL AS numero_vagas_abertas,
+                             a.previsao_inicio,
+                             DATE_FORMAT(a.data_abertura, '%d/%m/%Y') AS data_abertura_de,
+                             DATE_FORMAT(a.previsao_inicio, '%d/%m/%Y') AS previsao_inicio_de,
+                             a.requisitante_interno,
+                             a.justificativa_contratacao,
+                             a.aprovado_por,
+                             a.data_aprovacao
+                      FROM requisicoes_pessoal a
+                      LEFT JOIN empresa_cargos b ON
+                                b.id = a.id_cargo
+                      LEFT JOIN empresa_funcoes c ON
+                                 c.id = a.id_funcao
+                      LEFT JOIN empresa_departamentos d ON 
+                                 d.id = a.id_depto
+                      LEFT JOIN empresa_areas e ON 
+                                 e.id = a.id_area
+                      LEFT JOIN empresa_setores f ON 
+                                 f.id = a.id_setor
+                      LEFT JOIN usuarios g ON 
+                                g.id = a.requisitante_interno
+                      LEFT JOIN usuarios h ON 
+                                h.id = a.requisitante_externo
+                      WHERE a.id_empresa = {$this->session->userdata('empresa')}
+                            AND (CASE WHEN '{$nivelUsuario}' = 9 THEN (a.requisitante_interno = '{$representante}' OR a.requisitante_externo = '{$representante}') WHEN '{$nivelUsuario}' IN (0, 3, 6, 7, 8, 9, 10, 19) THEN  1 END)
+                            AND (a.status = '{$post['status']}' OR CHAR_LENGTH('{$post['status']}') = 0)
+                            AND (a.estagio = '{$post['estagio']}' OR CHAR_LENGTH('{$post['estagio']}') = 0)
+                            AND (a.municipio = '{$post['municipio']}' OR CHAR_LENGTH('{$post['municipio']}') = 0)
+                            AND (a.id_depto = '{$post['depto']}' OR CHAR_LENGTH('{$post['depto']}') = 0)
+                            AND (a.id_cargo = '{$post['cargo']}' OR CHAR_LENGTH('{$post['cargo']}') = 0)";
         if ($this->session->userdata('tipo') == 'funcionario' and in_array($this->session->userdata('nivel'), [6, 9, 10, 19])) {
-            $this->db->where('a.id_cargo', $post['cargo']);
+            $sql .= " AND ((g.id = '{$representante}' OR h.id = '{$representante}') OR a.aprovado_por = '{$representante}')";
         }
         if ($post['data_inicio']) {
-            $post['data_inicio'] = date('Y-m-d', strtotime(str_replace('/', '-', $post['data_inicio'])));
-            $this->db->where("(a.data_abertura >= '{$post['data_inicio']}' OR 
-                               a.data_fechamento >= '{$post['data_inicio']}' OR 
-                               a.data_solicitacao_exame >= '{$post['data_inicio']}' OR 
-                               a.data_aprovacao >= '{$post['data_inicio']}' OR 
-                               a.previsao_inicio >= '{$post['data_inicio']}')");
+            $sql .= " AND (DATE_FORMAT(a.data_abertura, '%d/%m/%Y') >= '{$post['data_inicio']}' OR 
+                          DATE_FORMAT(a.data_fechamento, '%d/%m/%Y') >= '{$post['data_inicio']}' OR 
+                          DATE_FORMAT(a.data_solicitacao_exame, '%d/%m/%Y') >= '{$post['data_inicio']}' OR 
+                          DATE_FORMAT(a.data_aprovacao, '%d/%m/%Y') >= '{$post['data_inicio']}' OR 
+                          DATE_FORMAT(a.previsao_inicio, '%d/%m/%Y') >= '{$post['data_inicio']}')";
         }
         if ($post['data_termino']) {
-            $post['data_termino'] = date('Y-m-d', strtotime(str_replace('/', '-', $post['data_termino'])));
-            $this->db->where("(a.data_abertura <= '{$post['data_termino']}' OR 
-                               a.data_fechamento <= '{$post['data_termino']}' OR 
-                               a.data_solicitacao_exame <= '{$post['data_termino']}' OR 
-                               a.data_aprovacao <= '{$post['data_termino']}' OR 
-                               a.previsao_inicio <= '{$post['data_termino']}')");
+            $sql .= " AND (DATE_FORMAT(a.data_abertura, '%d/%m/%Y') <= '{$post['data_termino']}' OR 
+                          DATE_FORMAT(a.data_fechamento, '%d/%m/%Y') <= '{$post['data_termino']}' OR 
+                          DATE_FORMAT(a.data_solicitacao_exame, '%d/%m/%Y') <= '{$post['data_termino']}' OR 
+                          DATE_FORMAT(a.data_aprovacao, '%d/%m/%Y') <= '{$post['data_termino']}' OR 
+                          DATE_FORMAT(a.previsao_inicio, '%d/%m/%Y') <= '{$post['data_termino']}')";
         }
-        $query = $this->db->get('requisicoes_pessoal a');
+        $sql .= ") s";
+        $recordsTotal = $this->db->query($sql)->num_rows();
 
-        $config = ['search' => ['id', 'selecionador', 'cargo', 'estrutura']];
-
-        $this->load->library('dataTables', $config);
-
-        $output = $this->datatables->generate($query);
-
-        $status = [
-            'A' => 'Ativa',
-            'S' => 'Suspensa',
-            'C' => 'Cancelada',
-            'G' => 'Aguardando aprovação',
-            'F' => 'Fechada',
-            'P' => 'Fechada parcialmente'
-        ];
-
-        $estagio = [
-            '1' => '01/10 - Alinhando perfil',
-            '2' => '02/10 - Divulgando vagas',
-            '3' => '03/10 - Triando currículos',
-            '4' => '04/10 - Convocando candidatos',
-            '5' => '05/10 - Entrevistando candidatos',
-            '6' => '06/10 - Elaborando pareceres',
-            '7' => '07/10 - Aguardando gestor',
-            '8' => '08/10 - Entrevista solicitante',
-            '9' => '09/10 - Exame adissional',
-            '10' => '10/10 - Entrega documentos',
-            '11' => 'Faturamento',
-            '12' => 'Processo finalizado'
-        ];
-
-        $data = [];
-
-        foreach ($output->data as $row) {
-            $btn = '';
-            if ($row->justificativa_contratacao == 'A' and $row->status != 'A' and $tipoUsuario != 'selecionador') {
-                if ($row->aprovado_por == $representante or $row->requisitante_interno == $representante or $tipoUsuario == 'empresa') {
-                    $btn = '<button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $row->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
-                            <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $row->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-                            <button type="button" class="btn btn-sm btn-success" onclick="publicar_vaga(' . $row->id . ')" title="Publicar vaga">Publicar vaga</button>
-                            <a class="btn btn-sm btn-primary" href="' . site_url('/recrutamentoPresencial_cargos/gerenciar/' . $row->id) . '" title="Processo Seletivo">Processo</a>
-                            <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $row->id . ')" title="Mostrar aprovados">Aprovados</button>
-                            <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $row->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
-                            <button type="button" class="btn btn-sm btn-info" onclick="edit_email(' . $row->id . ')" title="Ativar contratação">Ativar contratação</button>';
-                } else {
-                    $btn = '<button type="button" class="btn btn-sm btn-info disabled" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
-                            <button type="button" class="btn btn-sm btn-danger disabled" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-                            <button type="button" class="btn btn-sm btn-success disabled" title="Publicar vaga">Publicar vaga</button>
-                            <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
-                            <button type="button" class="btn btn-sm btn-info disabled" title="Mostrar aprovados">Aprovados</button>
-                            <button type="button" class="btn btn-sm btn-primary disabled" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></button>
-                            <button type="button" class="btn btn-sm btn-info disabled" title="Ativar contratação">Ativar contratação</button>';
-                }
-            } else {
-                if (($usuario['depto'] == 'Gestão de Pessoas' or $tipoUsuario == 'empresa' or ($tipoUsuario == 'selecionador' or $nivelUsuario = 'selecionador requisitante')) and $row->status == 'G') {
-                    $btn = '<button type="button" class="btn btn-sm btn-info disabled" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
-                            <button type="button" class="btn btn-sm btn-danger disabled" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-                            <button type="button" class="btn btn-sm btn-success disabled" title="Publicar vaga">Publicar vaga</button>
-                            <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
-                            <button type="button" class="btn btn-sm btn-info disabled" title="Mostrar aprovados">Aprovados</button>
-                            <button type="button" class="btn btn-sm btn-primary disabled" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></button>
-                            <button type="button" class="btn btn-sm btn-info disabled" title="Ativar contratação">Ativar contratação</button>';
-                } elseif (($usuario['depto'] == 'Gestão de Pessoas' or $tipoUsuario == 'empresa' or ($tipoUsuario == 'selecionador' or $nivelUsuario = 'selecionador requisitante')) and $row->status != 'G') {
-                    $btn = '<button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $row->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
-                            <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $row->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-                            <button type="button" class="btn btn-sm btn-success" onclick="publicar_vaga(' . $row->id . ')" title="Publicar vaga">Publicar vaga</button>
-                            <a class="btn btn-sm btn-primary" href="' . site_url('/recrutamentoPresencial_cargos/gerenciar/' . $row->id) . '" title="Processo Seletivo">Processo</a>
-                            <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $row->id . ')" title="Mostrar aprovados">Aprovados</button>
-                            <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $row->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
-                            <button type="button" class="btn btn-sm btn-info" onclick="edit_email(' . $row->id . ')" title="Ativar contratação">Ativar contratação</button>';
-                } else {
-                    $btn = '<button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $row->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
-                            <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $row->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-                            <button type="button" class="btn btn-sm btn-success" onclick="publicar_vaga(' . $row->id . ')" title="Publicar vaga">Publicar vaga</button>
-                            <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
-                            <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $row->id . ')" title="Mostrar aprovados">Aprovados</button>
-                            <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $row->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
-                            <button type="button" class="btn btn-sm btn-info" onclick="edit_email(' . $row->id . ')" title="Ativar contratação">Ativar contratação</button>';
+        $columns = array(
+            's.numero',
+            's.id',
+            's.data_abertura',
+            's.status',
+            's.estagio',
+            's.selecionador',
+            's.numero_vagas',
+            's.cargo_funcao',
+            's.depto_area',
+            's.previsao_inicio'
+        );
+        if ($post['search']['value']) {
+            foreach ($columns as $key => $column) {
+                if ($key > 1) {
+                    $sql .= " OR
+                         {$column} LIKE '%{$post['search']['value']}%'";
+                } elseif ($key == 1) {
+                    $sql .= " 
+                        WHERE {$column} LIKE '%{$post['search']['value']}%'";
                 }
             }
+        }
+        $recordsFiltered = $this->db->query($sql)->num_rows();
 
-            $data[] = [
-                $row->id,
-                $row->data_abertura_de,
-                $status[$row->status] ?? '',
-                $estagio[$row->estagio] ?? '',
-                $row->selecionador,
-                $row->cargo,
-                $row->numero_vagas,
-                $row->cargo_funcao,
-                $row->depto_area . ' - ' . $row->requisitante,
-                $row->numero_vagas,
-                $row->previsao_inicio_de,
-                $row->cargo_funcao,
-                $row->numero_vagas_fechadas,
-                $row->numero_vagas_abertas,
-                $btn,
-                $row->justificativa_contratacao,
-                $row->data_aprovacao
-            ];
+        if (isset($post['order'])) {
+            $orderBy = array();
+            foreach ($post['order'] as $order) {
+                $orderBy[] = ($order['column'] + 1) . ' ' . $order['dir'];
+            }
+            $sql .= ' 
+                    ORDER BY ' . implode(', ', $orderBy);
+        }
+        if ($post['length'] > 0) {
+            $sql .= " 
+                LIMIT {$post['start']}, {$post['length']}";
+        }
+        $list = $this->db->query($sql)->result();
+
+        $data = array();
+        foreach ($list as $requisicao) {
+            $row = array();
+            $row[] = $requisicao->id;
+            $row[] = $requisicao->data_abertura_de;
+            $row[] = $requisicao->status;
+            $row[] = $requisicao->estagio;
+            $row[] = $requisicao->selecionador;
+            $row[] = $requisicao->cargo;
+            $row[] = $requisicao->numero_vagas;
+
+            $row[] = $requisicao->cargo_funcao;
+            if ($requisicao->tipo_vaga == 'Externa') {
+                $row[] = $requisicao->depto_area . ' - ' . $requisicao->requisitante;
+            } elseif ($this->session->userdata('tipo') == 'selecionadorx') {
+//                $row[] = $requisicao->estrutura . ' - ' . $requisicao->requisitante;
+            } else {
+                $row[] = $requisicao->depto_area . ' - ' . $requisicao->requisitante;
+            }
+            $row[] = $requisicao->numero_vagas;
+            $row[] = $requisicao->previsao_inicio_de;
+
+            $row[] = $requisicao->cargo_funcao;
+            $row[] = $requisicao->numero_vagas_fechadas;
+            $row[] = $requisicao->numero_vagas_abertas;
+
+//print_r($requisicao->status);exit;
+            if ($requisicao->justificativa_contratacao == 'A' and $requisicao->status != 'Ativa' and $tipoUsuario != 'selecionador') {
+                if ($requisicao->aprovado_por == $representante or $requisicao->requisitante_interno == $representante or $tipoUsuario == 'empresa') {
+                    $row[] = '
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                              <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $requisicao->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                              <button type="button" class="btn btn-sm btn-success" onclick="publicar_vaga(' . $requisicao->id . ')" title="Publicar vaga">Publicar vaga</button>
+                              <a class="btn btn-sm btn-primary" href="' . site_url('/recrutamentoPresencial_cargos/gerenciar/' . $requisicao->id) . '" title="Processo Seletivo">Processo</a>
+                              <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $requisicao->id . ')" title="Mostrar aprovados">Aprovados</button>
+                              <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $requisicao->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_email(' . $requisicao->id . ')" title="Ativar contratação">Ativar contratação</button>
+                             ';
+                } else {
+                    $row[] = '
+                              <button type="button" class="btn btn-sm btn-info disabled" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                              <button type="button" class="btn btn-sm btn-danger disabled" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                              <button type="button" class="btn btn-sm btn-success disabled" title="Publicar vaga">Publicar vaga</button>
+                              <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
+                              <button type="button" class="btn btn-sm btn-info disabled" title="Mostrar aprovados">Aprovados</button>
+                              <button type="button" class="btn btn-sm btn-primary disabled" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></button>
+                              <button type="button" class="btn btn-sm btn-info disabled" title="Ativar contratação">Ativar contratação.</button>
+                             ';
+                }
+            } else {
+                if (($usuario['depto'] == 'Gestão de Pessoas' or $tipoUsuario == 'empresa' or ($tipoUsuario == 'selecionador' or $nivelUsuario = 'selecionador requisitante')) and $requisicao->status == 'Aguardando aprovação') {
+                    $row[] = '
+                              <button type="button" class="btn btn-sm btn-info disabled" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                              <button type="button" class="btn btn-sm btn-danger disabled" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                              <button type="button" class="btn btn-sm btn-success disabled" title="Publicar vaga">Publicar vaga</button>
+                              <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
+                              <button type="button" class="btn btn-sm btn-info disabled" title="Mostrar aprovados">Aprovados</button>
+                              <button type="button" class="btn btn-sm btn-primary disabled" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></button>
+                              <button type="button" class="btn btn-sm btn-info disabled" title="Ativar contratação">Ativar contratação..</button>
+                             ';
+                } elseif (($usuario['depto'] == 'Gestão de Pessoas' or $tipoUsuario == 'empresa' or ($tipoUsuario == 'selecionador' or $nivelUsuario = 'selecionador requisitante')) and $requisicao->status != 'Aguardando aprovação') {
+                    $row[] = '
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                              <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $requisicao->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                              <button type="button" class="btn btn-sm btn-success" onclick="publicar_vaga(' . $requisicao->id . ')" title="Publicar vaga">Publicar vaga</button>
+                              <a class="btn btn-sm btn-primary" href="' . site_url('/recrutamentoPresencial_cargos/gerenciar/' . $requisicao->id) . '" title="Processo Seletivo">Processo</a>
+                              <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $requisicao->id . ')" title="Mostrar aprovados">Aprovados</button>
+                              <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $requisicao->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_email(' . $requisicao->id . ')" title="Ativar contratação">Ativar contratação</button>
+                             ';
+                } else {
+                    $row[] = '
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                              <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $requisicao->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                              <button type="button" class="btn btn-sm btn-success" onclick="publicar_vaga(' . $requisicao->id . ')" title="Publicar vaga">Publicar vaga</button>
+                              <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
+                              <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $requisicao->id . ')" title="Mostrar aprovados">Aprovados</button>
+                              <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $requisicao->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_email(' . $requisicao->id . ')" title="Ativar contratação">Ativar contratação</button>
+                             ';
+                }
+            }
+            $row[] = $requisicao->justificativa_contratacao;
+            $row[] = $requisicao->data_aprovacao;
+
+            $data[] = $row;
         }
 
-        $output->data = $data;
+        $output = array(
+            "draw" => $this->input->post('draw'),
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $data,
+        );
 
         echo json_encode($output);
     }
 
-    //==========================================================================
     public function ajax_listAprovados()
     {
-        $this->db->start_cache();
+        $this->db->select('c.nome');
+        $this->db->select("DATE_FORMAT(a.data_abertura, '%d/%m/%Y') AS data_abertura", false);
+        $this->db->select("DATE_FORMAT(a.data_fechamento, '%d/%m/%Y') AS data_fechamento", false);
+        $this->db->select("DATE_FORMAT(a.data_aprovacao, '%d/%m/%Y') AS data_aprovacao", false);
+        $this->db->select("DATE_FORMAT(b.data_selecao, '%d/%m/%Y') AS data_selecao", false);
+        $this->db->select("DATE_FORMAT(b.data_requisitante, '%d/%m/%Y') AS data_requisitante", false);
+        $this->db->select("DATE_FORMAT(b.data_admissao, '%d/%m/%Y') AS data_admissao", false);
+        $this->db->select("DATEDIFF(a.data_aprovacao, a.data_abertura) AS total_data_aprovacao", false);
+        $this->db->select("DATEDIFF(b.data_selecao, a.data_abertura) AS total_data_selecao", false);
+        $this->db->select("DATEDIFF(b.data_requisitante, a.data_abertura) AS total_data_requisitante", false);
+        $this->db->select("DATEDIFF(a.data_fechamento, a.data_abertura) AS total_data_fechamento", false);
+        $this->db->select("DATEDIFF(b.data_admissao, a.data_abertura) AS total_data_admissao", false);
+        $this->db->join('requisicoes_pessoal_candidatos b', 'b.id_requisicao = a.id', 'left');
+        $this->db->join('recrutamento_usuarios c', 'c.id = b.id_usuario', 'left');
+        $this->db->join('deficiencias d', 'd.id = c.deficiencia', 'left');
+        $this->db->where('a.id', $this->input->post('id'));
+        $this->db->where('b.aprovado', 1);
+        $rows = $this->db->get('requisicoes_pessoal a')->result();
 
-        $this->db
-            ->from('requisicoes_pessoal a')
-            ->join('requisicoes_pessoal_candidatos b', 'b.id_requisicao = a.id', 'left')
-            ->join('recrutamento_usuarios c', 'c.id = b.id_usuario', 'left')
-            ->join('deficiencias d', 'd.id = c.deficiencia', 'left')
-            ->where('a.id', $this->input->post('id'))
-            ->where('b.aprovado', 1);
+        $data = array();
+        $totalDias = array();
+        foreach ($rows as $row) {
+            $data[] = array(
+                $row->nome,
+                $row->data_abertura,
+                $row->data_aprovacao,
+                $row->data_selecao,
+                $row->data_requisitante,
+                $row->data_fechamento,
+                $row->data_admissao
+            );
 
-        $this->db->stop_cache();
+            if (empty($totalDias)) {
+                $totalDias = array(
+                    $row->total_data_aprovacao,
+                    $row->total_data_selecao,
+                    $row->total_data_requisitante,
+                    $row->total_data_fechamento,
+                    $row->total_data_admissao
+                );
+            }
+        }
 
-        $query = $this->db
-            ->select('c.nome')
-            ->select(["DATE_FORMAT(a.data_abertura, '%d/%m/%Y') AS data_abertura"], false)
-            ->select(["DATE_FORMAT(a.data_aprovacao, '%d/%m/%Y') AS data_aprovacao"], false)
-            ->select(["DATE_FORMAT(b.data_selecao, '%d/%m/%Y') AS data_selecao"], false)
-            ->select(["DATE_FORMAT(b.data_requisitante, '%d/%m/%Y') AS data_requisitante"], false)
-            ->select(["DATE_FORMAT(a.data_fechamento, '%d/%m/%Y') AS data_fechamento"], false)
-            ->select(["DATE_FORMAT(b.data_admissao, '%d/%m/%Y') AS data_admissao"], false)
-            ->get()
-            ->result_array();
+        $output = array(
+            "draw" => $this->input->post('draw'),
+            "recordsTotal" => 1,
+            "recordsFiltered" => 1,
+            "data" => $data,
+            'total_dias' => $totalDias
+        );
 
-        $totalDias = $this->db
-            ->select(["DATEDIFF(a.data_aprovacao, a.data_abertura) AS total_data_aprovacao"], false)
-            ->select(["DATEDIFF(b.data_selecao, a.data_abertura) AS total_data_selecao"], false)
-            ->select(["DATEDIFF(b.data_requisitante, a.data_abertura) AS total_data_requisitante"], false)
-            ->select(["DATEDIFF(a.data_fechamento, a.data_abertura) AS total_data_fechamento"], false)
-            ->select(["DATEDIFF(b.data_admissao, a.data_abertura) AS total_data_admissao"], false)
-            ->get()
-            ->row_array();
-
-        $this->db->flush_cache();
-
-        $data = array_map(function ($row) {
-            return array_values($row);
-        }, $query);
-
-        echo json_encode([
-            'recordsTotal' => count($data),
-            'recordsFiltered' => count($data),
-            'total_dias' => array_values($totalDias),
-            'data' => $data
-        ]);
+        echo json_encode($output);
     }
 
-    //==========================================================================
     public function ajax_nextId()
     {
         $empresa = $this->session->userdata('empresa');
@@ -728,7 +791,6 @@ PIS (2)';
         echo json_encode(array('input' => $input, 'data' => $data));
     }
 
-    //==========================================================================
     public function ajax_add()
     {
         $data = $this->input->post();
@@ -944,7 +1006,6 @@ PIS (2)';
         echo json_encode(array('status' => $status !== false));
     }
 
-    //==========================================================================
     public function ajax_update()
     {
         $data = $this->input->post();
@@ -1176,7 +1237,6 @@ PIS (2)';
         echo json_encode(array('status' => $status !== false));
     }
 
-    //==========================================================================
     public function ajax_delete()
     {
         $id = $this->input->post('id');
@@ -1184,7 +1244,6 @@ PIS (2)';
         echo json_encode(array('status' => $status !== false));
     }
 
-    //==========================================================================
     private function notificarAprovador($data)
     {
         $this->db->select('id, nome, email');
@@ -1219,7 +1278,6 @@ PIS (2)';
         $this->email->clear();
     }
 
-    //==========================================================================
     private function notificarApoio($id)
     {
         $this->db->select('a.id, a.nome, a.email, b.id AS id_depto');
@@ -1274,7 +1332,6 @@ PIS (2)';
         unlink($filename);
     }
 
-    //==========================================================================
     public function ativarContratacao()
     {
         $this->db->select('id, nome');
@@ -1328,7 +1385,7 @@ PIS (2)';
         echo json_encode($data);
     }
 
-    //==========================================================================
+
     public function filtrarEmailContratacao()
     {
         $depto = $this->input->post('depto');
@@ -1383,7 +1440,7 @@ PIS (2)';
         echo json_encode($data);
     }
 
-    //==========================================================================
+
     public function enviarEmail()
     {
         $remetente = $this->db
@@ -1463,13 +1520,11 @@ PIS (2)';
         echo json_encode(['status' => $status !== false]);
     }
 
-    //==========================================================================
     public function relatorio($id)
     {
         $this->ajax_relatorio();
     }
 
-    //==========================================================================
     public function ajax_relatorio($pdf = false)
     {
         $this->db->select('foto, foto_descricao');
@@ -1602,7 +1657,6 @@ PIS (2)';
         $this->load->view('requisicaoPessoal_relatorio', $data);
     }
 
-    //==========================================================================
     public function pdf()
     {
         $this->load->library('m_pdf');
@@ -1627,7 +1681,7 @@ PIS (2)';
         }
     }
 
-    //==========================================================================
+
     public function publicarVaga()
     {
         $this->db->select('a.id_empresa');

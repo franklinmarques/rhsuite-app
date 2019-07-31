@@ -73,9 +73,6 @@ require_once "header.php";
                                 <li role="presentation">
                                     <a href="#documentos" aria-controls="documentos" role="tab" data-toggle="tab">Documentos</a>
                                 </li>
-                                <li role="presentation">
-                                    <a href="#contratos" aria-controls="contratos" role="tab" data-toggle="tab">Contratos</a>
-                                </li>
                             </ul>
 
                             <!-- Css -->
@@ -453,57 +450,51 @@ require_once "header.php";
                                                     <li>
                                                         <input type="checkbox">
                                                         <i class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;Gestão
-                                                        Operacional PAPD
+                                                        Operacional PAPD (Programa de Apoio a Pessoa com Deficiência -
+                                                        Barueri)
                                                         <ul>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[PAPD][]"
                                                                        value="501">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Gerenciar
-                                                                pacientes
+                                                                Gerenciar pacientes
                                                             </li>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[PAPD][]"
                                                                        value="502">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Gestão
-                                                                Atividades/Deficiências
+                                                                Gestão Atividades/Deficiências
                                                             </li>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[PAPD][]"
                                                                        value="503">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Relatório
-                                                                Totalização
-                                                                Mensal
+                                                                Relatório Totalização Mensal
                                                             </li>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[PAPD][]"
                                                                        value="510">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Gerenciar
-                                                                Atendimentos
+                                                                Gerenciar Atendimentos
                                                             </li>
                                                         </ul>
                                                     </li>
                                                     <li>
                                                         <input type="checkbox">
                                                         <i class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;Gestão
-                                                        Operacional ST
+                                                        Operacional ST (Serviços Terceirizados)
                                                         <ul>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[ST][]"
                                                                        value="401">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Gestão de
-                                                                Contratos
+                                                                Gestão de Contratos
                                                             </li>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[ST][]"
                                                                        value="402">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Totalização
-                                                                Mensal
+                                                                Totalização Mensal
                                                             </li>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[ST][]"
@@ -515,29 +506,26 @@ require_once "header.php";
                                                                 <input type="checkbox" name="hash_acesso[ST][]"
                                                                        value="410">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Apontamentos
-                                                                Diários
+                                                                Apontamentos Diários
                                                             </li>
                                                         </ul>
                                                     </li>
                                                     <li>
                                                         <input type="checkbox">
                                                         <i class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;Gestão
-                                                        Operacional CD
+                                                        Operacional CD (Cuidadores)
                                                         <ul>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[CD][]"
                                                                        value="601">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Gestão de
-                                                                Contratos
+                                                                Gestão de Contratos
                                                             </li>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[CD][]"
                                                                        value="602">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Totalização
-                                                                Mensal
+                                                                Totalização Mensal
                                                             </li>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[CD][]"
@@ -549,29 +537,26 @@ require_once "header.php";
                                                                 <input type="checkbox" name="hash_acesso[CD][]"
                                                                        value="610">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Apontamentos
-                                                                Diários
+                                                                Apontamentos Diários
                                                             </li>
                                                         </ul>
                                                     </li>
                                                     <li>
                                                         <input type="checkbox">
                                                         <i class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;Gestão
-                                                        Operacional EI
+                                                        Operacional EI (Educação Inclusiva)
                                                         <ul>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[EI][]"
                                                                        value="701">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Gestão de
-                                                                Contratos
+                                                                Gestão de Contratos
                                                             </li>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[EI][]"
                                                                        value="702">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Totalização
-                                                                Mensal
+                                                                Totalização Mensal
                                                             </li>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[EI][]"
@@ -583,8 +568,7 @@ require_once "header.php";
                                                                 <input type="checkbox" name="hash_acesso[EI][]"
                                                                        value="710">
                                                                 <i class="glyphicon glyphicon-file text-info"></i>
-                                                                Apontamentos
-                                                                Diários
+                                                                Apontamentos Diários
                                                             </li>
                                                         </ul>
                                                     </li>
@@ -718,11 +702,6 @@ require_once "header.php";
                                 <div role="tabpanel" class="tab-pane" id="documentos">
 
                                     <?php $this->load->view('funcionario_documentos1', $data_documentos1); ?>
-
-                                </div>
-                                <div role="tabpanel" class="tab-pane" id="contratos">
-
-                                    <?php $this->load->view('funcionario_contratos1', $data_contratos1); ?>
 
                                 </div>
                             </div>

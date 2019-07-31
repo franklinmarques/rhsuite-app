@@ -168,7 +168,9 @@ class Diretorias extends MY_Controller
                        s.ano_semestre,
                        s.funcao,
                        s.valor,
-                       s.valor_pagamento
+                       s.valor_pagamento,
+                       s.valor2,
+                       s.valor_pagamento2
                 FROM (SELECT a.id,
                              a.nome,
                              d.contrato,
@@ -177,7 +179,9 @@ class Diretorias extends MY_Controller
                              CONCAT(e.ano, '/', e.semestre) AS ano_semestre,
                              f.nome AS funcao,
                              FORMAT(e.valor, 2, 'de_DE') AS valor,
-                             FORMAT(e.valor_pagamento, 2, 'de_DE') AS valor_pagamento
+                             FORMAT(e.valor_pagamento, 2, 'de_DE') AS valor_pagamento,
+                             FORMAT(e.valor2, 2, 'de_DE') AS valor2,
+                             FORMAT(e.valor_pagamento2, 2, 'de_DE') AS valor_pagamento2
                       FROM ei_diretorias a
                       INNER JOIN usuarios b ON 
                                  b.id = a.id_empresa 
@@ -258,6 +262,8 @@ class Diretorias extends MY_Controller
             $row[] = $ei->funcao;
             $row[] = $ei->valor;
             $row[] = $ei->valor_pagamento;
+            $row[] = $ei->valor2;
+            $row[] = $ei->valor_pagamento2;
             if ($ei->id_valor_faturamento) {
                 $row[] = '
                           <button type="button" class="btn btn-sm btn-info" onclick="edit_valor_faturamento(' . $ei->id_valor_faturamento . ')" title="Editar valor faturamento"><i class="glyphicon glyphicon-pencil"></i></button>
@@ -358,6 +364,13 @@ class Diretorias extends MY_Controller
         }
         if ($data->valor_pagamento) {
             $data->valor_pagamento = number_format($data->valor_pagamento, 2, ',', '.');
+        }
+
+        if ($data->valor2) {
+            $data->valor2 = number_format($data->valor2, 2, ',', '.');
+        }
+        if ($data->valor_pagamento2) {
+            $data->valor_pagamento2 = number_format($data->valor_pagamento2, 2, ',', '.');
         }
 
         $this->db->select('a.id, a.nome');
@@ -477,6 +490,16 @@ class Diretorias extends MY_Controller
         } else {
             $data['valor_pagamento'] = null;
         }
+        if (!empty($data['valor2'])) {
+            $data['valor2'] = str_replace(array('.', ','), array('', '.'), $data['valor2']);
+        } else {
+            $data['valor2'] = null;
+        }
+        if (!empty($data['valor_pagamento2'])) {
+            $data['valor_pagamento2'] = str_replace(array('.', ','), array('', '.'), $data['valor_pagamento2']);
+        } else {
+            $data['valor_pagamento2'] = null;
+        }
 
         $this->db->select('id_cargo');
         $funcao = $this->db->get_where('empresa_funcoes', ['id' => $data['id_funcao']])->row();
@@ -573,6 +596,16 @@ class Diretorias extends MY_Controller
             $data['valor_pagamento'] = str_replace(array('.', ','), array('', '.'), $data['valor_pagamento']);
         } else {
             $data['valor_pagamento'] = null;
+        }
+        if (!empty($data['valor2'])) {
+            $data['valor2'] = str_replace(array('.', ','), array('', '.'), $data['valor2']);
+        } else {
+            $data['valor2'] = null;
+        }
+        if (!empty($data['valor_pagamento2'])) {
+            $data['valor_pagamento2'] = str_replace(array('.', ','), array('', '.'), $data['valor_pagamento2']);
+        } else {
+            $data['valor_pagamento2'] = null;
         }
 
         $this->db->select('id_cargo');

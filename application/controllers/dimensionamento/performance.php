@@ -55,6 +55,16 @@ class Performance extends MY_Controller
         ];
         $baseTempo = array_intersect_key($baseTempo, array_column($cronoAnalises, 'base_tempo', 'base_tempo'));
 
+        $pesoItem = $this->db
+            ->select('a.peso_item')
+            ->select("FORMAT(a.peso_item, 2, 'de_DE') AS peso_item_de", false)
+            ->join('dimensionamento_atividades b', 'b.id = a.id_atividade')
+            ->join('dimensionamento_processos c', 'c.id = b.id_processo')
+            ->where('c.id_empresa', $this->session->userdata('empresa'))
+            ->order_by('a.peso_item', 'asc')
+            ->get('dimensionamento_etapas a')
+            ->result();
+
         $data = [
             'processos' => ['' => 'Todos'] + array_column($processos, 'nome', 'id'),
             'atividades' => ['' => 'Todas'],
@@ -62,7 +72,8 @@ class Performance extends MY_Controller
             'colaboradores' => ['' => 'Todos'] + array_column($colaboradores, 'nome', 'id'),
             'cronoAnalises' => ['' => 'Todas'] + array_column($cronoAnalises, 'nome', 'id'),
             'baseTempo' => ['' => 'Todas'] + $baseTempo,
-            'unidadeProducao' => ['' => 'Todas'] + array_column($cronoAnalises, 'unidade_producao', 'unidade_producao')
+            'unidadeProducao' => ['' => 'Todas'] + array_column($cronoAnalises, 'unidade_producao', 'unidade_producao'),
+            'pesoItem' => ['' => 'Todos'] + array_column($pesoItem, 'peso_item_de', 'peso_item')
         ];
 
 
@@ -138,6 +149,16 @@ class Performance extends MY_Controller
             'Y' => 'Ano'
         ];
 
+        $pesoItem = $this->db
+            ->select('a.peso_item')
+            ->select("FORMAT(a.peso_item, 2, 'de_DE') AS peso_item_de", false)
+            ->join('dimensionamento_atividades b', 'b.id = a.id_atividade')
+            ->join('dimensionamento_processos c', 'c.id = b.id_processo')
+            ->where('c.id_empresa', $this->session->userdata('empresa'))
+            ->order_by('a.peso_item', 'asc')
+            ->get('dimensionamento_etapas a')
+            ->result();
+
         $data = [
             'processos' => [$processo->id => $processo->nome],
             'atividades' => ['' => 'Todas'] + array_column($atividades, 'nome', 'id'),
@@ -145,7 +166,8 @@ class Performance extends MY_Controller
             'colaboradores' => ['' => 'Todos'] + array_column($colaboradores, 'nome', 'id'),
             'cronoAnalises' => [$cronoAnalises->id => $cronoAnalises->nome],
             'baseTempo' => $baseTempo[$cronoAnalises->base_tempo] ?? '',
-            'unidadeProducao' => $cronoAnalises->unidade_producao
+            'unidadeProducao' => $cronoAnalises->unidade_producao,
+            'pesoItem' => ['' => 'Todos'] + array_column($pesoItem, 'peso_item_de', 'peso_item')
         ];
 
 
@@ -206,6 +228,7 @@ class Performance extends MY_Controller
         $idExecutor = $this->input->post('id_executor');
         $complexidade = $this->input->post('complexidade');
         $tipoItiem = $this->input->post('tipo_item');
+        $pesoItiem = $this->input->post('peso_item');
         $medicaoCalculada = $this->input->post('medicao_calculada');
 
 
@@ -247,6 +270,9 @@ class Performance extends MY_Controller
         }
         if ($tipoItiem) {
             $this->db->where('d.tamanho_item', $tipoItiem);
+        }
+        if ($pesoItiem) {
+            $this->db->where('d.peso_item', $pesoItiem);
         }
         $query = $this->db
             ->group_by('a.id')

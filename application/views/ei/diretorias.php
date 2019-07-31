@@ -60,7 +60,7 @@ require_once APPPATH . "views/header.php";
                         <tr>
                             <th colspan="2">Área/cliente</th>
                             <th colspan="2" class="text-center">Contrato</th>
-                            <th colspan="5" class="text-center">Valor período</th>
+                            <th colspan="7" class="text-center">Valor período</th>
                         </tr>
                         <tr>
                             <th>Nome</th>
@@ -69,8 +69,10 @@ require_once APPPATH . "views/header.php";
                             <th>Ações</th>
                             <th>Ano/semestre</th>
                             <th>Tipo funcionário</th>
-                            <th>Valor Fat.</th>
-                            <th>Valor Pagto.</th>
+                            <th>Valor Fat.1</th>
+                            <th>Valor Pagto.1</th>
+                            <th>Valor Fat.2</th>
+                            <th>Valor Pagto.2</th>
                             <th>Ações</th>
                         </tr>
                         </thead>
@@ -326,7 +328,7 @@ require_once APPPATH . "views/header.php";
                                         </div>
                                     </div>
                                     <div class="row form-group">
-                                        <label class="control-label col-md-4">Valor de faturamento</label>
+                                        <label class="control-label col-md-4">Valor de faturamento 1</label>
                                         <div class="col-sm-4 input-group">
                                             <span class="input-group-addon">R$</span>
                                             <input name="valor" type="text" value=""
@@ -334,10 +336,26 @@ require_once APPPATH . "views/header.php";
                                         </div>
                                     </div>
                                     <div class="row form-group">
-                                        <label class="control-label col-md-4">Valor de pagamento</label>
+                                        <label class="control-label col-md-4">Valor de pagamento 1</label>
                                         <div class="col-sm-4 input-group">
                                             <span class="input-group-addon">R$</span>
                                             <input name="valor_pagamento" type="text" value=""
+                                                   class="form-control text-right valor">
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-4">Valor de faturamento 2</label>
+                                        <div class="col-sm-4 input-group">
+                                            <span class="input-group-addon">R$</span>
+                                            <input name="valor2" type="text" value=""
+                                                   class="form-control text-right valor">
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-4">Valor de pagamento 2</label>
+                                        <div class="col-sm-4 input-group">
+                                            <span class="input-group-addon">R$</span>
+                                            <input name="valor_pagamento2" type="text" value=""
                                                    class="form-control text-right valor">
                                         </div>
                                     </div>
@@ -384,69 +402,72 @@ require_once APPPATH . "views/header.php";
             $('.valor').mask('###.###.##0,00', {'reverse': true});
             $('.ano').mask('0000', {'reverse': true});
 
+
             table = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                iDisplayLength: 100,
-                lengthMenu: [[5, 10, 25, 50, 100, 500], [5, 10, 25, 50, 100, 500]],
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 100,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500], [5, 10, 25, 50, 100, 500]],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('ei/diretorias/ajax_list/') ?>',
-                    type: 'POST',
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('ei/diretorias/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.busca = $('#busca').serialize();
                         return d;
                     }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        width: '100%',
-                        targets: [0, 5]
+                        'width': '50%',
+                        'targets': [0, 5]
                     },
                     {
-                        mRender: function (data) {
+                        'mRender': function (data) {
                             if (data === null) {
                                 data = '<span class="text-muted">Nenhum contrato encontrado</span>';
                             }
                             return data;
                         },
-                        targets: [2]
+                        'targets': [2]
                     },
                     {
-                        className: 'text-center',
-                        targets: [4, 6, 7]
+                        'className': 'text-center',
+                        'targets': [4, 6, 7, 8, 9]
                     },
                     {
-                        className: 'text-nowrap',
-                        targets: [1, 3, -1],
-                        orderable: false,
-                        searchable: false
+                        'className': 'text-nowrap',
+                        'targets': [1, 3, -1],
+                        'orderable': false,
+                        'searchable: false
                     }
                 ],
-                rowsGroup: [1, 0, 3, 2, 4]
+                'rowsGroup': [1, 0, 3, 2, 4]
             });
 
         });
 
+
         function atualizarFiltro() {
             $.ajax({
-                url: '<?php echo site_url('ei/diretorias/atualizar_filtro/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: $('#busca').serialize(),
-                success: function (data) {
-                    $('[name="busca[diretoria]"]').html($(data.diretoria).html());
-                    $('[name="busca[coordenador]"]').html($(data.coordenador).html());
-                    $('[name="busca[contrato]"]').html($(data.contrato).html());
+                'url': '<?php echo site_url('ei/diretorias/atualizar_filtro') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
+                    $('[name="busca[diretoria]"]').html($(json.diretoria).html());
+                    $('[name="busca[coordenador]"]').html($(json.coordenador).html());
+                    $('[name="busca[contrato]"]').html($(json.contrato).html());
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         $('#limpa_filtro').on('click', function () {
             var busca = unescape($('#busca').serialize());
@@ -457,27 +478,30 @@ require_once APPPATH . "views/header.php";
             atualizarFiltro();
         });
 
+
         $('.estrutura').on('change', function () {
             atualizar_estrutura();
         });
 
+
         function atualizar_estrutura(id_coordenador = '') {
             $.ajax({
-                url: '<?php echo site_url('ei/diretorias/ajax_estrutura/') ?>',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    depto: $('#depto').val(),
-                    id_coordenador: id_coordenador
+                'url': '<?php echo site_url('ei/diretorias/ajax_estrutura') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'depto': $('#depto').val(),
+                    'id_coordenador': id_coordenador
                 },
-                success: function (data) {
-                    $('[name="id_coordenador"]').html($(data.id_coordenador).html());
+                'success': function (json) {
+                    $('[name="id_coordenador"]').html($(json.id_coordenador).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function add_cliente() {
             save_method = 'add';
@@ -491,6 +515,7 @@ require_once APPPATH . "views/header.php";
             $('.combo_nivel1').hide();
         }
 
+
         function add_contrato(id) {
             save_method = 'add';
             $('#form_contrato')[0].reset();
@@ -503,6 +528,7 @@ require_once APPPATH . "views/header.php";
             $('.combo_nivel1').hide();
         }
 
+
         function add_valor_faturamento(id) {
             save_method = 'add';
             $('#form_valores')[0].reset();
@@ -510,7 +536,7 @@ require_once APPPATH . "views/header.php";
             $('.form-group').removeClass('has-error');
             $('.help-block').empty();
             $.ajax({
-                'url': '<?php echo site_url('ei/diretorias/ajax_valores/') ?>',
+                'url': '<?php echo site_url('ei/diretorias/ajax_valores') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
@@ -529,6 +555,7 @@ require_once APPPATH . "views/header.php";
             });
         }
 
+
         function edit_cliente(id) {
             save_method = 'update';
             $('#form')[0].reset();
@@ -537,11 +564,11 @@ require_once APPPATH . "views/header.php";
             $('.help-block').empty();
 
             $.ajax({
-                url: '<?php echo site_url('ei/diretorias/ajax_edit/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (json) {
+                'url': '<?php echo site_url('ei/diretorias/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     $.each(json, function (key, value) {
                         if (key !== 'id_coordenador') {
                             $('#modal_form [name="' + key + '"]').val(value);
@@ -553,11 +580,12 @@ require_once APPPATH . "views/header.php";
                     $('#modal_form').modal('show');
 
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function edit_contrato(id) {
             $('#form_contrato')[0].reset();
@@ -566,11 +594,11 @@ require_once APPPATH . "views/header.php";
             $('#form_contrato .help-block').empty();
 
             $.ajax({
-                url: '<?php echo site_url('ei/diretorias/ajax_editContrato/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (json) {
+                'url': '<?php echo site_url('ei/diretorias/ajax_editContrato') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     $.each(json, function (key, value) {
                         $('#modal_contrato [name="' + key + '"]').val(value);
                     });
@@ -578,11 +606,12 @@ require_once APPPATH . "views/header.php";
                     $('.modal-title').text('Editar contrato - ' + json.contrato);
                     $('#modal_contrato').modal('show');
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function edit_valor_faturamento(id) {
             $('#form_valores')[0].reset();
@@ -591,7 +620,7 @@ require_once APPPATH . "views/header.php";
             $('#form_valores .help-block').empty();
 
             $.ajax({
-                'url': '<?php echo site_url('ei/diretorias/ajax_editValores/') ?>',
+                'url': '<?php echo site_url('ei/diretorias/ajax_editValores') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
@@ -603,8 +632,10 @@ require_once APPPATH . "views/header.php";
                     $('#modal_valores [name="semestre"][value="' + json.semestre + '"]').prop('checked', true);
                     $('#modal_valores [name="id_funcao"]').html($(json.funcoes).html());
                     $('#modal_valores [name="valor"]').val(json.valor);
-                    $('#modal_valores [name="valor_faturamento"]').val(json.valor_faturamento);
+                    // $('#modal_valores [name="valor_faturamento"]').val(json.valor_faturamento);
                     $('#modal_valores [name="valor_pagamento"]').val(json.valor_pagamento);
+                    $('#modal_valores [name="valor2"]').val(json.valor2);
+                    $('#modal_valores [name="valor_pagamento2"]').val(json.valor_pagamento2);
 
                     $('.contrato').html(json.contrato);
                     $('.modal-title').text('Editar valores para faturamento');
@@ -616,15 +647,14 @@ require_once APPPATH . "views/header.php";
             });
         }
 
+
         function reload_table() {
             table.ajax.reload(null, false);
         }
 
-        function save() {
-            $('#btnSave').text('Salvando...');
-            $('#btnSave').attr('disabled', true);
-            var url;
 
+        function save() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('ei/diretorias/ajax_add') ?>';
             } else {
@@ -632,32 +662,31 @@ require_once APPPATH . "views/header.php";
             }
 
             $.ajax({
-                url: url,
-                type: 'POST',
-                data: $('#form').serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    if (data.status) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_form').modal('hide');
                         atualizarFiltro();
                     }
-
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave').attr('disabled', false);
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
-        function save_contrato() {
-            $('#btnSaveContrato').text('Salvando...');
-            $('#btnSaveContrato').attr('disabled', true);
-            var url;
 
+        function save_contrato() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('ei/diretorias/ajax_addContrato') ?>';
             } else {
@@ -665,31 +694,31 @@ require_once APPPATH . "views/header.php";
             }
 
             $.ajax({
-                url: url,
-                type: 'POST',
-                data: $('#form_contrato').serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    if (data.status) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form_contrato').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveContrato').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_contrato').modal('hide');
                         atualizarFiltro();
                     }
-
-                    $('#btnSaveContrato').text('Salvar');
-                    $('#btnSaveContrato').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveContrato').text('Salvar');
-                    $('#btnSaveContrato').attr('disabled', false);
+                },
+                'complete': function () {
+                    $('#btnSaveContrato').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
-        function save_valores() {
-            $('#btnSaveValores').text('Salvando...').attr('disabled', true);
-            var url;
 
+        function save_valores() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('ei/diretorias/ajax_addValores') ?>';
             } else {
@@ -697,72 +726,78 @@ require_once APPPATH . "views/header.php";
             }
 
             $.ajax({
-                url: url,
-                type: 'POST',
-                data: $('#form_valores').serialize(),
-                dataType: 'json',
-                success: function (json) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form_valores').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveValores').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     if (json.status) {
                         $('#modal_valores').modal('hide');
                         atualizarFiltro();
                     }
-
-                    $('#btnSaveValores').text('Salvar').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
+                },
+                'complete': function () {
                     $('#btnSaveValores').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function delete_cliente(id) {
             if (confirm('Deseja remover o cliente?')) {
                 $.ajax({
-                    url: '<?php echo site_url('ei/diretorias/ajax_delete') ?>',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {id: id},
-                    success: function (data) {
+                    'url': '<?php echo site_url('ei/diretorias/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
                         $('#modal_form').modal('hide');
                         atualizarFiltro();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
             }
         }
+
 
         function delete_contrato(id) {
             if (confirm('Deseja remover o contrato?')) {
                 $.ajax({
-                    url: '<?php echo site_url('ei/diretorias/ajax_deleteContrato') ?>',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {id: id},
-                    success: function (data) {
+                    'url': '<?php echo site_url('ei/diretorias/ajax_deleteContrato') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
                         $('#modal_contrato').modal('hide');
                         atualizarFiltro();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
             }
         }
 
+
         function delete_valor_faturamento(id) {
             if (confirm('Deseja remover o valor de faturamento?')) {
                 $.ajax({
-                    url: '<?php echo site_url('ei/diretorias/ajax_deleteValores') ?>',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {id: id},
-                    success: function (json) {
+                    'url': '<?php echo site_url('ei/diretorias/ajax_deleteValores') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });

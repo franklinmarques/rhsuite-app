@@ -69,9 +69,6 @@ require_once "header.php";
                                 <li role="presentation" class="disabled">
                                     <a href="#">Documentos</a>
                                 </li>
-                                <li role="presentation" class="disabled">
-                                    <a href="#">Contratos</a>
-                                </li>
                             </ul>
 
                             <div class="tab-content">
@@ -406,7 +403,8 @@ require_once "header.php";
                                                     <li>
                                                         <input type="checkbox">
                                                         <i class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;Gestão
-                                                        Operacional PAPD
+                                                        Operacional PAPD (Programa de Apoio a Pessoa com Deficiência -
+                                                        Barueri)
                                                         <ul>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[PAPD][]"
@@ -442,7 +440,7 @@ require_once "header.php";
                                                     <li>
                                                         <input type="checkbox">
                                                         <i class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;Gestão
-                                                        Operacional ST
+                                                        Operacional ST (Serviços Terceirizados)
                                                         <ul>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[ST][]"
@@ -476,7 +474,7 @@ require_once "header.php";
                                                     <li>
                                                         <input type="checkbox">
                                                         <i class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;Gestão
-                                                        Operacional CD
+                                                        Operacional CD (Cuidadores)
                                                         <ul>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[CD][]"
@@ -510,7 +508,7 @@ require_once "header.php";
                                                     <li>
                                                         <input type="checkbox">
                                                         <i class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;Gestão
-                                                        Operacional EI
+                                                        Operacional EI (Educação Inclusiva)
                                                         <ul>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[EI][]"

@@ -44,6 +44,7 @@ class PlanoTrabalho extends MY_Controller
         $idAtividade = $this->input->post('atividade');
         $complexidade = $this->input->post('complexidade');
         $tipoItem = $this->input->post('tipo_item');
+        $pesoItem = $this->input->post('peso_item');
         $idEtapa = $this->input->post('etapa');
         $idCronoAnalise = $this->input->post('crono_analise');
         $idEquipe = $this->input->post('equipe');
@@ -168,11 +169,23 @@ class PlanoTrabalho extends MY_Controller
         $etapas = array_column($rowEtapas, 'nome', 'id');
 
 
+        $pesoItem = $this->db
+            ->select('a.peso_item')
+            ->select("FORMAT(a.peso_item, 2, 'de_DE') AS peso_item_de", false)
+            ->join('dimensionamento_atividades b', 'b.id = a.id_atividade')
+            ->join('dimensionamento_processos c', 'c.id = b.id_processo')
+            ->where('c.id_empresa', $this->session->userdata('empresa'))
+            ->order_by('a.peso_item', 'asc')
+            ->get('dimensionamento_etapas a')
+            ->result();
+
+
         $data['processo'] = form_dropdown('', ['' => 'selecione...'] + $processos, $idProcesso);
         $data['atividade'] = form_dropdown('', ['' => 'selecione...'] + $atividades, $idAtividade);
         $data['complexidade'] = form_dropdown('', ['' => 'Todas'] + $grausComplexidade, $complexidade);
         $data['tipo_item'] = form_dropdown('', ['' => 'Todos'] + $tamanhoItens, $tipoItem);
         $data['etapa'] = form_dropdown('', ['' => 'Todas'] + $etapas, $idEtapa);
+        $data['peso_item'] = ['' => 'Todos'] + array_column($pesoItem, 'peso_item_de', 'peso_item');
 
 
         $rowCronoAnalises = $this->db

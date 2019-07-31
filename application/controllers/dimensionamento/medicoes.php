@@ -55,6 +55,16 @@ class Medicoes extends MY_Controller
         ];
         $baseTempo = array_intersect_key($baseTempo, array_column($cronoAnalises, 'base_tempo', 'base_tempo'));
 
+        $pesoItem = $this->db
+            ->select('a.peso_item')
+            ->select("FORMAT(a.peso_item, 2, 'de_DE') AS peso_item_de", false)
+            ->join('dimensionamento_atividades b', 'b.id = a.id_atividade')
+            ->join('dimensionamento_processos c', 'c.id = b.id_processo')
+            ->where('c.id_empresa', $this->session->userdata('empresa'))
+            ->order_by('a.peso_item', 'asc')
+            ->get('dimensionamento_etapas a')
+            ->result();
+
         $data = [
             'processos' => ['' => 'Todos'] + array_column($processos, 'nome', 'id'),
             'atividades' => ['' => 'Todas'],
@@ -63,7 +73,8 @@ class Medicoes extends MY_Controller
             'cronoAnalises' => ['' => 'Todas'] + array_column($cronoAnalises, 'nome', 'id'),
             'baseTempo' => ['' => 'Todas'] + $baseTempo,
             'unidadeProducao' => ['' => 'Todas'] + array_column($cronoAnalises, 'unidade_producao', 'unidade_producao'),
-            'status' => ['' => 'Todas', '1' => 'Ativas', '0' => 'Inativas']
+            'status' => ['' => 'Todas', '1' => 'Ativas', '0' => 'Inativas'],
+            'pesoItem' => ['' => 'Todos'] + array_column($pesoItem, 'peso_item_de', 'peso_item')
         ];
 
 
@@ -140,6 +151,16 @@ class Medicoes extends MY_Controller
             'Y' => 'Ano'
         ];
 
+        $pesoItem = $this->db
+            ->select('a.peso_item')
+            ->select("FORMAT(a.peso_item, 2, 'de_DE') AS peso_item_de", false)
+            ->join('dimensionamento_atividades b', 'b.id = a.id_atividade')
+            ->join('dimensionamento_processos c', 'c.id = b.id_processo')
+            ->where('c.id_empresa', $this->session->userdata('empresa'))
+            ->order_by('a.peso_item', 'asc')
+            ->get('dimensionamento_etapas a')
+            ->result();
+
         $data = [
             'processos' => [$processo->id => $processo->nome],
             'atividades' => ['' => 'Todas'] + array_column($atividades, 'nome', 'id'),
@@ -148,7 +169,8 @@ class Medicoes extends MY_Controller
             'cronoAnalises' => [$cronoAnalises->id => $cronoAnalises->nome],
             'baseTempo' => $baseTempo[$cronoAnalises->base_tempo] ?? '',
             'unidadeProducao' => $cronoAnalises->unidade_producao,
-            'status' => ['' => 'Todas', '1' => 'Ativas', '0' => 'Inativas']
+            'status' => ['' => 'Todas', '1' => 'Ativas', '0' => 'Inativas'],
+            'pesoItem' => ['' => 'Todos'] + array_column($pesoItem, 'peso_item_de', 'peso_item')
         ];
 
 
@@ -207,6 +229,9 @@ class Medicoes extends MY_Controller
         $tipo = $this->input->post('tipo');
         $idExecutor = $this->input->post('id_executor');
         $idCronoAnalise = $this->input->post('id_crono_analise');
+        $complexidade = $this->input->post('complexidade');
+        $tipoItiem = $this->input->post('tipo_item');
+        $pesoItiem = $this->input->post('peso_item');
         $status = $this->input->post('status');
 
 
@@ -215,7 +240,7 @@ class Medicoes extends MY_Controller
             ->select("(CASE b.tipo WHEN 'E' THEN g.total_componentes ELSE 1 END) AS total_componentes", false)
             ->select('f.nome AS processo, e.nome AS atividade, d.nome AS etapa')
             ->select('a.tempo_inicio, a.tempo_termino, a.tempo_gasto, a.quantidade')
-            ->select('a.tempo_unidade, a.indice_mao_obra, d.grau_complexidade, d.tamanho_item, a.id')
+            ->select('a.tempo_unidade, a.indice_mao_obra, d.grau_complexidade, d.tamanho_item, d.peso_item, a.id')
             ->join('dimensionamento_executores b', 'b.id = a.id_executor')
             ->join('dimensionamento_crono_analises c', 'c.id = b.id_crono_analise')
             ->join('dimensionamento_etapas d', 'd.id = a.id_etapa')
@@ -239,6 +264,15 @@ class Medicoes extends MY_Controller
         }
         if ($idCronoAnalise) {
             $this->db->where('c.id', $idCronoAnalise);
+        }
+        if ($complexidade) {
+            $this->db->where('d.grau_complexidade', $complexidade);
+        }
+        if ($tipoItiem) {
+            $this->db->where('d.tamanho_item', $tipoItiem);
+        }
+        if ($pesoItiem) {
+            $this->db->where('d.peso_item', $pesoItiem);
         }
         if (strlen($status)) {
             $this->db->where('a.status', $status);
@@ -295,6 +329,7 @@ class Medicoes extends MY_Controller
                 str_replace('.', ',', round($row->indice_mao_obra, 3)),
                 $complexidade[$row->grau_complexidade] ?? null,
                 $tipoItem[$row->tamanho_item] ?? null,
+                str_replace('.', ',', round($row->peso_item, 3)),
                 '<button class="btn btn-sm btn-info" onclick="edit_medicao(' . $row->id . ')" title="Editar medição"><i class="glyphicon glyphicon-pencil"></i></button>
                  <button class="btn btn-sm btn-danger" onclick="delete_medicao(' . $row->id . ')" title="Excluir medição"><i class="glyphicon glyphicon-trash"></i></button>'
             );
