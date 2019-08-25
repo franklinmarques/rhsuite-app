@@ -704,4 +704,139 @@ class MY_Form_validation extends CI_Form_validation
         return (filter_var('http://' . $str, FILTER_VALIDATE_URL) !== FALSE);
     }
 
+    /*
+    | ---------------------------------------------------------
+    | FUNÇÕES DO CODEIGNITER 4
+    | ---------------------------------------------------------
+    */
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Equals the static value provided.
+     *
+     * @param string $str
+     * @param string $val
+     *
+     * @return boolean
+     */
+    public function equals(string $str = null, string $val): bool
+    {
+        $CI = &get_instance();
+        $CI->form_validation->set_message('equals', 'O campo %s deve ser igual a: %s.');
+
+        return $str === $val;
+    }
+
+    /**
+     * Does not equal the static value provided.
+     *
+     * @param string $str
+     * @param string $val
+     *
+     * @return boolean
+     */
+    public function not_equals(string $str = null, string $val): bool
+    {
+        $CI = &get_instance();
+        $CI->form_validation->set_message('not_equals', 'O campo %s não pode ser igual a: %s.');
+
+        return $str !== $val;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * The field is required when any of the other required fields are present
+     * in the data.
+     *
+     * Example (field is required when the password field is present):
+     *
+     *     required_with[password]
+     *
+     * @param $str
+     * @param string $fields List of fields that we should check if present
+     * @param array $data Complete list of fields from the form
+     *
+     * @return boolean
+     */
+    public function required_with($str = null, string $fields, array $data): bool
+    {
+        $fields = explode(',', $fields);
+
+        // If the field is present we can safely assume that
+        // the field is here, no matter whether the corresponding
+        // search field is present or not.
+        $present = $this->required($str ?? '');
+
+        if ($present) {
+            return true;
+        }
+
+        $CI = &get_instance();
+        $CI->form_validation->set_message('required_with', 'O campo %s é obrigatório se %s estiver preenchido.');
+
+        // Still here? Then we fail this test if
+        // any of the fields are present in $data
+        // as $fields is the lis
+        $requiredFields = [];
+
+        foreach ($fields as $field) {
+            if (array_key_exists($field, $data)) {
+                $requiredFields[] = $field;
+            }
+        }
+
+        // Remove any keys with empty values since, that means they
+        // weren't truly there, as far as this is concerned.
+        $requiredFields = array_filter($requiredFields, function ($item) use ($data) {
+            return !empty($data[$item]);
+        });
+
+        return empty($requiredFields);
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * The field is required when all of the other fields are present
+     * in the data but not required.
+     *
+     * Example (field is required when the id or email field is missing):
+     *
+     *     required_without[id,email]
+     *
+     * @param $str
+     * @param string $fields
+     * @param array $data
+     *
+     * @return boolean
+     */
+    public function required_without($str = null, string $fields, array $data): bool
+    {
+        $fields = explode(',', $fields);
+
+        // If the field is present we can safely assume that
+        // the field is here, no matter whether the corresponding
+        // search field is present or not.
+        $present = $this->required($str ?? '');
+
+        if ($present) {
+            return true;
+        }
+
+        $CI = &get_instance();
+        $CI->form_validation->set_message('required_without', 'O campo %s é obrigatório se %s não estiver preenchido.');
+
+        // Still here? Then we fail this test if
+        // any of the fields are not present in $data
+        foreach ($fields as $field) {
+            if (!array_key_exists($field, $data)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

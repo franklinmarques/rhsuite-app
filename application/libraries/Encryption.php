@@ -48,7 +48,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author		Andrey Andreev
  * @link		https://codeigniter.com/user_guide/libraries/encryption.html
  */
-class CI_Encryption {
+class Encryption {
 
 	/**
 	 * Encryption cipher

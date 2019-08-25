@@ -258,23 +258,15 @@ class Auth
     private function setSession()
     {
         if ($user = $this->userData) {
-
-            if ($user->hash_acesso) {
-                $this->_CI->load->library('encrypt');
-                $hash_acesso = (array)json_decode($this->_CI->encrypt->decode($user->hash_acesso, base64_encode($user->id)));
-            } else {
-                $hash_acesso = [];
-            }
-
-            $this->_CI->session->set_userdata(array(
+            $this->_CI->session->set_userdata([
                 'nome' => $user->nome,
                 'tipo' => $user->tipo,
                 'nivel' => $user->nivel_acesso,
                 'email' => $user->email,
                 'foto' => $user->foto,
                 'foto_descricao' => $user->foto_descricao ?? null,
-                'hash_acesso' => $hash_acesso
-            ));
+                'hash_acesso' => json_decode($user->hash_acesso, true)
+            ]);
         }
     }
 

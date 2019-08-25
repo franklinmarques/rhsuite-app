@@ -12,6 +12,10 @@ class MY_Model extends CI_Model
 
     protected static $insertID = 0;
 
+    protected $returnType = 'object';
+
+    protected $tempReturnType;
+
     protected $uploadConfig = [];
 
     protected $validationRules = [];
@@ -48,6 +52,22 @@ class MY_Model extends CI_Model
     }
 
     //==========================================================================
+    public function asObject(string $class = 'object')
+    {
+        $this->tempReturnType = $class;
+
+        return $this;
+    }
+
+    //==========================================================================
+    public function asArray()
+    {
+        $this->tempReturnType = 'array';
+
+        return $this;
+    }
+
+    //==========================================================================
     public function find($id = null)
     {
         if (is_array($id)) {
@@ -67,7 +87,7 @@ class MY_Model extends CI_Model
         }
 
         if (!empty($offset)) {
-            $this->db->limit($offset);
+            $this->db->offset($offset);
         }
 
         return $this->db->get(static::$table)->result();
@@ -103,6 +123,18 @@ class MY_Model extends CI_Model
         $this->skipValidation = $skip;
 
         return $this;
+    }
+
+    //==========================================================================
+    public function getUploadConfig(): array
+    {
+        return $this->uploadConfig;
+    }
+
+    //==========================================================================
+    public function setUploadConfig(array $config = [])
+    {
+        $this->uploadConfig = $config;
     }
 
     //==========================================================================
@@ -272,6 +304,8 @@ class MY_Model extends CI_Model
 
         static::$insertID = 0;
 
+        $insertID = 0;
+
         if ($data instanceof Entity) {
             $data = $data->toArray();
         }
@@ -298,6 +332,7 @@ class MY_Model extends CI_Model
 
         if ($result) {
             $this->db->insert(static::$table, $data['data']);
+            $insertID = $this->db->insert_id();
         }
 
         if ($this->db->trans_status() === false) {
@@ -314,7 +349,7 @@ class MY_Model extends CI_Model
 
         $this->db->trans_commit();
 
-        static::$insertID = $this->db->insert_id();
+        static::$insertID = $insertID;
 
         return $returnID ? static::$insertID : true;
     }
