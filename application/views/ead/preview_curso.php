@@ -73,7 +73,8 @@
                 <div class="col-sm-10" style="padding-left: 10px; height: inherit;">
                     <section class="panel" style="max-width: 100%; height: inherit;">
                         <header class="panel-heading">
-                            <i class="fa fa-file-text-o"></i><span class="hidden-xs hidden-sm"> <?php echo $paginaatual->titulo; ?></span>
+                            <i class="fa fa-file-text-o"></i><span
+                                    class="hidden-xs hidden-sm"> <?php echo $paginaatual->titulo; ?></span>
                             <div style="float:right; margin-top: -5px;">
                                 <?php if ($paginaatual->audio): ?>
                                     <button id="audio" data-toggle="popover" class="btn btn-primary btn-sm"
@@ -101,11 +102,13 @@
                                 <?php if ($this->uri->rsegment(4) < $curso->ultima_pagina): ?>
                                     <a class="btn btn-primary btn-sm"
                                        href="<?php echo site_url('ead/cursos/preview/' . $this->uri->rsegment(3) . '/' . ((int)$this->uri->rsegment(4) + 1)); ?>">
-                                        <span class="hidden-xs hidden-sm">Próximo </span><i class="glyphicon glyphicon-arrow-right"></i>
+                                        <span class="hidden-xs hidden-sm">Próximo </span><i
+                                                class="glyphicon glyphicon-arrow-right"></i>
                                     </a>
                                 <?php else: ?>
                                     <a class="btn btn-primary btn-sm" href="#" disabled="">
-                                        <span class="hidden-xs hidden-sm">Próximo </span><i class="glyphicon glyphicon-arrow-right"></i>
+                                        <span class="hidden-xs hidden-sm">Próximo </span><i
+                                                class="glyphicon glyphicon-arrow-right"></i>
                                     </a>
                                 <?php endif; ?>
                                 <?php if ($this->agent->is_mobile()): ?>
@@ -342,11 +345,11 @@
     var enviarResposta = 0;
     if (audio) {
         $('#audio').popover({
-            title: "Player",
-            html: true,
-            placement: 'bottom',
-            template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title text-primary"></h3><div class="popover-content"></div></div>',
-            content: '<audio id="player" controls<?= $paginaatual->autoplay ? ' autoplay' : '' ?> src="<?= base_url('arquivos/media/' . $paginaatual->audio); ?>"></audio>'
+            'title': 'Player',
+            'html': true,
+            'placement': 'bottom',
+            'template': '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title text-primary"></h3><div class="popover-content"></div></div>',
+            'content': '<audio id="player" controls<?= $paginaatual->autoplay ? ' autoplay' : '' ?> src="<?= base_url('arquivos/media/' . $paginaatual->audio); ?>"></audio>'
         });
     }
 

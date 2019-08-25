@@ -1,6 +1,4 @@
-<?php
-require_once APPPATH . "views/header.php";
-?>
+<?php require_once APPPATH . 'views/header.php'; ?>
     <style>
         .jstree-defaulto {
             color: #31708f;
@@ -76,6 +74,19 @@ require_once APPPATH . "views/header.php";
                                                    value="<?php echo $row->cnpj; ?>" class="form-control"/>
                                         </div>
                                     <?php endif; ?>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 col-lg-2 control-label">Telefone</label>
+                                    <div class="col-sm-5 col-lg-5 controls">
+                                        <input type="text" name="telefone" placeholder="Telefone"
+                                               value="<?php echo $row->telefone; ?>" class="form-control tags"
+                                               data-role="tagsinput"/>
+                                    </div>
+                                    <label class="col-sm-2 col-lg-1 control-label">E-mail</label>
+                                    <div class="col-sm-5 col-lg-4 controls">
+                                        <input type="text" id="email" name="email" placeholder="E-mail"
+                                               value="<?php echo $row->email; ?>" class="form-control"/>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 col-lg-2 control-label">Status</label>
@@ -154,7 +165,7 @@ require_once APPPATH . "views/header.php";
     </section>
     <!--main content end-->
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
     <!-- Css -->
     <link rel="stylesheet" href="<?php echo base_url("assets/js/bootstrap-combobox/css/bootstrap-combobox.css"); ?>">
@@ -174,9 +185,15 @@ require_once APPPATH . "views/end_js.php";
     <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js') ?>"></script>
 
     <script>
-        $('.tags').tagsInput({width: 'auto', defaultText: 'Telefone', placeholderColor: '#999', delimiter: '/'});
+        $('.tags').tagsInput({
+            'width': 'auto',
+            'defaultText': 'Telefone',
+            'placeholderColor': '#999',
+            'delimiter': '/'
+        });
+
         $('#data_admissao').mask('00/00/0000');
-        $('#cnpj').mask('00.000.000/0000-00', {reverse: true});
+        $('#cnpj').mask('00.000.000/0000-00', {'reverse': true});
 
         $(document).ready(function () {
             $('.combobox').combobox();
@@ -191,13 +208,13 @@ require_once APPPATH . "views/end_js.php";
 
         $('#tree input[type="checkbox"]').change(function (e) {
 
-            var checked = $(this).prop("checked"),
+            var checked = $(this).prop('checked'),
                 container = $(this).parent(),
                 siblings = container.siblings();
 
             container.find('input[type="checkbox"]').prop({
-                indeterminate: false,
-                checked: checked
+                'indeterminate': false,
+                'checked': checked
             });
 
             function checkSiblings(el) {
@@ -206,31 +223,30 @@ require_once APPPATH . "views/end_js.php";
                     all = true;
 
                 el.siblings().each(function () {
-                    return all = ($(this).children('input[type="checkbox"]').prop("checked") === checked);
+                    return all = ($(this).children('input[type="checkbox"]').prop('checked') === checked);
                 });
 
                 if (all && checked) {
 
                     parent.children('input[type="checkbox"]').prop({
-                        indeterminate: false,
-                        checked: checked
+                        'indeterminate': false,
+                        'checked': checked
                     });
 
                     checkSiblings(parent);
 
                 } else if (all && !checked) {
 
-                    parent.children('input[type="checkbox"]').prop("checked", checked);
-                    parent.children('input[type="checkbox"]').prop("indeterminate", (parent.find('input[type="checkbox"]:checked').length > 0));
+                    parent.children('input[type="checkbox"]').prop('checked', checked);
+                    parent.children('input[type="checkbox"]').prop('indeterminate', (parent.find('input[type="checkbox"]:checked').length > 0));
                     checkSiblings(parent);
 
                 } else {
 
                     el.parents("li").children('input[type="checkbox"]').prop({
-                        indeterminate: true,
-                        checked: false
+                        'indeterminate': true,
+                        'checked': false
                     });
-
                 }
 
             }
@@ -239,6 +255,4 @@ require_once APPPATH . "views/end_js.php";
         });
     </script>
 
-<?php
-require_once APPPATH . "views/end_html.php";
-?>
+<?php require_once APPPATH . 'views/end_html.php'; ?>

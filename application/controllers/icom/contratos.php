@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Contratos extends MY_Controller
 {
-    //==========================================================================
+
     public function __construct()
     {
         parent::__construct();
@@ -24,13 +24,8 @@ class Contratos extends MY_Controller
             ->get('empresa_departamentos')
             ->result();
 
-        $this->load->model('icom_propostas_model', 'propostas');
-        $this->load->model('icom_clientes_model', 'clientes');
-
         $data = [
             'empresa' => $empresa,
-            'codigoProposta' => $this->propostas->findColumn('codigo', 'codigo', 'selecione...'),
-            'idCliente' => $this->clientes->findColumn('nome', 'id', 'selecione...'),
             'statusAtivo' => $this->contratos::status(),
             'deptos' => ['' => 'Todos'] + array_column($deptos, 'nome', 'id'),
             'areas' => ['' => 'Todas'],
@@ -52,6 +47,37 @@ class Contratos extends MY_Controller
         $cliente = $this->input->post('id_cliente');
         $proposta = $this->input->post('codigo_proposta');
 
+        $data = $this->carregarEstrutura($depto, $area, $setor, $cliente, $proposta, true);
+
+        echo json_encode($data);
+    }
+
+    //==========================================================================
+    public function montarEstrutura()
+    {
+        $depto = $this->input->post('id_depto');
+        $area = $this->input->post('id_area');
+        $setor = $this->input->post('id_setor');
+        $cliente = $this->input->post('id_cliente');
+        $proposta = $this->input->post('codigo_proposta');
+
+        $data = $this->carregarEstrutura($depto, $area, $setor, $cliente, $proposta);
+
+        echo json_encode($data);
+    }
+
+    //==========================================================================
+    private function carregarEstrutura($depto = 0, $area = 0, $setor = 0, $cliente = 0, $proposta = 0, $todos = false)
+    {
+        $rowDeptos = $this->db
+            ->select('id, nome')
+            ->where('id_empresa', $this->session->userdata('empresa'))
+            ->order_by('nome', 'asc')
+            ->get('empresa_departamentos')
+            ->result();
+
+        $deptos = ['' => ($todos ? 'Todos' : 'selecione...')] + array_column($rowDeptos, 'nome', 'id');
+
         $rowAreas = $this->db
             ->select('id, nome')
             ->where('id_departamento', $depto)
@@ -59,7 +85,7 @@ class Contratos extends MY_Controller
             ->get('empresa_areas')
             ->result();
 
-        $areas = ['' => 'Todas'] + array_column($rowAreas, 'nome', 'id');
+        $areas = ['' => ($todos ? 'Todas' : 'selecione...')] + array_column($rowAreas, 'nome', 'id');
 
         $rowSetores = $this->db
             ->select('a.id, a.nome')
@@ -70,77 +96,73 @@ class Contratos extends MY_Controller
             ->get('empresa_setores a')
             ->result();
 
-        $setores = ['' => 'Todos'] + array_column($rowSetores, 'nome', 'id');
+        $setores = ['' => ($todos ? 'Todos' : 'selecione...')] + array_column($rowSetores, 'nome', 'id');
 
         $rowClientes = $this->db
-            ->select('a.id, a.nome')
-            ->join('empresa_setores b', 'b.id = a.id_setor')
-            ->join('empresa_areas c', 'c.id = b.id_area')
-            ->where('a.id_setor', $setor)
-            ->where('b.id_area', $area)
-            ->where('c.id_departamento', $depto)
-            ->order_by('a.nome', 'asc')
-            ->get('icom_clientes a')
+            ->select('id, nome')
+            ->where('id_empresa', $this->session->userdata('empresa'))
+            ->order_by('nome', 'asc')
+            ->get('icom_clientes')
             ->result();
 
-        $clientes = ['' => 'Todos'] + array_column($rowClientes, 'nome', 'id');
+        $clientes = ['' => ($todos ? 'Todos' : 'selecione...')] + array_column($rowClientes, 'nome', 'id');
 
         $rowPropostas = $this->db
             ->select('a.codigo')
             ->join('icom_clientes b', 'b.id = a.id_cliente')
-            ->join('empresa_setores c', 'c.id = b.id_setor')
+            ->join('empresa_setores c', 'c.id = a.id_setor')
             ->join('empresa_areas d', 'd.id = c.id_area')
             ->where('a.id_cliente', $cliente)
-            ->where('b.id_setor', $setor)
+            ->where('a.id_setor', $setor)
             ->where('c.id_area', $area)
             ->where('d.id_departamento', $depto)
             ->order_by('a.codigo', 'asc')
             ->get('icom_propostas a')
             ->result();
 
-        $propostas = ['' => 'Todas'] + array_column($rowPropostas, 'codigo', 'codigo');
+        $propostas = ['' => ($todos ? 'Todas' : 'selecione...')] + array_column($rowPropostas, 'codigo', 'codigo');
 
         $data = [
-            'areas' => form_dropdown('id_area', $areas, $area, 'onchange="filtrar_estrutura();" class="form-control input-sm"'),
-            'setores' => form_dropdown('id_setor', $setores, $setor, 'onchange="filtrar_estrutura();" class="form-control input-sm"'),
+            'deptos' => form_dropdown('id_depto', $deptos, $depto, 'onchange="filtrar_alocacao();" class="form-control input-sm"'),
+            'areas' => form_dropdown('id_area', $areas, $area, 'onchange="filtrar_alocacao();" class="form-control input-sm"'),
+            'setores' => form_dropdown('id_setor', $setores, $setor, 'class="form-control input-sm"'),
             'clientes' => form_dropdown('id_cliente', $clientes, $cliente, 'class="form-control input-sm"'),
             'propostas' => form_dropdown('codigo_proposta', $propostas, $proposta, 'class="form-control input-sm"')
         ];
 
-        echo json_encode($data);
-    }
-
-    //==========================================================================
-    public function filtrarPropostas()
-    {
-        $rowPropostas = $this->db
-            ->select('codigo')
-            ->where('id_cliente', $this->input->post('id_cliente'))
-            ->order_by('codigo', 'asc')
-            ->get('icom_propostas')
-            ->result();
-
-        $propostas = ['' => 'selecione...'] +
-            array_column($rowPropostas, 'codigo', 'codigo');
-
-        $data = [
-            'propostas' => form_dropdown('', $propostas, $this->input->post('codigo_proposta'))
-        ];
-
-        echo json_encode($data);
+        return $data;
     }
 
     //==========================================================================
     public function listar()
     {
-        $query = $this->db
-            ->select('a.codigo, a.codigo_proposta, c.nome AS nome_cliente')
-            ->select(["FORMAT(a.centro_custo, 2, 'de_DE') AS centro_custo"], false)
+        parse_str($this->input->post('busca'), $busca);
+
+        $this->db
+            ->select('a.codigo, a.codigo_proposta, c.nome AS nome_cliente, centro_custo')
             ->select(["DATE_FORMAT(a.data_vencimento, '%d/%m/%Y') AS data_vencimento"], false)
             ->join('icom_propostas b', 'b.codigo = a.codigo_proposta')
-            ->join('icom_clientes c', 'c.id = a.id_cliente')
-            ->where('a.id_empresa', $this->session->userdata('empresa'))
-            ->get('icom_contratos a');
+            ->join('icom_clientes c', 'c.id = b.id_cliente')
+            ->join('empresa_setores d', 'd.id = b.id_setor')
+            ->join('empresa_areas e', 'e.id = d.id_area')
+            ->join('empresa_departamentos f', 'f.id = e.id_departamento')
+            ->where('a.id_empresa', $this->session->userdata('empresa'));
+        if ($busca['id_depto']) {
+            $this->db->where('f.id', $busca['id_depto']);
+        }
+        if ($busca['id_area']) {
+            $this->db->where('e.id', $busca['id_area']);
+        }
+        if ($busca['id_setor']) {
+            $this->db->where('d.id', $busca['id_setor']);
+        }
+        if ($busca['id_cliente']) {
+            $this->db->where('c.id', $busca['id_cliente']);
+        }
+        if ($busca['codigo_proposta']) {
+            $this->db->where('b.codigo', $busca['codigo_proposta']);
+        }
+        $query = $this->db->get('icom_contratos a');
 
         $config = ['search' => ['codigo', 'codigo_proposta', 'nome_cliente']];
 
@@ -180,30 +202,31 @@ class Contratos extends MY_Controller
             $data->data_vencimento = date('d/m/Y', strtotime($data->data_vencimento));
         }
 
-        $rowClientes = $this->db
-            ->select('a.id, a.nome')
-            ->join('icom_clientes b', 'b.id_setor = a.id_setor')
-            ->where('b.id', $data->id_cliente)
-            ->order_by('a.nome', 'asc')
-            ->get('icom_clientes a')
-            ->result();
+        $idEstrutura = $this->db
+            ->select('a.codigo, b.id_cliente, b.id_setor, d.id_area, e.id_departamento', false)
+            ->join('icom_propostas b', 'b.codigo = a.codigo_proposta')
+            ->join('icom_clientes c', 'c.id = b.id_cliente')
+            ->join('empresa_setores d', 'd.id = b.id_setor', 'left')
+            ->join('empresa_areas e', 'e.id = d.id_area', 'left')
+            ->where('a.codigo', $data->codigo)
+            ->get('icom_contratos a')
+            ->row();
 
-        $clientes = ['' => 'selecione...'] +
-            array_column($rowClientes, 'nome', 'id');
+        $estrutura = $this->carregarEstrutura($idEstrutura->id_departamento, $idEstrutura->id_area, $idEstrutura->id_setor, $idEstrutura->id_cliente, $data->codigo_proposta);
 
-        $data->clientes = form_dropdown('', $clientes, $data->id_cliente);
+        $data->deptos = $estrutura['deptos'];
+        $data->areas = $estrutura['areas'];
+        $data->setores = $estrutura['setores'];
+        $data->clientes = $estrutura['clientes'];
+        $data->propostas = $estrutura['propostas'];
 
-        $rowPropostas = $this->db
-            ->select('codigo')
-            ->where('id_cliente', $data->id_cliente)
-            ->order_by('codigo', 'asc')
-            ->get('icom_propostas')
-            ->result();
+        $contratos = $this->contratos->findColumn('arquivo', 'arquivo', 'selecione...');
 
-        $propostas = ['' => 'selecione...'] +
-            array_column($rowPropostas, 'codigo', 'codigo');
+        $data->contratos = form_dropdown('', $contratos, $data->arquivo);
 
-        $data->propostas = form_dropdown('', $propostas, $data->codigo_proposta);
+        $url_arquivo = $this->contratos->getUploadConfig()['arquivo']['upload_path'];
+
+        $data->url_arquivo = base_url(str_replace('./', '', $url_arquivo) . $data->arquivo);
 
         echo json_encode($data);
     }
@@ -215,12 +238,27 @@ class Contratos extends MY_Controller
 
         $data = $this->entities->create('icomContratos', $this->input->post());
 
+        $this->contratos->setValidationRule('id_depto', 'required|is_natural_no_zero|max_length[11]');
+        $this->contratos->setValidationRule('id_area', 'required|is_natural_no_zero|max_length[11]');
+        $this->contratos->setValidationRule('id_setor', 'required|is_natural_no_zero|max_length[11]');
+        $this->contratos->setValidationRule('id_cliente', 'required|is_natural_no_zero|max_length[11]');
+
+        $this->contratos->setValidationLabel('id_depto', 'Departamento');
+        $this->contratos->setValidationLabel('id_area', 'Área');
+        $this->contratos->setValidationLabel('id_setor', 'Setor');
+        $this->contratos->setValidationLabel('id_cliente', 'Cliente');
         $this->contratos->setValidationLabel('codigo', 'Cód. Contrato');
         $this->contratos->setValidationLabel('codigo_proposta', 'Proposta');
         $this->contratos->setValidationLabel('id_cliente', 'Cliente');
         $this->contratos->setValidationLabel('centro_custo', 'Centro de Custo');
         $this->contratos->setValidationLabel('data_vencimento', 'Vencimento Contrato');
         $this->contratos->setValidationLabel('arquivo', 'Anexar Contrato');
+
+        $this->contratos->validate($data) or exit(json_encode(['erro' => $this->contratos->errors()]));
+
+        unset($data->id_depto, $data->id_area, $data->id_setor, $data->id_cliente);
+
+        $this->contratos->skipValidation();
 
         $this->contratos->save($data) or exit(json_encode(['erro' => $this->contratos->errors()]));
 
@@ -231,6 +269,30 @@ class Contratos extends MY_Controller
     public function excluir()
     {
         $this->contratos->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->contratos->errors()]));
+
+        echo json_encode(['status' => true]);
+    }
+
+    //==========================================================================
+    public function excluirArquivo()
+    {
+        $arquivo = $this->input->post('arquivo');
+        $urlArquivo = $this->contratos->getUploadConfig()['arquivo']['upload_path'] . $arquivo;
+
+        if (!is_file($urlArquivo)) {
+            exit(json_encode(['erro' => 'Arquivo não encontrado.']));
+        }
+
+        $this->db->trans_begin();
+
+        $this->db->update('icom_contratos', ['arquivo' => null], ['arquivo' => $arquivo]);
+
+        if (!unlink($urlArquivo) or !$this->db->trans_status()) {
+            $this->db->trans_rollback();
+            exit(json_encode(['erro' => 'Não foi possível excluir o arquivo.']));
+        }
+
+        $this->db->trans_commit();
 
         echo json_encode(['status' => true]);
     }
@@ -281,12 +343,12 @@ class Contratos extends MY_Controller
 
         $data['rows'] = $this->db
             ->select("a.codigo, (CASE a.status_ativo WHEN 1 THEN 'Ativo' WHEN 0 THEN 'Inativo' END) AS status", false)
-            ->select('c.nome AS nome_cliente, c.contato_principal, c.telefone_principal')
+            ->select('c.nome AS nome_cliente, c.contato_principal, c.telefone_contato_principal')
             ->select(["DATE_FORMAT(a.data_vencimento, '%d/%m/%Y') AS data_vencimento"], false)
             ->join('icom_propostas b', 'b.codigo = a.codigo_proposta')
             ->join('icom_clientes c', 'c.id = b.id_cliente')
             ->where('a.id_empresa', $this->session->userdata('empresa'))
-            ->where('c.id_setor', $this->input->get('setor'))
+            ->where('b.id_setor', $this->input->get('setor'))
             ->order_by('a.codigo', 'asc')
             ->get('icom_contratos a')
             ->result();

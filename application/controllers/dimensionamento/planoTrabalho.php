@@ -114,7 +114,8 @@ class PlanoTrabalho extends MY_Controller
 
 
         $rowDadosEtapas = $this->db
-            ->select('a.grau_complexidade, a.tamanho_item')
+            ->select('a.grau_complexidade, a.tamanho_item, a.peso_item')
+            ->select(["FORMAT(a.peso_item, 2, 'de_DE') AS peso_item_de"], false)
             ->join('dimensionamento_atividades b', 'b.id = a.id_atividade')
             ->join('dimensionamento_processos c', 'c.id = b.id_processo')
             ->where('c.id_empresa', $empresa)
@@ -126,6 +127,7 @@ class PlanoTrabalho extends MY_Controller
 
         $grauComplexidade = array_column($rowDadosEtapas, 'grau_complexidade', 'grau_complexidade');
         $tamanhoItem = array_column($rowDadosEtapas, 'tamanho_item', 'tamanho_item');
+        $pesoItens = array_column($rowDadosEtapas, 'peso_item_de', 'peso_item');
 
 
         $rowGrauComplexidade = [
@@ -169,23 +171,12 @@ class PlanoTrabalho extends MY_Controller
         $etapas = array_column($rowEtapas, 'nome', 'id');
 
 
-        $pesoItem = $this->db
-            ->select('a.peso_item')
-            ->select("FORMAT(a.peso_item, 2, 'de_DE') AS peso_item_de", false)
-            ->join('dimensionamento_atividades b', 'b.id = a.id_atividade')
-            ->join('dimensionamento_processos c', 'c.id = b.id_processo')
-            ->where('c.id_empresa', $this->session->userdata('empresa'))
-            ->order_by('a.peso_item', 'asc')
-            ->get('dimensionamento_etapas a')
-            ->result();
-
-
         $data['processo'] = form_dropdown('', ['' => 'selecione...'] + $processos, $idProcesso);
         $data['atividade'] = form_dropdown('', ['' => 'selecione...'] + $atividades, $idAtividade);
         $data['complexidade'] = form_dropdown('', ['' => 'Todas'] + $grausComplexidade, $complexidade);
         $data['tipo_item'] = form_dropdown('', ['' => 'Todos'] + $tamanhoItens, $tipoItem);
+        $data['peso_item'] = form_dropdown('', ['' => 'Todos'] + $pesoItens, $pesoItem);
         $data['etapa'] = form_dropdown('', ['' => 'Todas'] + $etapas, $idEtapa);
-        $data['peso_item'] = ['' => 'Todos'] + array_column($pesoItem, 'peso_item_de', 'peso_item');
 
 
         $rowCronoAnalises = $this->db
@@ -348,6 +339,10 @@ class PlanoTrabalho extends MY_Controller
     public function ajaxListMedicoes()
     {
         parse_str($this->input->post('busca'), $busca);
+        $volumeTrabalho = $this->input->post('volume_trabalho');
+        $horarioInicioProgramado = $this->input->post('horario_inicio_programado');
+        $indProducao = $this->input->post('ind_producao');
+        $indMaoObra = $this->input->post('ind_mao_obra');
 
 
         $idJob = $this->input->post('id_job');
@@ -407,6 +402,10 @@ class PlanoTrabalho extends MY_Controller
             $this->db->where('d.tamanho_item', $busca['tipo_item']);
         }
 
+        if ($busca['peso_item']) {
+            $this->db->where('d.peso_item', $busca['peso_item']);
+        }
+
         $query = $this->db
             ->group_by('a.id')
             ->get('dimensionamento_medicoes a');
@@ -443,18 +442,24 @@ class PlanoTrabalho extends MY_Controller
         $output->base_tempo = $baseTempo[$cronoAnalise->base_tempo ?? ''];
         $output->unidade_producao = $cronoAnalise->unidade_producao ?? '';
 
+        $this->load->helper('time');
+
         $data = [];
 
         foreach ($output->data as $row) {
+            $producao = $indProducao === '3' ? $row->valor_max_calculado : ($indProducao === '2' ? $row->valor_medio_calculado : ($indProducao === '1' ? $row->valor_min_calculado : ''));
+            $maoObra = $indMaoObra === '3' ? $row->mao_obra_max_calculada : ($indMaoObra === '2' ? $row->mao_obra_media_calculada : ($indMaoObra === '1' ? $row->mao_obra_min_calculada : ''));
             $data[] = array(
                 $row->id,
                 $row->nome,
-                str_replace('.', ',', round($row->valor_min_calculado, 3)),
-                str_replace('.', ',', round($row->valor_medio_calculado, 3)),
-                str_replace('.', ',', round($row->valor_max_calculado, 3)),
-                str_replace('.', ',', round($row->mao_obra_min_calculada, 3)),
-                str_replace('.', ',', round($row->mao_obra_media_calculada, 3)),
-                str_replace('.', ',', round($row->mao_obra_max_calculada, 3)),
+                str_replace('.', ',', round($producao, 3)),
+                str_replace('.', ',', round($maoObra, 3)),
+                $volumeTrabalho,
+                str_replace('.', ',', $volumeTrabalho * $producao),
+                $horarioInicioProgramado,
+                secToTime(timeToSec($horarioInicioProgramado) + ($volumeTrabalho * $producao), false),
+                '',
+                '',
                 $row->tempo_unidade,
                 $row->indice_mao_obra,
                 $row->volume_trabalho,
@@ -463,7 +468,6 @@ class PlanoTrabalho extends MY_Controller
                 $row->qtde_recursos_necessarios,
                 $row->atividade_etapa,
                 $row->medicao_calculada,
-
             );
         }
 

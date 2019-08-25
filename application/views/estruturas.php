@@ -1,4 +1,5 @@
-<?php require_once "header.php"; ?>
+<?php require_once 'header.php'; ?>
+
     <style>
         .btn-success {
             background-color: #5cb85c;
@@ -158,9 +159,10 @@
                                 <input type="hidden" value="" name="id"/>
                                 <div class="form-body">
                                     <div class="row form-group">
-                                        <label class="control-label col-md-2">Nome</label>
+                                        <label class="control-label col-md-2">Depto.</label>
                                         <div class="col-md-9">
-                                            <input name="nome" class="form-control" type="text" maxlength="255">
+                                            <input name="nome" class="form-control" type="text" maxlength="255"
+                                                   placeholder="Nome do departamento">
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
@@ -193,9 +195,16 @@
                                 <input type="hidden" value="" name="id"/>
                                 <div class="form-body">
                                     <div class="row form-group">
-                                        <label class="control-label col-md-2">Nome</label>
+                                        <label class="col-sm-2 control-label">Depto.</label>
+                                        <div class="col-sm-9">
+                                            <input name="nome_depto" class="form-control" type="text" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Área</label>
                                         <div class="col-md-9">
-                                            <input name="nome" class="form-control" type="text" maxlength="255">
+                                            <input name="nome" class="form-control" type="text" maxlength="255"
+                                                   placeholder="Nome da área">
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
@@ -228,9 +237,22 @@
                                 <input type="hidden" value="" name="id"/>
                                 <div class="form-body">
                                     <div class="row form-group">
-                                        <label class="control-label col-md-2">Nome</label>
+                                        <label class="col-sm-2 control-label">Depto.</label>
+                                        <div class="col-sm-9">
+                                            <input name="nome_depto" class="form-control" type="text" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="col-sm-2 control-label">Área</label>
+                                        <div class="col-sm-9">
+                                            <input name="nome_area" class="form-control" type="text" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Setor</label>
                                         <div class="col-md-9">
-                                            <input name="nome" class="form-control" type="text" maxlength="255">
+                                            <input name="nome" class="form-control" type="text" maxlength="255"
+                                                   placeholder="Nome do setor">
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
@@ -246,8 +268,6 @@
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
-
-
             <!-- End Bootstrap modal -->
 
             <!-- page end-->
@@ -259,7 +279,7 @@
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/jquery.steps.css?1') ?>" rel="stylesheet">
 
-<?php require_once "end_js.php"; ?>
+<?php require_once 'end_js.php'; ?>
     <!-- Js -->
     <script>
         $(document).ready(function () {
@@ -276,93 +296,97 @@
         var save_method;
         var table_depto, table_area, table_setor;
         var id_depto = '';
+        var nome_depto = '';
         var id_area = '';
+        var nome_area = '';
 
-        var steps = $("#wizard").steps({
-            headerTag: "h6",
-            bodyTag: "div",
-//        transitionEffect: "slideLeft",
-            transitionEffect: 0,
-            autoFocus: true,
-            enableFinishButton: false,
-            enablePagination: false,
-            enableAllSteps: true,
-            titleTemplate: "#title#",
-            startIndex: <?php echo $indice; ?>
+        var steps = $('#wizard').steps({
+            'headerTag': "h6",
+            'bodyTag': "div",
+            // 'transitionEffect': 'slideLeft',
+            'transitionEffect': 0,
+            'autoFocus': true,
+            'enableFinishButton': false,
+            'enablePagination': false,
+            'enableAllSteps': true,
+            'titleTemplate': '#title#',
+            'startIndex': <?= $indice ?? 0; ?>
         });
 
         $(document).ready(function () {
 
-            //datatables
             table_depto = $('#table_depto').DataTable({
-                "info": true,
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.
-                "order": [], //Initial no order.
-                "iDisplayLength": -1,
-                "bLengthChange": false,
-                "searching": false,
-                "paging": false,
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+                'info': true,
+                'processing': true, //Feature control the processing indicator.
+                'serverSide': true, //Feature control DataTables' server-side processing mode.
+                'order': [], //Initial no order.
+                'iDisplayLength': -1,
+                'bLengthChange': false,
+                'searching': false,
+                'paging': false,
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('estruturas/ajax_departamento/') ?>",
-                    "type": "POST"
+                'ajax': {
+                    'url': '<?php echo site_url('estruturas/listarDepartamentos') ?>',
+                    'type': 'POST'
                 },
-
-                //Set column definition initialisation properties.
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        width: '100%',
-                        targets: [0]
+                        'width': '100%',
+                        'targets': [0]
                     },
                     {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'className': 'text-nowrap',
+                        'targets': [-1], //last column
+                        'orderable': false, //set not orderable
+                        'searchable': false //set not orderable
                     }
                 ]
             });
 
             table_area = $('#table_area').DataTable({
-                "info": true,
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.
-                "order": [], //Initial no order.
-                "iDisplayLength": -1,
-                "bLengthChange": false,
-                "searching": false,
-                "paging": false,
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+                'info': true,
+                'processing': true, //Feature control the processing indicator.
+                'serverSide': true, //Feature control DataTables' server-side processing mode.
+                'order': [], //Initial no order.
+                'iDisplayLength': -1,
+                'bLengthChange': false,
+                'searching': false,
+                'paging': false,
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('estruturas/ajax_area/') ?>",
-                    "type": "POST",
-                    "data": function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('estruturas/listarAreas') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.id_depto = id_depto;
                         return d;
                     }
                 },
-
-                //Set column definition initialisation properties.
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        width: '50%',
-                        targets: [0, 1]
+                        'width': '50%',
+                        'targets': [0, 1]
                     },
                     {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'mRender': function (data) {
+                            if (data === null) {
+                                data = '<span class="text-muted">Nenhuma área encontrada</span>';
+                            }
+                            return data;
+                        },
+                        'targets': [1]
+                    },
+                    {
+                        'className': 'text-nowrap',
+                        'targets': [-1], //last column
+                        'orderable': false, //set not orderable
+                        'searchable': false //set not orderable
                     }
                 ],
-                "drawCallback": function () {
+                'drawCallback': function () {
                     if (id_depto.length === 0) {
                         $('#nova_area').addClass('btn-warning').removeClass('btn-info');
                     } else {
@@ -372,42 +396,48 @@
             });
 
             table_setor = $('#table_setor').DataTable({
-                "info": true,
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.
-                "order": [], //Initial no order.
-                "iDisplayLength": -1,
-                "bLengthChange": false,
-                "searching": false,
-                "paging": false,
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+                'info': true,
+                'processing': true, //Feature control the processing indicator.
+                'serverSide': true, //Feature control DataTables' server-side processing mode.
+                'order': [], //Initial no order.
+                'iDisplayLength': -1,
+                'bLengthChange': false,
+                'searching': false,
+                'paging': false,
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('estruturas/ajax_setor/') ?>",
-                    "type": "POST",
-                    "data": function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('estruturas/listarSetores') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.id_depto = id_depto;
                         d.id_area = id_area;
                         return d;
                     }
                 },
-
-                //Set column definition initialisation properties.
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        width: '33%',
-                        targets: [0, 1, 2]
+                        'width': '33%',
+                        'targets': [0, 1, 2]
                     },
                     {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'mRender': function (data) {
+                            if (data === null) {
+                                data = '<span class="text-muted">Nenhum setor encontrado</span>';
+                            }
+                            return data;
+                        },
+                        'targets': [2]
+                    },
+                    {
+                        'className': 'text-nowrap',
+                        'targets': [-1], //last column
+                        'orderable': false, //set not orderable
+                        'searchable': false //set not orderable
                     }
                 ],
-                "drawCallback": function () {
+                'drawCallback': function () {
                     if (id_depto.length === 0 || id_area.length === 0) {
                         $('#novo_setor').addClass('btn-warning').removeClass('btn-info');
                     } else {
@@ -417,6 +447,7 @@
             });
 
         });
+
 
         function add_depto() {
             save_method = 'add';
@@ -429,6 +460,7 @@
             $('.combo_nivel1').hide();
         }
 
+
         function add_area() {
             if (id_depto.length === 0) {
                 alert('Selecione o departamento onde será adicionada a nova área.');
@@ -438,12 +470,14 @@
             $('#form_area')[0].reset(); // reset form on modals
             $('#form_area [name="id"]').val('');
             $('#form_area [name="id_departamento"]').val(id_depto);
+            $('#form_area [name="nome_depto"]').val(nome_depto).prop('readonly', true);
             $('.form-group').removeClass('has-error'); // clear error class
             $('.help-block').empty(); // clear error string
             $('#modal_area').modal('show'); // show bootstrap modal
             $('.modal-title').text('Adicionar nova área'); // Set Title to Bootstrap modal title
             $('.combo_nivel1').hide();
         }
+
 
         function add_setor() {
             if (id_depto.length === 0 && id_area.length === 0) {
@@ -457,12 +491,15 @@
             $('#form_setor')[0].reset(); // reset form on modals
             $('#form_setor [name="id"]').val('');
             $('#form_setor [name="id_area"]').val(id_area);
+            $('#form_setor [name="nome_depto"]').val(nome_depto).prop('readonly', true);
+            $('#form_setor [name="nome_area"]').val(nome_area).prop('readonly', true);
             $('.form-group').removeClass('has-error'); // clear error class
             $('.help-block').empty(); // clear error string
             $('#modal_setor').modal('show'); // show bootstrap modal
             $('.modal-title').text('Adicionar novo setor'); // Set Title to Bootstrap modal title
             $('.combo_nivel1').hide();
         }
+
 
         function edit_depto(id) {
             save_method = 'update';
@@ -472,25 +509,30 @@
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('estruturas/ajax_editDepto') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (json) {
-                    $('[name="id"]').val(json.id);
-                    $('[name="id_empresa"]').val(json.id_empresa);
-                    $('[name="nome"]').val(json.nome);
+                'url': '<?php echo site_url('estruturas/editarDepartamento') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
 
+                    $.each(json, function (key, value) {
+                        $('#form_depto [name="' + key + '"]').val(value);
+                    });
+
+                    $('.modal-title').text('Editar departamento'); // Set title to Bootstrap modal title
                     $('#modal_depto').modal('show');
-                    $('.modal-title').text('Editar departamento - ' + json.nome); // Set title to Bootstrap modal title
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
-        function edit_area(id) {
+        function edit_area(id, nome_depto) {
             save_method = 'update';
             $('#form_area')[0].reset(); // reset form on modals
             $('.form-group').removeClass('has-error'); // clear error class
@@ -498,25 +540,31 @@
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('estruturas/ajax_editArea') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (json) {
-                    $('[name="id"]').val(json.id);
-                    $('[name="id_departamento"]').val(json.id_departamento);
-                    $('[name="nome"]').val(json.nome);
+                'url': '<?php echo site_url('estruturas/editarArea') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
 
+                    $.each(json, function (key, value) {
+                        $('#form_area [name="' + key + '"]').val(value);
+                    });
+
+                    $('#form_area [name="nome_depto"]').val(nome_depto).prop('readonly', true);
+                    $('.modal-title').text('Editar área'); // Set title to Bootstrap modal title
                     $('#modal_area').modal('show');
-                    $('.modal-title').text('Editar área - ' + json.nome); // Set title to Bootstrap modal title
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
-        function edit_setor(id) {
+        function edit_setor(id, nome_depto, nome_area) {
             save_method = 'update';
             $('#form_setor')[0].reset(); // reset form on modals
             $('.form-group').removeClass('has-error'); // clear error class
@@ -524,160 +572,151 @@
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('estruturas/ajax_editSetor') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (json) {
-                    $('[name="id"]').val(json.id);
-                    $('[name="id_area"]').val(json.id_area);
-                    $('[name="nome"]').val(json.nome);
+                'url': '<?php echo site_url('estruturas/editarSetor') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
 
+                    $.each(json, function (key, value) {
+                        $('#form_setor [name="' + key + '"]').val(value);
+                    });
+
+                    $('#form_setor [name="nome_depto"]').val(nome_depto).prop('readonly', true);
+                    $('#form_setor [name="nome_area"]').val(nome_area).prop('readonly', true);
+                    $('.modal-title').text('Editar setor'); // Set title to Bootstrap modal title
                     $('#modal_setor').modal('show');
-                    $('.modal-title').text('Editar setor - ' + json.nome); // Set title to Bootstrap modal title
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function save_depto() {
-            $('#btnSaveDepto').text('Salvando...'); //change button text
-            $('#btnSaveDepto').attr('disabled', true); //set button disable
-            var url;
-
-            if (save_method === 'add') {
-                url = "<?php echo site_url('estruturas/ajax_addDepto') ?>";
-            } else {
-                url = "<?php echo site_url('estruturas/ajax_updateDepto') ?>";
-            }
-
-            // ajax adding data to database
             $.ajax({
-                url: url,
-                type: "POST",
-                data: $('#form_depto').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'url': '<?php echo site_url('estruturas/salvarDepartamento') ?>',
+                'type': 'POST',
+                'data': $('#form_depto').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveDepto').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_depto').modal('hide');
                         reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
                     }
-
-                    $('#btnSaveDepto').text('Salvar'); //change button text
-                    $('#btnSaveDepto').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveDepto').text('Salvar'); //change button text
-                    $('#btnSaveDepto').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveDepto').text('Salvar').attr('disabled', false);
                 }
             });
         }
+
 
         function save_area() {
-            $('#btnSaveArea').text('Salvando...'); //change button text
-            $('#btnSaveArea').attr('disabled', true); //set button disable
-            var url;
-
-            if (save_method === 'add') {
-                url = "<?php echo site_url('estruturas/ajax_addArea') ?>";
-            } else {
-                url = "<?php echo site_url('estruturas/ajax_updateArea') ?>";
-            }
-
-            // ajax adding data to database
             $.ajax({
-                url: url,
-                type: "POST",
-                data: $('#form_area').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'url': '<?php echo site_url('estruturas/salvarArea') ?>',
+                'type': 'POST',
+                'data': $('#form_area').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveArea').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_area').modal('hide');
                         reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
                     }
-
-                    $('#btnSaveArea').text('Salvar'); //change button text
-                    $('#btnSaveArea').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveArea').text('Salvar'); //change button text
-                    $('#btnSaveArea').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveArea').text('Salvar').attr('disabled', false);
                 }
             });
         }
+
 
         function save_setor() {
-            $('#btnSaveSetor').text('Salvando...'); //change button text
-            $('#btnSaveSetor').attr('disabled', true); //set button disable
-            var url;
-
-            if (save_method === 'add') {
-                url = "<?php echo site_url('estruturas/ajax_addSetor') ?>";
-            } else {
-                url = "<?php echo site_url('estruturas/ajax_updateSetor') ?>";
-            }
-
-            // ajax adding data to database
             $.ajax({
-                url: url,
-                type: "POST",
-                data: $('#form_setor').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'url': '<?php echo site_url('estruturas/salvarSetor') ?>',
+                'type': 'POST',
+                'data': $('#form_setor').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveSetor').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_setor').modal('hide');
                         reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
                     }
-
-                    $('#btnSaveSetor').text('Salvar'); //change button text
-                    $('#btnSaveSetor').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveSetor').text('Salvar'); //change button text
-                    $('#btnSaveSetor').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveSetor').text('Salvar').attr('disabled', false);
                 }
             });
         }
+
 
         function delete_depto(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: "<?php echo site_url('estruturas/ajax_deleteDepto') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {id: id},
-                    success: function (data) {
-                        $('#modal_depto').modal('hide');
-                        reload_table();
+                    'url': '<?php echo site_url('estruturas/excluirDepartamento') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else if (json.erro) {
+                            alert(json.erro);
+                        }
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                         alert('Error deleting data');
                     }
                 });
             }
         }
+
 
         function delete_area(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: "<?php echo site_url('estruturas/ajax_deleteArea') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {id: id},
-                    success: function (data) {
-                        $('#modal_area').modal('hide');
-                        reload_table();
+                    'url': '<?php echo site_url('estruturas/excluirArea') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else if (json.erro) {
+                            alert(json.erro);
+                        }
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                         alert('Error deleting data');
                     }
@@ -685,24 +724,29 @@
             }
         }
 
+
         function delete_setor(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: "<?php echo site_url('estruturas/ajax_deleteSetor') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {id: id},
-                    success: function (data) {
-                        $('#modal_setor').modal('hide');
-                        reload_table();
+                    'url': '<?php echo site_url('estruturas/excluirSetor') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else if (json.erro) {
+                            alert(json.erro);
+                        }
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                         alert('Error deleting data');
                     }
                 });
             }
         }
+
 
         function reload_table() {
             table_depto.ajax.reload(null, false);
@@ -710,21 +754,27 @@
             table_setor.ajax.reload(null, false);
         }
 
-        function nextArea(id) {
+
+        function nextArea(id, nome) {
             if (id_depto !== id || id_depto === '') {
                 id_depto = id;
+                nome_depto = nome;
                 id_area = '';
+                nome_area = '';
             }
             //steps.next(id);
             $('#wizard-t-1').trigger('click');
             reload_table();
         }
 
-        function nextSetor(id) {
+
+        function nextSetor(id, nome) {
             id_area = id;
+            nome_area = nome;
             $('#wizard-t-2').trigger('click');
             reload_table();
         }
+
     </script>
 
-<?php require_once "end_html.php"; ?>
+<?php require_once 'end_html.php'; ?>

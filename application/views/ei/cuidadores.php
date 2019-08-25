@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
     <style>
         .btn-success {
@@ -202,7 +202,7 @@ require_once APPPATH . "views/header.php";
     <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -235,52 +235,52 @@ require_once APPPATH . "views/end_js.php";
 
             //datatables
             table = $('#table').DataTable({
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.
-                "iDisplayLength": 500,
-                "lengthMenu": [[5, 10, 25, 50, 100, 250, 500], [5, 10, 25, 50, 100, 250, 500]],
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+                'processing': true, //Feature control the processing indicator.
+                'serverSide': true, //Feature control DataTables' server-side processing mode.
+                'iDisplayLength': 500,
+                'lengthMenu': [[5, 10, 25, 50, 100, 250, 500], [5, 10, 25, 50, 100, 250, 500]],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('ei/cuidadores/ajax_list/') ?>",
-                    "type": "POST",
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('ei/cuidadores/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.busca = $('#busca').serialize();
                         return d;
                     }
                 },
                 //Set column definition initialisation properties.
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        width: '25%',
-                        targets: [0, 1, 3, 4]
+                        'width': '25%',
+                        'targets': [0, 1, 3, 4]
                     },
 
                     {
-                        className: 'text-center',
-                        targets: [2]
+                        'className': 'text-center',
+                        'targets': [2]
                     },
                     {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'className': 'text-nowrap',
+                        'targets': [-1], //last column
+                        'orderable': false, //set not orderable
+                        'searchable': false //set not orderable
                     }
                 ],
-                rowsGroup: [0, 1, -1, 2, 3, 4]
+                'rowsGroup': [0, 1, -1, 2, 3, 4]
             });
 
             demo2 = $('.demo2').bootstrapDualListbox({
-                nonSelectedListLabel: 'Cuidadores do departamento',
-                selectedListLabel: 'Cuidadores alocados à unidade de ensino',
-                preserveSelectionOnMove: 'moved',
-                moveOnSelect: false,
-                filterPlaceHolder: 'Filtrar',
-                helperSelectNamePostfix: false,
-                selectorMinimalHeight: 132,
-                infoText: false
+                'nonSelectedListLabel': 'Cuidadores do departamento',
+                'selectedListLabel': 'Cuidadores alocados à unidade de ensino',
+                'preserveSelectionOnMove': 'moved',
+                'moveOnSelect': false,
+                'filterPlaceHolder': 'Filtrar',
+                'helperSelectNamePostfix': false,
+                'selectorMinimalHeight': 132,
+                'infoText': false
             });
 
             //atualizarFiltro();
@@ -289,10 +289,10 @@ require_once APPPATH . "views/end_js.php";
         function atualizar_unidades() {
             $('#btnSave').prop('disabled', $('#id_escola').val().length === 0);
             $.ajax({
-                url: "<?php echo site_url('ei/cuidadores/atualizar_unidades/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                success: function (json) {
+                'url': '<?php echo site_url('ei/cuidadores/atualizar_unidades') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'success': function (json) {
                     $('#id_diretoria').html($(json.id_diretoria).html());
                     $('#id_escola').html($(json.id_escola).html());
 
@@ -305,7 +305,7 @@ require_once APPPATH . "views/end_js.php";
                     $('#form .nav-tabs a:first').tab('show');
                     demo2.bootstrapDualListbox('refresh', true);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -314,14 +314,14 @@ require_once APPPATH . "views/end_js.php";
 
         $('#id_diretoria, #id_escola').on('change', function () {
             $.ajax({
-                url: "<?php echo site_url('ei/cuidadores/atualizar_cuidadores/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    id_diretoria: $('#id_diretoria').val(),
-                    id_escola: $('#id_escola').val()
+                'url': '<?php echo site_url('ei/cuidadores/atualizar_cuidadores') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_diretoria': $('#id_diretoria').val(),
+                    'id_escola': $('#id_escola').val()
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#id_escola').html($(json.id_escola).html());
 
                     $('#supervisores_manha').html(json.supervisores_manha);
@@ -334,7 +334,7 @@ require_once APPPATH . "views/end_js.php";
                     demo2.bootstrapDualListbox('refresh', true);
                     $('#btnSave').prop('disabled', $('#id_escola').val().length === 0);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -371,16 +371,16 @@ require_once APPPATH . "views/end_js.php";
 
         function atualizarFiltro() {
             $.ajax({
-                url: "<?php echo site_url('ei/cuidadores/atualizar_filtro/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: $('#busca').serialize(),
-                success: function (json) {
+                'url': '<?php echo site_url('ei/cuidadores/atualizar_filtro') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
                     $('[name="busca[diretoria]"]').html($(json.diretoria).html());
                     $('[name="busca[escola]"]').html($(json.escola).html());
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -421,13 +421,13 @@ require_once APPPATH . "views/end_js.php";
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('ei/cuidadores/ajax_edit/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    id_escola: id_escola
+                'url': '<?php echo site_url('ei/cuidadores/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_escola': id_escola
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#id_diretoria').html($(json.id_diretoria).html());
                     $('#id_escola').html($(json.id_escola).html());
                     $('#id_diretoria option:not(:selected), #id_escola option:not(:selected)').prop('disabled', true);
@@ -441,11 +441,10 @@ require_once APPPATH . "views/end_js.php";
                     demo2.bootstrapDualListbox('refresh', true);
 
                     $('.nav-tabs a:first').tab('show');
-                    $('#btnSave').prop('disabled', false);
                     $('#modal_form').modal('show');
 
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -456,29 +455,27 @@ require_once APPPATH . "views/end_js.php";
         }
 
         function save() {
-            $('#btnSave').text('Salvando...'); //change button text
-            $('#btnSave').attr('disabled', true); //set button disable
-
             // ajax adding data to database
             $.ajax({
-                url: "<?php echo site_url('ei/cuidadores/ajax_save') ?>",
-                type: "POST",
-                data: $('#form').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
+                'url: '<?php echo site_url('ei/cuidadores/ajax_save') ?>',
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) //if success close modal and reload ajax table
                     {
                         $('#modal_form').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
@@ -487,18 +484,18 @@ require_once APPPATH . "views/end_js.php";
             if (confirm('Deseja desvincular os cuidadores pertencentes à unidade de ensino?')) {
                 // ajax delete data to database
                 $.ajax({
-                    url: "<?php echo site_url('ei/cuidadores/ajax_delete') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {
-                        id_escola: id_escola
+                    'url': '<?php echo site_url('ei/cuidadores/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {
+                        'id_escola': id_escola
                     },
-                    success: function (data) {
+                    'success': function (json) {
                         //if success reload ajax table
                         $('#modal_form').modal('hide');
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
@@ -508,5 +505,5 @@ require_once APPPATH . "views/end_js.php";
     </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

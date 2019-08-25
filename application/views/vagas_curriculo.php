@@ -166,9 +166,9 @@
                             <input type="hidden" name="id" value="">
                             <div class="row">
                                 <div class="col-sm-12 text-right">
-                                    <a class="btn btn-default" href="<?= site_url($url_empresa . 'vagas'); ?>"><i
+                                    <button class="btn btn-default" onclick="javascript:history.back()"><i
                                                 class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
-                                    </a>
+                                    </button>
                                     <button type="button" class="btn btn-success btnSaveDadosCadastrais"
                                             onclick="save_dados_cadastrais();">Avançar <i
                                                 class="glyphicon glyphicon-circle-arrow-right"></i>
@@ -179,7 +179,7 @@
                                 <legend>Campos obrigatórios</legend>
                                 <div class="form-group last">
                                     <label class="col-sm-2 control-label">Foto</label>
-                                    <div class="col-lg-7 controls">
+                                    <div class="col-lg-3 controls">
                                         <div class="fileinput fileinput-new" data-provides="fileinput">
                                             <div class="fileinput-new thumbnail"
                                                  style="width: auto; height: 150px;">
@@ -200,6 +200,12 @@
                                                    data-dismiss="fileinput"><i class="fa fa-trash"></i> Remover</a>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-lg-4 controls">
+                                        <label class="control-label">Digite primeiramente o número de seu CPF <span
+                                                    class="text-danger">*</span></label>
+                                        <input type="text" id="cpf" name="cpf" placeholder="CPF" value=""
+                                               class="form-control"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -305,11 +311,6 @@
                                         <select name="nivel_acesso" class="form-control">
                                             <option value="E">Candidato</option>
                                         </select>
-                                    </div>
-                                    <label class="col-sm-1 control-label">CPF</label>
-                                    <div class="col-lg-2 controls">
-                                        <input type="text" name="cpf" id="cpf" placeholder="CPF" value=""
-                                               class="form-control"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -1336,6 +1337,30 @@
 
 </div>
 
+<div id="modal_cpf" class="modal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form id="form_recuperacao_senha" action="#" class="form-horizontal" autocomplete="off">
+                    <input type="hidden" name="email" value="">
+                    <h4>Caro(a) candidato(a)</h4>
+                    <br>
+                    <p>Seu CPF já está cadastrado no nosso banco de dados.</p>
+                    <p>E-mail do perfil cadastrado: <i id="alert_cpf"></i></p>
+                    <br>
+                    <p>Clique no botão abaixo para recuperar sua senha de acesso ao portal de vagas.</p>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btnRecuperarSenha" type="button" class="btn btn-warning" onclick="recuperar_senha();">
+                    Recuperar senha
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar e limpar campo de CPF</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <!--main content end-->
 
 <footer class="footer">
@@ -1368,18 +1393,69 @@
 <script>
     var table;
 
-    $('.tags').tagsInput({width: 'auto', defaultText: 'Telefone', placeholderColor: '#999', delimiter: '/'});
+    $('.tags').tagsInput({'width': 'auto', 'defaultText': 'Telefone', 'placeholderColor': '#999', 'delimiter': '/'});
     $('.date').mask('00/00/0000');
     $('.ano').mask('0000');
-    $('.valor').mask('##.###.##0,00', {reverse: true});
-    $('#rg').mask('00.000.000-0', {reverse: true});
-    $('#cpf').mask('000.000.000-00', {reverse: true});
-    $('#cnpj').mask('00.000.000/0000-00', {reverse: true});
-    $('#pis').mask('00.000.000.000', {reverse: true});
+    $('.valor').mask('##.###.##0,00', {'reverse': true});
+    $('#rg').mask('00.000.000-0', {'reverse': true});
+    $('#cpf').mask('000.000.000-00', {'reverse': true});
+    $('#cnpj').mask('00.000.000/0000-00', {'reverse': true});
+    $('#pis').mask('00.000.000.000', {'reverse': true});
 
     $(document).ready(function () {
         $('.combobox').combobox();
     });
+
+
+    $('#cpf').on('change', function () {
+        $.ajax({
+            'url': '<?php echo site_url('vagas/verificarCPF') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {'cpf': this.value},
+            'success': function (json) {
+                if (json.email) {
+                    $('#alert_cpf').html(json.email);
+                    $('#form_cpf [name="email"]').val(json.email);
+                    $('#modal_cpf').modal('show');
+                }
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Error get data from ajax');
+            }
+        });
+    });
+
+    function recuperar_senha() {
+        $.ajax({
+            'url': '<?php echo site_url('vagas/recuperarSenhaCandidato') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': $('#form_recuperacao_senha').serialize(),
+            'beforeSend': function () {
+                $('#btnRecuperarSenha').text('Enviando...').prop('disabled', true);
+            },
+            'success': function (json) {
+                if (json.status) {
+                    alert('E-mail enviado com sucesso.');
+                    $('#modal_cpf').modal('hide');
+                } else if (json.erro) {
+                    alert(json.erro);
+                }
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Error send e-mail from ajax');
+            },
+            'complete': function () {
+                $('#btnRecuperarSenha').text('Enviar').prop('disabled', false);
+            }
+        });
+    }
+
+    $('#modal_cpf').on('hide.bs.modal', function (e) {
+        $('#cpf').val('');
+    })
+
 
     $('ul.nav-pills li a').on('click', function () {
         return false;
@@ -1400,8 +1476,8 @@
             siblings = container.siblings();
 
         container.find('input[type="checkbox"]').prop({
-            indeterminate: false,
-            checked: checked
+            'indeterminate': false,
+            'checked': checked
         });
 
         function checkSiblings(el) {
@@ -1416,8 +1492,8 @@
             if (all && checked) {
 
                 parent.children('input[type="checkbox"]').prop({
-                    indeterminate: false,
-                    checked: checked
+                    'indeterminate': false,
+                    'checked': checked
                 });
 
                 checkSiblings(parent);
@@ -1431,8 +1507,8 @@
             } else {
 
                 el.parents("li").children('input[type="checkbox"]').prop({
-                    indeterminate: true,
-                    checked: false
+                    'indeterminate': true,
+                    'checked': false
                 });
 
             }
@@ -1444,19 +1520,19 @@
 
     $('.estrutura').on('change', function () {
         $.ajax({
-            url: '<?php echo site_url('funcionario/atualizarEstrutura/') ?>',
-            type: 'POST',
-            dataType: 'JSON',
-            data: {
-                depto: $('#form [name="depto"]').val(),
-                area: $('#form [name="area"]').val(),
-                setor: $('#form [name="setor"]').val()
+            'url': '<?php echo site_url('funcionario/atualizarEstrutura') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'depto': $('#form [name="depto"]').val(),
+                'area': $('#form [name="area"]').val(),
+                'setor': $('#form [name="setor"]').val()
             },
-            success: function (json) {
+            'success': function (json) {
                 $('#form [name="area"]').html($(json.area).html());
                 $('#form [name="setor"]').html($(json.setor).html());
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -1464,17 +1540,17 @@
 
     $('.cargo_funcao').on('change', function () {
         $.ajax({
-            url: '<?php echo site_url('funcionario/atualizarCargoFuncao/') ?>',
-            type: 'POST',
-            dataType: 'JSON',
-            data: {
-                cargo: $('#form [name="cargo"]').val(),
-                funcao: $('#form [name="funcao"]').val()
+            'url': '<?php echo site_url('funcionario/atualizarCargoFuncao') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'cargo': $('#form [name="cargo"]').val(),
+                'funcao': $('#form [name="funcao"]').val()
             },
-            success: function (json) {
+            'success': function (json) {
                 $('#form [name="funcao"]').html($(json.funcao).html());
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -1508,7 +1584,7 @@
         var cep = $('#cep').val();
         if (cep.length > 0) {
             $.ajax({
-                'url': '<?php echo site_url('vagas/consultarCEP') ?>/',
+                'url': '<?php echo site_url('vagas/consultarCEP') ?>',
                 'type': 'GET',
                 'dataType': 'json',
                 'data': {
@@ -1532,9 +1608,10 @@
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
+                    $('#consultar_cep').html('<i class="glyphicon glyphicon-search"></i> Consultar CEP');
                 }
-            }).done(function () {
-                $('#consultar_cep').html('<i class="glyphicon glyphicon-search"></i> Consultar CEP');
             });
         }
     });
@@ -1557,8 +1634,6 @@
 
 
     function save_dados_cadastrais() {
-        $('.btnSaveDadosCadastrais').html('Avançando... <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', true);
-
         $.ajax({
             'url': '<?php echo site_url('vagas/salvarCandidato') ?>',
             'type': 'POST',
@@ -1568,6 +1643,9 @@
             'contentType': false,
             'cache': false,
             'dataType': 'json',
+            'beforeSend': function () {
+                $('.btnSaveDadosCadastrais').html('Avançando... <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', true);
+            },
             'success': function (json) {
                 if (json.status) {
                     $('#form_dados_cadastrais [name="id"], .id_usuario').val(json.id_usuario);
@@ -1576,10 +1654,11 @@
                     $('html, body').animate({scrollTop: 0}, 1500);
                     $('#alert').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
                 }
-                $('.btnSaveDadosCadastrais').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
+            },
+            'complete': function () {
                 $('.btnSaveDadosCadastrais').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
             }
         });
@@ -1587,13 +1666,14 @@
 
 
     function save_formacao() {
-        $('.btnSaveFormacao').html('Avançando... <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', true);
-
         $.ajax({
             'url': '<?php echo site_url('vagas/salvarFormacaoCandidato') ?>',
             'type': 'POST',
             'data': $('#form_formacao').serialize(),
             'dataType': 'json',
+            'beforeSend': function () {
+                $('.btnSaveFormacao').html('Avançando... <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', true);
+            },
             'success': function (json) {
                 if (json.status) {
                     edit_historico_profissional();
@@ -1601,10 +1681,11 @@
                     $('html, body').animate({scrollTop: 0}, 1500);
                     $('#alert').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
                 }
-                $('.btnSaveFormacao').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
+            },
+            'complete': function () {
                 $('.btnSaveFormacao').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
             }
         });
@@ -1612,13 +1693,14 @@
 
 
     function save_historico_profissional() {
-        $('.btnSaveHistoricoProfissional').html('<i class="fa fa-save"> Concluindo...</i>').attr('disabled', true);
-
         $.ajax({
             'url': '<?php echo site_url('vagas/salvarHistoricoProfissional') ?>',
             'type': 'POST',
             'data': $('#form_historico_profissional').serialize(),
             'dataType': 'json',
+            'beforeSend': function () {
+                $('.btnSaveHistoricoProfissional').html('<i class="fa fa-save"> Concluindo...</i>').attr('disabled', true);
+            },
             'success': function (json) {
                 $('html, body').animate({scrollTop: 0}, 1500);
                 if (json.status) {
@@ -1627,11 +1709,12 @@
                     });
                 } else if (json.erro) {
                     $('#alert').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
-                    $('.btnSaveHistoricoProfissional').html('<i class="fa fa-save"> Concluir</i>').attr('disabled', false);
                 }
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
+            },
+            'complete': function () {
                 $('.btnSaveHistoricoProfissional').html('<i class="fa fa-save"> Concluir</i>').attr('disabled', false);
             }
         });

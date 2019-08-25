@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
     <style>
         .btn-success {
@@ -200,7 +200,7 @@ require_once APPPATH . "views/header.php";
     <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -221,53 +221,53 @@ require_once APPPATH . "views/end_js.php";
 
 
             table = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                iDisplayLength: 1000,
-                lengthMenu: [[5, 10, 25, 50, 100, 500, 1000, 1500, 2000], [5, 10, 25, 50, 100, 500, 1000, 1500, 2000]],
-                order: [],
-                language: {
-                    sEmptyTable: "Nenhum registro encontrado",
-                    sInfo: "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                    sInfoEmpty: "Mostrando 0 até 0 de 0 registros",
-                    sInfoFiltered: "(Filtrados de _MAX_ registros)",
-                    sInfoPostFix: "",
-                    sInfoThousands: ".",
-                    sLengthMenu: "Mostrar _MENU_ resultados",
-                    sLoadingRecords: "Carregando...",
-                    sProcessing: "Processando...",
-                    sZeroRecords: "Nenhum registro encontrado",
-                    sSearch: "Cuidador(a) / Escola / Substituto(a)",
-                    oPaginate: {
-                        sNext: "Próximo",
-                        sPrevious: "Anterior",
-                        sFirst: "Primeiro",
-                        sLast: "Último"
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 1000,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, 1000, 1500, 2000], [5, 10, 25, 50, 100, 500, 1000, 1500, 2000]],
+                'order': [],
+                'language': {
+                    'sEmptyTable': 'Nenhum registro encontrado',
+                    'sInfo': 'Mostrando de _START_ até _END_ de _TOTAL_ registros',
+                    'sInfoEmpty': 'Mostrando 0 até 0 de 0 registros',
+                    'sInfoFiltered': '(Filtrados de _MAX_ registros)',
+                    'sInfoPostFix': '',
+                    'sInfoThousands': '.',
+                    'sLengthMenu': 'Mostrar _MENU_ resultados',
+                    'sLoadingRecords': 'Carregando...',
+                    'sProcessing': 'Processando...',
+                    'sZeroRecords': 'Nenhum registro encontrado',
+                    'sSearch': 'Cuidador(a) / Escola / Substituto(a)',
+                    'oPaginate': {
+                        'sNext': 'Próximo',
+                        'sPrevious': 'Anterior',
+                        'sFirst': 'Primeiro',
+                        'sLast': 'Último'
                     },
-                    oAria: {
-                        sSortAscending: ": Ordenar colunas de forma ascendente",
-                        sSortDescending: ": Ordenar colunas de forma descendente"
+                    'oAria': {
+                        'sSortAscending': ': Ordenar colunas de forma ascendente',
+                        'sSortDescending': ': Ordenar colunas de forma descendente'
                     }
                 },
-                ajax: {
-                    url: "<?php echo site_url('ei/eventos/ajax_list/') ?>",
-                    type: "POST",
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('ei/eventos/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.busca = $('#busca').serialize();
                         return d;
                     }
                 },
-                drawCallback: function () {
+                'drawCallback': function () {
                     setPdf_atributes();
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        className: "text-center",
-                        searchable: false,
-                        targets: [1, 2, 3, 5, 6]
+                        'className': 'text-center',
+                        'searchable': false,
+                        'targets': [1, 2, 3, 5, 6]
                     },
                     {
-                        createdCell: function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             $(td).css({'font-weight': 'normal', 'padding': '8px 1px'});
                             switch (rowData[col]) {
                                 case 'DE':
@@ -328,11 +328,11 @@ require_once APPPATH . "views/end_js.php";
                             }
                             $(td).html(rowData[col]);
                         },
-                        targets: [3]
+                        'targets': [3]
                     },
                     {
-                        searchable: false,
-                        targets: [7]
+                        'searchable': false,
+                        'targets': [7]
                     }
                 ]
             });
@@ -342,16 +342,16 @@ require_once APPPATH . "views/end_js.php";
 
         function atualizarFiltro() {
             $.ajax({
-                url: "<?php echo site_url('ei/eventos/atualizar_filtro/') ?>",
-                type: "GET",
-                dataType: "JSON",
-                data: $('#busca').serialize(),
-                success: function (json) {
+                'url': '<?php echo site_url('ei/eventos/atualizar_filtro') ?>',
+                'type': 'GET',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
                     $('[name="diretoria"]').html($(json.area).html());
                     $('[name="supervisor"]').html($(json.setor).html());
                     $('[name="escola"]').html($(json.cargo).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -402,5 +402,5 @@ require_once APPPATH . "views/end_js.php";
     </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

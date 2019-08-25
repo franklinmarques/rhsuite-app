@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
     <style>
         .btn-success {
@@ -238,7 +238,7 @@ require_once APPPATH . "views/header.php";
     <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -271,24 +271,24 @@ require_once APPPATH . "views/end_js.php";
 
             //datatables
             table = $('#table').DataTable({
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.
-                "iDisplayLength": 500,
-                "lengthMenu": [[5, 10, 25, 50, 100, 250, 500], [5, 10, 25, 50, 100, 250, 500]],
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+                'processing': true, //Feature control the processing indicator.
+                'serverSide': true, //Feature control DataTables' server-side processing mode.
+                'iDisplayLength': 500,
+                'lengthMenu': [[5, 10, 25, 50, 100, 250, 500], [5, 10, 25, 50, 100, 250, 500]],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('ei/supervisores/ajax_list/') ?>",
-                    "type": "POST",
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('ei/supervisores/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.busca = $('#busca').serialize();
                         return d;
                     }
                 },
                 //Set column definition initialisation properties.
-                "columnDefs": [
+                'columnDefs': [
                     {
                         'width': '50%',
                         'targets': [0]
@@ -297,7 +297,11 @@ require_once APPPATH . "views/end_js.php";
                         'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[col] === '') {
                                 $(td).addClass('text-center').css('vertical-align', 'middle');
-                                $(td).html('<span class="text-muted">Nenhuma escola vinculada</span>');
+                                $(td).html('<span class='
+                                text - muted
+                                '>Nenhuma escola vinculada</span>'
+                            )
+                                ;
                             } else {
                                 $(td).html(rowData[col]);
                             }
@@ -310,35 +314,35 @@ require_once APPPATH . "views/end_js.php";
                         'targets': [1]
                     },
                     {
-                        'className': "text-center text-nowrap",
-                        "targets": [-2],//last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'className': 'text-center text-nowrap',
+                        'targets': [-2],//last column
+                        'orderable': false, //set not orderable
+                        'searchable': false //set not orderable
                     }
                 ],
-                rowsGroup: [0, 1, 2, -1, 3]
+                'rowsGroup': [0, 1, 2, -1, 3]
             });
 
             demo1 = $('.demo1').bootstrapDualListbox({
-                nonSelectedListLabel: 'Funções disponíveis',
-                selectedListLabel: 'Funções supervisionados',
-                preserveSelectionOnMove: 'moved',
-                moveOnSelect: false,
-                filterPlaceHolder: 'Filtrar',
-                helperSelectNamePostfix: false,
-                selectorMinimalHeight: 132,
-                infoText: false
+                'nonSelectedListLabel': 'Funções disponíveis',
+                'selectedListLabel': 'Funções supervisionados',
+                'preserveSelectionOnMove': 'moved',
+                'moveOnSelect': false,
+                'filterPlaceHolder': 'Filtrar',
+                'helperSelectNamePostfix': false,
+                'selectorMinimalHeight': 132,
+                'infoText': false
             });
 
             demo2 = $('.demo2').bootstrapDualListbox({
-                nonSelectedListLabel: 'Unidades disponíveis',
-                selectedListLabel: 'Unidades selecionadas',
-                preserveSelectionOnMove: 'moved',
-                moveOnSelect: false,
-                filterPlaceHolder: 'Filtrar',
-                helperSelectNamePostfix: false,
-                selectorMinimalHeight: 132,
-                infoText: false
+                'nonSelectedListLabel': 'Unidades disponíveis',
+                'selectedListLabel': 'Unidades selecionadas',
+                'preserveSelectionOnMove': 'moved',
+                'moveOnSelect': false,
+                'filterPlaceHolder': 'Filtrar',
+                'helperSelectNamePostfix': false,
+                'selectorMinimalHeight': 132,
+                'infoText': false
             });
 
         });
@@ -346,21 +350,21 @@ require_once APPPATH . "views/end_js.php";
 
         $('#depto, #area, #setor').on('change', function () {
             $.ajax({
-                url: "<?php echo site_url('ei/supervisores/atualizar_supervisores/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    depto: $('#depto').val(),
-                    area: $('#area').val(),
-                    setor: $('#setor').val(),
-                    supervisor: $('#supervisor').val()
+                'url': '<?php echo site_url('ei/supervisores/atualizar_supervisores') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'depto': $('#depto').val(),
+                    'area': $('#area').val(),
+                    'setor': $('#setor').val(),
+                    'supervisor': $('#supervisor').val()
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#area').html($(json.area).html());
                     $('#setor').html($(json.setor).html());
                     $('#supervisor').html($(json.supervisor).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -369,18 +373,18 @@ require_once APPPATH . "views/end_js.php";
 
         $('#id_diretoria').on('change', function () {
             $.ajax({
-                url: "<?php echo site_url('ei/supervisores/atualizar_unidades/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    id_diretoria: $('#id_diretoria').val(),
-                    id_escolas: $('#id_escolas').val(),
+                'url': '<?php echo site_url('ei/supervisores/atualizar_unidades') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_diretoria': $('#id_diretoria').val(),
+                    'id_escolas': $('#id_escolas').val(),
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#id_escolas').html($(json.escolas).html());
                     demo2.bootstrapDualListbox('refresh', true);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -388,17 +392,17 @@ require_once APPPATH . "views/end_js.php";
 
         function atualizarFiltro() {
             $.ajax({
-                url: "<?php echo site_url('ei/supervisores/atualizar_filtro/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: $('#busca').serialize(),
-                success: function (json) {
+                'url': '<?php echo site_url('ei/supervisores/atualizar_filtro') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
                     $('[name="busca[supervisor]').html($(json.supervisor).html());
                     $('[name="busca[diretoria]').html($(json.diretoria).html());
                     $('[name="busca[escola]"]').html($(json.escola).html());
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -439,13 +443,13 @@ require_once APPPATH . "views/end_js.php";
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('ei/supervisores/ajax_edit/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    id: id_supervisor
+                'url': '<?php echo site_url('ei/supervisores/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id': id_supervisor
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#depto').val(json.depto);
                     $('#area').html($(json.area).html());
                     $('#setor').html($(json.setor).html());
@@ -462,7 +466,7 @@ require_once APPPATH . "views/end_js.php";
                     $('#modal_form').modal('show');
 
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -477,13 +481,13 @@ require_once APPPATH . "views/end_js.php";
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('ei/supervisores/ajax_editUnidades/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    id: id_supervisor
+                'url': '<?php echo site_url('ei/supervisores/ajax_editUnidades') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id': id_supervisor
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#form_escolas [name="id_coordenacao"]').val(json.id);
                     $('#nome_supervisor').html(json.nome_supervisor);
                     $('#ano_semestre').html(json.ano_semestre);
@@ -494,7 +498,7 @@ require_once APPPATH . "views/end_js.php";
                     $('#modal_escolas').modal('show');
 
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -505,10 +509,7 @@ require_once APPPATH . "views/end_js.php";
         }
 
         function save() {
-            $('#btnSave').text('Salvando...'); //change button text
-            $('#btnSave').attr('disabled', true); //set button disable
             var url;
-
             if (save_method === 'add') {
                 url = '<?php echo site_url('ei/supervisores/ajax_add') ?>';
             } else {
@@ -517,11 +518,14 @@ require_once APPPATH . "views/end_js.php";
 
             // ajax adding data to database
             $.ajax({
-                url: url,
-                type: "POST",
-                data: $('#form').serialize(),
-                dataType: "JSON",
-                success: function (json) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     if (json.status) //if success close modal and reload ajax table
                     {
                         $('#modal_form').modal('hide');
@@ -529,42 +533,38 @@ require_once APPPATH . "views/end_js.php";
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
         function save_escolas() {
-            $('#btnSaveEscolas').text('Salvando...'); //change button text
-            $('#btnSaveEscolas').attr('disabled', true); //set button disable
-
             // ajax adding data to database
             $.ajax({
-                url: '<?php echo site_url('ei/supervisores/salvarEscolas') ?>',
-                type: "POST",
-                data: $('#form_escolas').serialize(),
-                dataType: "JSON",
-                success: function (json) {
+                'url': '<?php echo site_url('ei/supervisores/salvarEscolas') ?>',
+                'type': 'POST',
+                'data': $('#form_escolas').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveEscolas').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     if (json.status) //if success close modal and reload ajax table
                     {
                         $('#modal_escolas').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveEscolas').text('Salvar'); //change button text
-                    $('#btnSaveEscolas').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveEscolas').text('Salvar'); //change button text
-                    $('#btnSaveEscolas').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveEscolas').text('Salvar').attr('disabled', false);
                 }
             });
         }
@@ -573,18 +573,18 @@ require_once APPPATH . "views/end_js.php";
             if (confirm('Deseja remover o(a) supervisor(a)?')) {
                 // ajax delete data to database
                 $.ajax({
-                    url: "<?php echo site_url('ei/supervisores/ajax_delete') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {
-                        id: id_supervisor
+                    'url': '<?php echo site_url('ei/supervisores/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {
+                        'id': id_supervisor
                     },
-                    success: function (data) {
+                    'success': function (json) {
                         //if success reload ajax table
                         $('#modal_form').modal('hide');
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
@@ -595,16 +595,16 @@ require_once APPPATH . "views/end_js.php";
             if (confirm('Deseja desvincular a unidade de ensino do(a) supervisor(a)?')) {
                 // ajax delete data to database
                 $.ajax({
-                    url: "<?php echo site_url('ei/supervisores/ajax_deleteEscola') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {
-                        id: id_supervisor
+                    'url': '<?php echo site_url('ei/supervisores/ajax_deleteEscola') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {
+                        'id': id_supervisor
                     },
-                    success: function (data) {
+                    'success': function (json) {
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
@@ -614,5 +614,5 @@ require_once APPPATH . "views/end_js.php";
     </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

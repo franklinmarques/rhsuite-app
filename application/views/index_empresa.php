@@ -1,25 +1,4 @@
-<?php
-require_once "header.php";
-?>
-
-    <style>
-        #busca_scheduler .btn {
-            padding: 5px;
-        }
-
-
-        #busca_scheduler .btn-default.active {
-            color: #fff;
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        #busca_scheduler .btn-default.active:hover {
-            color: #fff;
-            background-color: #0069d9;
-            border-color: #0062cc;
-        }
-    </style>
+<?php require_once 'header.php'; ?>
 
     <!--main content start-->
     <section id="main-content">
@@ -140,64 +119,94 @@ require_once "header.php";
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><strong>Você possui tarefas pendentes</strong></h4>
+                    <div style="float: right;">
+                        <!--                        <button type="button" class="btn btn-warning" onclick="salvar_scheduler();">Não lembrar-->
+                        <!--                            novamente-->
+                        <!--                        </button>-->
+                        <a class="btn btn-primary" href="<?= site_url('atividades_scheduler'); ?>">Scheduler -
+                            Atividades</a>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+                    </div>
+                    <h4 class="modal-title"><strong>Tarefas pendentes</strong></h4>
                 </div>
                 <div class="modal-body">
 
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#dia" aria-controls="home" role="tab"
-                                                                  data-toggle="tab">Hoje</a>
+                        <li role="presentation" class="active">
+                            <a href="#dia_mes" aria-controls="dia_mes" role="tab" data-toggle="tab">De hoje e deste
+                                mês</a>
                         </li>
-                        <li role="presentation"><a href="#semana" aria-controls="profile" role="tab" data-toggle="tab">2 semana</a></li>
-                        <li role="presentation"><a href="#mes" aria-controls="messages" role="tab" data-toggle="tab">Tarefas deste mês</a></li>
+                        <li role="presentation">
+                            <a href="#dia" aria-controls="mes" role="tab" data-toggle="tab">De todos os dias deste
+                                mês</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#mes" aria-controls="dia" role="tab" data-toggle="tab">De todos os dias de um mês
+                                qualquer</a>
+                        </li>
                     </ul>
 
-                    <!--<div class="row form-group">
-                        <label class="control-label col-md-5 text-primary"><strong>Ocultar as atividades
-                                recorrentes</strong></label>
-                        <div class="col-md-7">
-                            <div id="busca_scheduler" class="btn-group btn-group-sm" data-toggle="buttons">
-                                <label class="btn btn-default">
-                                    <input type="checkbox" name="mes" value="1"> Deste mês
-                                </label>
-                                <label class="btn btn-default">
-                                    <input type="checkbox" name="semana" value="1"> Do número
-                                    desta semana
-                                </label>
-                                <label class="btn btn-default">
-                                    <input type="checkbox" name="dia" value="1"> De hoje
-                                </label>
-                            </div>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="dia_mes"
+                             style="overflow-y: auto; max-height: 100%;">
+                            <?php foreach ($scheduler['atividades'] as $k => $atividades): ?>
+                                <?php if (!($atividades->dia == date('d') and $atividades->mes == date('m'))) {
+                                    continue;
+                                } ?>
+                                <hr>
+                                <div id="scheduler_diario_<?= $atividades->id; ?>"
+                                     class="scheduler_item <?= $atividades->class_dia; ?> <?= $atividades->class_mes; ?>">
+                                    <h4><strong>Atividade:</strong> <?= nl2br($atividades->atividade); ?></h4>
+                                    <div><strong>Objetivo(s):</strong> <?= nl2br($atividades->objetivos); ?></div>
+                                    <div class="text-right">
+                                        <button type="button" class="btn btn-danger btn-xs"
+                                                onclick="excluir_scheduler('<?= $atividades->id; ?>')">Excluir
+                                        </button>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                            <br>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="dia"
+                             style="overflow-y: auto; max-height: 100%;">
+                            <?php foreach ($scheduler['atividades'] as $k => $atividades): ?>
+                                <?php if ($atividades->mes != date('m')) {
+                                    continue;
+                                } ?>
+                                <hr>
+                                <div id="scheduler_diario_<?= $atividades->id; ?>"
+                                     class="scheduler_item <?= $atividades->class_dia; ?> <?= $atividades->class_mes; ?>">
+                                    <h4><strong>Atividade:</strong> <?= nl2br($atividades->atividade); ?></h4>
+                                    <div><strong>Objetivo(s):</strong> <?= nl2br($atividades->objetivos); ?></div>
+                                    <div class="text-right">
+                                        <button type="button" class="btn btn-danger btn-xs"
+                                                onclick="excluir_scheduler('<?= $atividades->id; ?>')">Excluir
+                                        </button>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                            <br>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="mes" style="overflow-y: auto; max-height: 100%;">
+                            <?php foreach ($scheduler['atividades'] as $k => $atividades): ?>
+                                <?php if (!(empty($atividades->mes) and $atividades->dia)) {
+                                    continue;
+                                } ?>
+                                <hr>
+                                <div id="scheduler_mensal_<?= $atividades->id; ?>"
+                                     class="scheduler_item <?= $atividades->class_dia; ?> <?= $atividades->class_mes; ?>">
+                                    <h4><strong>Atividade:</strong> <?= nl2br($atividades->atividade); ?></h4>
+                                    <div><strong>Objetivo(s):</strong> <?= nl2br($atividades->objetivos); ?></div>
+                                    <div class="text-right">
+                                        <button type="button" class="btn btn-danger btn-xs"
+                                                onclick="excluir_scheduler('<?= $atividades->id; ?>')">Excluir
+                                        </button>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                            <br>
                         </div>
                     </div>
-                    <hr>-->
-                    <form id="form_scheduler" action="#" method="POST" autocomplete="off">
-                        <?php foreach ($scheduler['atividades'] as $k => $atividades): ?>
-                            <div id="scheduler_<?= $atividades->atividade; ?>"
-                                 class="scheduler_item <?= $atividades->class_dia; ?> <?= $atividades->class_semana; ?> <?= $atividades->class_mes; ?>">
-                                <h4><strong>Atividade:</strong> <?= nl2br($atividades->atividade); ?></h4>
-                                <div><strong>Objetivo(s):</strong> <?= nl2br($atividades->objetivos); ?></div>
-                                <div class="text-right">
-                                    <button type="button" class="btn btn-danger btn-xs"
-                                            onclick="excluir_scheduler('<?= $atividades->atividade; ?>')">Excluir
-                                    </button>
-                                    <button type="button" class="btn btn-warning btn-xs"
-                                            onclick="salvar_scheduler('<?= $atividades->atividade; ?>');">Não lembrar
-                                        novamente
-                                    </button>
-                                </div>
-                                <?php if ($k < $scheduler['total']): ?>
-                                    <hr>
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
-                        <br>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -226,40 +235,38 @@ require_once "header.php";
             document.title = 'CORPORATE RH - LMS - Home';
 
             $("#eventCalendarDefault").eventCalendar({
-                eventsjson: '<?= base_url('agenda/verAgenda'); ?>',
-                startWeekOnMonday: false,
-                openEventInNewWindow: true,
-                showDescription: true,
-                monthNames: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-                    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
-                dayNames: ['Domingo', 'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira',
-                    'Quinta-Feira', 'Sexta-Feira', 'Sábado'],
-                dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
-                txt_noEvents: "Não há eventos para este período",
-                txt_SpecificEvents_prev: "",
-                txt_SpecificEvents_after: " - Eventos:",
-                txt_next: "Próximo",
-                txt_prev: "Anterior",
-                txt_NextEvents: "VEJA ABAIXO SUAS ATIVIDADES PROGRAMADAS PARA SEREM EXECUTADAS!",
-                txt_GoToEventUrl: "Ir ao evento",
-                txt_NumAbbrevTh: "",
-                txt_NumAbbrevSt: "",
-                txt_NumAbbrevNd: "",
-                txt_NumAbbrevRd: "",
-                txt_loading: "Carregando...",
-                jsonDateFormat: 'human'// link to events json
+                'eventsjson': '<?= base_url('agenda/verAgenda'); ?>',
+                'startWeekOnMonday': false,
+                'openEventInNewWindow': true,
+                'showDescription': true,
+                'monthNames': ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                'dayNames': ['Domingo', 'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado'],
+                'dayNamesShort': ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+                'txt_noEvents': 'Não há eventos para este período',
+                'txt_SpecificEvents_prev': '',
+                'txt_SpecificEvents_after': ' - Eventos:',
+                'txt_next': 'Próximo',
+                'txt_prev': 'Anterior',
+                'txt_NextEvents': 'VEJA ABAIXO SUAS ATIVIDADES PROGRAMADAS PARA SEREM EXECUTADAS!',
+                'txt_GoToEventUrl': 'Ir ao evento',
+                'txt_NumAbbrevTh': '',
+                'txt_NumAbbrevSt': '',
+                'txt_NumAbbrevNd': '',
+                'txt_NumAbbrevRd': '',
+                'txt_loading': 'Carregando...',
+                'jsonDateFormat': 'human'// link to events json
             });
 
             //datetime picker start
 
 
             $(".form_datetime-component").datetimepicker({
-                format: "dd/mm/yyyy   hh:ii",
-                minuteStep: 1,
-                autoclose: true,
-                todayBtn: true,
-                language: 'pt',
-                pickerPosition: "bottom-left"
+                'format': 'dd/mm/yyyy   hh:ii',
+                'minuteStep': 1,
+                'autoclose': true,
+                'todayBtn': true,
+                'language': 'pt',
+                'pickerPosition': 'bottom-left'
             });
 
             //datetime picker end
@@ -269,69 +276,50 @@ require_once "header.php";
             }
         });
 
-        $('#busca_scheduler .btn').on('click', function () {
-            setTimeout(function () {
-                var dia = $('#busca_scheduler [name="dia"]').is(':checked') === false;
-                var semana = $('#busca_scheduler [name="semana"]').is(':checked') === false;
-                var mes = $('#busca_scheduler [name="mes"]').is(':checked') === false;
-                console.log([dia, semana, mes]);
-                $('#form_scheduler .scheduler_item').hide();
-                if (dia) {
-                    $('#form_scheduler .scheduler_dia').show();
-                }
-                if (semana) {
-                    $('#form_scheduler .scheduler_semana').show();
-                }
-                if (mes) {
-                    $('#form_scheduler .scheduler_mes').show();
-                }
-            });
-        });
-
-        function salvar_scheduler(atividade) {
+        function salvar_scheduler() {
             $('#btnSaveScheduler').prop('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('home/atualizarScheduler') ?>',
                 'type': 'POST',
                 'dataType': 'json',
-                'data': {'atividade': atividade},
+                'data': {
+                    'dia': '<?= $scheduler['dia'] ?>',
+                    'semana': '<?= $scheduler['semana'] ?>',
+                    'mes': '<?= $scheduler['mes'] ?>'
+                },
                 'beforeSend': function () {
                     $('#modal_scheduler .btn').prop('disabled', true);
                 },
                 'success': function (json) {
                     if (json.status) {
-                        $('#scheduler_' + atividade).remove();
-                        if ($('.scheduler_item').size() === 0) {
-                            $('#modal_scheduler').modal('hide');
-                        }
+                        $('#modal_scheduler .btn').prop('disabled', false);
+                        $('#btnSaveScheduler').prop('disabled', true);
                     } else if (json.erro) {
                         alert(json.erro);
                     }
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
-                    $('#btnSaveScheduler').prop('disabled', false);
-                },
-                'beforeSend': function () {
                     $('#modal_scheduler .btn').prop('disabled', false);
                 }
             });
         }
 
-        function excluir_scheduler(atividade) {
+        function excluir_scheduler(group_id) {
             if (confirm('Deseja excluir a atividade?')) {
                 $('#btnSaveScheduler').prop('disabled', true);
                 $.ajax({
                     'url': '<?php echo site_url('home/excluirScheduler') ?>',
                     'type': 'POST',
                     'dataType': 'json',
-                    'data': {'atividade': atividade},
+                    'data': {'id': group_id},
                     'beforeSend': function () {
                         $('#modal_scheduler .btn').prop('disabled', true);
                     },
                     'success': function (json) {
                         if (json.status) {
-                            $('#scheduler_' + atividade).remove();
+                            $('#scheduler_diario_' + group_id).remove();
+                            $('#scheduler_mensal_' + group_id).remove();
                             if ($('.scheduler_item').size() === 0) {
                                 $('#modal_scheduler').modal('hide');
                             }
@@ -343,7 +331,7 @@ require_once "header.php";
                         alert('Error get data from ajax');
                         $('#btnSaveScheduler').prop('disabled', false);
                     },
-                    'beforeSend': function () {
+                    'complete': function () {
                         $('#modal_scheduler .btn').prop('disabled', false);
                     }
                 });
@@ -367,19 +355,19 @@ require_once "header.php";
 
         $('#form .filtro').on('change', function () {
             $.ajax({
-                url: "<?php echo site_url('agenda/atualizarFiltro') ?>",
-                type: "GET",
-                data: {
-                    depto: $('#depto').val(),
-                    area: $('#area').val(),
-                    usuario: $('#usuario').val()
+                'url': '<?php echo site_url('agenda/atualizarFiltro') ?>',
+                'type': 'GET',
+                'dataType': 'json',
+                'data': {
+                    'depto': $('#depto').val(),
+                    'area': $('#area').val(),
+                    'usuario': $('#usuario').val()
                 },
-                dataType: "JSON",
-                success: function (json) {
+                'success': function (json) {
                     $('#area').html($(json.area).html());
                     $('#usuario').html($(json.usuario).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
                 }
             });
@@ -391,27 +379,27 @@ require_once "header.php";
                 var aviso = '#alert-function';
 
                 $.ajax({
-                    url: '<?= base_url('agenda/finalizar'); ?>',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {id: id},
-                    beforeSend: function () {
-                        $('html, body').animate({scrollTop: 0}, 1500);
+                    'url': '<?= base_url('agenda/finalizar'); ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'beforeSend': function () {
+                        $('html, body').animate({'scrollTop': 0}, 1500);
                         $(aviso).html('<div class="alert alert-info">Carregando...</div>').hide().fadeIn('slow');
                     },
-                    error: function () {
-                        $(aviso).html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                    },
-                    success: function (data) {
-                        $('html, body').animate({scrollTop: 0}, 1500);
-                        if (parseInt(data['retorno'])) {
-                            $(aviso).html('<div class="alert alert-success">' + data['aviso'] + '</div>').hide().fadeIn('slow', function () {
-                                if (parseInt(data['redireciona']))
-                                    window.location = data['pagina'];
+                    'success': function (json) {
+                        $('html, body').animate({'scrollTop': 0}, 1500);
+                        if (parseInt(json['retorno'])) {
+                            $(aviso).html('<div class="alert alert-success">' + json['aviso'] + '</div>').hide().fadeIn('slow', function () {
+                                if (parseInt(json['redireciona']))
+                                    window.location = json['pagina'];
                             });
                         } else {
-                            $(aviso).html('<div class="alert alert-danger">' + data['aviso'] + '</div>').hide().fadeIn('slow');
+                            $(aviso).html('<div class="alert alert-danger">' + json['aviso'] + '</div>').hide().fadeIn('slow');
                         }
+                    },
+                    'error': function () {
+                        $(aviso).html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                     }
                 });
             }
@@ -422,34 +410,35 @@ require_once "header.php";
                 var aviso = '#alert-function';
 
                 $.ajax({
-                    url: '<?= base_url('agenda/excluir'); ?>',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {id: id},
-                    beforeSend: function () {
-                        $('html, body').animate({scrollTop: 0}, 1500);
+                    'url': '<?= base_url('agenda/excluir'); ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'beforeSend': function () {
+                        $('html, body').animate({'scrollTop': 0}, 1500);
                         $(aviso).html('<div class="alert alert-info">Carregando...</div>').hide().fadeIn('slow');
                     },
-                    error: function () {
-                        $(aviso).html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                    },
-                    success: function (data) {
-                        $('html, body').animate({scrollTop: 0}, 1500);
-                        if (parseInt(data['retorno'])) {
-                            $(aviso).html('<div class="alert alert-success">' + data['aviso'] + '</div>').hide().fadeIn('slow', function () {
-                                if (parseInt(data['redireciona']))
-                                    window.location = data['pagina'];
+                    'success': function (json) {
+                        $('html, body').animate({'scrollTop': 0}, 1500);
+                        if (parseInt(json['retorno'])) {
+                            $(aviso).html('<div class="alert alert-success">' + json['aviso'] + '</div>').hide().fadeIn('slow', function () {
+                                if (parseInt(json['redireciona']))
+                                    window.location = json['pagina'];
                             });
                         } else {
-                            $(aviso).html('<div class="alert alert-danger">' + data['aviso'] + '</div>').hide().fadeIn('slow');
+                            $(aviso).html('<div class="alert alert-danger">' + json['aviso'] + '</div>').hide().fadeIn('slow');
                         }
+                    },
+                    'error': function () {
+                        $(aviso).html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                     }
                 });
             }
         }
 
     </script>
+
 <?php
-require_once "end_js.php";
-require_once "end_html.php";
+require_once 'end_js.php';
+require_once 'end_html.php';
 ?>

@@ -507,8 +507,9 @@ class Colaboradores extends MY_Controller
 //            redirect(site_url('apontamento_colaboradores'));
 //        }
         if ($funcionario->hash_acesso) {
-            $this->load->library('encrypt');
-            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $this->load->library('encrypt');
+//            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $funcionario->hash_acesso = json_decode($funcionario->hash_acesso, true);
         } else {
             $funcionario->hash_acesso = 'null';
         }
@@ -629,6 +630,8 @@ class Colaboradores extends MY_Controller
         $data['area'] = $this->input->post('area');
         $data['setor'] = $this->input->post('setor');
         $data['cnpj'] = $this->input->post('cnpj');
+        $data['telefone'] = $this->input->post('telefone');
+        $data['email'] = $this->input->post('email');
         $data['contrato'] = $this->input->post('contrato');
         $data['dataeditado'] = mdate("%Y-%m-%d %H:%i:%s");
         $data['status'] = $this->input->post('status');
@@ -717,5 +720,112 @@ class Colaboradores extends MY_Controller
 
         $this->m_pdf->pdf->Output('Colaboradores.pdf', 'D');
     }
+
+
+    public function gerenciarContratos()
+    {
+        $idUsuario = $this->input->post('id_usuario');
+
+        $rowsCurriculos = $this->db
+            ->select('arquivo, descricao')
+            ->where('colaborador', $idUsuario)
+            ->where('tipo', 15)
+            ->order_by('descricao', 'asc')
+            ->get('documentos')
+            ->result();
+
+        $curriculos = ['' => 'selecione...'];
+
+        foreach ($rowsCurriculos as $rowCurriculo) {
+            $curriculos[convert_accented_characters($rowCurriculo->arquivo)] = $rowCurriculo->descricao;
+        }
+
+        $rowsContratos = $this->db
+            ->select('arquivo, descricao')
+            ->where('colaborador', $idUsuario)
+            ->where('tipo', 16)
+            ->order_by('descricao', 'asc')
+            ->get('documentos')
+            ->result();
+
+        $contratos = ['' => 'selecione...'];
+
+        foreach ($rowsContratos as $rowContrato) {
+            $contratos[convert_accented_characters($rowContrato->arquivo)] = $rowContrato->descricao;
+        }
+
+        $data = [
+            'curriculos' => form_dropdown('', $curriculos, ''),
+            'contratos' => form_dropdown('', $contratos, '')
+        ];
+
+        echo json_encode($data);
+    }
+
+
+    public function salvarContrato()
+    {
+        if ($this->session->userdata('tipo') != 'empresa') {
+            redirect(site_url('ei/colaboradores'));
+        }
+
+        $data = $this->input->post();
+
+        $data['datacadastro'] = date('Y-m-d H:i:s');
+        $data['usuario'] = $this->session->userdata('id');
+
+        if ($data['colaborador'] < 1) {
+            exit(json_encode(array('retorno' => 0, 'aviso' => 'Erro ao salvar arquivo, id do colaborador não identificado ', 'redireciona' => 0)));
+        }
+
+        if (!empty($_FILES['arquivo'])) {
+            $config['upload_path'] = './arquivos/documentos/colaborador/';
+            $config['allowed_types'] = 'pdf';
+            $config['max_size'] = '102400';
+
+            $this->load->library('upload', $config);
+            $_FILES['arquivo']['name'] = utf8_encode($_FILES['arquivo']['name']);
+
+            if ($this->upload->do_upload('arquivo')) {
+                $foto = $this->upload->data();
+                $data['arquivo'] = $foto['file_name'];
+
+                if ($foto['file_ext'] === '.doc' || $foto['file_ext'] === '.docx') {
+                    shell_exec("unoconv -f pdf " . $config['upload_path'] . $foto['file_name']);
+                    $data['arquivo'] = $foto['raw_name'] . ".pdf";
+                    unlink($config['upload_path'] . $foto['file_name']);
+                }
+
+                $this->db->trans_start();
+                $this->db->insert('documentos', $data);
+                $this->db->trans_complete();
+
+                if ($this->db->trans_status() == false) {
+                    exit(json_encode(['erro' => 'Erro ao salvar o arquivo.']));
+                }
+            } else {
+                exit(json_encode(['erro' => 'Erro no upload do arquivo: ' . $this->upload->display_errors()]));
+            }
+        }
+
+        echo json_encode(['status' => true]);
+    }
+
+
+    public function excluirContrato()
+    {
+        $urlArquivo = './arquivos/documentos/colaborador/' . $this->input->post('arquivo');
+
+        if (!is_file($urlArquivo)) {
+            exit(json_encode(['erro' => 'Arquivo não encontrado.']));
+        }
+
+        if (!unlink($urlArquivo)) {
+            exit(json_encode(['erro' => 'Não foi possível excluir o arquivo.']));
+        }
+
+        echo json_encode(['status' => true]);
+    }
+
 
 }

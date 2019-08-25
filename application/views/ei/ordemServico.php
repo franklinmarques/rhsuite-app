@@ -333,7 +333,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('ei/ordemServico/ajaxList/') ?>',
+                    'url': '<?php echo site_url('ei/ordemServico/ajaxList') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.busca = $('#busca').serialize();
@@ -397,7 +397,7 @@
 
         $('#diretoria').on('change', function () {
             $.ajax({
-                'url': '<?php echo site_url('ei/ordemServico/atualizarContratos/') ?>',
+                'url': '<?php echo site_url('ei/ordemServico/atualizarContratos') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -424,7 +424,7 @@
 
         function atualizarFiltro() {
             $.ajax({
-                'url': '<?php echo site_url('ei/ordemServico/atualizarFiltro/') ?>',
+                'url': '<?php echo site_url('ei/ordemServico/atualizarFiltro') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
@@ -485,7 +485,7 @@
             $('.combo_nivel1').hide();
 
             $.ajax({
-                'url': '<?php echo site_url('ei/ordemServico/ajaxEdit/') ?>',
+                'url': '<?php echo site_url('ei/ordemServico/ajaxEdit') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
@@ -515,11 +515,8 @@
         }
 
         function selecionar_os() {
-            $('.bootstrap-duallistbox-container').find('*').prop('disabled', true);
-            $('#btnSaveCopiaOS').prop('disabled', true);
-
             $.ajax({
-                'url': '<?php echo site_url('ei/ordemServico/copiarOS/') ?>',
+                'url': '<?php echo site_url('ei/ordemServico/copiarOS') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -527,14 +524,18 @@
                     'semestre': $('#form_copia_os [name="semestre_anterior"]:checked').val(),
                     'id': $('#ordens_servico').val()
                 },
+                'beforeSend': function () {
+                    $('.bootstrap-duallistbox-container').find('*').prop('disabled', true);
+                    $('#btnSaveCopiaOS').prop('disabled', true);
+                },
                 'success': function (json) {
                     $('#ordens_servico').html($(json.ordens_servico).html());
                     demo2.bootstrapDualListbox('refresh', true);
-                    $('.bootstrap-duallistbox-container').find('*').prop('disabled', false);
-                    $('#btnSaveCopiaOS').prop('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('.bootstrap-duallistbox-container').find('*').prop('disabled', false);
                     $('#btnSaveCopiaOS').prop('disabled', false);
                 }
@@ -547,7 +548,7 @@
             $('.combo_nivel1').hide();
 
             $.ajax({
-                'url': '<?php echo site_url('ei/ordemServico/ajaxEditEscola/') ?>',
+                'url': '<?php echo site_url('ei/ordemServico/ajaxEditEscola') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
@@ -571,12 +572,8 @@
 
 
         $('#municipio').on('change', function () {
-            $('.bootstrap-duallistbox-container').find('*').prop('disabled', true);
-            $('#btnSaveEscolas').prop('disabled', true);
-            $('#municipio2').val();
-
             $.ajax({
-                'url': '<?php echo site_url('ei/ordemServico/atualizarEscolas/') ?>',
+                'url': '<?php echo site_url('ei/ordemServico/atualizarEscolas') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -584,14 +581,19 @@
                     'municipio': $('#municipio').val(),
                     'escolas': $('#escola').val()
                 },
+                'beforeSend': function () {
+                    $('.bootstrap-duallistbox-container').find('*').prop('disabled', true);
+                    $('#btnSaveEscolas').prop('disabled', true);
+                    $('#municipio2').val();
+                },
                 'success': function (json) {
                     $('#escola').html($(json.escola).html());
                     demo1.bootstrapDualListbox('refresh', true);
-                    $('.bootstrap-duallistbox-container').find('*').prop('disabled', false);
-                    $('#btnSaveEscolas').prop('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('.bootstrap-duallistbox-container').find('*').prop('disabled', false);
                     $('#btnSaveEscolas').prop('disabled', false);
                 }
@@ -600,11 +602,8 @@
 
 
         $('#municipio2').on('change', function () {
-            $('.bootstrap-duallistbox-container').find('*').prop('disabled', true);
-            $('#btnSaveEscolas').prop('disabled', true);
-
             $.ajax({
-                'url': '<?php echo site_url('ei/ordemServico/filtrarEscolasSelecionadas/') ?>',
+                'url': '<?php echo site_url('ei/ordemServico/filtrarEscolasSelecionadas') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -612,17 +611,21 @@
                     'municipio': $('#municipio2').val(),
                     'escolas': $('#escola').val()
                 },
+                'beforeSend': function () {
+                    $('.bootstrap-duallistbox-container').find('*').prop('disabled', true);
+                    $('#btnSaveEscolas').prop('disabled', true);
+                },
                 'success': function (json) {
                     $('.demo1 option:selected').hide();
                     $.each(json.escolas, function (key, value) {
                         $('.demo1 option:selected[value="' + value + '"]').show();
                     });
                     demo1.bootstrapDualListbox('refresh', true);
-                    $('.bootstrap-duallistbox-container').find('*').prop('disabled', false);
-                    $('#btnSaveEscolas').prop('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('.bootstrap-duallistbox-container').find('*').prop('disabled', false);
                     $('#btnSaveEscolas').prop('disabled', false);
                 }
@@ -631,7 +634,6 @@
 
 
         function save() {
-            $('#btnSave').text('Salvando...').attr('disabled', true);
             var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('ei/ordemServico/ajaxAdd') ?>';
@@ -644,13 +646,14 @@
                 'type': 'POST',
                 'data': $('#form').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSave').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     if (textStatus) {
@@ -658,19 +661,22 @@
                     } else {
                         alert('Error adding / update data');
                     }
+                },
+                'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
         function save_copia_os() {
-            $('#btnSaveCopiaOS').text('Criando cópia(s)...').attr('disabled', true);
-
             $.ajax({
                 'url': '<?php echo site_url('ei/ordemServico/salvarCopiaOS') ?>',
                 'type': 'POST',
                 'data': $('#form_copia_os').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveCopiaOS').text('Criando cópia(s)...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_copia_os').modal('hide');
@@ -679,7 +685,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-                    $('#btnSaveCopiaOS').text('Criar cópia(s)').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     if (textStatus) {
@@ -687,6 +692,8 @@
                     } else {
                         alert('Error adding / update data');
                     }
+                },
+                'complete': function () {
                     $('#btnSaveCopiaOS').text('Criar cópia(s)').attr('disabled', false);
                 }
             });
@@ -696,20 +703,19 @@
             $('.demo1 option:selected').show();
             demo1.bootstrapDualListbox('refresh', true);
 
-            $('#btnSaveEscolas').text('Salvando...').attr('disabled', true);
-
             $.ajax({
                 'url': '<?php echo site_url('ei/ordemServico/ajaxAddEscola') ?>',
                 'type': 'POST',
                 'data': $('#form_escolas').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveEscolas').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_escolas').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveEscolas').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     if (textStatus) {
@@ -717,26 +723,27 @@
                     } else {
                         alert('Error adding / update data');
                     }
+                },
+                'complete': function () {
                     $('#btnSaveEscolas').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
         function save_curso() {
-            $('#btnSaveCurso').text('Salvando...').attr('disabled', true);
-
             $.ajax({
                 'url': '<?php echo site_url('ei/ordemServico/ajaxAddCurso') ?>',
                 'type': 'POST',
                 'data': $('#form_curso').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveCurso').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_curso').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveCurso').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     if (textStatus) {
@@ -744,26 +751,27 @@
                     } else {
                         alert('Error adding / update data');
                     }
+                },
+                'complete': function () {
                     $('#btnSaveCurso').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
         function save_profissional() {
-            $('#btnSaveProfissional').text('Salvando...').attr('disabled', true);
-
             $.ajax({
                 'url': '<?php echo site_url('ei/ordemServico/ajaxAddProfissional') ?>',
                 'type': 'POST',
                 'data': $('#form_profissional').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveProfissional').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_profissional').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveProfissional').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     if (textStatus) {
@@ -771,6 +779,8 @@
                     } else {
                         alert('Error adding / update data');
                     }
+                },
+                'complete': function () {
                     $('#btnSaveProfissional').text('Salvar').attr('disabled', false);
                 }
             });
@@ -798,7 +808,7 @@
                             reload_table();
                         }
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                         alert('Error deleting data');
                     }
@@ -813,7 +823,7 @@
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {'id': id},
-                    'success': function (data) {
+                    'success': function (json) {
                         reload_table();
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {

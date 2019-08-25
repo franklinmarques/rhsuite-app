@@ -94,7 +94,7 @@ class CursosDisciplinas extends MY_Controller
                 FROM (SELECT a.id, 
                              a.nome,
                              a2.nome AS diretoria,
-                             c.nome AS escola
+                             CONCAT(c.codigo, ' - ', c.nome) AS escola
                       FROM ei_cursos a
                       INNER JOIN ei_diretorias a2 ON 
                                  a2.id = a.id_diretoria
@@ -253,9 +253,10 @@ class CursosDisciplinas extends MY_Controller
     {
         $id = $this->input->post('id');
 
-        $this->db->select('a.id, a.nome');
+        $this->db->select("a.id, CONCAT(a.codigo, ' - ', a.nome) AS nome", false);
         $this->db->join('ei_diretorias b', 'b.id = a.id_diretoria', 'left');
         $this->db->where('b.id', $id);
+        $this->db->order_by('a.codigo', 'asc');
         $this->db->order_by('a.nome', 'asc');
         $escolas = array_column($this->db->get('ei_escolas a')->result(), 'nome', 'id');
 

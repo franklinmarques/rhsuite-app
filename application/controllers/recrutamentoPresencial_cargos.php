@@ -88,6 +88,10 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         $escolaridade = $this->db->get('escolaridade')->result();
         $data['escolaridade'] = ['' => 'selecione...'] + array_column($escolaridade, 'nome', 'id');
 
+        $estados = $this->db->order_by('estado', 'asc')->get('estados')->result();
+        $data['estados'] = ['' => 'selecione...'] + array_column($estados, 'estado', 'cod_uf');
+        $cidades = $this->db->where('cod_uf', 35)->order_by('municipio', 'asc')->get('municipios')->result();
+        $data['cidades'] = ['' => 'selecione...'] + array_column($cidades, 'municipio', 'cod_mun');
         /*if ($data['requisicao']) {
             $this->load->view('recrutamentoPresencial_cargo', $data);
         } else {
@@ -327,6 +331,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
                        s.antecedentes_criminais,
                        s.restricoes_financeiras,
                        s.data_exame_admissional,
+                       s.endereco_exame_admissional,
                        s.resultado_exame_admissional,
                        s.nome_status,
                        s.data_admissao,
@@ -336,6 +341,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
                        s.aproveitamento2,
                        s.id_candidato,
                        s.observacoes,
+                       s.desempenho_perfil,
                        CASE WHEN s.aproveitamento1 BETWEEN 0 AND 20 THEN 'Insuficiente'
                             WHEN s.aproveitamento1 BETWEEN 21 AND 40 THEN 'Fraco'
                             WHEN s.aproveitamento1 BETWEEN 41 AND 60 THEN 'Médio'
@@ -354,6 +360,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
                              d.id AS id_candidato,
                              d.id_usuario,
                              d.observacoes,
+                             d.desempenho_perfil,
                              IF(CHAR_LENGTH(d.observacoes) > 0, 'Obs', '') AS observacoes2,
                              IFNULL(e.nome, i.nome) AS candidato,
                              IFNULL(e.telefone, i.telefone) AS telefone,
@@ -387,7 +394,8 @@ class RecrutamentoPresencial_cargos extends MY_Controller
                                   WHEN 1 THEN 'Com restrições'
                                   WHEN 0 THEN 'Sem restrições'
                                   END AS restricoes_financeiras,
-                             DATE_FORMAT(d.data_exame_admissional, '%d/%m/%Y') AS data_exame_admissional,
+                             DATE_FORMAT(d.data_exame_admissional, '%d/%m/%Y %H:%i') AS data_exame_admissional,
+                             d.endereco_exame_admissional,
                              CASE d.resultado_exame_admissional
                                   WHEN 1 THEN 'Apto'
                                   WHEN 0 THEN 'Não apto'
@@ -428,7 +436,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
                       FROM requisicoes_pessoal a
                       INNER JOIN requisicoes_pessoal_candidatos d
                                  ON d.id_requisicao = a.id
-                      INNER JOIN recrutamento_usuarios e
+                      LEFT JOIN recrutamento_usuarios e
                                 ON e.id = d.id_usuario
                       LEFT JOIN empresa_cargos b
                                  ON b.id = a.id_cargo
@@ -488,7 +496,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
                 $row[] = '
                           <button class="btn btn-sm btn-info" href="javascript:void(0)" onclick="documentos(' . $requisicao->id_candidato . ');" title="Gerenciar documentos"><i class="glyphicon glyphicon-file"></i></button>
                           <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir candidato" onclick="delete_candidato(' . "'" . $requisicao->id_candidato . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                          <a class="btn btn-sm  ' . $btnObs . '" href="javascript:void(0)" title="Editar observações" onclick="edit_observacoes(\'' . $requisicao->candidato . '\',' . $requisicao->id_candidato . ', \'' . $requisicao->observacoes . '\')">Obs.</a>
+                          <a class="btn btn-sm  ' . $btnObs . '" href="javascript:void(0)" title="Editar observações" onclick="edit_observacoes(\'' . $requisicao->candidato . '\',' . $requisicao->id_candidato . ', \'' . $requisicao->observacoes . '\', \'' . $requisicao->desempenho_perfil . '\')">Obs.</a>
                           ';
             } else {
                 $row[] = '
@@ -569,6 +577,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
             $row[] = $requisicao->status;
             $row[] = $requisicao->id_usuario;
             $row[] = $requisicao->candidato;
+            $row[] = $requisicao->endereco_exame_admissional;
 
             $data[] = $row;
         }
@@ -590,14 +599,19 @@ class RecrutamentoPresencial_cargos extends MY_Controller
 
 
         $this->db->select('a.id, b.id AS id_usuario, a.nome, f.municipio, g.tipo AS deficiencia');
-        $this->db->select('a.telefone, a.email, a.fonte_contratacao, a.status, b.id_requisicao, h.id AS id_usuario_google');
-        $this->db->join('requisicoes_pessoal_candidatos b', "b.id_usuario = a.id AND b.id_requisicao = '{$busca['id_requisicao']}'", 'left');
-        $this->db->join('requisicoes_pessoal c', "c.id = b.id_requisicao", 'left');
+        $this->db->select('a.telefone, a.email, a.fonte_contratacao, b.id_requisicao');
+//        $this->db->select('a.telefone, a.email, a.fonte_contratacao, b.id_requisicao, h.id AS id_usuario_google');
+        $this->db->select("(CASE a.status WHEN 'A' THEN 'Ativo' WHEN 'E' THEN 'Excluído' END) AS status", false);
+        $this->db->select('b.data_selecao, b.data_requisitante');
+        $this->db->select(["DATE_FORMAT(b.data_admissao, '%d/%m/%Y') AS data_admissao"], false);
+        $this->db->join('requisicoes_pessoal_candidatos b', 'b.id_usuario = a.id', 'left');
+//        $this->db->join('requisicoes_pessoal_candidatos b', "b.id_usuario = a.id AND b.id_requisicao = '{$busca['id_requisicao']}'", 'left');
+        $this->db->join('requisicoes_pessoal c', 'c.id = b.id_requisicao', 'left');
         $this->db->join('empresa_cargos d', 'd.id = c.id_cargo', 'left');
         $this->db->join('empresa_funcoes e', 'e.id = c.id_funcao', 'left');
         $this->db->join('municipios f', 'f.cod_mun = a.cidade', 'left');
         $this->db->join('deficiencias g', 'g.id = a.deficiencia', 'left');
-        $this->db->join('recrutamento_google h', 'h.nome = a.nome', 'left');
+//        $this->db->join('recrutamento_google h', 'h.nome = a.nome', 'left');
         $this->db->where('a.empresa', $this->session->userdata('empresa'));
         if (!empty($busca['estado'])) {
             $this->db->where('a.estado', $busca['estado']);
@@ -620,6 +634,12 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         if (!empty($busca['cargo_funcao'])) {
             $this->db->where("CONCAT(d.nome, '/' , e.nome) = ", "'{$busca['cargo_funcao']}'", false);
         }
+        if (!empty($busca['idade_minima'])) {
+            $this->db->where("a.data_nascimento <= SUBDATE(NOW(), INTERVAL {$busca['idade_minima']} YEAR)");
+        }
+        if (!empty($busca['idade_maxima'])) {
+            $this->db->where("a.data_nascimento >= SUBDATE(NOW(), INTERVAL {$busca['idade_maxima']} YEAR)");
+        }
         if (!empty($busca['resultado_selecao'])) {
             $this->db->where('b.resultado_selecao', $busca['resultado_selecao']);
         }
@@ -633,7 +653,6 @@ class RecrutamentoPresencial_cargos extends MY_Controller
 
         $config = array(
             'search' => ['nome', 'telefone', 'email', 'fonte_contratacao']
-//            'search' => ['nome', 'telefone', 'email', 'fonte_contratacao', 'observacoes']
         );
 
         $this->load->library('dataTables', $config);
@@ -644,29 +663,26 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         $data = array();
 
         foreach ($output->data as $row) {
-//            if ($row->id_requisicao or $row->id_usuario_google) {
-//                $btn = '<button type="button" class="btn btn-sm btn-success disabled" title="Incluído"><i class="glyphicon glyphicon-ok"></i></button>
-//                        <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')">CV</button>
-//                        <button type="button" class="btn btn-sm btn-primary" title="Histórico" onclick="historico_candidato(' . $row->id . ')">Hist.</button>';
-//            } else {
-//                $btn = '<button type="button" class="btn btn-sm btn-success" onclick="salvar_banco_novo(' . $row->id . ');" title="Incluir"><i class="glyphicon glyphicon-plus"></i></button>
-//                        <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')">CV</button>
-//                        <button type="button" class="btn btn-sm btn-primary" title="Histórico" onclick="historico_candidato(' . $row->id . ')">Hist.</button>';
-//            }
-            $data[] = array(
-                '<button type="button" class="btn btn-sm btn-success" onclick="salvar_banco_novo(' . $row->id . ');" title="Incluir"><i class="glyphicon glyphicon-plus"></i></button>
-                 <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')">CV</button>
-                 <button type="button" class="btn btn-sm btn-primary" title="Histórico" onclick="historico_candidato(' . $row->id . ')">Hist.</button>',
+            if ($row->id_requisicao) {
+                $btn = '<button type="button" class="btn btn-sm btn-success" onclick="salvar_banco_novo(' . $row->id . ');" title="Incluir"><i class="glyphicon glyphicon-plus"></i></button>
+                        <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')">CV</button>
+                        <button type="button" class="btn btn-sm btn-warning" title="Histórico" onclick="historico_candidato(' . $row->id . ')">Hist.</button>';
+            } else {
+                $btn = '<button type="button" class="btn btn-sm btn-success" onclick="salvar_banco_novo(' . $row->id . ');" title="Incluir"><i class="glyphicon glyphicon-plus"></i></button>
+                        <button type="button" class="btn btn-sm btn-primary" title="Detalhes" onclick="detalhes_candidato(' . $row->id . ')">CV</button>
+                        <button type="button" class="btn btn-sm btn-primary" title="Histórico" onclick="historico_candidato(' . $row->id . ')">Hist.</button>';
+            }
+            $data[] = [
+                $btn,
+                form_checkbox(['name' => 'id[]', 'value' => $row->id, 'class' => 'id_banco']),
+                $row->data_admissao,
                 $row->municipio,
                 $row->nome,
                 $row->deficiencia,
                 $row->telefone,
-                $row->email,
                 $row->fonte_contratacao,
-                $row->status,
-//                $row->observacoes,
                 $row->id
-            );
+            ];
         }
 
         $output->data = $data;
@@ -684,7 +700,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
 
 
         $this->db->select('a.*, b.id_requisicao', false);
-        $this->db->join('requisicoes_pessoal_candidatos b', "b.id_usuario_banco = a.id AND b.id_requisicao = {$idRequisicao}", 'left');
+        $this->db->join('requisicoes_pessoal_candidatos b', "b.id_usuario_banco = a.id AND b.id_requisicao = '{$idRequisicao}'", 'left');
         $post = $this->input->post();
         if (count(array_filter($busca)) > 0 or strlen($post['search']['value']) > 0) {
             if (!empty($busca['cliente'])) {
@@ -701,6 +717,12 @@ class RecrutamentoPresencial_cargos extends MY_Controller
             }
             if (!empty($busca['deficiencia'])) {
                 $this->db->where('a.deficiencia', $busca['deficiencia']);
+            }
+            if (!empty($busca['idade_minima'])) {
+                $this->db->where("a.data_nascimento <= SUBDATE(NOW(), INTERVAL {$busca['idade_minima']} YEAR)");
+            }
+            if (!empty($busca['idade_maxima'])) {
+                $this->db->where("a.data_nascimento >= SUBDATE(NOW(), INTERVAL {$busca['idade_maxima']} YEAR)");
             }
             if (!empty($busca['resultado_entrevista_rh'])) {
                 $this->db->where('a.resultado_entrevista_rh', $busca['resultado_entrevista_rh']);
@@ -1106,8 +1128,7 @@ class RecrutamentoPresencial_cargos extends MY_Controller
             exit(json_encode(array('erro' => 'Endereço de e-mail inválido')));
         }
 
-        $this->db->select('nome, email');
-        $this->db->where('nome', $data['nome']);
+        $this->db->select('nome, email')->where('nome', $data['nome']);
         if (strlen($data['email'])) {
             $this->db->or_where('email', $data['email']);
         }
@@ -1188,6 +1209,58 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         $status = $this->db->insert('requisicoes_pessoal_candidatos', $data);
 
         echo json_encode(array("status" => $status !== false));
+    }
+
+    public function ajax_addGrupoCandidatos()
+    {
+        parse_str($this->input->post('id'), $id);
+
+        if (!empty($id['id']) === false) {
+            exit(json_encode(array('erro' => 'Nenhum candidato selecionado.')));
+        }
+
+        $idUsuarios = $id['id'];
+        $idRequisicao = $this->input->post('id_requisicao');
+
+        $usuarios = $this->db
+            ->select('id')
+            ->where_in('id', $idUsuarios)
+            ->get('recrutamento_usuarios')
+            ->result();
+
+        if (empty($usuarios)) {
+            exit(json_encode(array('erro' => 'Nenhum candidato encontrado.')));
+        }
+
+        $data = array(
+            'id_requisicao' => $idRequisicao,
+            'antecedentes_criminais' => null,
+            'restricoes_financeiras' => null,
+            'resultado_exame_admissional' => null,
+            'observacoes' => null
+        );
+
+        $status = true;
+
+        $this->db->trans_begin();
+
+        foreach ($usuarios as $usuario) {
+            $data['id_usuario'] = $usuario->id;
+            $this->db->insert('requisicoes_pessoal_candidatos', $data);
+            if ($this->db->trans_status() === false) {
+                $status = false;
+                break;
+            }
+        }
+
+        if ($status === false) {
+            $this->db->trans_rollback();
+            exit(json_encode(array("erro" => 'Não foi possível cadastrar o(s) candidato(s).')));
+        }
+
+        $this->db->trans_commit();
+
+        echo json_encode(array("status" => $status));
     }
 
     public function ajax_addBanco()
@@ -1307,9 +1380,16 @@ class RecrutamentoPresencial_cargos extends MY_Controller
         }
         if (isset($data['data_exame_admissional'])) {
             if (strlen($data['data_exame_admissional']) > 0) {
-                $this->db->set('data_exame_admissional', date('Y-m-d', strtotime(str_replace('/', '-', $data['data_exame_admissional']))));
+                $this->db->set('data_exame_admissional', date('Y-m-d H:i', strtotime(str_replace('/', '-', $data['data_exame_admissional'] . ' ' . $data['hora_exame_admissional']))));
             } else {
                 $this->db->set('data_exame_admissional', null);
+            }
+        }
+        if (isset($data['endereco_exame_admissional'])) {
+            if (strlen($data['endereco_exame_admissional']) > 0) {
+                $this->db->set('endereco_exame_admissional', $data['endereco_exame_admissional']);
+            } else {
+                $this->db->set('endereco_exame_admissional', null);
             }
         }
         if (isset($data['resultado_exame_admissional'])) {
@@ -1331,6 +1411,13 @@ class RecrutamentoPresencial_cargos extends MY_Controller
                 $this->db->set('observacoes', $data['observacoes']);
             } else {
                 $this->db->set('observacoes', null);
+            }
+        }
+        if (isset($data['desempenho_perfil'])) {
+            if (strlen($data['desempenho_perfil']) > 0) {
+                $this->db->set('desempenho_perfil', $data['desempenho_perfil']);
+            } else {
+                $this->db->set('desempenho_perfil', null);
             }
         }
 
@@ -1636,6 +1723,87 @@ class RecrutamentoPresencial_cargos extends MY_Controller
 
             $this->load->view('pesquisa_relatorio', $data);
         }
+    }
+
+
+    public function enviarEmail()
+    {
+        $mensagem = $this->input->post('mensagem');
+        if (strlen($mensagem) == 0) {
+            exit(json_encode(['erro' => 'O texto de e-mail está vazio.']));
+        }
+
+        $tipo = $this->input->post('tipo');
+        if (strlen($tipo) == 0) {
+            exit(json_encode(['erro' => 'Selecione uma das opções de envio de e-mail.']));
+        }
+
+        $this->db->select("a.nome, a.email, IFNULL(b.email, a.email) AS email_empresa", false);
+        $this->db->join('usuarios b', 'b.id = a.empresa', 'left');
+        $this->db->where('a.id', $this->session->userdata('id'));
+        $remetente = $this->db->get('usuarios a')->row();
+
+        $email = [
+            'titulo' => 'E-mail de notificação para Processo Seletivo',
+            'remetente' => $this->session->userdata('id'),
+            'datacadastro' => date('Y-m-d H:i:s'),
+            'mensagem' => $mensagem
+        ];
+
+        $this->db
+            ->select('(CASE WHEN c.id IS NOT NULL THEN c.email WHEN d.id IS NOT NULL THEN d.email END) AS email', false)
+            ->join('requisicao_pessoal_candidatos b', 'b.id_requisicao = a.id')
+            ->join('recrutamento_usuarios c', 'c.id = b.id_usuario', 'left')
+            ->join('recrutamento_google d', 'd.id = b.id_usuario_banco', 'left')
+            ->where('a.id', $this->input->post('id_requisicao'));
+        if ($tipo === '3') {
+            $this->db->where('(b.aprovado = 1 OR b.data_exame_admissional IS NOT NULL)');
+        } elseif ($tipo === '2') {
+            $this->db->where('b.data_requisitante IS NOT NULL');
+        } elseif ($tipo === '1') {
+            $this->db->where('b.data_selecao IS NOT NULL');
+        }
+        $destinatarios = $this->db
+            ->group_by(['a.id', 'b.id'])
+            ->get('requisicoes_pessoal a')
+            ->result();
+
+        $this->load->library('email');
+
+        foreach ($destinatarios as $destinatario) {
+            $this->email->from($remetente->email, $remetente->nome);
+            $this->email->to($destinatario->email);
+
+            $this->email->subject($email['titulo']);
+            $this->email->message($email['mensagem']);
+
+            if ($this->email->send()) {
+                $email['destinatario'] = $destinatario->id_usuario;
+                $this->db->query($this->db->insert_string('mensagensrecebidas', $email));
+                $this->db->query($this->db->insert_string('mensagensenviadas', $email));
+            } else {
+                exit(json_encode(['erro' => 'Não foi possível enviar o e-mail.']));
+            }
+
+            $this->email->clear();
+        }
+
+        echo json_encode(['status' => true]);
+    }
+
+    public function filtrarCidades()
+    {
+        $arrCidades = $this->db
+            ->where('cod_uf', $this->input->post('cod_uf'))
+            ->order_by('municipio', 'asc')
+            ->get('municipios')
+            ->result();
+
+        $cidades = ['' => 'selecione...'] + array_column($arrCidades, 'municipio', 'cod_mun');
+
+        $data['cidades'] = form_dropdown('', $cidades, '');
+
+        echo json_encode($data);
     }
 
 }

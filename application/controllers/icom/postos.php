@@ -2,14 +2,14 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Propostas extends MY_Controller
+class Postos extends MY_Controller
 {
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->load->model('icom_propostas_model', 'propostas');
+        $this->load->model('icom_postos_model', 'postos');
     }
 
     //==========================================================================
@@ -17,16 +17,19 @@ class Propostas extends MY_Controller
     {
         $empresa = $this->session->userdata('empresa');
 
-        $deptos = $this->db
+        $arrDeptos = $this->db
             ->select('id, nome')
             ->where('id_empresa', $empresa)
+            ->where('nome', 'ICOM')
             ->order_by('nome', 'asc')
             ->get('empresa_departamentos')
             ->result();
 
+        $deptos = array_column($arrDeptos, 'nome', 'id');
+
         $data = [
             'status' => $this->propostas::status(),
-            'deptos' => ['' => 'Todos'] + array_column($deptos, 'nome', 'id'),
+            'deptos' => count($deptos) === 1 ? $deptos : ['' => 'Todos'] + $deptos,
             'areas' => ['' => 'Todas'],
             'setores' => ['' => 'Todos'],
             'depto_atual' => '',
@@ -43,9 +46,9 @@ class Propostas extends MY_Controller
         $depto = $this->input->post('id_depto');
         $area = $this->input->post('id_area');
         $setor = $this->input->post('id_setor');
-        $cliente = $this->input->post('id_cliente');
+        $usuario = $this->input->post('id_usuario');
 
-        $data = $this->carregarEstrutura($depto, $area, $setor, $cliente, true);
+        $data = $this->carregarEstrutura($depto, $area, $setor, $usuario, true);
 
         echo json_encode($data);
     }
@@ -56,24 +59,27 @@ class Propostas extends MY_Controller
         $depto = $this->input->post('id_depto');
         $area = $this->input->post('id_area');
         $setor = $this->input->post('id_setor');
-        $cliente = $this->input->post('id_cliente');
+        $usuario = $this->input->post('id_usuario');
 
-        $data = $this->carregarEstrutura($depto, $area, $setor, $cliente);
+        $data = $this->carregarEstrutura($depto, $area, $setor, $usuario);
 
         echo json_encode($data);
     }
 
     //==========================================================================
-    private function carregarEstrutura($depto = 0, $area = 0, $setor = 0, $cliente = 0, $todos = false)
+    private function carregarEstrutura($depto = 0, $area = 0, $setor = 0, $usuario = 0, $todos = false)
     {
         $rowDeptos = $this->db
             ->select('id, nome')
             ->where('id_empresa', $this->session->userdata('empresa'))
+            ->where('nome', 'ICOM')
             ->order_by('nome', 'asc')
             ->get('empresa_departamentos')
             ->result();
 
-        $deptos = ['' => ($todos ? 'Todos' : 'selecione...')] + array_column($rowDeptos, 'nome', 'id');
+        $arrDeptos = array_column($rowDeptos, 'nome', 'id');
+
+        $deptos = count($arrDeptos) === 1 ? $arrDeptos : ['' => ($todos ? 'Todos' : 'selecione...')] + $arrDeptos;
 
         $rowAreas = $this->db
             ->select('id, nome')
@@ -95,20 +101,34 @@ class Propostas extends MY_Controller
 
         $setores = ['' => ($todos ? 'Todos' : 'selecione...')] + array_column($rowSetores, 'nome', 'id');
 
-        $rowClientes = $this->db
-            ->select('id, nome')
-            ->where('id_empresa', $this->session->userdata('empresa'))
-            ->order_by('nome', 'asc')
-            ->get('icom_clientes')
+        $rowUsuarios = $this->db
+            ->select('a.id, a.nome')
+            ->join('empresa_setores b', 'b.id = a.id_setor OR b.nome = a.setor')
+            ->where('a.empresa', $this->session->userdata('empresa'))
+            ->where('b.id', $setor)
+            ->group_by('a.id')
+            ->order_by('a.nome', 'asc')
+            ->get('usuarios a')
             ->result();
 
-        $clientes = ['' => ($todos ? 'Todos' : 'selecione...')] + array_column($rowClientes, 'nome', 'id');
+        $usuarios = ['' => ($todos ? 'Todos' : 'selecione...')] + array_column($rowUsuarios, 'nome', 'id');
+
+        $rowFuncoes = $this->db
+            ->select('a.id, a.nome')
+            ->join('empresa_cargos b', 'b.id = a.id_cargo')
+            ->where('b.id_empresa', $this->session->userdata('empresa'))
+            ->order_by('a.nome', 'asc')
+            ->get('empresa_funcoes a')
+            ->result();
+
+        $funcoes = ['' => ($todos ? 'Todas' : 'selecione...')] + array_column($rowFuncoes, 'nome', 'id');
 
         $data = [
             'deptos' => form_dropdown('id_depto', $deptos, $depto, 'onchange="filtrar_alocacao();" class="form-control input-sm"'),
             'areas' => form_dropdown('id_area', $areas, $area, 'onchange="filtrar_alocacao();" class="form-control input-sm"'),
             'setores' => form_dropdown('id_setor', $setores, $setor, 'class="form-control input-sm"'),
-            'clientes' => form_dropdown('id_cliente', $clientes, $cliente, 'class="form-control input-sm"')
+            'usuarios' => form_dropdown('id_cliente', $usuarios, $usuario, 'class="form-control input-sm"'),
+            'funcoes' => form_dropdown('id_funcao', $funcoes, '', 'class="form-control input-sm"')
         ];
 
         return $data;
@@ -173,10 +193,10 @@ class Propostas extends MY_Controller
     //==========================================================================
     public function editar()
     {
-        $data = $this->propostas->find($this->input->post('id'));
+        $data = $this->postos->find($this->input->post('id'));
 
         if (empty($data)) {
-            exit(json_encode(['erro' => $this->propostas->errors()]));
+            exit(json_encode(['erro' => $this->postos->errors()]));
         }
 
         $data->valor = number_format($data->valor, 2, ',', '.');
@@ -223,37 +243,35 @@ class Propostas extends MY_Controller
     {
         $this->load->library('entities');
 
-        $data = $this->entities->create('icomPropostas', $this->input->post());
+        $data = $this->entities->create('icomPostos', $this->input->post());
 
-        $this->propostas->setValidationRule('id_depto', 'required|is_natural_no_zero|max_length[11]');
-        $this->propostas->setValidationRule('id_area', 'required|is_natural_no_zero|max_length[11]');
-        $this->propostas->setValidationRule('id_setor', 'required|is_natural_no_zero|max_length[11]');
+        $this->postos->setValidationRule('id_depto', 'required|is_natural_no_zero|max_length[11]');
+        $this->postos->setValidationRule('id_area', 'required|is_natural_no_zero|max_length[11]');
 
-        $this->propostas->setValidationLabel('codigo', 'Cód. Proposta');
-        $this->propostas->setValidationLabel('descricao', 'Descrição Proposta');
-        $this->propostas->setValidationLabel('id_depto', 'Departamento');
-        $this->propostas->setValidationLabel('id_area', 'Área');
-        $this->propostas->setValidationLabel('id_setor', 'Setor');
-        $this->propostas->setValidationLabel('id_cliente', 'Cliente');
-        $this->propostas->setValidationLabel('data_entrega', 'Data Entrega');
-        $this->propostas->setValidationLabel('probabilidade_fechamento', 'Probabilidade Fechamento');
-        $this->propostas->setValidationLabel('valor', 'Valor');
-        $this->propostas->setValidationLabel('detalhes', 'Detalhes Proposta');
-        $this->propostas->setValidationLabel('status', 'Status');
-        $this->propostas->setValidationLabel('custo_produto_servico', 'Custo Produto/Serviço');
-        $this->propostas->setValidationLabel('custo_administrativo', 'Custo Administrativo');
-        $this->propostas->setValidationLabel('impostos', 'Impostos');
-        $this->propostas->setValidationLabel('margem_liquida', 'Margem Líquida');
-        $this->propostas->setValidationLabel('margem_liquida_percentual', 'Margem Líquida Percentual');
-        $this->propostas->setValidationLabel('arquivo', 'Anexar Proposta');
+        $this->postos->setValidationLabel('id_depto', 'Departamento');
+        $this->postos->setValidationLabel('id_area', 'Área');
+        $this->postos->setValidationLabel('id_setor', 'Setor');
+        $this->postos->setValidationLabel('id_usuario', 'Colaborador(a)');
+        $this->postos->setValidationLabel('id_funcao', 'Função');
+        $this->postos->setValidationLabel('matricula', 'Matrícula');
+        $this->postos->setValidationLabel('categoria', 'CLT/MEI');
+        $this->postos->setValidationLabel('probabilidade_fechamento', 'Probabilidade Fechamento');
+        $this->postos->setValidationLabel('valor_hora_mei', 'Valor Hora Colaborador');
+        $this->postos->setValidationLabel('valor_mes_clt', 'Valor Remuneração Mensal');
+        $this->postos->setValidationLabel('qtde_horas_mei', 'Qtde. Horas/Mês');
+        $this->postos->setValidationLabel('qtde_meses_clt', 'Qtde. Horas/Mês');
+        $this->postos->setValidationLabel('horario_entrada', 'Horário Entrada');
+        $this->postos->setValidationLabel('horario_intervalo', 'Horário Saída Intervalo');
+        $this->postos->setValidationLabel('horario_retorno', 'Horário Entrada Intervalo');
+        $this->postos->setValidationLabel('horario_saida', 'Horário Saída');
 
-        $this->propostas->validate($data) or exit(json_encode(['erro' => $this->propostas->errors()]));
+        $this->postos->validate($data) or exit(json_encode(['erro' => $this->postos->errors()]));
 
-        unset($data->id_depto, $data->id_area, $data->id_setor);
+        unset($data->id_depto, $data->id_area);
 
-        $this->propostas->skipValidation();
+        $this->postos->skipValidation();
 
-        $this->propostas->save($data) or exit(json_encode(['erro' => $this->propostas->errors()]));
+        $this->postos->save($data) or exit(json_encode(['erro' => $this->postos->errors()]));
 
         echo json_encode(['status' => true]);
     }
@@ -261,81 +279,9 @@ class Propostas extends MY_Controller
     //==========================================================================
     public function excluir()
     {
-        $this->propostas->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->propostas->errors()]));
+        $this->postos->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->postos->errors()]));
 
         echo json_encode(['status' => true]);
-    }
-
-    //==========================================================================
-    public function relatorio($isPdf = false)
-    {
-        $data = $this->db
-            ->select('foto, foto_descricao')
-            ->where('id', $this->session->userdata('empresa'))
-            ->get('usuarios')
-            ->row_array();
-
-        $estrutura = $this->db
-            ->select('c.nome AS depto, b.nome AS area, a.nome AS setor')
-            ->join('empresa_areas b', 'b.id = a.id_area')
-            ->join('empresa_departamentos c', 'c.id = b.id_departamento')
-            ->where('a.id', $this->input->get('setor'))
-            ->get('empresa_setores a')
-            ->row();
-
-        $data['depto'] = $estrutura->depto;
-        $data['area'] = $estrutura->area;
-        $data['setor'] = $estrutura->setor;
-
-        $data['rows'] = $this->db
-            ->select("a.codigo, (CASE a.status WHEN 'A' THEN 'Aberta' WHEN 'G' THEN 'Ganha' WHEN 'P' THEN 'Perdida' END) AS status", false)
-            ->select('b.nome AS nome_cliente, a.descricao')
-            ->select('b.contato_principal, b.telefone_contato_principal, b.email_contato_principal')
-            ->join('icom_clientes b', 'b.id = a.id_cliente')
-            ->where('b.id_empresa', $this->session->userdata('empresa'))
-            ->where('a.id_setor', $this->input->get('setor'))
-            ->order_by('a.codigo', 'asc')
-            ->get('icom_propostas a')
-            ->result();
-
-        $this->load->library('Calendar');
-
-        $data['mes_ano'] = $this->calendar->get_month_name(date('m')) . '/' . date('Y');
-
-        $data['is_pdf'] = $isPdf === true;
-
-        if ($data['is_pdf']) {
-            return $this->load->view('icom/pdf_propostas', $data, true);
-        }
-
-        $this->load->view('icom/relatorio_propostas', $data);
-    }
-
-    //==========================================================================
-    public function pdf()
-    {
-        $this->load->library('m_pdf');
-
-        $stylesheet = '#propostas thead tr th { font-size: 12px; padding: 5px; text-align: center; font-weight: normal; } ';
-        $stylesheet .= '#propostas thead tr, #medicao tbody tr { border-width: 5px; border-color: #ddd; } ';
-        $stylesheet .= '#propostas tbody td { font-size: 11px; padding: 5px; } ';
-        $stylesheet .= '#table thead th { font-size: 12px; padding: 5px; background-color: #f5f5f5;} ';
-        $stylesheet .= '#table tbody td { font-size: 12px; padding: 5px; vertical-align: top; } ';
-
-        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
-        $this->m_pdf->pdf->writeHTML($this->relatorio(true));
-
-        $this->load->library('Calendar');
-
-        $mes_ano = $this->calendar->get_month_name(date('m')) . '/' . date('Y');
-
-        $this->m_pdf->pdf->Output('Relatório de Propostas_' . $mes_ano . '.pdf', 'D');
-    }
-
-    //==========================================================================
-    public function downloadArquivo()
-    {
-
     }
 
 }

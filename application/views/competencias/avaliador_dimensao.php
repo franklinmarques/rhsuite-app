@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <style>
     <?php if ($this->agent->is_mobile()): ?>
@@ -9,7 +9,7 @@ require_once APPPATH . "views/header.php";
     }
 
     <?php endif; ?>
-    
+
     .btn-success {
         background-color: #5cb85c;
         border-color: #4cae4c;
@@ -201,7 +201,7 @@ require_once APPPATH . "views/header.php";
 <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
 <!-- Css -->
 <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -224,53 +224,54 @@ require_once APPPATH . "views/end_js.php";
 
         //datatables
         table = $('#table').DataTable({
-            "info": false,
-            "processing": true, //Feature control the processing indicator.
-            "serverSide": true, //Feature control DataTables' server-side processing mode.
-            "order": [], //Initial no order.
-            "iDisplayLength": -1,
-            "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-            "lengthChange": (is_mobile === false),
-            "searching": (is_mobile === false),
-            "language": {
-                "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+            'info': false,
+            'processing': true, //Feature control the processing indicator.
+            'serverSide': true, //Feature control DataTables' server-side processing mode.
+            'order': [], //Initial no order.
+            'iDisplayLength': -1,
+            'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
+            'lengthChange': (is_mobile === false),
+            'searching': (is_mobile === false),
+            'language': {
+                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
             },
             // Load data for the table's content from an Ajax source
-            "ajax": {
-                "url": "<?php echo site_url('competencias/avaliador/ajax_dimensao/' . $id_avaliador . "/" . $id_competencia) ?>",
-                "type": "POST"
+            'ajax': {
+                'url': '<?php echo site_url('competencias/avaliador/ajax_dimensao/' . $id_avaliador . '/' . $id_competencia) ?>',
+                'type': 'POST'
             },
-
             //Set column definition initialisation properties.
-            "columnDefs": [
+            'columnDefs': [
                 {
-                    width: (is_mobile === false ? '100%' : 'auto'),
-                    targets: [0]
+                    'width': (is_mobile === false ? '100%' : 'auto'),
+                    'targets': [0]
                 },
                 {
-                    visible: (is_mobile === false),
-                    "targets": [1, 4]
+                    'visible': (is_mobile === false),
+                    'targets': [1, 4]
                 },
                 {
-                    className: "text-right",
-                    "orderable": (is_mobile === false),
-                    cellType: 'td',
-                    "targets": [1, 2, 3, 4]
+                    'className': 'text-right',
+                    'orderable': (is_mobile === false),
+                    'cellType': 'td',
+                    'targets': [1, 2, 3, 4]
                 },
                 {
-                    "mRender": function (data) {
+                    'mRender': function (data) {
                         if (data === null) {
-                            data = '<span class="text-muted">0</span>';
+                            data = '<span class='
+                            text - muted
+                            '>0</span>';
                         }
                         return data;
                     },
-                    "targets": [2, 3, 4]
+                    'targets': [2, 3, 4]
                 },
                 {
-                    className: "text-nowrap",
-                    "targets": [-1], //last column
-                    "orderable": false, //set not orderable
-                    "searchable": false //set not orderable
+                    'className': 'text-nowrap',
+                    'targets': [-1], //last column
+                    'orderable': false, //set not orderable
+                    'searchable': false //set not orderable
                 }
             ]
 
@@ -278,11 +279,11 @@ require_once APPPATH . "views/end_js.php";
 
         //datepicker
         $('.datepicker').datepicker({
-            autoclose: true,
-            format: "yyyy-mm-dd",
-            todayHighlight: true,
-            orientation: "top auto",
-            todayBtn: true
+            'autoclose': true,
+            'format': 'yyyy-mm-dd',
+            'todayHighlight': true,
+            'orientation': 'top auto',
+            'todayBtn': true
         });
 
     });
@@ -294,58 +295,53 @@ require_once APPPATH . "views/end_js.php";
 
         //Ajax Load data from ajax
         $.ajax({
-            url: "<?php echo site_url('competencias/avaliador/ajax_edit') ?>",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                cargo_dimensao: cargo_dimensao,
-                id: id
+            'url': "<?php echo site_url('competencias/avaliador/ajax_edit') ?>",
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'cargo_dimensao': cargo_dimensao,
+                'id': id
             },
-            success: function (data) {
-                $('[name="id"]').val(data.id);
-                $('[name="cargo_dimensao"]').val(data.cargo_dimensao);
-                $('[name="nivel"]').val(data.nivel);
-                $('[name="atitude"]').val(data.atitude);
+            'success': function (json) {
+                $('[name="id"]').val(json.id);
+                $('[name="cargo_dimensao"]').val(json.cargo_dimensao);
+                $('[name="nivel"]').val(json.nivel);
+                $('[name="atitude"]').val(json.atitude);
                 $('#nome_dimensao, #nome_dimensao_m').html(data.nome);
                 $('#modal_form').modal('show');
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
     }
 
+
     function reload_table() {
         table.ajax.reload(null, false); //reload datatable ajax 
     }
 
-    function save() {
-        $('#btnSave').text('Salvando...'); //change button text
-        $('#btnSave').attr('disabled', true); //set button disable 
 
-        // ajax adding data to database
+    function save() {
         $.ajax({
-            url: '<?php echo site_url('competencias/avaliador/ajax_save') ?>',
-            type: "POST",
-            data: $('#form').serialize(),
-            dataType: "JSON",
-            success: function (data) {
-                if (data.status) //if success close modal and reload ajax table
-                {
+            'url': '<?php echo site_url('competencias/avaliador/ajax_save') ?>',
+            'type': 'POST',
+            'data': $('#form').serialize(),
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSave').text('Salvando...').attr('disabled', true);
+            },
+            'success': function (json) {
+                if (json.status) {
                     $('#modal_form').modal('hide');
                     reload_table();
                 }
-
-                $('#btnSave').text('Salvar'); //change button text
-                $('#btnSave').attr('disabled', false); //set button enable 
-
-
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
-                $('#btnSave').text('Salvar'); //change button text
-                $('#btnSave').attr('disabled', false); //set button enable 
-
+            },
+            'complete': function () {
+                $('#btnSave').text('Salvar').attr('disabled', false);
             }
         });
     }
@@ -353,20 +349,20 @@ require_once APPPATH . "views/end_js.php";
     function delete_avaliadorDimensao(id) {
         //Ajax Load data from ajax
         $.ajax({
-            url: "<?php echo site_url('competencias/avaliador/ajax_delete') ?>",
-            type: "POST",
-            dataType: "JSON",
-            data: {
-                id: id
+            'url': '<?php echo site_url('competencias/avaliador/ajax_delete') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'id': id
             },
-            success: function (data) {
-                if (data.status) {
+            'success': function (json) {
+                if (json.status) {
                     reload_table();
                 } else {
                     alert('Não foi possível excluir o arquivo');
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -375,5 +371,5 @@ require_once APPPATH . "views/end_js.php";
 </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

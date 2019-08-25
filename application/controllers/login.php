@@ -136,8 +136,9 @@ class Login extends CI_Controller
             'uploadDir' => ""
         );
         if ($login->hash_acesso) {
-            $this->load->library('encrypt');
-            $hash_acesso = (array)json_decode($this->encrypt->decode($login->hash_acesso, base64_encode($login->id)));
+//            $this->load->library('encrypt');
+//            $hash_acesso = (array)json_decode($this->encrypt->decode($login->hash_acesso, base64_encode($login->id)));
+            $hash_acesso = json_decode($login->hash_acesso, true);
         } else {
             $hash_acesso = array();
         }

@@ -385,6 +385,18 @@
                                                    class="form-control text-center date"/>
                                         </div>
                                     </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Pagamento início</label>
+                                        <div class="col-md-3">
+                                            <input type="text" name="pagamento_inicio" value=""
+                                                   class="form-control valor"/>
+                                        </div>
+                                        <label class="control-label col-md-3">Pagamento reajuste</label>
+                                        <div class="col-md-3">
+                                            <input type="text" name="pagamento_reajuste" value=""
+                                                   class="form-control valor"/>
+                                        </div>
+                                    </div>
                                     <br>
                                     <div class="row form-group" style="margin-bottom: 5px;">
                                         <label class="control-label col-md-2"><?= $nomeMes1; ?></label>
@@ -617,104 +629,104 @@
 
         $('.date').mask('00/00/0000');
         $('.hora').mask('00:00');
-        $('.time').mask('#00:00', {reverse: true});
-        $('.desconto').mask('###0,00', {reverse: true});
-        $('.valor').mask('##.###.##0,00', {reverse: true});
-        $('[name="qtde_dias"]').mask('#0,00', {reverse: true});
-        $('[name="horas_diarias"], [name="horas_semanais"], [name="horas_mensais"]').mask('##0,00', {reverse: true});
-        $('[name="horas_semestre"]').mask('###0,00', {reverse: true});
+        $('.time').mask('#00:00', {'reverse': true});
+        $('.desconto').mask('###0,00', {'reverse': true});
+        $('.valor').mask('##.###.##0,00', {'reverse': true});
+        $('[name="qtde_dias"]').mask('#0,00', {'reverse': true});
+        $('[name="horas_diarias"], [name="horas_semanais"], [name="horas_mensais"]').mask('##0,00', {'reverse': true});
+        $('[name="horas_semestre"]').mask('###0,00', {'reverse': true});
 
         table = $('#table').DataTable({
-            info: false,
-            processing: true,
-            serverSide: true,
-            lengthChange: false,
-            searching: false,
-            paging: false,
-            order: [[1, 'asc'], [0, 'desc']],
-            language: {
-                url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+            'info': false,
+            'processing': true,
+            'serverSide': true,
+            'lengthChange': false,
+            'searching': false,
+            'paging': false,
+            'order': [[1, 'asc'], [0, 'desc']],
+            'language': {
+                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
             },
-            ajax: {
-                url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxList/') ?>',
-                type: 'POST',
+            'ajax': {
+                'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxList') ?>',
+                'type': 'POST',
                 'data': function (d) {
                     d.id_escola = '<?= $this->uri->rsegment(3) ?>';
                     return d;
                 }
             },
-            columnDefs: [
+            'columnDefs': [
                 {
-                    mRender: function (data) {
+                    'mRender': function (data) {
                         if (data === null) {
                             data = '<span class="text-muted">Sem cadastro</span>';
                         }
                         return data;
                     },
-                    className: 'text-nowrap',
-                    width: '10%',
-                    targets: [0]
+                    'className': 'text-nowrap',
+                    'width': '10%',
+                    'targets': [0]
                 },
                 {
-                    createdCell: function (td, cellData, rowData, row, col) {
+                    'createdCell': function (td, cellData, rowData, row, col) {
                         $(td).css('cursor', 'pointer').on('click', function () {
                             edit_dados(rowData[8], rowData[9]);
                         });
                     },
-                    width: '30%',
-                    targets: [1, 2]
+                    'width': '30%',
+                    'targets': [1, 2]
                 },
                 {
-                    width: '20%',
-                    targets: [3]
+                    'width': '20%',
+                    'targets': [3]
                 },
                 {
-                    className: 'text-center text-nowrap',
-                    targets: [4, 5, 6]
+                    'className': 'text-center text-nowrap',
+                    'targets': [4, 5, 6]
                 },
                 {
-                    className: 'text-center text-nowrap',
-                    targets: [-1],
-                    orderable: false
+                    'className': 'text-center text-nowrap',
+                    'targets': [-1],
+                    'orderable': false
                 }
             ],
-            rowsGroup: [0, 2, 3]
+            'rowsGroup': [0, 2, 3]
         });
 
         demo1 = $('.demo1').bootstrapDualListbox({
-            nonSelectedListLabel: 'Profissionais disponíveis',
-            selectedListLabel: 'Profissionais alocados',
-            preserveSelectionOnMove: 'moved',
-            moveOnSelect: false,
-            filterPlaceHolder: 'Filtrar',
-            helperSelectNamePostfix: false,
-            selectorMinimalHeight: 132,
-            infoText: false
+            'nonSelectedListLabel': 'Profissionais disponíveis',
+            'selectedListLabel': 'Profissionais alocados',
+            'preserveSelectionOnMove': 'moved',
+            'moveOnSelect': false,
+            'filterPlaceHolder': 'Filtrar',
+            'helperSelectNamePostfix': false,
+            'selectorMinimalHeight': 132,
+            'infoText': false
         });
 
         demo2 = $('.demo2').bootstrapDualListbox({
-            nonSelectedListLabel: 'Alunos alocados à unidade de ensino',
-            selectedListLabel: 'Alunos vinculados ao profissional',
-            preserveSelectionOnMove: 'moved',
-            moveOnSelect: false,
-            filterPlaceHolder: 'Filtrar',
-            helperSelectNamePostfix: false,
-            selectorMinimalHeight: 100,
-            infoText: false
+            'nonSelectedListLabel': 'Alunos alocados à unidade de ensino',
+            'selectedListLabel': 'Alunos vinculados ao profissional',
+            'preserveSelectionOnMove': 'moved',
+            'moveOnSelect': false,
+            'filterPlaceHolder': 'Filtrar',
+            'helperSelectNamePostfix': false,
+            'selectorMinimalHeight': 100,
+            'infoText': false
         });
 
     });
 
     $('.filtro').on('change', function () {
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/atualizarFiltros/') ?>',
-            type: 'POST',
-            dataType: 'JSON',
-            data: {
-                busca: $('.filtro').serialize(),
-                id_usuarios: $('#id_usuarios').val()
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/atualizarFiltros') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'busca': $('.filtro').serialize(),
+                'id_usuarios': $('#id_usuarios').val()
             },
-            success: function (json) {
+            'success': function (json) {
                 $('#area').html($(json.area).html());
                 $('#setor').html($(json.setor).html());
                 $('#cargo').html($(json.cargo).html());
@@ -723,7 +735,7 @@
                 $('#id_usuarios').html($(json.id_usuarios).html());
                 demo1.bootstrapDualListbox('refresh', true);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -783,17 +795,17 @@
 
     $('#municipio_sub1').on('change', function () {
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/atualizarSubstituto/') ?>',
-            type: 'POST',
-            dataType: 'json',
-            data: {
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/atualizarSubstituto') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
                 'municipio': this.value,
                 'id_usuario': $('#form_substituto1 [name="id_usuario"]').val()
             },
-            success: function (json) {
+            'success': function (json) {
                 $('#form_substituto1 [name="id_usuario_sub1"]').html($(json.usuario).html());
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -801,17 +813,17 @@
 
     $('#municipio_sub2').on('change', function () {
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/atualizarSubstituto/') ?>',
-            type: 'POST',
-            dataType: 'json',
-            data: {
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/atualizarSubstituto') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
                 'municipio': this.value,
                 'id_usuario': $('#form_substituto2 [name="id_usuario"]').val()
             },
-            success: function (json) {
+            'success': function (json) {
                 $('#form_substituto2 [name="id_usuario_sub2"]').html($(json.usuario).html());
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -825,13 +837,13 @@
         $('.help-block').empty();
 
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxEdit/') ?>',
-            type: 'POST',
-            dataType: 'JSON',
-            data: {
-                id_escola: '<?= $this->uri->rsegment(3); ?>'
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxEdit') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'id_escola': '<?= $this->uri->rsegment(3); ?>'
             },
-            success: function (json) {
+            'success': function (json) {
                 $('#form_profissionais [name="id_ordem_servico_escola"]').val(json.id_ordem_servico_escola);
                 $('#depto').html($(json.depto).html());
                 $('#area').html($(json.area).html());
@@ -848,7 +860,7 @@
                 $('#modal_profissionais').modal('show');
                 $('.combo_nivel1').hide();
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -864,14 +876,14 @@
         $('.help-block').empty();
 
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxEditHorario/') ?>',
-            type: 'POST',
-            dataType: 'JSON',
-            data: {
-                id_profissional: id_os_profissional,
-                id_escola: '<?= $this->uri->rsegment(3); ?>'
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxEditHorario') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'id_profissional': id_os_profissional,
+                'id_escola': '<?= $this->uri->rsegment(3); ?>'
             },
-            success: function (json) {
+            'success': function (json) {
                 $('#form [name="id_os_profissional"]').html($(json.id_os_profissional).html());
                 $('#alunos').html($(json.alunos).html());
                 demo2.bootstrapDualListbox('refresh', true);
@@ -882,7 +894,7 @@
                 $('#modal_form').modal('show');
                 $('.combo_nivel1').hide();
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -927,14 +939,14 @@
         $('.combo_nivel1').hide();
 
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxEditHorario/') ?>',
-            type: 'POST',
-            dataType: 'JSON',
-            data: {
-                id: id,
-                id_escola: '<?= $this->uri->rsegment(3); ?>'
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxEditHorario') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'id': id,
+                'id_escola': '<?= $this->uri->rsegment(3); ?>'
             },
-            success: function (json) {
+            'success': function (json) {
                 $('#form [name="id"]').val(json.id);
                 $('#form [name="dia_semana[]"]').val(json.dia_semana);
                 $('#form [name="horario_inicio[]"]').val(json.horario_inicio);
@@ -949,7 +961,7 @@
                 $('.horario:gt(0)').remove();
                 $('#modal_form').modal('show');
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -962,14 +974,14 @@
         $('.combo_nivel1').hide();
 
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxEditDados/') ?>',
-            type: 'POST',
-            dataType: 'JSON',
-            data: {
-                id_os_profissional: id_os_profissional,
-                id: id,
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxEditDados') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {
+                'id_os_profissional': id_os_profissional,
+                'id': id,
             },
-            success: function (json) {
+            'success': function (json) {
                 $('#profissional').text(json.input.nome_usuario);
                 $('#semana').text(json.input.nome_semana);
                 $('#periodo').text(json.input.nome_periodo);
@@ -982,7 +994,7 @@
                 $('.modal-title').text('Editar dados do profissional');
                 $('#modal_dados').modal('show');
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -995,13 +1007,11 @@
         $('.combo_nivel1').hide();
 
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxEditSubstituto1/') ?>',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                id: id
-            },
-            success: function (json) {
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxEditSubstituto1') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {'id': id},
+            'success': function (json) {
                 $('#form_substituto1 [name="id"]').val(json.id);
                 $('#municipio_sub1').html($(json.municipio).html());
                 $('#form_substituto1 [name="id_usuario_sub1"]').html($(json.id_usuario_sub1).html());
@@ -1009,7 +1019,7 @@
 
                 $('#modal_substituto1').modal('show');
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -1022,13 +1032,11 @@
         $('.combo_nivel1').hide();
 
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxEditSubstituto2/') ?>',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                id: id
-            },
-            success: function (json) {
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxEditSubstituto2') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {'id': id},
+            'success': function (json) {
                 $('#form_substituto2 [name="id"]').val(json.id);
                 $('#municipio_sub2').html($(json.municipio).html());
                 $('#form_substituto2 [name="id_usuario_sub2"]').html($(json.id_usuario_sub2).html());
@@ -1036,7 +1044,7 @@
 
                 $('#modal_substituto2').modal('show');
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -1044,28 +1052,30 @@
 
 
     function saveProfissionais() {
-        $('#btnSaveProfissionais').text('Salvando...').attr('disabled', true);
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxSave') ?>',
-            type: 'POST',
-            data: $('#form_profissionais').serialize(),
-            dataType: 'JSON',
-            success: function (json) {
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxSave') ?>',
+            'type': 'POST',
+            'data': $('#form_profissionais').serialize(),
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSaveProfissionais').text('Salvando...').attr('disabled', true);
+            },
+            'success': function (json) {
                 if (json.status) {
                     $('#modal_profissionais').modal('hide');
                     reload_table();
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSaveProfissionais').text('Salvar').attr('disabled', false);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 if (textStatus) {
                     alert(jqXHR.responseText);
                 } else {
                     alert('Error adding / update data');
                 }
+            },
+            'complete': function () {
                 $('#btnSaveProfissionais').text('Salvar').attr('disabled', false);
             }
         });
@@ -1073,7 +1083,6 @@
 
 
     function save() {
-        $('#btnSave, #btnSave2').text('Salvando...').attr('disabled', true);
         var url;
         if (save_method === 'add') {
             url = '<?php echo site_url('ei/ordemServico_profissionais/ajaxAddHorarios') ?>';
@@ -1082,26 +1091,29 @@
         }
 
         $.ajax({
-            url: url,
-            type: 'POST',
-            data: $('#form').serialize(),
-            dataType: 'JSON',
-            success: function (json) {
+            'url': url,
+            'type': 'POST',
+            'data': $('#form').serialize(),
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSave, #btnSave2').text('Salvando...').attr('disabled', true);
+            },
+            'success': function (json) {
                 if (json.status) {
                     $('#modal_form').modal('hide');
                     reload_table();
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 if (textStatus) {
                     alert(jqXHR.responseText);
                 } else {
                     alert('Error adding / update data');
                 }
+            },
+            'complete': function () {
                 $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);
             }
         });
@@ -1109,82 +1121,89 @@
 
     function save_dados() {
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxSaveDados') ?>',
-            type: 'POST',
-            data: $('#form_dados').serialize(),
-            dataType: 'JSON',
-            success: function (json) {
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxSaveDados') ?>',
+            'type': 'POST',
+            'data': $('#form_dados').serialize(),
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSaveDados').text('Salvando').attr('disabled', true);
+            },
+            'success': function (json) {
                 if (json.status) {
                     $('#modal_dados').modal('hide');
                     reload_table();
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSaveDados').text('Salvar').attr('disabled', false);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 if (textStatus) {
                     alert(jqXHR.responseText);
                 } else {
                     alert('Error adding / update data');
                 }
+            },
+            'complete': function () {
                 $('#btnSaveDados').text('Salvar').attr('disabled', false);
             }
         });
     }
 
     function save_substituto1() {
-        $('#btnSaveSubstituto1').text('Salvando').attr('disabled', true);
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxSaveSubstituto1') ?>',
-            type: 'POST',
-            data: $('#form_substituto1').serialize(),
-            dataType: 'json',
-            success: function (json) {
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxSaveSubstituto1') ?>',
+            'type': 'POST',
+            'data': $('#form_substituto1').serialize(),
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSaveSubstituto1').text('Salvando').attr('disabled', true);
+            },
+            'success': function (json) {
                 if (json.status) {
                     $('#modal_substituto1').modal('hide');
                     reload_table();
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSaveSubstituto1').text('Salvar').attr('disabled', false);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 if (textStatus) {
                     alert(jqXHR.responseText);
                 } else {
                     alert('Error adding / update data');
                 }
+            },
+            'complete': function () {
                 $('#btnSaveSubstituto1').text('Salvar').attr('disabled', false);
             }
         });
     }
 
     function save_substituto2() {
-        $('#btnSaveSubstituto2').text('Salvando').attr('disabled', true);
         $.ajax({
-            url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxSaveSubstituto2') ?>',
-            type: 'POST',
-            data: $('#form_substituto2').serialize(),
-            dataType: 'json',
-            success: function (json) {
+            'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxSaveSubstituto2') ?>',
+            'type': 'POST',
+            'data': $('#form_substituto2').serialize(),
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSaveSubstituto2').text('Salvando').attr('disabled', true);
+            },
+            'success': function (json) {
                 if (json.status) {
                     $('#modal_substituto2').modal('hide');
                     reload_table();
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSaveSubstituto2').text('Salvar').attr('disabled', false);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 if (textStatus) {
                     alert(jqXHR.responseText);
                 } else {
                     alert('Error adding / update data');
                 }
+            },
+            'complete': function () {
                 $('#btnSaveSubstituto2').text('Salvar').attr('disabled', false);
             }
         });
@@ -1193,14 +1212,14 @@
     function delete_profissional(id) {
         if (confirm('Deseja remover a programação semanal?')) {
             $.ajax({
-                url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxDeleteHorario') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (data) {
+                'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxDeleteHorario') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                     alert('Error deleting data');
                 }
@@ -1212,14 +1231,14 @@
     function limpar_profissional(id) {
         if (confirm('Deseja remover este profissional?')) {
             $.ajax({
-                url: '<?php echo site_url('ei/ordemServico_profissionais/ajaxDelete') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (data) {
+                'url': '<?php echo site_url('ei/ordemServico_profissionais/ajaxDelete') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                     alert('Error deleting data');
                 }

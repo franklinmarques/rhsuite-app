@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
     <!--main content start-->
     <section id="main-content">
@@ -256,7 +256,7 @@ require_once APPPATH . "views/header.php";
     </section>
     <!--main content end-->
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
     <!-- Css -->
     <link rel="stylesheet" href="<?php echo base_url("assets/js/bootstrap-fileinput/bootstrap-fileinput.css"); ?>">
@@ -272,32 +272,32 @@ require_once APPPATH . "views/end_js.php";
     <script src="<?php echo base_url("assets/js/jquery-tags-input/jquery.tagsinput.js"); ?>"></script>
 
     <script>
-        $('.tags').tagsInput({width: 'auto', defaultText: ''});
+        $('.tags').tagsInput({'width': 'auto', 'defaultText': ''});
 
         function autoComplete(campo, funcao) {
             $(campo).autocomplete({
-                source: function (request, response) {
+                'source': function (request, response) {
                     $.ajax({
-                        url: '<?= site_url('ead/cursos'); ?>/' + funcao,
-                        dataType: "json",
-                        data: {
-                            termo: request.term
+                        'url': '<?= site_url('ead/cursos'); ?>/' + funcao,
+                        'dataType': 'json',
+                        'data': {
+                            'termo': request.term
                         },
-                        success: function (data) {
-                            response($.map(data, function (item) {
+                        'success': function (json) {
+                            response($.map(json, function (item) {
                                 return {
-                                    label: item,
-                                    value: item
+                                    'label': item,
+                                    'value': item
                                 };
                             }));
                         }
                     });
                 },
-                autoFocus: true,
-                minLength: 0
+                'autoFocus': true,
+                'minLength': 0
             });
         }
     </script>
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

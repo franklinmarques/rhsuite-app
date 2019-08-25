@@ -94,6 +94,12 @@ class Avaliacaoexp_avaliador extends MY_Controller
         if (isset($busca['resultado']) and !empty($busca['resultado'])) {
             $sql .= ' AND h.id_avaliador IS NULL';
         }
+        if (!empty($busca['mes'])) {
+            $sql .= " AND MONTH(d.data_avaliacao) = '{$busca['mes']}'";
+        }
+        if (!empty($busca['ano'])) {
+            $sql .= " AND YEAR(d.data_avaliacao) = '{$busca['ano']}'";
+        }
         if ($tipo) {
             if ($tipo == '1') {
                 $tipo = 'A';

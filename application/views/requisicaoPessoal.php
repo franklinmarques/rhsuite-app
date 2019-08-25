@@ -20,8 +20,8 @@
                     <? //= site_url('requisicaoPessoal_vagas'); ?><!--">Relatório - RPs x-->
                     <!--                        Status</a>-->
                     <?php if (!($id_depto === '5' or $depto === 'Cuidadores')): ?>
-                        <a class="btn btn-primary" href="<?= site_url('requisicaoPessoal_consolidado'); ?>">Consolidado
-                            geral</a>
+                        <!--                        <a class="btn btn-primary" href="<?php //echo site_url('requisicaoPessoal_consolidado'); ?>">Consolidado
+                            geral</a>-->
                     <?php endif ?>
                     <br/>
                     <br/>
@@ -760,6 +760,14 @@
                                             <textarea name="observacoes" class="form-control" cols="2"></textarea>
                                         </div>
                                     </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-3">Para uso exclusivo do(a)
+                                            selecionador(a)</label>
+                                        <div class="col-md-8">
+                                            <textarea name="observacoes_selecionador" class="form-control"
+                                                      cols="2" <?php echo $nivel == 6 ? '' : 'disabled'; ?>></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -1000,7 +1008,7 @@
                         'targets': [4, 8]
                     },
                     {
-                        'searchable': false,
+                        'searchable': true,
                         'targets': [1, 3, 9, 10, 11, 12, 13, 14]
                     },
                     {
@@ -1517,6 +1525,13 @@
                         alert('Error deleting data');
                     }
                 });
+            }
+        }
+
+
+        function publicar_vaga_confidencial(id) {
+            if (confirm('Esta vaga é confidencial. Deseja publicá-la mesmo assim?')) {
+                publicar_vaga(id);
             }
         }
 

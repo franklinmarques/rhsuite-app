@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
     <style>
         .btn-success {
@@ -184,7 +184,7 @@ require_once APPPATH . "views/header.php";
     <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -217,55 +217,53 @@ require_once APPPATH . "views/end_js.php";
 
             //datatables
             table = $('#table').DataTable({
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.
-                "iDisplayLength": 500,
-                "lengthMenu": [[5, 10, 25, 50, 100, 250, 500], [5, 10, 25, 50, 100, 250, 500]],
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 500,
+                'lengthMenu': [[5, 10, 25, 50, 100, 250, 500], [5, 10, 25, 50, 100, 250, 500]],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('cd/supervisores/ajax_list/') ?>",
-                    "type": "POST",
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('cd/supervisores/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.busca = $('#busca').serialize();
                         return d;
                     }
                 },
-                //Set column definition initialisation properties.
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        width: '33%',
-                        targets: [0, 1]
+                        'width': '33%',
+                        'targets': [0, 1]
                     },
                     {
-                        className: 'text-center',
-                        targets: [2]
+                        'className': 'text-center',
+                        'targets': [2]
                     },
                     {
-                        width: '34%',
-                        targets: [3]
+                        'width': '34%',
+                        'targets': [3]
                     },
                     {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'className': 'text-nowrap',
+                        'orderable': false,
+                        'searchable': false,
+                        'targets': [-1]
                     }
                 ],
-                rowsGroup: [0, 1, -1, 2]
+                'rowsGroup': [0, 1, -1, 2]
             });
 
             demo2 = $('.demo2').bootstrapDualListbox({
-                nonSelectedListLabel: 'Unidades disponíveis',
-                selectedListLabel: 'Unidades selecionadas',
-                preserveSelectionOnMove: 'moved',
-                moveOnSelect: false,
-                filterPlaceHolder: 'Filtrar',
-                helperSelectNamePostfix: false,
-                selectorMinimalHeight: 132,
-                infoText: false
+                'nonSelectedListLabel': 'Unidades disponíveis',
+                'selectedListLabel': 'Unidades selecionadas',
+                'preserveSelectionOnMove': 'moved',
+                'moveOnSelect': false,
+                'filterPlaceHolder': 'Filtrar',
+                'helperSelectNamePostfix': false,
+                'selectorMinimalHeight': 132,
+                'infoText': false
             });
 
         });
@@ -276,35 +274,37 @@ require_once APPPATH . "views/end_js.php";
             }
         });
 
+
         $('#depto').on('change', function () {
             $.ajax({
-                url: "<?php echo site_url('cd/supervisores/atualizar_supervisores/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    depto: $('#depto').val()
+                'url': '<?php echo site_url('cd/supervisores/atualizar_supervisores') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'depto': $('#depto').val()
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#id_supervisor').html($(json.id_supervisor).html());
                     $('#depto').html($(json.depto).html());
                     $('#id_diretoria').html($(json.id_diretoria).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         });
 
+
         $('#id_supervisor, #id_diretoria').on('change', function () {
             $.ajax({
-                url: "<?php echo site_url('cd/supervisores/atualizar_unidades/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    id_diretoria: $('#id_diretoria').val(),
-                    id_supervisor: $('#id_supervisor').val()
+                'url': '<?php echo site_url('cd/supervisores/atualizar_unidades') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_diretoria': $('#id_diretoria').val(),
+                    'id_supervisor': $('#id_supervisor').val()
                 },
-                success: function (json) {
+                'success': function (json) {
                     if (json.erro !== undefined) {
                         alert(json.erro);
                         $('#id_diretoria, #id_supervisor').val('')
@@ -317,7 +317,7 @@ require_once APPPATH . "views/end_js.php";
                         demo2.bootstrapDualListbox('refresh', true);
                     }
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -353,20 +353,21 @@ require_once APPPATH . "views/end_js.php";
 
         function atualizarFiltro() {
             $.ajax({
-                url: "<?php echo site_url('cd/supervisores/atualizar_filtro/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: $('#busca').serialize(),
-                success: function (json) {
+                'url': '<?php echo site_url('cd/supervisores/atualizar_filtro') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
                     $('[name="busca[diretoria]"]').html($(json.diretoria).html());
                     $('[name="busca[supervisor]"]').html($(json.supervisor).html());
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         $('#limpa_filtro').on('click', function () {
             var busca = unescape($('#busca').serialize());
@@ -401,16 +402,15 @@ require_once APPPATH . "views/end_js.php";
             $('.form-group').removeClass('has-error'); // clear error class
             $('.help-block').empty(); // clear error string
 
-            //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('cd/supervisores/ajax_edit/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    diretoria: id_diretoria,
-                    supervisor: id_supervisor
+                'url': '<?php echo site_url('cd/supervisores/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'diretoria': id_diretoria,
+                    'supervisor': id_supervisor
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#depto').html($(json.depto).html());
                     $('#id_supervisor').html($(json.id_supervisor).html());
                     $('#id_diretoria').html($(json.id_diretoria).html());
@@ -422,66 +422,61 @@ require_once APPPATH . "views/end_js.php";
                     demo2.bootstrapDualListbox('refresh', true);
 
                     $('#form .nav-tabs a:first').tab('show');
-
                     $('#modal_form').modal('show');
-
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function reload_table() {
             table.ajax.reload(null, false); //reload datatable ajax
         }
 
-        function save() {
-            $('#btnSave').text('Salvando...'); //change button text
-            $('#btnSave').attr('disabled', true); //set button disable
 
-            // ajax adding data to database
+        function save() {
             $.ajax({
-                url: "<?php echo site_url('cd/supervisores/ajax_save') ?>",
-                type: "POST",
-                data: $('#form').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'url': '<?php echo site_url('cd/supervisores/ajax_save') ?>',
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function delete_supervisores(id_diretoria, id_supervisor) {
             if (confirm('Deseja desvincular o supervisor das unidades pertencentes à diretoria de ensino?')) {
                 if (confirm('Tem certeza? Esta ação não poderá ser desfeita.')) {
-                    // ajax delete data to database
                     $.ajax({
-                        url: "<?php echo site_url('cd/supervisores/ajax_delete') ?>",
-                        type: "POST",
-                        dataType: "JSON",
-                        data: {
-                            id_diretoria: id_diretoria,
-                            id_supervisor: id_supervisor
+                        'url': '<?php echo site_url('cd/supervisores/ajax_delete') ?>',
+                        'type': 'POST',
+                        'dataType': 'json',
+                        'data': {
+                            'id_diretoria': id_diretoria,
+                            'id_supervisor': id_supervisor
                         },
-                        success: function (data) {
-                            //if success reload ajax table
+                        'success': function (json) {
                             $('#modal_form').modal('hide');
                             reload_table();
                         },
-                        error: function (jqXHR, textStatus, errorThrown) {
+                        'error': function (jqXHR, textStatus, errorThrown) {
                             alert('Error deleting data');
                         }
                     });
@@ -492,5 +487,5 @@ require_once APPPATH . "views/end_js.php";
     </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

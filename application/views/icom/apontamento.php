@@ -151,6 +151,18 @@
                                             class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
+                                    <?php if ($this->session->userdata('nivel') != 11): ?>
+                                        <li><a href="<?= site_url('icom/colaboradores'); ?>"><i
+                                                        class="glyphicon glyphicon-list text-primary"></i> Colaboradores</a>
+                                        </li>
+                                    <?php endif; ?>
+                                    <li><a href="apontamento_contratos"><i
+                                                    class="glyphicon glyphicon-list text-primary"></i> Contratos</a>
+                                    </li>
+                                    <li><a href="javascript:void(0)" onclick="edit_posto();"><i
+                                                    class="glyphicon glyphicon-list text-primary"></i> Postos</a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
                                     <li><a href="javascript:;" onclick="iniciar_mes();"><i
                                                     class="glyphicon glyphicon-plus text-info"></i> Iniciar
                                             mês</a></li>
@@ -171,7 +183,7 @@
                                 </button>
                                 <span>
                                 <small>&emsp;<strong>Departamento:</strong> <span
-                                            id="alerta_depto"><?= empty($depto_atual) ? 'Todos' : $depto_atual ?></span></small><br>
+                                            id="alerta_depto"><?= empty($depto_atual) ? 'Todos' : $deptos[$depto_atual] ?></span></small><br>
                                 <small>&emsp;<strong>Área:</strong> <span
                                             id="alerta_area"><?= empty($area_atual) ? 'Todos' : $area_atual ?></span></small><br>
                                 <small>&emsp;<strong>Setor:</strong> <span
@@ -196,6 +208,15 @@
                                         Opções do mês <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-right">
+                                        <li><a href="javascript:void(0);" onclick="add_mes()"><i
+                                                        class="glyphicon glyphicon-import text-success"></i> Alocar
+                                                mês</a></li>
+                                        <li><a href="javascript:void(0);" onclick="excluir_mes()"><i
+                                                        class="glyphicon glyphicon-erase text-danger"></i> Limpar
+                                                mês</a></li>
+                                        <li><a href="#" data-toggle="modal" data-target="#modal_colaborador"><i
+                                                        class="glyphicon glyphicon-plus text-info"></i> Alocar
+                                                novo colaborador</a></li>
                                         <li><a href="javascript:void(0)" onclick="mapaCarregamentoDeOS();"><i
                                                         class="glyphicon glyphicon-list text-info"></i>
                                                 Rel. Mapa de Carregamento de O.S.</a></li>
@@ -239,7 +260,8 @@
                                            cellspacing="0" width="100%">
                                         <thead>
                                         <tr>
-                                            <th rowspan="2" class="warning">Período</th>
+                                            <th rowspan="2" class="warning">Nome colaborador</th>
+                                            <th rowspan="2" class="warning">Banco horas</th>
                                             <td colspan="31" class="date-width" id="dias"><strong>Dias</strong></td>
                                         </tr>
                                         <tr>
@@ -331,7 +353,162 @@
                             <h3 class="modal-title">Relatório de eventos</h3>
                         </div>
                         <div class="modal-body form">
-                            <form action="#" id="form" class="form-horizontal">
+                            <form action="#" id="form" class="form-horizontal" autocomplete="off">
+                                <input type="hidden" value="" name="id"/>
+                                <input type="hidden" value="" name="id_alocado"/>
+                                <input type="hidden" value="" name="data"/>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2"><strong>Colaborador(a):<br>Data:</strong></label>
+                                    <div class="col-md-6">
+                                        <p id="colaborador_data" class="form-control-static"></p>
+                                    </div>
+                                    <div class="col-sm-4 text-right text-nowrap">
+                                        <button type="button" class="btn btn-success" id="btnSaveEvento"
+                                                onclick="save_evento();"> Salvar
+                                        </button>
+                                        <button type="button" class="btn btn-danger" id="btnLimparEvento"
+                                                onclick="delete_evento();"> Excluir
+                                        </button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Tipo de evento <span
+                                                class="text-danger">*</span></label>
+                                    <div class="col col-md-3">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="FJ" checked>
+                                                Falta com atestado próprio
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="FN">
+                                                Falta sem atestado
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="FR">
+                                                Feriado
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="AE">
+                                                Apontamento extra
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col col-md-3">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="AJ">
+                                                Atraso com atestado próprio
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="AN">
+                                                Atraso sem atestado
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="PD">
+                                                Posto descoberto
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="PI">
+                                                Posto desativado
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col col-md-4">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="SJ">
+                                                Saída antec. com atestado próprio
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="SN">
+                                                Saída antecipada sem atestado
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Horário entrada</label>
+                                    <div class="col-md-2">
+                                        <input name="horario_entrada" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                    <label class="control-label col-md-2">Horário intervalo</label>
+                                    <div class="col-md-2">
+                                        <input name="horario_intervalo" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Horário retorno</label>
+                                    <div class="col-md-2">
+                                        <input name="horario_retorno" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                    <label class="control-label col-md-2">Horário saída</label>
+                                    <div class="col-md-2">
+                                        <input name="horario_saida" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Apontamento +</label>
+                                    <div class="col-md-2">
+                                        <input name="acrescimo_horas" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                    <label class="control-label col-md-2">Apontamento -</label>
+                                    <div class="col-md-2">
+                                        <input name="decrescimo_horas" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Desconto folha</label>
+                                    <div class="col-md-2">
+                                        <input name="desconto_folha" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                    <label class="control-label col-md-2">Observações</label>
+                                    <div class="col-md-5">
+                                        <textarea name="observacoes" class="form-control"
+                                                  rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- Bootstrap modal -->
+            <div class="modal fade" id="modal_form_old" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Relatório de eventos</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <form action="#" id="form_old" class="form-horizontal">
                                 <input type="hidden" value="" name="id_alocacao"/>
                                 <input type="hidden" value="" name="data"/>
                                 <input type="hidden" value="" name="periodo"/>
@@ -341,10 +518,10 @@
                                         <p id="data_periodo" class="form-control-static"></p>
                                     </div>
                                     <div class="col-sm-4 text-right text-nowrap">
-                                        <button type="button" class="btn btn-success" id="btnSaveEvento"
+                                        <button type="button" class="btn btn-success" id="btnSaveEventoOld"
                                                 onclick="save_evento();"> Salvar
                                         </button>
-                                        <button type="button" class="btn btn-danger" id="btnLimparEvento"
+                                        <button type="button" class="btn btn-danger" id="btnLimparEventoOld"
                                                 onclick="delete_evento();"> Excluir
                                         </button>
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar
@@ -473,6 +650,151 @@
                 </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
 
+            <!-- Bootstrap modal -->
+            <div class="modal fade" id="modal_posto" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Editar posto</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <form action="#" id="form_posto" class="form-horizontal" autocomplete="off">
+                                <input type="hidden" value="" name="id"/>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Departamento</label>
+                                    <div class="col-md-8">
+                                        <select name="id_depto" class="form-control posto_estrutura"
+                                                onchange="filtrar_posto_estrutura(this)">
+                                            <option value="">selecione...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Área</label>
+                                    <div class="col-md-8">
+                                        <select name="id_area" class="form-control posto_estrutura"
+                                                onchange="filtrar_posto_estrutura(this)">
+                                            <option value="">selecione...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Setor</label>
+                                    <div class="col-md-8">
+                                        <select name="id_setor" class="form-control posto_estrutura"
+                                                onchange="filtrar_posto_estrutura(this)">
+                                            <option value="">selecione...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Colaborador(a)</label>
+                                    <div class="col-md-8">
+                                        <select name="id_usuario" class="form-control posto_estrutura">
+                                            <option value="">selecione...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Função</label>
+                                    <div class="col-md-8">
+                                        <select name="id_funcao" class="form-control posto_estrutura">
+                                            <option value="">selecione...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Matrícula</label>
+                                    <div class="col-md-4">
+                                        <input type="text" name="matricula" class="form-control">
+                                    </div>
+                                    <label class="control-label col-md-2">CLT/MEI</label>
+                                    <div class="col-md-2">
+                                        <select name="categoria" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="CLT">CLT</option>
+                                            <option value="MEI">MEI</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h5>Colaborador MEI</h5>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-3">Valor hora colaborador</label>
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="basic-addon1">R$</span>
+                                            <input name="valor_mes_clt" type="text" class="form-control valor"
+                                                   aria-describedby="basic-addon1">
+                                        </div>
+                                        <span class="help-block"></span>
+                                    </div>
+                                    <label class="control-label col-md-2">Qtde. horas/mês</label>
+                                    <div class="col-md-2">
+                                        <input name="qtde_horas_mei" type="text" class="form-control text-center hora"
+                                               placeholder="hh:mm">
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h5>Colaborador CLT</h5>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-3">Valor remuneração mensal</label>
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="basic-addon1">R$</span>
+                                            <input name="valor_hora_mei" type="text" class="form-control valor"
+                                                   aria-describedby="basic-addon1">
+                                        </div>
+                                        <span class="help-block"></span>
+                                    </div>
+                                    <label class="control-label col-md-2">Qtde. horas/mês</label>
+                                    <div class="col-md-2">
+                                        <input name="qtde_meses_clt" type="text" class="form-control text-center hora"
+                                               placeholder="hh:mm">
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-3">Horário entrada</label>
+                                    <div class="col-md-2">
+                                        <input name="horario_entrada" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                    <label class="control-label col-md-3">Horário saída intervalo</label>
+                                    <div class="col-md-2">
+                                        <input name="horario_intervalo" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-3">Horário entrada intervalo</label>
+                                    <div class="col-md-2">
+                                        <input name="horario_retorno" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                    <label class="control-label col-md-3">Horário saída</label>
+                                    <div class="col-md-2">
+                                        <input name="horario_saida" type="text" value=""
+                                               class="form-control text-center hora" placeholder="hh:mm">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="btnSavePosto" onclick="save_posto();">
+                                Salvar
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar
+                            </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
         </section>
     </section>
     <!--main content end-->
@@ -510,12 +832,8 @@
 
 
             table = $('#table').DataTable({
-                'info': false,
                 'processing': true,
                 'serverSide': true,
-                'lengthChange': false,
-                'searching': false,
-                'paging': false,
                 'order': [0, 'asc'],
                 'language': {
                     'url': language
@@ -536,7 +854,7 @@
                         dt2.setFullYear(json.calendar.ano, (json.calendar.mes - 1));
 
                         var semana = 1;
-                        var colunasUsuario = 0;
+                        var colunasUsuario = 1;
                         for (i = 1; i <= 31; i++) {
                             if (i > 28) {
                                 if (i > json.calendar.qtde_dias) {
@@ -599,7 +917,7 @@
                                     if (rowData[col].length === 0) {
                                         return '<span style="color: #aaa;">Vazio</span>';
                                     } else {
-                                        return '<strong>Eventos cadastrados:</strong> ' + rowData[col];
+                                        return '<strong>Eventos cadastrados:</strong> ' + rowData[col]['tipo_evento'];
                                     }
                                 },
                                 'html': true
@@ -609,9 +927,9 @@
                                 'vertical-align': 'middle'
                             }).on('click', function () {
                                 $(td).popover('hide');
-                                gerenciar_eventos(row + 1, col);
+                                edit_evento(row + 1, col - 1);
                             });
-                            $(td).html(rowData[col]['status']);
+                            $(td).html(rowData[col]['tipo_evento']);
                         },
                         'className': 'text-center',
                         'orderable': false,
@@ -639,8 +957,8 @@
                 },
                 'success': function (json) {
                     $('#busca [name="id_depto"]').prop('disabled', false);
-                    $('#busca [name="id_area"]').replaceWith(json.areas).prop;
-                    $('#busca [name="id_setor"]').replaceWith(json.setores);
+                    $('#busca [name="id_area"]').html($(json.areas).html()).prop;
+                    $('#busca [name="id_setor"]').html($(json.setores).html());
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -649,6 +967,31 @@
                     $('#busca [name="id_depto"]').prop('disabled', false);
                     $('#busca [name="id_area"]').prop('disabled', false);
                     $('#busca [name="id_setor"]').prop('disabled', false);
+                }
+            });
+        }
+
+
+        function filtrar_posto_estrutura() {
+            $.ajax({
+                'url': '<?php echo site_url('icom/postos/montarEstrutura') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#form_posto .posto_estrutura').serialize(),
+                'beforeSend': function () {
+                    $('.posto_estrutura').prop('disabled', true);
+                },
+                'success': function (json) {
+                    $('#form_posto [name="id_area"]').html($(json.areas).html());
+                    $('#form_posto [name="id_setor"]').html($(json.setores).html());
+                    $('#form_posto [name="id_usuario"]').html($(json.usuarios).html());
+                    $('#form_posto [name="id_funcao"]').html($(json.funcoes).html());
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                },
+                'complete': function () {
+                    $('.posto_estrutura').prop('disabled', false);
                 }
             });
         }
@@ -791,59 +1134,21 @@
         }
 
 
-        function gerenciar_eventos(periodo, dia) {
-            $('#form')[0].reset();
-            $('#form input[type="hidden"]').val('');
-            $('.form-group').removeClass('has-error');
-            $('.help-block').empty();
-
-            $.ajax({
-                'url': '<?php echo site_url('icom/apontamento/gerenciarEventos/') ?>',
-                'type': 'POST',
-                'dataType': 'json',
-                'async': false,
-                'data': {
-                    'busca': busca,
-                    'periodo': periodo,
-                    'dia': dia
-                },
-                'success': function (json) {
-                    $.each(json, function (key, value) {
-                        // if ($('#form [name="' + key + '"]').is(':select') === false) {
-                        $('#form [name="' + key + '"]').val(value);
-                        // }
-                    });
-                    $('#data_periodo').html(json.data_periodo);
-                    $('#id').html(json.id);
-                    $('#form [name="id_cliente"]').html(json.id_cliente);
-                    $('#form [name="codigo_contrato"]').html(json.codigo_contrato);
-
-                    if ($('#id').val().length > 0) {
-                        save_method = 'update';
-                        $('#modal_form .modal-title').text('Editar evento operacional');
-                        $('#btnLimparEvento').show();
-                    } else {
-                        save_method = 'add';
-                        $('#modal_form .modal-title').text('Adicionar evento operacional');
-                        $('#btnLimparEvento').hide();
-                    }
-                    $('#modal_form').modal('show');
-                    $('.combo_nivel1').hide();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
-                }
-            });
-        }
-
-
-        function edit_evento(elem) {
+        function edit_evento(id_alocado, dia) {
             $.ajax({
                 'url': '<?php echo site_url('icom/apontamento/editarEvento') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
-                    'id': elem.value
+                    'id_alocado': id_alocado,
+                    'data': moment({
+                        'year': $('#busca [name="ano"]').val(),
+                        'month': $('#busca [name="mes"]').val() - 1,
+                        'day': dia
+                    }).format('YYYY-MM-DD')
+                },
+                'beforeSend': function () {
+                    $('#form')[0].reset();
                 },
                 'success': function (json) {
                     if (json.erro) {
@@ -852,7 +1157,11 @@
                     }
 
                     $.each(json, function (key, value) {
-                        $('#form [name="' + key + '"]').val(value);
+                        if ($('#form [name="' + key + '"]').prop('type') === 'radio') {
+                            $('#form [name="' + key + '"][value="' + value + '"]').prop('checked', value !== null);
+                        } else {
+                            $('#form [name="' + key + '"]').val(value);
+                        }
                     });
 
                     if (json.id) {
@@ -864,6 +1173,39 @@
                         $('#modal_form .modal-title').text('Adicionar evento operacional');
                         $('#btnLimparEvento').hide();
                     }
+
+                    $('#colaborador_data').html(json.colaborador_data);
+
+                    $('#modal_form').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function edit_posto() {
+            $.ajax({
+                'url': '<?php echo site_url('icom/apontamento/editarPosto') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': busca,
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
+
+                    $.each(json, function (key, value) {
+                        $('#form_posto [name="' + key + '"]').val(value);
+                    });
+
+                    $('#form_posto [name="id_depto"]').html($(json.deptos).html());
+                    $('#form_posto [name="id_area"]').html($(json.areas).html());
+                    $('#form_posto [name="id_setor"]').html($(json.setores).html());
+
+                    $('#modal_posto').modal('show');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -899,6 +1241,34 @@
                 }
             });
         }
+
+
+        function save_posto() {
+            $.ajax({
+                'url': '<?php echo site_url('icom/postos/salvar') ?>',
+                'type': 'POST',
+                'data': $('#form_posto').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSavePosto').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
+                        $('#modal_posto').modal('hide');
+                        reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                },
+                'complete': function () {
+                    $('#btnSavePosto').text('Salvar').attr('disabled', false);
+                }
+            });
+        }
+
 
         function delete_evento() {
             if (confirm('Deseja limpar o evento?')) {

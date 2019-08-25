@@ -260,7 +260,7 @@
         </section>
     </section>
 
-<?php require_once APPPATH . "views/end_js.php"; ?>
+<?php require_once APPPATH . 'views/end_js.php'; ?>
 
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
 
@@ -285,41 +285,42 @@
             $('.date').mask('00/00/0000');
 
             table = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                iDisplayLength: 500,
-                lengthMenu: [[5, 10, 25, 50, 100, 500, 1000], [5, 10, 25, 50, 100, 500, 1000]],
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 500,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, 1000], [5, 10, 25, 50, 100, 500, 1000]],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('cd/alunos/ajax_list/') ?>',
-                    type: 'POST',
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('cd/alunos/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.busca = $('#busca').serialize();
                         d.id_escola = '<?= $this->uri->rsegment(3, '') ?>';
                         return d;
                     }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        width: '25%',
-                        targets: [0, 1, 2, 5]
+                        'width': '25%',
+                        'targets': [0, 1, 2, 5]
                     },
                     {
-                        className: 'text-center',
-                        targets: [4]
+                        'className': 'text-center',
+                        'targets': [4]
                     },
                     {
-                        className: 'text-nowrap',
-                        targets: [-1],
-                        orderable: false,
-                        searchable: false
+                        'className': 'text-nowrap',
+                        'orderable': false,
+                        'searchable': false,
+                        'targets': [-1]
                     }
                 ]
             });
 
         });
+
 
         $('#limpa_filtro').on('click', function () {
             var busca = unescape($('#busca').serialize());
@@ -330,9 +331,11 @@
             atualizarFiltro();
         });
 
+
         $('.estrutura').on('change', function () {
             atualizar_estrutura();
         });
+
         $('#pesquisar').on('change', function () {
             atualizar_Filtro();
         });
@@ -345,79 +348,83 @@
             atualizar_periodos();
         });
 
+
         function atualizarFiltro() {
             $.ajax({
-                url: '<?php echo site_url('cd/alunos/atualizar_filtro/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: $('#busca').serialize(),
-                success: function (json) {
+                'url': '<?php echo site_url('cd/alunos/atualizar_filtro') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
                     $('[name="busca[diretoria]"]').html($(json.diretoria).html());
                     $('[name="busca[escola]').html($(json.escola).html());
                     $('[name="busca[supervisor]').html($(json.supervisor).html());
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function atualizar_estrutura() {
             $.ajax({
-                url: '<?php echo site_url('cd/alunos/ajax_estrutura/') ?>',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    depto: $('#depto').val(),
-                    area: $('#area').val(),
-                    setor: $('#setor').val()
+                'url': '<?php echo site_url('cd/alunos/ajax_estrutura') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'depto': $('#depto').val(),
+                    'area': $('#area').val(),
+                    'setor': $('#setor').val()
                 },
-                success: function (data) {
-                    $('#area').html($(data.area).html());
-                    $('#setor').html($(data.setor).html());
+                'success': function (json) {
+                    $('#area').html($(json.area).html());
+                    $('#setor').html($(json.setor).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function atualizar_escolas() {
             $.ajax({
-                url: '<?php echo site_url('cd/alunos/atualizar_escolas/') ?>',
-                type: 'POST',
-                dataType: 'html',
-                data: {
-                    id_diretoria: $('#id_diretoria').val(),
-                    id_escola: $('#id_escola').val()
+                'url': '<?php echo site_url('cd/alunos/atualizar_escolas') ?>',
+                'type': 'POST',
+                'dataType': 'html',
+                'data': {
+                    'id_diretoria': $('#id_diretoria').val(),
+                    'id_escola': $('#id_escola').val()
                 },
-                success: function (data) {
-                    $('#id_escola').html($(data).html());
+                'success': function (json) {
+                    $('#id_escola').html($(json).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function atualizar_periodos() {
             var id = $('#id_escola').val()
 
             if (id.length > 0) {
                 $.ajax({
-                    url: '<?php echo site_url('cd/alunos/atualizar_periodos/') ?>',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {
-                        id: id
+                    'url': '<?php echo site_url('cd/alunos/atualizar_periodos') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {
+                        'id': id
                     },
-                    success: function (data) {
-                        // $('#periodo_manha').prop('disabled', data.periodo_manha === '0');
-                        // $('#periodo_tarde').prop('disabled', data.periodo_tarde === '0');
-                        // $('#periodo_noite').prop('disabled', data.periodo_noite === '0');
+                    'success': function (json) {
+                        // $('#periodo_manha').prop('disabled', json.periodo_manha === '0');
+                        // $('#periodo_tarde').prop('disabled', json.periodo_tarde === '0');
+                        // $('#periodo_noite').prop('disabled', json.periodo_noite === '0');
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error get data from ajax');
                     }
                 });
@@ -425,6 +432,7 @@
                 $('#periodo_manha, #periodo_tarde, #periodo_noite').prop('disabled', false);
             }
         }
+
 
         function add_aluno() {
             save_method = 'add';
@@ -438,6 +446,7 @@
             $('.combo_nivel1').hide();
         }
 
+
         function edit_aluno(id) {
             save_method = 'update';
             $('#form')[0].reset();
@@ -446,11 +455,11 @@
             $('.help-block').empty();
 
             $.ajax({
-                url: '<?php echo site_url('cd/alunos/ajax_edit/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (json) {
+                'url': '<?php echo site_url('cd/alunos/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     $('#id_diretoria').val(json.id_diretoria);
                     // $('#periodo_manha').prop('disabled', json.escola_manha === '0');
                     // $('#periodo_tarde').prop('disabled', json.escola_tarde === '0');
@@ -462,24 +471,23 @@
                             $('[name="' + key + '"][value="' + value + '"]').prop('checked', value === '1');
                         }
                     });
-                    $('#modal_form').modal('show');
 
+                    $('#modal_form').modal('show');
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function reload_table() {
             table.ajax.reload(null, false);
         }
 
-        function save() {
-            $('#btnSave').text('Salvando...');
-            $('#btnSave').attr('disabled', true);
-            var url;
 
+        function save() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('cd/alunos/ajax_add') ?>';
             } else {
@@ -487,43 +495,49 @@
             }
 
             $.ajax({
-                url: url,
-                type: 'POST',
-                data: $('#form').serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    if (data.status) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
                     }
-
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     if (textStatus) {
                         alert(jqXHR.responseText);
                     } else {
                         alert('Error adding / update data');
                     }
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave').attr('disabled', false);
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function delete_aluno(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: '<?php echo site_url('cd/alunos/ajax_delete') ?>/',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {id: id},
-                    success: function (data) {
-                        $('#modal_form').modal('hide');
+                    'url': '<?php echo site_url('cd/alunos/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
+                        if (json.erro) {
+                            alert(json.erro);
+                        }
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
@@ -532,4 +546,4 @@
 
     </script>
 
-<?php require_once APPPATH . "views/end_html.php"; ?>
+<?php require_once APPPATH . 'views/end_html.php'; ?>

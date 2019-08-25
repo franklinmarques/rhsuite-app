@@ -259,7 +259,7 @@
                     alert(json.aviso);
                 } else if (json.retorno === 1) {
                     $('#modal_documento').modal('hide');
-                    reolad_documento();
+                    reload_documento();
                 }
             },
             'error': function (jqXHR, textStatus, errorThrown) {
@@ -280,7 +280,7 @@
                 'type': 'POST',
                 'dataType': 'json',
                 'success': function () {
-                    reolad_documento();
+                    reload_documento();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error deleting data');

@@ -181,7 +181,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('ead/clientes/ajaxList/') ?>',
+                    'url': '<?php echo site_url('ead/clientes/ajaxList') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         if ($('#clientes [name="busca_cliente"]').val() !== undefined) {
@@ -296,7 +296,6 @@
 
 
         function save() {
-            $('#btnSave, #btnSave2').text('Salvando...').attr('disabled', true);
             $('#form .form-group').removeClass('has-error');
             $('#form span.help-block').html('');
             var url = '<?php echo site_url('ead/clientes/ajaxUpdate') ?>';
@@ -316,12 +315,15 @@
                 'processData': false,
                 'contentType': false,
                 'cache': false,
+                'beforeSend': function () {
+                    $('#btnSave, #btnSave2').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     } else {
-                        $('#modal_form').animate({scrollTop: 0});
+                        $('#modal_form').animate({'scrollTop': 0});
                         if (json.msg) {
                             $.each(json.msg, function (key, value) {
                                 $('#form input[name="' + key + '"]').parents('div.form-group').addClass('has-error');
@@ -332,11 +334,11 @@
                             $('#alert_form').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
                         }
                     }
-
-                    $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     $('#alert_form').html('<div class="alert alert-warning">Erro ao salvar cliente/usuário</div>').hide().fadeIn('slow');
+                },
+                'complete': function () {
                     $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);
                 }
             });

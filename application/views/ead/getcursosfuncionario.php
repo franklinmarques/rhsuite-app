@@ -87,18 +87,18 @@
         if (confirm('Tem certeza que deseja excluir esse curso do funcionário?')) {
             // ajax delete data to database
             $.ajax({
-                url: "<?php echo site_url('ead/cursos_funcionario/ajax_delete') ?>",
-                type: "POST",
-                dataType: "JSON",
-                timeout: 9000,
-                data: {
-                    id: id
+                'url': '<?php echo site_url('ead/cursos_funcionario/ajax_delete') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'timeout': 9000,
+                'data': {
+                    'id': id
                 },
-                success: function (data) {
+                'success': function (json) {
                     //if success reload ajax table
                     location.reload();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Erro ao excluir treinamento');
                 }
             });

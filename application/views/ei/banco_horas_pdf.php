@@ -109,8 +109,11 @@
                 </td>
             </tr>
             <tr>
+                <!--<td>
+                    <span style="font-weight: bold;">Cliente:</span> <? /*= $diretoria; */ ?>
+                </td>-->
                 <td colspan="2">
-                    <span style="font-weight: bold;">Cliente:</span> <?= $diretoria; ?>
+                    <span style="font-weight: bold;">Saldo acumulado na data de <?= date('d/m/Y'); ?>:</span> <?= $saldo_acumulado_horas; ?>
                 </td>
             </tr>
             <tr>

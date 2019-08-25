@@ -11,14 +11,17 @@ class Icom_propostas_model extends MY_Model
     protected $validationRules = [
         'codigo' => 'required|is_natural_no_zero|max_length[11]',
         'id_cliente' => 'required|is_natural_no_zero|max_length[11]',
+        'id_setor' => 'required|is_natural_no_zero|max_length[11]',
         'descricao' => 'required|max_length[255]',
         'data_entrega' => 'required|valid_date',
+        'probabilidade_fechamento' => 'is_natural|less_than_equal_to[100]',
         'valor' => 'required|numeric|max_length[10]',
         'status' => 'required|in_list[A,G,P]',
         'custo_produto_servico' => 'numeric|max_length[10]',
         'custo_administrativo' => 'numeric|max_length[10]',
         'impostos' => 'numeric|max_length[10]',
         'margem_liquida' => 'numeric|max_length[10]',
+        'margem_liquida_percentual' => 'numeric|less_than_equal_to[100]',
         'arquivo' => 'uploaded[arquivo]|mime_in[pdf]|max_length[255]'
     ];
 

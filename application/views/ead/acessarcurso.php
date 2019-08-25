@@ -497,11 +497,11 @@
     var audio = <?= !empty($paginaatual->audio ? 'true' : 'false') ?>;
     if (audio) {
         $('#audio').popover({
-            title: "Player",
-            html: true,
-            placement: 'bottom',
-            template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title text-primary"></h3><div class="popover-content"></div></div>',
-            content: '<audio id="player" controls<?= $paginaatual->autoplay ? ' autoplay' : '' ?> src="<?= base_url('arquivos/media/' . $paginaatual->audio); ?>"></audio>'
+            'title': 'Player',
+            'html': true,
+            'placement': 'bottom',
+            'template': '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title text-primary"></h3><div class="popover-content"></div></div>',
+            'content': '<audio id="player" controls<?= $paginaatual->autoplay ? ' autoplay' : '' ?> src="<?= base_url('arquivos/media/' . $paginaatual->audio); ?>"></audio>'
         });
     }
 
@@ -527,19 +527,16 @@
 
     $(function () {
         $('.enviaResposta').click(function () {
-            var data = $('#respostaAtividades').serialize();
-            var url = '<?= site_url('ead/treinamento/avaliar_atividade/'); ?>';
             var modulo = '<?= $paginaatual->modulo; ?>';
-
             //Verifica se é atividade ou quiz
             if (modulo === 'quiz' || modulo === 'atividades') {
                 $.ajax({
-                    type: "POST",
-                    url: url,
-                    data: data,
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data === 'Atividade finalizada com sucesso!') {
+                    'type': 'POST',
+                    'url': '<?= site_url('ead/treinamento/avaliar_atividade'); ?>',
+                    'data': $('#respostaAtividades').serialize(),
+                    'dataType': 'json',
+                    'success': function (json) {
+                        if (json === 'Atividade finalizada com sucesso!') {
                             $('html, body').animate({scrollTop: 0}, 1500);
                             $("#alert").addClass("alert alert-success");
                             $('#finalizarAula').attr('onclick', "javascript:finalizaPagina('<?= $paginaatual->id_curso . "','" . $paginaatual->id; ?>');");
@@ -547,7 +544,7 @@
                         } else {
                             $("#alert").addClass("alert alert-danger");
                         }
-                        $('#alert').html(data);
+                        $('#alert').html(json);
                     }
                 });
             }
@@ -576,18 +573,17 @@
 
     function finalizaPagina(id_curso, id_pagina) {
         if (id_curso > 0 && id_pagina > 0) {
-            var url = '<?php echo site_url('ead/treinamento/finalizar_pagina'); ?>';
             $.ajax({
-                type: "POST",
-                url: url,
-                dataType: 'json',
-                data: {
-                    id_curso: id_curso,
-                    id_pagina: id_pagina
+                'type': 'POST',
+                'url': '<?php echo site_url('ead/treinamento/finalizar_pagina'); ?>',
+                'dataType': 'json',
+                'data': {
+                    'id_curso': id_curso,
+                    'id_pagina': id_pagina
                 },
-                success: function (data) {
-                    if (data.proxima !== null) {
-                        window.location.href = '<?= site_url('ead/treinamento/acessar/' . $this->uri->rsegment(3)); ?>/' + data.proxima;
+                'success': function (json) {
+                    if (json.proxima !== null) {
+                        window.location.href = '<?= site_url('ead/treinamento/acessar/' . $this->uri->rsegment(3)); ?>/' + json.proxima;
                     } else {
                         window.location.href = '<?= site_url('ead/treinamento'); ?>';
                     }

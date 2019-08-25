@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CORPORATE RH - LMS - Histórico de Candidatos</title>
+    <link href="<?php echo base_url('assets/font-awesome/css/font-awesome.css') ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
 
@@ -74,15 +75,23 @@
         <thead>
         <tr>
             <th rowspan="2">RP</th>
+            <th rowspan="2" class="text-center text-nowrap">
+                Perfil<br>
+                <i class="fa fa-smile-o text-success"></i>
+                <i class="fa fa-meh-o text-warning"></i>
+                <i class="fa fa-frown-o text-danger"></i>
+            </th>
+            <th rowspan="2">Observações</th>
             <th rowspan="2">Cargo</th>
             <th rowspan="2">Função</th>
+            <th rowspan="2">Status</th>
+            <th rowspan="2">Deficiência</th>
             <th colspan="2" class="text-center">Seleção</th>
             <th colspan="2" class="text-center">Requisitante</th>
             <th class="text-center">Antecedentes criminais</th>
             <th class="text-center">Restrições financeiras</th>
             <th colspan="2" class="text-center">Exame médico admissional</th>
             <th rowspan="2">Data admissão</th>
-            <th rowspan="2">Observações</th>
         </tr>
         <tr>
             <th class="text-center">Data</th>
@@ -136,12 +145,12 @@
             },
             'columnDefs': [
                 {
-                    'width': '18%',
-                    'targets': [1, 2, 7, 8, 9]
+                    'width': '16%',
+                    'targets': [1, 2, 5, 10, 11, 12]
                 },
                 {
                     'className': 'text-center',
-                    'targets': [0, 3, 4, 5, 6, 7, 8]
+                    'targets': [0, 1, 6, 7, 8, 9, 10, 11]
                 }
             ]
         });

@@ -140,6 +140,9 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                                 <li><a href="<?php echo site_url('requisicaoPessoal_fontes'); ?>">Gerenciar
                                         fontes/aprovadores</a>
                                 </li>
+                                <li><a href="<?php echo site_url('requisicaoPessoal_candidatos'); ?>">Relatório de
+                                        Gestão</a>
+                                </li>
                             </ul>
                         </li>
                     <?php endif; ?>
@@ -334,7 +337,7 @@ $hash_acesso = $this->session->userdata('hash_acesso');
 
                 <?php if (isset($hash_acesso['RG'])): ?>
                     <li>
-                        <a href="<?php echo site_url('manutencao'); ?>">
+                        <a href="<?php echo site_url('relatoriosGestao'); ?>">
                             <i class="glyphicons glyphicons-list"> </i>
                             <span>Relatórios de Gestão</span>
                         </a>
@@ -439,10 +442,20 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                     <li class="sub-menu">
                         <a href="javascript:;"<?php echo(in_array($this->uri->rsegment(1), array('apontamento')) ? ' class="active"' : ''); ?>>
                             <i class="fa fa-history"></i>
+                            <span>Gestão Operacional Libras</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="<?php echo site_url('icom/sessoes'); ?>">Gerenciar eventos</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="sub-menu">
+                        <a href="javascript:;"<?php echo(in_array($this->uri->rsegment(1), array('apontamento')) ? ' class="active"' : ''); ?>>
+                            <i class="fa fa-history"></i>
                             <span>Gestão Operacional ICOM</span>
                         </a>
                         <ul class="sub">
-                            <li><a href="<?php echo site_url('manutencao'); ?>">Gerenciar apontamentos</a></li>
+                            <li><a href="<?php echo site_url('icom/apontamento'); ?>">Gerenciar apontamentos</a></li>
                             <li><a href="<?php echo site_url('manutencao'); ?>">Requisição de pessoal</a></li>
                         </ul>
                     </li>

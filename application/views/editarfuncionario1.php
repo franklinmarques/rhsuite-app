@@ -572,6 +572,19 @@ require_once "header.php";
                                                             </li>
                                                         </ul>
                                                     </li>
+                                                    <li>
+                                                        <input type="checkbox">
+                                                        <i class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;Gestão
+                                                        Operacional Libras
+                                                        <ul>
+                                                            <li>
+                                                                <input type="checkbox" name="hash_acesso[ICOM][]"
+                                                                       value="801">
+                                                                <i class="glyphicon glyphicon-file text-info"></i>
+                                                                Gestão de Eventos
+                                                            </li>
+                                                        </ul>
+                                                    </li>
                                                 </ul>
                                             </fieldset>
                                         <?php endif; ?>

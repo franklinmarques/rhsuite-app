@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class EmpresaCargos extends Entity
 {

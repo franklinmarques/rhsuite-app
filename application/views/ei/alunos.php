@@ -279,7 +279,7 @@
         </section>
     </section>
 
-<?php require_once APPPATH . "views/end_js.php"; ?>
+<?php require_once APPPATH . 'views/end_js.php'; ?>
 
     <link rel="stylesheet" href="<?php echo base_url("assets/js/bootstrap-combobox/css/bootstrap-combobox.css"); ?>">
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -301,68 +301,70 @@
         var save_method;
         var table;
 
+        $('[name="cep"]').mask('00000-000');
+        $('.date').mask('00/00/0000');
+        $('.semestre').mask('0/0000');
+
+        $('.combobox').combobox();
+
+
         $(document).ready(function () {
 
-            $('[name="cep"]').mask('00000-000');
-            $('.date').mask('00/00/0000');
-            $('.semestre').mask('0/0000');
-
-            $('.combobox').combobox();
-
             table = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                iDisplayLength: 500,
-                lengthMenu: [[5, 10, 25, 50, 100, 500, 1000], [5, 10, 25, 50, 100, 500, 1000]],
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 500,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, 1000], [5, 10, 25, 50, 100, 500, 1000]],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('ei/alunos/ajax_list/') ?>',
-                    type: 'POST',
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('ei/alunos/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.busca = $('#busca').serialize();
                         d.id_escola = '<?= $this->uri->rsegment(3, '') ?>';
                         return d;
                     }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        width: '34%',
-                        targets: [0]
+                        'width': '34%',
+                        'targets': [0]
                     },
 
                     {
-                        width: '33%',
-                        targets: [3, 4]
+                        'width': '33%',
+                        'targets': [3, 4]
                     },
                     {
-                        className: 'text-center',
-                        targets: [1]
+                        'className': 'text-center',
+                        'targets': [1]
                     },
                     {
-                        mRender: function (data) {
+                        'mRender': function (data) {
                             if (data === null) {
                                 data = '<span class="text-muted">Nenhum curso encontrado</span>';
                             }
                             return data;
                         },
-                        targets: [3]
+                        'targets': [3]
                     },
                     {
-                        className: 'text-nowrap',
-                        targets: [2, -1]
+                        'className': 'text-nowrap',
+                        'targets': [2, -1]
                     },
                     {
-                        targets: [1, 2, -1, -2],
-                        orderable: false,
-                        searchable: false
+                        'targets': [1, 2, -1, -2],
+                        'orderable': false,
+                        'searchable': false
                     }
                 ],
-                rowsGroup: [0, 1, 2, -1, 3]
+                'rowsGroup': [0, 1, 2, -1, 3]
             });
 
         });
+
 
         $('#limpa_filtro').on('click', function () {
             var busca = unescape($('#busca').serialize());
@@ -395,82 +397,84 @@
             atualizar_periodos();
         });
 
+
         function atualizarFiltro() {
             $.ajax({
-                url: '<?php echo site_url('ei/alunos/atualizar_filtro/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: $('#busca').serialize(),
-                success: function (json) {
+                'url': '<?php echo site_url('ei/alunos/atualizar_filtro') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
                     $('[name="busca[escola]"]').html($(json.escola).html());
                     $('[name="busca[status]"]').html($(json.status).html());
                     $('[name="busca[curso]"]').html($(json.curso).html());
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function atualizar_estrutura() {
             $.ajax({
-                url: '<?php echo site_url('ei/alunos/ajax_estrutura/') ?>',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    depto: $('#depto').val(),
-                    area: $('#area').val(),
-                    setor: $('#setor').val()
+                'url': '<?php echo site_url('ei/alunos/ajax_estrutura') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'depto': $('#depto').val(),
+                    'area': $('#area').val(),
+                    'setor': $('#setor').val()
                 },
-                success: function (data) {
-                    $('#area').html($(data.area).html());
-                    $('#setor').html($(data.setor).html());
+                'success': function (json) {
+                    $('#area').html($(json.area).html());
+                    $('#setor').html($(json.setor).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function atualizar_escolas() {
             $.ajax({
-                url: '<?php echo site_url('ei/alunos/atualizar_escolas/') ?>',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    id_diretoria: $('#id_diretoria').val(),
-                    municipio: $('#municipio').val(),
-                    id_escola: $('#id_escola').val()
+                'url': '<?php echo site_url('ei/alunos/atualizar_escolas') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_diretoria': $('#id_diretoria').val(),
+                    'municipio': $('#municipio').val(),
+                    'id_escola': $('#id_escola').val()
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#municipio').html($(json.municipios).html());
                     $('#form_curso [name="id_escola"]').html($(json.escolas).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function atualizar_periodos() {
             var id = $('#id_escola').val()
 
             if (id.length > 0) {
                 $.ajax({
-                    url: '<?php echo site_url('ei/alunos/atualizar_periodos/') ?>',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {
-                        id: id
+                    'url': '<?php echo site_url('ei/alunos/atualizar_periodos') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
+                        $('#form_curso [name="id_curso"]').html($(json.cursos).html())
+                        // $('#periodo_manha').prop('disabled', json.periodo_manha === '0');
+                        // $('#periodo_tarde').prop('disabled', json.periodo_tarde === '0');
+                        // $('#periodo_noite').prop('disabled', json.periodo_noite === '0');
                     },
-                    success: function (data) {
-                        $('#form_curso [name="id_curso"]').html($(data.cursos).html())
-                        // $('#periodo_manha').prop('disabled', data.periodo_manha === '0');
-                        // $('#periodo_tarde').prop('disabled', data.periodo_tarde === '0');
-                        // $('#periodo_noite').prop('disabled', data.periodo_noite === '0');
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error get data from ajax');
                     }
                 });
@@ -478,6 +482,7 @@
                 $('#periodo_manha, #periodo_tarde, #periodo_noite').prop('disabled', false);
             }
         }
+
 
         function add_aluno() {
             save_method = 'add';
@@ -490,6 +495,7 @@
             $('.modal-title').text('Adicionar aluno');
             $('.combo_nivel1').hide();
         }
+
 
         function add_curso(id_aluno) {
             save_method = 'add';
@@ -510,6 +516,7 @@
             $('.combo_nivel1').hide();
         }
 
+
         function edit_aluno(id) {
             save_method = 'update';
             $('#form')[0].reset();
@@ -518,11 +525,11 @@
             $('.help-block').empty();
 
             $.ajax({
-                url: '<?php echo site_url('ei/alunos/ajax_edit/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (json) {
+                'url': '<?php echo site_url('ei/alunos/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     $('#id_diretoria').val(json.id_diretoria);
                     $('#id_escola').val(json.id_escola);
                     // $('#periodo_manha').prop('disabled', json.escola_manha === '0');
@@ -544,11 +551,12 @@
                     $('#modal_form').modal('show');
 
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function edit_curso(id) {
             save_method = 'update';
@@ -558,11 +566,11 @@
             $('.help-block').empty();
 
             $.ajax({
-                url: '<?php echo site_url('ei/alunos/ajax_editCurso/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (json) {
+                'url': '<?php echo site_url('ei/alunos/ajax_editCurso') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     $.each(json, function (key, value) {
                         $('#id_diretoria').val(json.id_diretoria);
                         if ($('#form_curso [name="' + key + '"]').is(':checkbox') === false) {
@@ -580,23 +588,21 @@
 
                     $('.modal-title').text('Editar curso');
                     $('#modal_curso').modal('show');
-
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function reload_table() {
             table.ajax.reload(null, false);
         }
 
-        function save() {
-            $('#btnSave').text('Salvando...');
-            $('#btnSave').attr('disabled', true);
-            var url;
 
+        function save() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('ei/alunos/ajax_add') ?>';
             } else {
@@ -604,36 +610,37 @@
             }
 
             $.ajax({
-                url: url,
-                type: 'POST',
-                data: $('#form').serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    if (data.status) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
                     }
-
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     if (textStatus) {
                         alert(jqXHR.responseText);
                     } else {
                         alert('Error adding / update data');
                     }
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave').attr('disabled', false);
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
-        function save_curso() {
-            $('#btnSaveCurso').text('Salvando...');
-            $('#btnSaveCurso').attr('disabled', true);
-            var url;
 
+        function save_curso() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('ei/alunos/ajax_addCurso') ?>';
             } else {
@@ -641,59 +648,64 @@
             }
 
             $.ajax({
-                url: url,
-                type: 'POST',
-                data: $('#form_curso').serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    if (data.status) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form_curso').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveCurso').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_curso').modal('hide');
                         reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
                     }
-
-                    $('#btnSaveCurso').text('Salvar');
-                    $('#btnSaveCurso').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     if (textStatus) {
                         alert(jqXHR.responseText);
                     } else {
                         alert('Error adding / update data');
                     }
-                    $('#btnSaveCurso').text('Salvar');
-                    $('#btnSaveCurso').attr('disabled', false);
+                },
+                'complete': function () {
+                    $('#btnSaveCurso').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function delete_aluno(id) {
             if (confirm('Deseja remover o(a) aluno(a)?')) {
                 $.ajax({
-                    url: '<?php echo site_url('ei/alunos/ajax_delete') ?>/',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {id: id},
-                    success: function (data) {
+                    'url': '<?php echo site_url('ei/alunos/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
             }
         }
 
+
         function delete_curso(id) {
             if (confirm('Deseja remover o curso?')) {
                 $.ajax({
-                    url: '<?php echo site_url('ei/alunos/ajax_deleteCurso') ?>/',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {id: id},
-                    success: function (data) {
+                    'url': '<?php echo site_url('ei/alunos/ajax_deleteCurso') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
@@ -702,4 +714,4 @@
 
     </script>
 
-<?php require_once APPPATH . "views/end_html.php"; ?>
+<?php require_once APPPATH . 'views/end_html.php'; ?>

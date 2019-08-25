@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <!--main content start-->
 <section id="main-content">
@@ -72,7 +72,7 @@ require_once APPPATH . "views/header.php";
 </section>
 <!--main content end-->
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
 <!-- Js -->
 <script>
@@ -86,5 +86,5 @@ require_once APPPATH . "views/end_js.php";
     }).submit();
 </script>
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

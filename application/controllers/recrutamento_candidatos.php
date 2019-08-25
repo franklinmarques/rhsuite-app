@@ -363,13 +363,15 @@ class Recrutamento_candidatos extends MY_Controller
     public function ajax_list_processos()
     {
         $query = $this->db
-            ->select('a.id_requisicao')
+            ->select('a.id_requisicao, a.desempenho_perfil, a.observacoes')
             ->select(['IFNULL(c.nome, b.cargo_externo) AS cargo'], false)
             ->select(['IFNULL(d.nome, b.funcao_externa) AS funcao'], false)
+            ->select("(CASE a.status WHEN 'A' THEN 'Agendado' WHEN 'P' THEN 'Em processo' WHEN 'F' THEN 'Fora do perfil' WHEN 'N' THEN 'Não atende ou recado' WHEN 'S' THEN 'Sem interesse' WHEN 'I' THEN 'Telefone errado ou inexistente' END) AS status", false)
+            ->select("(CASE WHEN id_usuario IS NOT NULL THEN g.tipo WHEN id_usuario_banco IS NOT NULL THEN f.deficiencia END) AS deficiencia", false)
             ->select('a.data_selecao, a.resultado_selecao')
             ->select('a.data_requisitante, a.resultado_requisitante')
             ->select('a.antecedentes_criminais, a.restricoes_financeiras')
-            ->select('a.data_exame_admissional, a.resultado_exame_admissional, a.data_admissao, a.observacoes')
+            ->select('a.data_exame_admissional, a.resultado_exame_admissional, a.data_admissao')
             ->select(["DATE_FORMAT(a.data_selecao, '%d/%m/%Y') AS data_selecao_de"], false)
             ->select(["DATE_FORMAT(a.data_requisitante, '%d/%m/%Y') AS data_requisitante_de"], false)
             ->select(["DATE_FORMAT(a.data_exame_admissional, '%d/%m/%Y') AS data_exame_admissional_de"], false)
@@ -377,8 +379,12 @@ class Recrutamento_candidatos extends MY_Controller
             ->join('requisicoes_pessoal b', 'b.id = a.id_requisicao')
             ->join('empresa_cargos c', 'c.id = b.id_cargo', 'left')
             ->join('empresa_funcoes d', 'd.id = b.id_funcao', 'left')
+            ->join('recrutamento_usuarios e', 'e.id = a.id_usuario', 'left')
+            ->join('recrutamento_google f', 'f.id = a.id_usuario_banco', 'left')
+            ->join('deficiencias g', 'g.id = e.deficiencia', 'left')
             ->where('a.id_usuario', $this->input->post('id_candidato'))
             ->where('b.id_empresa', $this->session->userdata('empresa'))
+            ->group_by('a.id')
             ->get('requisicoes_pessoal_candidatos a');
 
         $this->load->library('dataTables');
@@ -404,14 +410,34 @@ class Recrutamento_candidatos extends MY_Controller
         ];
         $antecedentesCriminais = ['1' => 'Antecedentes', '0' => 'Nada consta'];
         $restricoesFinanceiras = ['1' => 'Com restrições', '0' => 'Sem restrições'];
+        $resultadoExameAdmissional = ['1' => 'Apto', '0' => 'Não apto'];
 
         $data = [];
 
         foreach ($output->data as $row) {
+
+            switch ($row->desempenho_perfil) {
+                case 'A':
+                    $desempenhoPerfil = '<i class="fa fa-smile-o text-success" style="font-size: 25px;"></i>';
+                    break;
+                case 'M':
+                    $desempenhoPerfil = '<i class="fa fa-meh-o text-warning" style="font-size: 25px;"></i>';
+                    break;
+                case 'B':
+                    $desempenhoPerfil = '<i class="fa fa-frown-o text-danger" style="font-size: 25px;"></i>';
+                    break;
+                default:
+                    $desempenhoPerfil = '';
+            }
+
             $data[] = [
                 $row->id_requisicao,
+                $desempenhoPerfil,
+                $row->observacoes,
                 $row->cargo,
                 $row->funcao,
+                $row->status,
+                $row->deficiencia,
                 $row->data_selecao_de,
                 $resutadoSelecao[$row->resultado_selecao] ?? '',
                 $row->data_requisitante_de,
@@ -419,9 +445,8 @@ class Recrutamento_candidatos extends MY_Controller
                 $antecedentesCriminais[$row->antecedentes_criminais] ?? '',
                 $restricoesFinanceiras[$row->restricoes_financeiras] ?? '',
                 $row->data_exame_admissional_de,
-                $row->resultado_exame_admissional,
-                $row->data_admissao_de,
-                $row->observacoes
+                $resultadoExameAdmissional[$row->resultado_exame_admissional] ?? '',
+                $row->data_admissao_de
             ];
         }
 

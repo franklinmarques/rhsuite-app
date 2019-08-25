@@ -317,7 +317,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="btnSaveItem" onclick="save_etapa()" class="btn btn-success">
+                        <button type="button" id="btnSaveEtapa" onclick="save_etapa()" class="btn btn-success">
                             Salvar
                         </button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -431,6 +431,8 @@
 
     $(document).ready(function () {
 
+        var url_language = '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>';
+
         table_processo = $('#table_processo').DataTable({
             'processing': true,
             'serverSide': true,
@@ -440,7 +442,7 @@
             'searching': false,
             'paging': false,
             'language': {
-                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'url': url_language
             },
             'ajax': {
                 'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListProcessos') ?>',
@@ -482,10 +484,10 @@
             'searching': false,
             'paging': false,
             'language': {
-                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'url': url_language
             },
             'ajax': {
-                'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListAtividades/') ?>',
+                'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListAtividades') ?>',
                 'type': 'POST',
                 'data': function (d) {
                     d.depto = $('#depto').val();
@@ -507,7 +509,7 @@
                         }
                         return data;
                     },
-                    "targets": [1]
+                    'targets': [1]
                 },
                 {
                     'className': 'text-nowrap',
@@ -535,10 +537,10 @@
             'searching': false,
             'paging': false,
             'language': {
-                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'url': url_language
             },
             'ajax': {
-                'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListEtapas/') ?>',
+                'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListEtapas') ?>',
                 'type': 'POST',
                 'data': function (d) {
                     d.depto = $('#depto').val();
@@ -589,10 +591,10 @@
             'searching': false,
             'paging': false,
             'language': {
-                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'url': url_language
             },
             'ajax': {
-                'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListItens/') ?>',
+                'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListItens') ?>',
                 'type': 'POST',
                 'data': function (d) {
                     d.depto = $('#depto').val();
@@ -652,12 +654,11 @@
                 'area': $('#area').val(),
                 'setor': $('#setor').val()
             },
-            'dataType': 'JSON',
+            'dataType': 'json',
             'success': function (json) {
                 $('#area').html($(json.area).html());
                 $('#setor').html($(json.setor).html());
                 estruturas = ($('#depto').val() !== '' && $('#area').val() !== '' && $('#setor').val() !== '');
-                console.log(estruturas);
                 reload_table();
             },
             'error': function (jqXHR, textStatus, errorThrown) {
@@ -759,7 +760,7 @@
         $.ajax({
             'url': '<?php echo site_url('dimensionamento/estruturas/ajaxEditProcesso') ?>',
             'type': 'POST',
-            'dataType': 'JSON',
+            'dataType': 'json',
             'data': {'id': id},
             'success': function (json) {
                 if (json.erro) {
@@ -789,7 +790,7 @@
         $.ajax({
             'url': '<?php echo site_url('dimensionamento/estruturas/ajaxEditAtividade') ?>',
             'type': 'POST',
-            'dataType': 'JSON',
+            'dataType': 'json',
             'data': {'id': id},
             'success': function (json) {
                 if (json.erro) {
@@ -819,7 +820,7 @@
         $.ajax({
             'url': '<?php echo site_url('dimensionamento/estruturas/ajaxEditEtapa') ?>',
             'type': 'POST',
-            'dataType': 'JSON',
+            'dataType': 'json',
             'data': {'id': id},
             'success': function (json) {
                 if (json.erro) {
@@ -849,7 +850,7 @@
         $.ajax({
             'url': '<?php echo site_url('dimensionamento/estruturas/ajaxEditItem') ?>',
             'type': 'POST',
-            'dataType': 'JSON',
+            'dataType': 'json',
             'data': {'id': id},
             'success': function (json) {
                 if (json.erro) {
@@ -871,7 +872,6 @@
 
 
     function save_processo() {
-        $('#btnSaveProcesso').text('Salvando...').attr('disabled', true);
         var url;
         if (save_method === 'add') {
             url = '<?php echo site_url('dimensionamento/estruturas/ajaxAddProcesso') ?>';
@@ -883,7 +883,10 @@
             'url': url,
             'type': 'POST',
             'data': $('#form_processo').serialize(),
-            'dataType': 'JSON',
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSaveProcesso').text('Salvando...').attr('disabled', true);
+            },
             'success': function (json) {
                 if (json.status) {
                     $('#modal_processo').modal('hide');
@@ -891,11 +894,11 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSaveProcesso').text('Salvar').attr('disabled', false);
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
+            },
+            'complete': function () {
                 $('#btnSaveProcesso').text('Salvar').attr('disabled', false);
             }
         });
@@ -903,7 +906,6 @@
 
 
     function save_atividade() {
-        $('#btnSaveAtividade').text('Salvando...').attr('disabled', true);
         var url;
         if (save_method === 'add') {
             url = '<?php echo site_url('dimensionamento/estruturas/ajaxAddAtividade') ?>';
@@ -915,7 +917,10 @@
             'url': url,
             'type': 'POST',
             'data': $('#form_atividade').serialize(),
-            'dataType': 'JSON',
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSaveAtividade').text('Salvando...').attr('disabled', true);
+            },
             'success': function (json) {
                 if (json.status) {
                     $('#modal_atividade').modal('hide');
@@ -923,11 +928,11 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSaveAtividade').text('Salvar').attr('disabled', false);
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
+            },
+            'complete': function () {
                 $('#btnSaveAtividade').text('Salvar').attr('disabled', false);
             }
         });
@@ -935,7 +940,6 @@
 
 
     function save_etapa() {
-        $('#btnSaveItem').text('Salvando...').attr('disabled', true);
         var url;
         if (save_method === 'add') {
             url = '<?php echo site_url('dimensionamento/estruturas/ajaxAddEtapa') ?>';
@@ -947,7 +951,10 @@
             'url': url,
             'type': 'POST',
             'data': $('#form_etapa').serialize(),
-            'dataType': 'JSON',
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSaveEtapa').text('Salvando...').attr('disabled', true);
+            },
             'success': function (json) {
                 if (json.status) {
                     $('#modal_etapa').modal('hide');
@@ -955,19 +962,18 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSaveItem').text('Salvar').attr('disabled', false);
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
-                $('#btnSaveItem').text('Salvar').attr('disabled', false);
+            },
+            'complete': function () {
+                $('#btnSaveEtapa').text('Salvar').attr('disabled', false);
             }
         });
     }
 
 
     function save_item() {
-        $('#btnSaveItem').text('Salvando...').attr('disabled', true);
         var url;
         if (save_method === 'add') {
             url = '<?php echo site_url('dimensionamento/estruturas/ajaxAddItem') ?>';
@@ -979,7 +985,10 @@
             'url': url,
             'type': 'POST',
             'data': $('#form_item').serialize(),
-            'dataType': 'JSON',
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSaveItem').text('Salvando...').attr('disabled', true);
+            },
             'success': function (json) {
                 if (json.status) {
                     $('#modal_item').modal('hide');
@@ -987,11 +996,11 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSaveItem').text('Salvar').attr('disabled', false);
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
+            },
+            'complete': function () {
                 $('#btnSaveItem').text('Salvar').attr('disabled', false);
             }
         });
@@ -1003,7 +1012,7 @@
             $.ajax({
                 'url': '<?php echo site_url('dimensionamento/estruturas/ajaxDeleteProcesso') ?>',
                 'type': 'POST',
-                'dataType': 'JSON',
+                'dataType': 'json',
                 'data': {'id': id},
                 'success': function (json) {
                     if (json.status) {
@@ -1026,7 +1035,7 @@
             $.ajax({
                 'url': '<?php echo site_url('dimensionamento/estruturas/ajaxDeleteAtividade') ?>',
                 'type': 'POST',
-                'dataType': 'JSON',
+                'dataType': 'json',
                 'data': {'id': id},
                 'success': function (json) {
                     if (json.status) {
@@ -1049,7 +1058,7 @@
             $.ajax({
                 'url': '<?php echo site_url('dimensionamento/estruturas/ajaxDeleteEtapa') ?>',
                 'type': 'POST',
-                'dataType': 'JSON',
+                'dataType': 'json',
                 'data': {'id': id},
                 'success': function (json) {
                     if (json.status) {
@@ -1072,7 +1081,7 @@
             $.ajax({
                 'url': '<?php echo site_url('dimensionamento/estruturas/ajaxDeleteItem') ?>',
                 'type': 'POST',
-                'dataType': 'JSON',
+                'dataType': 'json',
                 'data': {'id': id},
                 'success': function (json) {
                     if (json.status) {

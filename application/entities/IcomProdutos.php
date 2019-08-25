@@ -11,7 +11,9 @@ class IcomProdutos extends Entity
     protected $nome;
     protected $tipo;
     protected $preco;
+    protected $custo;
     protected $tipo_cobranca;
+    protected $centro_custo;
 
     protected $casts = [
         'id' => 'int',
@@ -21,7 +23,9 @@ class IcomProdutos extends Entity
         'nome' => 'string',
         'tipo' => 'string',
         'preco' => 'float',
-        'tipo_cobranca' => 'string'
+        'custo' => '?float',
+        'tipo_cobranca' => 'string',
+        'centro_custo' => '?string'
     ];
 
 }

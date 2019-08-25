@@ -247,7 +247,7 @@ class Apontamento_postos extends MY_Controller
             $row[] = number_format($apontamento->valor_dia, 2, ',', '.');
             $row[] = number_format($apontamento->valor_hora, 2, ',', '.');
             $row[] = '
-                      <button type="button" class="btn btn-sm btn-primary" onclick="edit_posto(' . $apontamento->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_posto(' . $apontamento->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
                       <button type="button" class="btn btn-sm btn-danger" onclick="delete_posto(' . $apontamento->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
                      ';
             $data[] = $row;
@@ -291,6 +291,7 @@ class Apontamento_postos extends MY_Controller
         $data['id_usuario_sub1'] = form_dropdown('id_usuario_sub1', $options, '', 'class="form-control"');
         $data['id_usuario_sub2'] = form_dropdown('id_usuario_sub2', $options, '', 'class="form-control"');
         $data['id_alocado_bck'] = form_dropdown('id_alocado_bck', $options, '', 'class="form-control"');
+        $data['id_alocado_bck2'] = form_dropdown('id_alocado_bck2', $options, '', 'class="form-control"');
 
         echo json_encode($data);
     }
@@ -310,8 +311,9 @@ class Apontamento_postos extends MY_Controller
             redirect(site_url('home/funcinarios'));
         }
         if ($funcionario->hash_acesso) {
-            $this->load->library('encrypt');
-            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $this->load->library('encrypt');
+//            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $funcionario->hash_acesso = json_decode($funcionario->hash_acesso, true);
         } else {
             $funcionario->hash_acesso = 'null';
         }

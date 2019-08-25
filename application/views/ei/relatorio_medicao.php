@@ -303,24 +303,25 @@
     }
 
     function fechar_mes() {
-        $('#fechar_mes').prop('disabled', true);
-
         $.ajax({
             'url': '<?php echo site_url('ei/relatorios/ajaxSaveMedicao') ?>',
             'type': 'POST',
             'data': $('form').serialize(),
             'dataType': 'json',
-            'success': function (data) {
-                if (data.status === true) {
+            'beforeSend': function () {
+                $('#fechar_mes').prop('disabled', true);
+            },
+            'success': function (json) {
+                if (json.status === true) {
                     alert('Mês fechado com sucesso!');
                 } else {
-                    alert(data.status);
+                    alert(json.status);
                 }
-
-                $('#fechar_mes').prop('disabled', false);
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Não foi possível fechar o mês');
+            },
+            'complete': function () {
                 $('#fechar_mes').prop('disabled', false);
             }
         });

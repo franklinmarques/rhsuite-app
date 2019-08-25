@@ -2,31 +2,26 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Icom_propostas_model extends MY_Model
+class Icom_sessoes_model extends MY_Model
 {
-    protected static $table = 'icom_propostas';
-
-    protected static $primaryKey = 'codigo';
+    protected static $table = 'icom_sessoes';
 
     protected $validationRules = [
-        'codigo' => 'required|is_natural_no_zero|max_length[11]',
-        'id_cliente' => 'required|is_natural_no_zero|max_length[11]',
-        'id_setor' => 'required|is_natural_no_zero|max_length[11]',
-        'descricao' => 'required|max_length[255]',
-        'data_entrega' => 'required|valid_date',
-        'probabilidade_fechamento' => 'is_natural|less_than_equal_to[100]',
-        'valor' => 'required|numeric|max_length[10]',
-        'status' => 'required|in_list[A,G,P]',
-        'custo_produto_servico' => 'numeric|max_length[10]',
-        'custo_administrativo' => 'numeric|max_length[10]',
-        'impostos' => 'numeric|max_length[10]',
-        'margem_liquida' => 'numeric|max_length[10]',
-        'margem_liquida_percentual' => 'numeric|less_than_equal_to[100]',
-        'arquivo' => 'uploaded[arquivo]|mime_in[pdf]|max_length[255]'
+        'id' => 'required|is_natural_no_zero|max_length[11]',
+        'id_produto' => 'required|is_natural_no_zero|max_length[11]',
+        'codigo_contrato' => 'required|is_natural_no_zero|max_length[11]',
+        'data_evento' => 'required|valid_date',
+        'horario_inicio' => 'required|valid_time',
+        'horario_termino' => 'required|valid_time|after_time[horario_inicio]',
+        'qtde_horas' => 'required|is_natural_no_zero|less_than_equal_to[24]',
+        'local_evento' => 'max_length[65535]',
+        'valor_faturamento' => 'numeric|max_length[10]',
+        'valor_desconto' => 'numeric|max_length[10]',
+        'custo_operacional' => 'numeric|max_length[10]',
+        'custo_impostos' => 'numeric|max_length[10]',
+        'profissional_alocado' => 'required|max_length[255]',
+        'valor_pagamento_profissional' => 'numeric|max_length[10]',
+        'observacoes' => 'max_length[65535]'
     ];
-
-    protected $uploadConfig = ['arquivo' => ['upload_path' => './arquivos/icom/propostas/', 'allowed_types' => 'pdf']];
-
-    protected static $status = ['A' => 'Aberta', 'G' => 'Ganha', 'P' => 'Perdida'];
 
 }

@@ -115,7 +115,7 @@ require_once "header.php";
                                     </div>
                                 </div>
 
-                                <div class="row form-group">
+                                <!--<div class="row form-group">
                                     <label class="control-label col-md-3 text-primary">Atividades recorrentes
                                         semanais</label>
                                     <div class="col-md-9">
@@ -137,7 +137,7 @@ require_once "header.php";
                                             </label>
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
 
                                 <div class="row form-group">
                                     <label class="control-label col-md-3 text-primary">Atividades recorrentes
@@ -255,14 +255,13 @@ require_once "header.php";
                         <thead>
                         <tr>
                             <th>Dia</th>
-                            <th>Sem.</th>
+<!--                            <th>Sem.</th>-->
                             <th>Mês</th>
                             <th>Atividade</th>
                             <th>Objetivos</th>
                             <th>Data limite</th>
                             <th>Envolvidos</th>
                             <th>Observações</th>
-                            <th>Processo</th>
                             <th>Ações</th>
                         </tr>
                         </thead>
@@ -547,25 +546,19 @@ require_once "end_js.php";
                                 '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(0);"> Dias' +
                                 '</label>' +
                                 '<label class="checkbox-inline">' +
-                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(1);"> Semanas' +
+                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(1);"> Meses' +
                                 '</label>' +
                                 '<label class="checkbox-inline">' +
-                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(2);"> Meses' +
+                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(3);"> Objetivos' +
                                 '</label>' +
                                 '<label class="checkbox-inline">' +
-                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(4);"> Objetivos' +
+                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(4);"> Data limite' +
                                 '</label>' +
                                 '<label class="checkbox-inline">' +
-                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(5);"> Data limite' +
+                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(5);"> Envolvidos' +
                                 '</label>' +
                                 '<label class="checkbox-inline">' +
-                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(6);"> Envolvidos' +
-                                '</label>' +
-                                '<label class="checkbox-inline">' +
-                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(7);"> Observações' +
-                                '</label>' +
-                                '<label class="checkbox-inline">' +
-                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(8);"> Processo' +
+                                '   <input type="checkbox" autocomplete="off" onchange="ocultar_coluna(6);"> Observações' +
                                 '</label>' +
                                 '<hr>'
                             );
@@ -583,15 +576,15 @@ require_once "end_js.php";
                 },
                 'columnDefs': [
                     {
-                        'width': '20%',
-                        'targets': [3, 4, 5, 6, 7]
+                        'width': '25%',
+                        'targets': [2, 3, 4, 5]
                     },
                     {
                         'width': '1%',
                         'className': 'text-center',
                         'searchable': false,
                         'orderable': false,
-                        'targets': [0, 1, 2, 8]
+                        'targets': [0, 1]
                     },
                     {
                         'width': '1%',
@@ -769,9 +762,9 @@ require_once "end_js.php";
         }
 
 
-        function processo(id) {
+        function visualizar_documentos(id) {
             $.ajax({
-                'url': '<?php echo site_url('atividades_scheduler/ajaxProcesso') ?>',
+                'url': '<?php echo site_url('atividades_scheduler/visualizarDocumentos') ?>',
                 'type': 'GET',
                 'dataType': 'json',
                 'data': {'id': id},
@@ -786,6 +779,7 @@ require_once "end_js.php";
                     $('#iframe_documento_3').attr('src', json.iframe_documento_3);
 
 
+                    $('.modal-title').text('Visualizar documentos');
                     $('#modal_processo').modal('show');
 
                     // POG para renderização de conteúdo no iframe em abas dentro da modal

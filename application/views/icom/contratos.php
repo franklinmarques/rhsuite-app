@@ -44,7 +44,7 @@
                 <div class="col-md-12">
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
-                        <li class="active">Gerenciar Contratos</li>
+                        <li class="active">Gestão Comercial - Gerenciar Contratos</li>
                     </ol>
                     <form action="#" id="estrutura" class="form-horizontal" autocomplete="off">
                         <div class="row">
@@ -73,8 +73,8 @@
                         </div>
                     </form>
                     <hr>
-                    <button id="btnAdd" type="button" class="btn btn-info" onclick="add_contrato()" autocomplete="off"
-                            disabled><i class="glyphicon glyphicon-plus"></i> Novo contrato
+                    <button id="btnAdd" type="button" class="btn btn-info" onclick="add_contrato()" autocomplete="off">
+                        <i class="glyphicon glyphicon-plus"></i> Novo contrato
                     </button>
                     <a id="pdf" class="btn btn-primary disabled" href="#" target="_blank"><i
                                 class="glyphicon glyphicon-print"></i> Imprimir
@@ -107,77 +107,151 @@
                                 <h3 class="modal-title">Gerenciar contrato</h3>
                             </div>
                             <div class="modal-body form">
-                                <div id="alert"></div>
-                                <form action="#" id="form" enctype="multipart/form-data" class="form-horizontal">
-                                    <input type="hidden" value="<?= $empresa; ?>" name="id_empresa"/>
-                                    <div class="form-body">
-                                        <div class="row form-group">
-                                            <label class="control-label col-md-2">Cód. contrato</label>
-                                            <div class="col-md-3">
-                                                <input name="codigo" class="form-control" type="text" readonly>
-                                                <span class="help-block"></span>
-                                            </div>
-                                            <label class="control-label col-md-1">Status</label>
-                                            <div class="col-md-2">
-                                                <?php echo form_dropdown('status_ativo', $statusAtivo, '', 'class="form-control"'); ?>
-                                                <span class="help-block"></span>
-                                            </div>
-                                            <div class="col-md-4 text-right">
-                                                <button type="button" class="btn btn-success" id="btnSave"
-                                                        onclick="save()">Salvar
-                                                </button>
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                    Cancelar
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="row form-group">
-                                            <label class="control-label col-md-2">Cliente</label>
-                                            <div class="col-md-4">
-                                                <?php echo form_dropdown('id_cliente', $idCliente, '', 'onchange="filtrar_propostas();" class="form-control"'); ?>
-                                                <span class="help-block"></span>
-                                            </div>
-                                            <label class="control-label col-md-2">Cód. proposta</label>
-                                            <div class="col-md-3">
-                                                <?php echo form_dropdown('codigo_proposta', $codigoProposta, '', 'class="form-control"'); ?>
-                                                <span class="help-block"></span>
-                                            </div>
-                                        </div>
-                                        <div class="row form-group">
-                                            <label class="control-label col-md-2">Centro de custo</label>
-                                            <div class="col-md-5">
-                                                <input name="centro_custo" type="text" class="form-control">
-                                                <span class="help-block"></span>
-                                            </div>
-                                            <label class="control-label col-md-2 text-nowrap">Vencimento
-                                                contrato</label>
-                                            <div class="col-md-2">
-                                                <input name="data_vencimento" type="text"
-                                                       class="form-control text-center date" placeholder="dd/mm/aaaa">
-                                                <span class="help-block"></span>
-                                            </div>
-                                        </div>
-                                        <div class="row form-group">
-                                            <label class="control-label col-md-2">Anexar contrato</label>
-                                            <div class="col-md-9">
-                                                <div id="arquivo" class="fileinput input-group"
-                                                     data-provides="fileinput">
-                                                    <div class="form-control" data-trigger="fileinput">
-                                                        <i class="glyphicon glyphicon-file fileinput-exists"></i>
-                                                        <span class="fileinput-preview fileinput-filename"></span>
+
+                                <ul id="abas" class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active">
+                                        <a href="#contrato_cadastro" aria-controls="contrato_cadastro" role="tab"
+                                           data-toggle="tab">Gerenciar contrato</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#contrato_visualizacao" aria-controls="contrato_visualizacao"
+                                           role="tab" data-toggle="tab">Visualizar arquivo</a>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane active" id="contrato_cadastro">
+                                        <div id="alert"></div>
+                                        <form action="#" id="form" enctype="multipart/form-data"
+                                              class="form-horizontal">
+                                            <input type="hidden" value="<?= $empresa; ?>" name="id_empresa"/>
+                                            <div class="form-body">
+                                                <div class="row form-group">
+                                                    <label class="control-label col-md-2">Cód. contrato</label>
+                                                    <div class="col-md-3">
+                                                        <input name="codigo" class="form-control" type="text" readonly>
+                                                        <span class="help-block"></span>
                                                     </div>
-                                                    <div class="input-group-addon btn btn-default btn-file" name="buu">
-                                                        <span class="fileinput-new">Selecionar arquivo</span>
-                                                        <span class="fileinput-exists">Alterar</span>
-                                                        <input type="file" accept=".pdf" name="arquivo"/>
+                                                    <label class="control-label col-md-1">Status</label>
+                                                    <div class="col-md-2">
+                                                        <?php echo form_dropdown('status_ativo', $statusAtivo, '', 'class="form-control"'); ?>
+                                                        <span class="help-block"></span>
                                                     </div>
-                                                    <a href="#" data-dismiss="fileinput"
-                                                       class="input-group-addon btn btn-default fileinput-exists">Limpar</a>
+                                                    <div class="col-md-4 text-right">
+                                                        <button type="button" class="btn btn-success" id="btnSave"
+                                                                onclick="save()">Salvar
+                                                        </button>
+                                                        <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">
+                                                            Cancelar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="row form-group">
+                                                    <label class="control-label col-md-2">Departamento</label>
+                                                    <div class="col-md-9">
+                                                        <?php echo form_dropdown('id_depto', $deptos, '', 'id="id_depto" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
+                                                        <span class="help-block"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row form-group">
+                                                    <label class="control-label col-md-2">Área</label>
+                                                    <div class="col-md-9">
+                                                        <?php echo form_dropdown('id_area', $areas, '', 'id="id_area" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
+                                                        <span class="help-block"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row form-group">
+                                                    <label class="control-label col-md-2">Setor</label>
+                                                    <div class="col-md-9">
+                                                        <?php echo form_dropdown('id_setor', $setores, '', 'id="id_setor" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
+                                                        <span class="help-block"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row form-group">
+                                                    <label class="control-label col-md-2">Cliente</label>
+                                                    <div class="col-md-4">
+                                                        <?php echo form_dropdown('id_cliente', ['' => 'selecione...'], '', 'id="id_cliente" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
+                                                        <span class="help-block"></span>
+                                                    </div>
+                                                    <label class="control-label col-md-2">Cód. proposta</label>
+                                                    <div class="col-md-3">
+                                                        <?php echo form_dropdown('codigo_proposta', ['' => 'selecione...'], '', 'id="codigo_proposta" class="form-control estrutura"'); ?>
+                                                        <span class="help-block"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row form-group">
+                                                    <label class="control-label col-md-2">Centro de custo</label>
+                                                    <div class="col-md-5">
+                                                        <input name="centro_custo" type="text" class="form-control">
+                                                        <span class="help-block"></span>
+                                                    </div>
+                                                    <label class="control-label col-md-2 text-nowrap">Vencimento
+                                                        contrato</label>
+                                                    <div class="col-md-2">
+                                                        <input name="data_vencimento" type="text"
+                                                               class="form-control text-center date"
+                                                               placeholder="dd/mm/aaaa">
+                                                        <span class="help-block"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row form-group">
+                                                    <label class="control-label col-md-2">Anexar contrato</label>
+                                                    <div class="col-md-9">
+                                                        <div id="arquivo" class="fileinput input-group"
+                                                             data-provides="fileinput">
+                                                            <div class="form-control" data-trigger="fileinput">
+                                                                <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                                                                <span class="fileinput-preview fileinput-filename"></span>
+                                                            </div>
+                                                            <div class="input-group-addon btn btn-default btn-file"
+                                                                 name="buu">
+                                                                <span class="fileinput-new">Selecionar arquivo</span>
+                                                                <span class="fileinput-exists">Alterar</span>
+                                                                <input type="file" accept=".pdf" name="arquivo"/>
+                                                            </div>
+                                                            <a href="#" data-dismiss="fileinput"
+                                                               class="input-group-addon btn btn-default fileinput-exists">Limpar</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane" id="contrato_visualizacao">
+                                        <div class="form-body">
+                                            <div class="row form-horizontal">
+                                                <label class="control-label col-md-3">Selecionar documento</label>
+                                                <div class="col-md-5">
+                                                    <select id="contratos" class="form-control">
+                                                        <option value="">selecione...</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 text-right">
+                                                    <button type="button" class="btn btn-info" id="btnDownloadContrato"
+                                                            onclick="download_arquivo();"><i
+                                                                class="fa fa-download"></i>Download
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger" id="btnDeleteContrato"
+                                                            onclick="delete_arquivo();">Excluir
+                                                    </button>
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                        Fechar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <iframe id="documento"
+                                                            src="https://docs.google.com/gview?embedded=true&url=<?= base_url('arquivos/icom/contratos/'); ?>"
+                                                            style="width:100%; height:600px; margin:0;"
+                                                            frameborder="0"></iframe>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
@@ -197,7 +271,7 @@
     <!-- Js -->
     <script>
         $(document).ready(function () {
-            document.title = 'CORPORATE RH - LMS - Gerenciar Contratos';
+            document.title = 'CORPORATE RH - LMS - Gestão Comercial: Gerenciar Contratos';
         });
     </script>
 
@@ -251,9 +325,32 @@
                         'orderable': false,
                         'searchable': false
                     }
-                ]
+                ],
+                'preDrawCallback': function () {
+                    var id_setor = $('#estrutura [name="id_setor"]').val();
+                    if (id_setor.length > 0) {
+                        $('#pdf').prop('href', '<?= site_url('icom/contratos/relatorio'); ?>/q?setor=' + id_setor).removeClass('disabled');
+                    } else {
+                        $('#pdf').prop('href', '#').addClass('disabled');
+                    }
+                }
             });
 
+        });
+
+
+        $('#abas li a').on('click', function (e) {
+            if ($(this).parent().hasClass('disabled')) {
+                return false;
+                console.log(1);
+            } else {
+                console.log(0);
+            }
+        });
+
+
+        $('#contratos').on('change', function () {
+            $('#btnDeleteContrato').prop('disabled', this.value.length === 0);
         });
 
 
@@ -270,62 +367,21 @@
                 'success': function (json) {
                     if (json.erro) {
                         alert(json.erro);
-                        return false;
-                    }
-
-                    $('#estrutura [name="id_area"]').html(json.areas);
-                    $('#estrutura [name="id_setor"]').html(json.setores);
-                    $('#estrutura [name="id_cliente"], #form [name="id_cliente"]').html(json.clientes);
-                    $('#estrutura [name="codigo_proposta"], #form [name="codigo_proposta"]').html(json.propostas);
-                    $('#form [name="id_cliente"] option[value=""], #form [name="codigo_proposta"] option[value=""]').text('selecione...');
-
-                    $('#estrutura select').prop('disabled', false);
-                    reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
-                },
-                'complete': function () {
-                    if ($('#estrutura [name="id_cliente"] > option').length < 2) {
-                        $('#btnAdd').prop('disabled', true);
-                        $('#pdf').addClass('disabled').prop('href', '#');
                     } else {
-                        $('#btnAdd').prop('disabled', false);
-                        var search = '/q?setor=' + $('#estrutura [name="id_setor"]').val();
-                        $('#pdf').removeClass('disabled').prop('href', '<?= site_url('icom/contratos/relatorio'); ?>' + search);
+                        $('#estrutura [name="id_area"]').html(json.areas);
+                        $('#estrutura [name="id_setor"]').html(json.setores);
+                        $('#estrutura [name="id_cliente"]').html(json.clientes);
+                        $('#estrutura [name="codigo_proposta"]').html(json.propostas);
+
+                        $('#estrutura select').prop('disabled', false);
+                        reload_table();
                     }
-
-                    $('#estrutura select').prop('disabled', false);
-                }
-            });
-        }
-
-
-        function filtrar_propostas() {
-            $.ajax({
-                'url': '<?php echo site_url('icom/contratos/filtrarPropostas') ?>',
-                'type': 'POST',
-                'dataType': 'json',
-                'data': {
-                    'id_cliente': $('#form [name="id_cliente"]').val(),
-                    'codigo_proposta': $('#form [name="codigo_proposta"]').val()
-                },
-                'beforeSend': function () {
-                    $('#form input[name="id_cliente"], #form [name="codigo_proposta"]').prop('disabled', true);
-                },
-                'success': function (json) {
-                    if (json.erro) {
-                        alert(json.erro);
-                        return false;
-                    }
-
-                    $('#form [name="codigo_proposta"]').html(json.propostas);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 },
                 'complete': function () {
-                    $('#form input[name="id_cliente"], #form [name="codigo_proposta"]').prop('disabled', false);
+                    $('#estrutura select').prop('disabled', false);
                 }
             });
         }
@@ -335,10 +391,13 @@
             save_method = 'add';
             $('#form')[0].reset();
             $('#form [name="id"]').val('');
-            $('#form [name="id_cliente"], #form [name="codigo_proposta"]').val('');
-            filtrar_propostas();
+            $('#id_depto option[value=""]').text('selecione...');
+            $('#id_area, #id_setor, #id_cliente').html('<option value="">selecione...</option>');
             $('#arquivo').removeClass('fileinput-exists').addClass('fileinput-new')
                 .fileinput({'name': ''}).find('[type="hidden"]').val('');
+            $('#abas li:eq(1), #contrato_visualizacao').removeClass('active');
+            $('#abas li:eq(1)').addClass('disabled');
+            $('#abas li:eq(0), #contrato_cadastro').addClass('active');
             $('.modal-title').text('Adicionar contrato');
             $('.combo_nivel1').hide();
             $('#modal_form').modal('show');
@@ -353,6 +412,8 @@
                 'data': {'id': id},
                 'beforeSend': function () {
                     save_method = 'update';
+                    $('#abas li:eq(1), #contrato_visualizacao').removeClass('active disabled');
+                    $('#abas li:eq(0), #contrato_cadastro').addClass('active');
                     $('#form')[0].reset();
                     $('.form-group').removeClass('has-error');
                     $('.help-block').empty();
@@ -362,6 +423,12 @@
                         alert(json.erro);
                         return false;
                     }
+
+                    $('#id_depto').html($(json.deptos).html());
+                    $('#id_area').html($(json.areas).html());
+                    $('#id_setor').html($(json.setores).html());
+                    $('#id_cliente').html($(json.clientes).html());
+                    $('#codigo_proposta').html($(json.propostas).html());
 
                     $('#form [name="id_cliente"]').html(json.clientes);
                     $('#form [name="codigo_proposta"]').html(json.propostas);
@@ -382,11 +449,43 @@
                         $('#arquivo .fileinput-preview').html('');
                     }
 
+                    $('#contratos').html($(json.contratos).html()).trigger('change');
+                    $('#documento').attr('src', 'https://docs.google.com/gview?embedded=true&url=' + json.url_arquivo);
+
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar contrato');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function montar_estrutura() {
+            $.ajax({
+                'url': '<?php echo site_url('icom/contratos/montarEstrutura') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('.estrutura').serialize(),
+                'beforeSend': function () {
+                    $('.estrutura, #btnSave').prop('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        $('#id_area').html(json.areas);
+                        $('#id_setor').html(json.setores);
+                        $('#id_cliente').html(json.clientes);
+                        $('#codigo_proposta').html(json.propostas);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                },
+                'complete': function () {
+                    $('.estrutura, #btnSave').prop('disabled', false);
                 }
             });
         }
@@ -444,6 +543,37 @@
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
+                    }
+                });
+            }
+        }
+
+        function delete_arquivo() {
+            if (confirm('Tem certeza que deseja excluir o arquivo?')) {
+                $.ajax({
+                    'url': '<?php echo site_url('icom/contratos/excluirArquivo'); ?>',
+                    'type': 'POST',
+                    'data': {
+                        'arquivo': $('#contratos').val()
+                    },
+                    'dataType': 'json',
+                    'beforeSend': function () {
+                        $('#btnDeleteContrato').text('Excluindo...');
+                        $('#btnDownloadContrato, #btnDeleteContrato').attr('disabled', true);
+                    },
+                    'success': function (json) {
+                        if (json.erro) {
+                            alert(json.erro);
+                        } else if (json.status) {
+                            $('#modal_form').modal('hide');
+                        }
+                    },
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert('Error adding / update data');
+                    },
+                    'complete': function () {
+                        $('#btnDeleteContrato').text('Excluir');
+                        $('#btnDownloadContrato, #btnDeleteContrato').attr('disabled', false);
                     }
                 });
             }

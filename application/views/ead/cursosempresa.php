@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <!--main content start-->
 <section id="main-content">
@@ -35,12 +35,12 @@ require_once APPPATH . "views/header.php";
 </section>
 <!--main content end-->
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
 <!-- Js -->
 <script>
     $(document).ready(function () {
-        document.title = 'LMS - Gerenciar Treinamentos da Empresa - <?php echo $row->nome; ?>';
+        document.title = 'LMS - Gwdscfvgbhnjmk,erenciar Treinamentos da Empresa - <?php echo $row->nome; ?>';
     });
 
     $('#busca-cursos-empresa').submit(function () {
@@ -49,5 +49,5 @@ require_once APPPATH . "views/end_js.php";
     }).submit();
 </script>
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

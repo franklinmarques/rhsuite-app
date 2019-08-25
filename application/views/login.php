@@ -182,9 +182,10 @@
 
         </div>
         <?php echo form_close(); ?>
-        <button type="button" class="btn btn-primary form-control" style="box-shadow: 1px 2px 4px rgba(0, 0, 0, .15);">
+        <a class="btn btn-primary form-control" style="box-shadow: 1px 2px 4px rgba(0, 0, 0, .15);"
+           href="vagas">
             Consultar vagas | Cadastrar currículo
-        </button>
+        </a>
         <br>
         <?php if ($visualizacao_pilula_conhecimento): ?>
             <button type="button" class="btn btn-primary form-control"

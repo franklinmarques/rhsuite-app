@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CORPORATE RH - LMS - Mapa de Contratos</title>
+    <title>CORPORATE RH - LMS - Gestão Comercial: Mapa de Contratos</title>
     <link href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
 
@@ -83,7 +83,7 @@
                     <td width="auto" class="text-center"><?= $row->status; ?></td>
                     <td width="auto" class="text-center"><?= $row->data_vencimento; ?></td>
                     <td width="30%"><?= $row->contato_principal; ?></td>
-                    <td width="20%"><?= $row->telefone_principal; ?></td>
+                    <td width="20%"><?= $row->telefone_contato_principal; ?></td>
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>

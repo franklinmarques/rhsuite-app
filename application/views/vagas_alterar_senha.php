@@ -1,70 +1,151 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>CORPORATE RH - LMS - Alterar Senha</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="ThemeBucket">
+    <link rel="shortcut icon" href="<?php echo base_url('assets/images/favipn.ico'); ?>">
+    <title>Rhsuite - Alterar Senha do Candidato</title>
+    <!--Core CSS -->
+    <link href="<?php echo base_url('assets/bs3/css/bootstrap.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo base_url('assets/css/bootstrap-reset.css'); ?>" rel="stylesheet">
+    <link href="<?php echo base_url('assets/font-awesome/css/font-awesome.css'); ?>" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="<?php echo base_url('assets/css/style.css'); ?>" rel="stylesheet">
+    <link href="<?php echo base_url('assets/css/style-responsive.css'); ?>" rel="stylesheet"/>
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]>
+    <script src="js/ie8/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
 
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <style>
 
-        <!--base css styles-->
-        <link rel="stylesheet" href="<?php echo base_url('assets/assets/bootstrap/css/bootstrap.min.css'); ?>">
-        <link rel="stylesheet" href="<?php echo base_url('assets/assets/font-awesome/css/font-awesome.min.css'); ?>">
+        body {
+            background-image: url('<?= base_url($imagem_fundo ? 'imagens/usuarios/' . $imagem_fundo : 'assets/images/fdmrh3.jpg') ?>');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+        }
 
-        <!--page specific css styles-->
+        body .container {
+            padding: 10px !important;
+            min-height: calc(100% - 40px);
+        }
 
-        <!--flaty css styles-->
-        <link rel="stylesheet" href="<?php echo base_url('assets/css/flaty.css'); ?>">
-        <link rel="stylesheet" href="<?php echo base_url('assets/css/flaty-responsive.css'); ?>">
+        .btn-primary {
+            background-color: #337ab7 !important;
+            border-color: #2e6da4 !important;
+            color: #fff;
+        }
 
-        <link rel="shortcut icon" href="<?php echo base_url('assets/img/favicon.ico'); ?>">
-        <style>
-            .login-page:before, .error-page:before, #main-content { background: none repeat scroll 0% 0% #fff; }
-        </style>
-    </head>
-    <body class="login-page">
+        .btn-default: {
+            background-color: #fff !important;
+            border-color: #ccc !important
+            color: #333 !important;
+        }
 
-        <!-- BEGIN Main Content -->
-        <div class="login-wrapper">
-            <!-- BEGIN alert -->
-            <div id="alert" style="width: 340px; margin: 10px auto;"></div>
-            <!-- END alert -->
+        label.control-label {
+            font-weight: bold;
+        }
 
-            <!-- BEGIN Login Form -->
-            <?php echo form_open('home/alterarsenha_json/' . $token, 'data-aviso="alert" class="ajax-simple"'); ?>
-            <h3>Alterar senha</h3>
-            <hr/>
-            <center>
-                <h4><?php echo $nome; ?></h4>
-            </center>
-            <hr/>
-            <div class="form-group">
-                <div class="controls">
-                    <input type="password" name="novasenha" placeholder="Nova Senha" class="form-control" autocomplete="new-password"/>
+        .panel {
+            background-color: rgba(255, 255, 255, 0.81);
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div id="cookie" class="text-danger text-center" style="background-color: #ffe; display: none;">
+    Este site usa Cookies! Habilite o uso de cookies em seu navegador para o correto funcionamento do site.
+</div>
+
+
+<div class="container">
+    <?php
+    if ($logoempresa) {
+        $logo = base_url('imagens/usuarios/' . $logo);
+        $hr = '<hr style="margin-top:10px; margin-bottom:10px;"/>';
+    } else {
+        $logo = base_url('assets/img/Llogo-rhsuite.jpg');
+        $cabecalho = '';
+        $hr = '';
+    }
+    ?>
+
+    <div class="panel">
+        <div class="panel-header">
+            <br>
+            <div align="center">
+                <img src="<?php echo $logo; ?>" style="width: auto; max-height: 100px; margin-bottom: 3%;">
+                <h4 style="color: #111343; text-shadow: 1px 2px 4px rgba(0, 0, 0, .15);">
+                    <strong><?php echo $cabecalho; ?></strong></h4>
+            </div>
+            <div align="center">
+                <h3>Alteração de senha</h3>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <div id="alert" style="margin: 10px auto;"></div>
+                        </div>
+                    </div>
+                    <?php echo form_open('vagas/salvarSenhaCandidato', 'data-aviso="alert" class="ajax-simple"'); ?>
+                    <input type="hidden" name="token" value="<?= $token; ?>">
+                    <div class="row form-group">
+                        <label class="control-label col-md-2 col-md-offset-2">Nova senha</label>
+                        <div class="col-md-4">
+                            <input name="nova_senha" class="form-control" type="password">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-md-2 col-md-offset-2">Confirmar nova senha</label>
+                        <div class="col-md-4">
+                            <input name="confirmar_nova_senha" class="form-control" type="password">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn"
+                                    style="width: 250px; color: #fff; background-color: #111343;">Alterar
+                                e entrar no portal
+                            </button>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <?php form_close(); ?>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="controls">
-                    <input type="password" name="confirmarsenha" placeholder="Confirmar Senha" class="form-control" autocomplete="new-password"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="controls">
-                    <button type="submit" class="btn btn-primary form-control">Alterar</button>
-                </div>
-            </div>
-            <hr/>
-            <?php echo form_close(); ?>
-            <!-- END Login Form -->
-
         </div>
-        <!-- END Main Content -->
+    </div>
 
-        <!--basic scripts-->
-        <script>window.jQuery || document.write('<script src="<?php echo base_url('assets/assets/jquery/jquery-2.0.3.min.js'); ?>"><\/script>')</script>
-        <script src="<?php echo base_url('assets/assets/bootstrap/js/bootstrap.min.js'); ?>"></script>
-        <script src="<?php echo base_url("assets/js/ajax.simple.js"); ?>"></script>
-    </body>
+</div>
+
+<!--main content end-->
+
+<footer class="footer">
+    <p style="text-align: center; color: #151860; text-shadow: 1px 2px 4px rgba(0, 0, 0, .15);">Copyright &copy;
+        PeopleNet In Education<br>
+        <a href="mailto:contato@rhsuite.com.br" style="color: #151860;">contato@rhsuite.com.br</a> | <a
+                href="mailto:contato@multirh.com.br" style="color: #151860;">contato@multirh.com.br</a>
+    </p>
+</footer>
+
+<!-- Placed js at the end of the document so the pages load faster -->
+<!--Core js-->
+<script src="<?php echo base_url('assets/js/jquery.js'); ?>"></script>
+<script src="<?php echo base_url('assets/bs3/js/bootstrap.min.js'); ?>"></script>
+<script src="<?php echo base_url("assets/js/ajax/ajax.simple.js"); ?>"></script>
+<script src="<?php echo base_url("assets/js/scripts.js"); ?>"></script>
+
+</body>
 </html>

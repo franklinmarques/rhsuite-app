@@ -204,7 +204,7 @@ class Diretorias extends MY_Controller
             $sql .= " AND a.id_coordenador = '{$busca['coordenador']}'";
         }
         if (!empty($busca['contrato'])) {
-            $sql .= " AND a.contrato = '{$busca['contrato']}'";
+            $sql .= " AND d.contrato = '{$busca['contrato']}'";
         }
         $sql .= ' GROUP BY a.id, d.id, e.id) s';
         $recordsTotal = $this->db->query($sql)->num_rows();

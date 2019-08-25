@@ -370,7 +370,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('dimensionamento/performance/ajaxList/') ?>',
+                    'url': '<?php echo site_url('dimensionamento/performance/ajaxList') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.id_crono_analise = $('#crono_analise').val();
@@ -417,12 +417,8 @@
                 'preDrawCallback': function () {
                     $('#btnEditValores, #btnSaveValores').prop('disabled', $('.tipo_medicao:checked').val() === '1');
                     $('#btnEditResultados, #btnSaveResutados').prop('disabled', $('.tipo_medicao:checked').val() === '0');
-                },
-                'drawCallback': function () {
-                    // table.column(1).visible($('.tipo_medicao:checked').val() === '0');
                 }
             });
-
 
             $('.valor').mask('#####0,000');
 
@@ -493,15 +489,6 @@
             table.column(9).visible(tipo_medicao === '1');
             table.column(10).visible(tipo_medicao === '1');
             table.column(11).visible(tipo_medicao === '1');
-            // if (tipo_medicao === '1') {
-            //     if ($('#atividade').val().length > 0) {
-            //         $('#valores').show();
-            //     } else {
-            //         $('#valores').show();
-            //     }
-            // } else {
-            //     $('#valores').show();
-            // }
             $('#valores input').val('');
             reload_table();
         }

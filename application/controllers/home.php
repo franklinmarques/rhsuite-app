@@ -90,9 +90,9 @@ class Home extends MY_Controller
     public function notificar()
     {
         $data = $this->db
-            ->select('DAY(NOW()) AS dia, 
-                (WEEK(NOW()) - WEEK(DATE_SUB(NOW(), INTERVAL DAY(NOW()) DAY)) + 1) AS semana, 
-                MONTH(NOW()) AS mes', false)
+            ->select('DAY(NOW()) AS dia', false)
+            ->select(['(WEEK(NOW()) - WEEK(DATE_SUB(NOW(), INTERVAL DAY(NOW()) DAY)) + 1) AS semana'], false)
+            ->select('MONTH(NOW()) AS mes', false)
             ->get()
             ->row_array();
 
@@ -103,16 +103,19 @@ class Home extends MY_Controller
         }
 
         $data['atividades'] = $this->db
-            ->select('atividade')
+            ->select("GROUP_CONCAT(id SEPARATOR '-') AS id, atividade, dia, mes", false)
+            ->select("(CASE dia WHEN '{$data['dia']}' THEN 'scheduler_dia' END) AS class_dia", false)
+            ->select("(CASE semana WHEN '{$data['semana']}' THEN 'scheduler_semana' END) AS class_semana", false)
+            ->select("(CASE mes WHEN '{$data['mes']}' THEN 'scheduler_mes' END) AS class_mes", false)
             ->select("GROUP_CONCAT(DISTINCT objetivos ORDER BY objetivos ASC SEPARATOR '<br>') AS objetivos", false)
             ->where('id_usuario', $this->session->userdata('id'))
-            ->where("(dia = '{$data['dia']}' OR semana = '{$data['semana']}' OR mes = '{$data['mes']}')")
             ->where('lembrar', 1)
+//            ->where("((dia = '{$data['dia']} AND mes = '{$data['mes']}') OR (semana = '{$data['semana']}' OR semana IS NULL) OR (mes = '{$data['mes']}' OR mes IS NULL))")
+//            ->where("(dia = '{$data['dia']}' OR (semana = '{$data['semana']}' OR semana IS NULL) OR (mes = '{$data['mes']}' OR mes IS NULL))")
             ->group_by('atividade')
             ->order_by('atividade', 'asc')
             ->get('atividades_scheduler')
             ->result();
-        $data['total'] = $data['atividades'] ? count($data['atividades']) - 1 : 0;
 
         return $data;
     }
@@ -127,7 +130,8 @@ class Home extends MY_Controller
 
         $this->db->set('lembrar', 0);
         $this->db->where('id_usuario', $this->session->userdata('id'));
-        $this->db->where("(dia = '{$dia}' OR semana = '{$semana}' OR mes = '{$mes}')");
+//        $this->db->where("(dia = '{$dia}' OR semana = '{$semana}' OR mes = '{$mes}')");
+        $this->db->where("(dia = '{$dia}' OR mes = '{$mes}')");
         $this->db->where('lembrar', 1);
         $this->db->update('atividades_scheduler');
 
@@ -135,6 +139,35 @@ class Home extends MY_Controller
 
         if ($this->db->trans_status() == false) {
             exit(['erro' => 'Erro ao atualizar notificação.']);
+        }
+        echo json_encode(['status' => true]);
+    }
+
+    public function excluirScheduler()
+    {
+        $idAtividades = explode('-', $this->input->post('id'));
+
+        $documentos = $this->db->where_in('id', $idAtividades)->get('atividades_scheduler')->result();
+
+        if (empty($documentos)) {
+            exit(json_encode(['erro' => 'A atividade não foi encontrada ou já foi excluída.']));
+        }
+
+        $this->db->trans_start();
+
+        $this->db->where_in('id', $idAtividades)->delete('atividades_scheduler');
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() == false) {
+            $this->db->trans_rollback();
+            exit(json_encode(['erro' => 'Não foi possível excluir a atividade.']));
+        }
+
+        foreach ($documentos as $documento) {
+            @unlink('./arquivos/pdf/' . $documento->documento_1);
+            @unlink('./arquivos/pdf/' . $documento->documento_2);
+            @unlink('./arquivos/pdf/' . $documento->documento_3);
         }
 
         echo json_encode(['status' => true]);
@@ -1099,8 +1132,9 @@ class Home extends MY_Controller
             $hash_acesso = $this->input->post('hash_acesso');
             if ($hash_acesso) {
                 $id = $this->db->insert_id();
-                $this->load->library('encrypt');
-                $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($id));
+//                $this->load->library('encrypt');
+//                $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($id));
+                $data['hash_acesso'] = json_encode($hash_acesso);
                 $this->db->update('usuarios', array('hash_acesso' => $data['hash_acesso']), array('id' => $id));
             }
             echo json_encode(array('retorno' => 1, 'aviso' => 'Cadastro de empresa efetuado com sucesso', 'redireciona' => 1, 'pagina' => site_url('home/empresas')));
@@ -1123,8 +1157,9 @@ class Home extends MY_Controller
 
         $data['row'] = $empresa->row(0);
         if ($data['row']->hash_acesso) {
-            $this->load->library('encrypt');
-            $data['row']->hash_acesso = $this->encrypt->decode($data['row']->hash_acesso, base64_encode($data['row']->id));
+//            $this->load->library('encrypt');
+//            $data['row']->hash_acesso = $this->encrypt->decode($data['row']->hash_acesso, base64_encode($data['row']->id));
+//            $data['row']->hash_acesso = json_decode($data['row']->hash_acesso, true);
         } else {
             $data['row']->hash_acesso = 'null';
         }
@@ -1308,8 +1343,9 @@ class Home extends MY_Controller
 
         $hash_acesso = $this->input->post('hash_acesso');
         if ($hash_acesso) {
-            $this->load->library('encrypt');
-            $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($empresa->id));
+//            $this->load->library('encrypt');
+//            $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($empresa->id));
+            $data['hash_acesso'] = json_encode($hash_acesso);
         } else {
             $data['hash_acesso'] = null;
         }
@@ -3779,8 +3815,9 @@ class Home extends MY_Controller
             $hash_acesso = $this->input->post('hash_acesso');
             if ($hash_acesso) {
                 $id = $this->db->insert_id();
-                $this->load->library('encrypt');
-                $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($id));
+//                $this->load->library('encrypt');
+//                $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($id));
+                $data['hash_acesso'] = json_encode($hash_acesso);
                 $this->db->update('usuarios', array('hash_acesso' => $data['hash_acesso']), array('id' => $id));
             }
             echo json_encode(array('retorno' => 1, 'aviso' => 'Cadastro de funcionário efetuado com sucesso', 'redireciona' => 1, 'pagina' => site_url('home/funcionarios')));
@@ -3803,8 +3840,9 @@ class Home extends MY_Controller
             redirect(site_url('home/funcinarios'));
         }
         if ($funcionario->hash_acesso) {
-            $this->load->library('encrypt');
-            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $this->load->library('encrypt');
+//            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $funcionario->hash_acesso = json_decode($funcionario->hash_acesso, true);
         } else {
             $funcionario->hash_acesso = 'null';
         }
@@ -3935,8 +3973,9 @@ class Home extends MY_Controller
             redirect(site_url('home/funcinarios'));
         }
         if ($funcionario->hash_acesso) {
-            $this->load->library('encrypt');
-            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $this->load->library('encrypt');
+//            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $funcionario->hash_acesso = json_decode($funcionario->hash_acesso, true);
         } else {
             $funcionario->hash_acesso = 'null';
         }
@@ -4109,8 +4148,9 @@ class Home extends MY_Controller
 
         $hash_acesso = $this->input->post('hash_acesso');
         if ($hash_acesso) {
-            $this->load->library('encrypt');
-            $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($funcionario->id));
+//            $this->load->library('encrypt');
+//            $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($funcionario->id));
+            $data['hash_acesso'] = json_encode($hash_acesso);
         } else {
             $data['hash_acesso'] = null;
         }

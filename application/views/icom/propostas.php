@@ -69,8 +69,8 @@
                         </div>
                     </form>
                     <hr>
-                    <button id="btnAdd" type="button" class="btn btn-info" onclick="add_proposta()" autocomplete="off"
-                            disabled><i class="glyphicon glyphicon-plus"></i> Nova proposta
+                    <button id="btnAdd" type="button" class="btn btn-info" onclick="add_proposta()" autocomplete="off">
+                        <i class="glyphicon glyphicon-plus"></i> Nova proposta
                     </button>
                     <a id="pdf" class="btn btn-primary disabled" href="#" target="_blank"><i
                                 class="glyphicon glyphicon-print"></i> Imprimir
@@ -85,6 +85,7 @@
                             <th>Cliente</th>
                             <th nowrap>Data entrega</th>
                             <th nowrap>Valor (R$)</th>
+                            <th nowrap>Margem<br>líquida (R$)</th>
                             <th>Ações</th>
                         </tr>
                         </thead>
@@ -113,7 +114,12 @@
                                                 <input name="codigo" class="form-control" type="text" readonly>
                                                 <span class="help-block"></span>
                                             </div>
-                                            <div class="col-md-7 text-right">
+                                            <label class="control-label col-md-1">Status</label>
+                                            <div class="col-md-2">
+                                                <?php echo form_dropdown('status', $status, '', 'class="form-control"'); ?>
+                                                <span class="help-block"></span>
+                                            </div>
+                                            <div class="col-md-4 text-right">
                                                 <button type="button" class="btn btn-success" id="btnSave"
                                                         onclick="save()">Salvar
                                                 </button>
@@ -130,31 +136,79 @@
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-2">Cliente</label>
+                                            <label class="control-label col-md-2">Departamento</label>
                                             <div class="col-md-9">
-                                                <?php echo form_dropdown('id_cliente', ['' => 'selecione...'], '', 'class="form-control"'); ?>
+                                                <?php echo form_dropdown('id_depto', $deptos, '', 'id="id_depto" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-2 text-nowrap">Data entrega</label>
+                                            <label class="control-label col-md-2">Área</label>
+                                            <div class="col-md-9">
+                                                <?php echo form_dropdown('id_area', $areas, '', 'id="id_area" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="control-label col-md-2">Setor</label>
+                                            <div class="col-md-9">
+                                                <?php echo form_dropdown('id_setor', $setores, '', 'id="id_setor" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="control-label col-md-2">Cliente</label>
+                                            <div class="col-md-9">
+                                                <?php echo form_dropdown('id_cliente', ['' => 'selecione...'], '', 'id="id_cliente" class="form-control estrutura"'); ?>
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="control-label col-md-2 text-nowrap">Data entrega
+                                                proposta</label>
                                             <div class="col-md-2">
                                                 <input name="data_entrega" type="text"
                                                        class="form-control text-center date" placeholder="dd/mm/aaaa">
                                                 <span class="help-block"></span>
                                             </div>
-                                            <label class="control-label col-md-1">Valor</label>
+                                            <label class="control-label col-md-3">Probabilidade fechamento</label>
+                                            <div class="col-md-2">
+                                                <select name="probabilidade_fechamento" class="form-control">
+                                                    <option value="">selecione...</option>
+                                                    <option value="0">0%</option>
+                                                    <option value="10">10%</option>
+                                                    <option value="20">20%</option>
+                                                    <option value="30">30%</option>
+                                                    <option value="40">40%</option>
+                                                    <option value="50">50%</option>
+                                                    <option value="60">60%</option>
+                                                    <option value="70">70%</option>
+                                                    <option value="80">80%</option>
+                                                    <option value="90">90%</option>
+                                                    <option value="100">100%</option>
+                                                </select>
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="control-label col-md-2">Valor da proposta</label>
                                             <div class="col-md-3">
                                                 <div class="input-group">
                                                     <span class="input-group-addon" id="basic-addon1">R$</span>
                                                     <input name="valor" type="text" class="form-control valor"
-                                                           aria-describedby="basic-addon1">
+                                                           aria-describedby="basic-addon1"
+                                                           onchange="calcular_margem_liquida();">
                                                 </div>
                                                 <span class="help-block"></span>
                                             </div>
-                                            <label class="control-label col-md-1">Status</label>
-                                            <div class="col-md-2">
-                                                <?php echo form_dropdown('status', $status, '', 'class="form-control"'); ?>
+                                            <label class="control-label col-md-1">Impostos</label>
+                                            <div class="col-md-3">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" id="basic-addon1">R$</span>
+                                                    <input name="impostos" type="text" class="form-control valor"
+                                                           aria-describedby="basic-addon1"
+                                                           onchange="calcular_margem_liquida();">
+                                                </div>
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
@@ -166,12 +220,12 @@
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-2">Impostos</label>
+                                            <label class="control-label col-md-2">Margem líquida</label>
                                             <div class="col-md-3">
                                                 <div class="input-group">
                                                     <span class="input-group-addon" id="basic-addon1">R$</span>
-                                                    <input name="impostos" type="text" class="form-control valor"
-                                                           aria-describedby="basic-addon1">
+                                                    <input name="margem_liquida" type="text" class="form-control valor"
+                                                           aria-describedby="basic-addon1" readonly>
                                                 </div>
                                                 <span class="help-block"></span>
                                             </div>
@@ -180,18 +234,20 @@
                                                 <div class="input-group">
                                                     <span class="input-group-addon" id="basic-addon1">R$</span>
                                                     <input name="custo_produto_servico" type="text"
+                                                           onchange="calcular_margem_liquida();"
                                                            class="form-control valor" aria-describedby="basic-addon1">
                                                 </div>
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-2">Margem líquida</label>
-                                            <div class="col-md-3">
+                                            <label class="control-label col-md-2">Margem líquida (%)</label>
+                                            <div class="col-md-2">
                                                 <div class="input-group">
-                                                    <span class="input-group-addon" id="basic-addon1">R$</span>
-                                                    <input name="margem_liquida" type="text" class="form-control valor"
-                                                           aria-describedby="basic-addon1">
+                                                    <input name="margem_liquida_percentual" type="text"
+                                                           class="form-control valor" aria-describedby="basic-addon2"
+                                                           readonly>
+                                                    <span class="input-group-addon" id="basic-addon2">%</span>
                                                 </div>
                                                 <span class="help-block"></span>
                                             </div>
@@ -200,6 +256,7 @@
                                                 <div class="input-group">
                                                     <span class="input-group-addon" id="basic-addon1">R$</span>
                                                     <input name="custo_administrativo" type="text"
+                                                           onchange="calcular_margem_liquida();"
                                                            class="form-control valor" aria-describedby="basic-addon1">
                                                 </div>
                                                 <span class="help-block"></span>
@@ -207,14 +264,14 @@
                                         </div>
                                         <div class="row form-group">
                                             <label class="control-label col-md-2">Anexar proposta</label>
-                                            <div class="col-md-9">
+                                            <div class="col-md-7">
                                                 <div id="arquivo" class="fileinput input-group"
                                                      data-provides="fileinput">
                                                     <div class="form-control" data-trigger="fileinput">
                                                         <i class="glyphicon glyphicon-file fileinput-exists"></i>
                                                         <span class="fileinput-preview fileinput-filename"></span>
                                                     </div>
-                                                    <div class="input-group-addon btn btn-default btn-file" name="buu">
+                                                    <div class="input-group-addon btn btn-default btn-file">
                                                         <span class="fileinput-new">Selecionar arquivo</span>
                                                         <span class="fileinput-exists">Alterar</span>
                                                         <input type="file" accept=".pdf" name="arquivo"/>
@@ -223,6 +280,12 @@
                                                        class="input-group-addon btn btn-default fileinput-exists"
                                                        data-dismiss="fileinput">Limpar</a>
                                                 </div>
+                                            </div>
+                                            <div class="col-md-2 text-right">
+                                                <button type="button" class="btn btn-info" id="btnDownload"
+                                                        onclick="baixar_arquivo()"><i class="fa fa-download"></i>
+                                                    Download
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -261,7 +324,7 @@
         var table;
 
         $('.date').mask('00/00/0000');
-        $('.valor').mask('#.###.##0,00', {reverse: true});
+        $('.valor').mask('#.###.##0,00', {'reverse': true});
 
 
         $(document).ready(function () {
@@ -296,15 +359,23 @@
                     },
                     {
                         'className': 'text-right',
-                        'targets': [5]
+                        'targets': [5, 6]
                     },
                     {
                         'className': 'text-nowrap',
-                        'targets': [-1],
                         'orderable': false,
-                        'searchable': false
+                        'searchable': false,
+                        'targets': [-1]
                     }
-                ]
+                ],
+                'preDrawCallback': function () {
+                    var id_setor = $('#estrutura [name="id_setor"]').val();
+                    if (id_setor.length > 0) {
+                        $('#pdf').prop('href', '<?= site_url('icom/propostas/relatorio'); ?>/q?setor=' + id_setor).removeClass('disabled');
+                    } else {
+                        $('#pdf').prop('href', '#').addClass('disabled');
+                    }
+                }
             });
 
         });
@@ -323,33 +394,50 @@
                 'success': function (json) {
                     if (json.erro) {
                         alert(json.erro);
-                        return false;
+                    } else {
+                        $('#estrutura [name="id_area"]').html(json.areas);
+                        $('#estrutura [name="id_setor"]').html(json.setores);
+                        $('#estrutura [name="id_cliente"]').html(json.clientes);
+
+                        $('#estrutura select').prop('disabled', false);
+                        reload_table();
                     }
-
-                    $('#estrutura [name="id_area"]').html(json.areas);
-                    $('#estrutura [name="id_setor"]').html(json.setores);
-                    $('#estrutura [name="id_cliente"], #form [name="id_cliente"]').html(json.clientes);
-                    $('#form [name="id_cliente"] option[value=""]').text('selecione...');
-
-                    $('#estrutura select').prop('disabled', false);
-                    reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 },
                 'complete': function () {
-                    if ($('#estrutura [name="id_cliente"] > option').length < 2) {
-                        $('#btnAdd').prop('disabled', true);
-                        $('#pdf').addClass('disabled').prop('href', '#');
-                    } else {
-                        $('#btnAdd').prop('disabled', false);
-                        var search = '/q?setor=' + $('#estrutura [name="id_setor"]').val();
-                        $('#pdf').removeClass('disabled').prop('href', '<?= site_url('icom/propostas/relatorio'); ?>' + search);
-                    }
-
                     $('#estrutura select').prop('disabled', false);
                 }
             });
+        }
+
+
+        function calcular_margem_liquida() {
+            var valor_proposta = parseFloat($('#form [name="valor"]').val().replace('.', '').replace(',', '.'));
+            var impostos = parseFloat($('#form [name="impostos"]').val().replace('.', '').replace(',', '.'));
+            var custo_produto = parseFloat($('#form [name="custo_produto_servico"]').val().replace('.', '').replace(',', '.'));
+            var custo_administrativo = parseFloat($('#form [name="custo_administrativo"]').val().replace('.', '').replace(',', '.'));
+
+            if (isNaN(valor_proposta)) {
+                $('#form [name="margem_liquida"], #form [name="margem_liquida_percentual"]').val('');
+                return false;
+            }
+            if (isNaN(impostos)) {
+                impostos = 0;
+            }
+            if (isNaN(custo_produto)) {
+                custo_produto = 0;
+            }
+            if (isNaN(custo_administrativo)) {
+                custo_administrativo = 0;
+            }
+
+            var margem_liquida = valor_proposta - impostos - custo_produto - custo_administrativo;
+            var margem_liquida_percentual = parseFloat(((margem_liquida / valor_proposta) * 100).toFixed(2));
+
+            $('#form [name="margem_liquida"]').val(margem_liquida.toLocaleString('pt-BR', {'minimumFractionDigits': 2}));
+            $('#form [name="margem_liquida_percentual"]').val(margem_liquida_percentual.toString().replace('.', ','));
         }
 
 
@@ -357,6 +445,8 @@
             save_method = 'add';
             $('#form')[0].reset();
             $('#form [name="id"]').val('');
+            $('#id_depto option[value=""]').text('selecione...');
+            $('#id_area, #id_setor, #id_cliente').html('<option value="">selecione...</option>');
             $('#arquivo').removeClass('fileinput-exists').addClass('fileinput-new')
                 .fileinput({'name': ''}).find('[type="hidden"]').val('');
             $('.modal-title').text('Adicionar proposta');
@@ -383,7 +473,10 @@
                         return false;
                     }
 
-                    $('#form [name="id_cliente"]').html(json.clientes);
+                    $('#id_depto').html($(json.deptos).html());
+                    $('#id_area').html($(json.areas).html());
+                    $('#id_setor').html($(json.setores).html());
+                    $('#id_cliente').html($(json.clientes).html());
 
                     $.each(json, function (key, value) {
                         if ($('#form [name="' + key + '"]').is(':file') === false) {
@@ -406,6 +499,34 @@
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function montar_estrutura() {
+            $.ajax({
+                'url': '<?php echo site_url('icom/propostas/montarEstrutura') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('.estrutura').serialize(),
+                'beforeSend': function () {
+                    $('.estrutura, #btnSave').prop('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        $('#id_area').html(json.areas);
+                        $('#id_setor').html(json.setores);
+                        $('#id_cliente').html(json.clientes);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                },
+                'complete': function () {
+                    $('.estrutura, #btnSave').prop('disabled', false);
                 }
             });
         }
@@ -466,6 +587,14 @@
                     }
                 });
             }
+        }
+
+
+        function baixar_arquivo() {
+            $.fileDownload('<?= site_url('icom/propostas/downloadArquivo') ?>/', {
+                'httpMethod': 'POST',
+                'data': {'id': id}
+            });
         }
 
 

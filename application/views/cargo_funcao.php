@@ -67,54 +67,27 @@
                             Gerenciar Cargos/Funções
                         </header>
                         <div class="panel-body">
-                            <div id="wizard">
-                                <h6>Cargos</h6>
-                                <section style="padding: 0; border-top: 1px solid #ddd; height: auto;">
-                                    <br>
-                                    <button id="novo_cargo" class="btn btn-info" onclick="add_cargo()"><i
-                                                class="glyphicon glyphicon-plus"></i> Novo cargo
-                                    </button>
-                                    <br>
-                                    <div class="table-responsive">
-                                        <table id="table_cargo" class="table table-striped table-condensed"
-                                               cellspacing="0" width="100%">
-                                            <thead>
-                                            <tr>
-                                                <th>Cargo</th>
-                                                <th nowrap>CBO - Família Ocupacional</th>
-                                                <th>Ações</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </section>
-
-                                <h6>Funções</h6>
-                                <section style="padding: 0; border-top: 1px solid #ddd;">
-                                    <br>
-                                    <button id="nova_funcao" class="btn btn-info" onclick="add_funcao()"><i
-                                                class="glyphicon glyphicon-plus"></i> Nova função
-                                    </button>
-                                    <br>
-                                    <div class="table-responsive">
-                                        <table id="table_funcao" class="table table-striped table-condensed"
-                                               cellspacing="0" width="100%">
-                                            <thead>
-                                            <tr>
-                                                <th>Cargo</th>
-                                                <th nowrap>Família CBO</th>
-                                                <th nowrap>Função/ocupação</th>
-                                                <th nowrap>Ocupação CBO</th>
-                                                <th>Ações</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </section>
+                            <button id="novo_cargo" class="btn btn-info" onclick="add_cargo()"><i
+                                        class="glyphicon glyphicon-plus"></i> Novo cargo
+                            </button>
+                            <br>
+                            <br>
+                            <div class="table-responsive">
+                                <table id="table" class="table table-striped table-bordered table-condensed"
+                                       cellspacing="0" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>Cargo</th>
+                                        <th nowrap>Família CBO</th>
+                                        <th>Ações</th>
+                                        <th nowrap>Função/ocupação</th>
+                                        <th nowrap>Ocupação CBO</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </section>
@@ -133,14 +106,15 @@
                         <div class="modal-body form">
                             <div id="alert"></div>
                             <form action="#" id="form_cargo" class="form-horizontal">
-                                <input type="hidden" value="<?php echo $empresa; ?>" name="id_empresa"/>
-                                <input type="hidden" value="" name="id"/>
+                                <input type="hidden" name="id" value=""/>
+                                <input type="hidden" name="id_empresa"
+                                       value="<?= $this->session->userdata('empresa'); ?>"/>
                                 <div class="form-body">
                                     <div class="row form-group">
-                                        <label class="control-label col-md-2">Nome</label>
+                                        <label class="control-label col-md-2">Cargo</label>
                                         <div class="col-md-9">
                                             <input name="nome" class="form-control" type="text" maxlength="255"
-                                                   autofocus>
+                                                   placeholder="Nome do cargo" autofocus>
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
@@ -181,10 +155,16 @@
                                 <input type="hidden" value="" name="id"/>
                                 <div class="form-body">
                                     <div class="row form-group">
-                                        <label class="control-label col-md-2">Nome</label>
+                                        <label class="col-sm-2 control-label">Cargo</label>
+                                        <div class="col-sm-9">
+                                            <input name="nome_cargo" class="form-control" type="text" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Função</label>
                                         <div class="col-md-9">
                                             <input name="nome" class="form-control" type="text" maxlength="255"
-                                                   autofocus>
+                                                   placeholder="Nome da função ou ocupação" autofocus>
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
@@ -219,7 +199,6 @@
 
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
-    <link href="<?php echo base_url('assets/css/jquery.steps.css?1') ?>" rel="stylesheet">
 
 <?php require_once "end_js.php"; ?>
     <!-- Js -->
@@ -232,115 +211,58 @@
 
     <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/js/jquery-steps/jquery.steps.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/datatables/plugins/dataTables.rowsGroup.js'); ?>"></script>
     <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js') ?>"></script>
 
     <script>
         var save_method;
-        var table_cargo, table_funcao;
-        var id_cargo = '';
+        var table;
 
-        var steps = $("#wizard").steps({
-            headerTag: "h6",
-            bodyTag: "section",
-//        transitionEffect: "slideLeft",
-            transitionEffect: 0,
-            autoFocus: true,
-            enableFinishButton: false,
-            enablePagination: false,
-            enableAllSteps: true,
-            titleTemplate: "#title#",
-            startIndex: <?php echo $indice; ?>
-        });
+        $('#familia_CBO').mask('0000');
+        $('#ocupacao_CBO').mask('00');
+
 
         $(document).ready(function () {
 
-            $('#familia_CBO').mask('0000');
-            $('#ocupacao_CBO').mask('00');
-
-            //datatables
-            table_cargo = $('#table_cargo').DataTable({
-                "info": true,
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.
-                "order": [], //Initial no order.
-                "iDisplayLength": -1,
-                "bLengthChange": false,
-                "searching": false,
-                "paging": false,
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+            table = $('#table').DataTable({
+                'processing': true, //Feature control the processing indicator.
+                'serverSide': true, //Feature control DataTables' server-side processing mode.
+                'order': [], //Initial no order.
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('cargo_funcao/ajax_cargo/') ?>",
-                    "type": "POST"
+                'ajax': {
+                    'url': '<?php echo site_url('cargo_funcao/listar') ?>',
+                    'type': 'POST'
                 },
-
-                //Set column definition initialisation properties.
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        width: '100%',
-                        targets: [0]
+                        'width': '50%',
+                        'targets': [0, 3]
                     },
                     {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
-                    }
-                ]
-            });
-
-            table_funcao = $('#table_funcao').DataTable({
-                "info": true,
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.
-                "order": [], //Initial no order.
-                "iDisplayLength": -1,
-                "bLengthChange": false,
-                "searching": false,
-                "paging": false,
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
-                },
-                // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('cargo_funcao/ajax_funcao/') ?>",
-                    "type": "POST",
-                    "data": function (d) {
-                        d.id_cargo = id_cargo;
-                        return d;
-                    }
-                },
-
-                //Set column definition initialisation properties.
-                "columnDefs": [
-                    {
-                        width: '50%',
-                        targets: [0, 2]
+                        'mRender': function (data) {
+                            if (data === null) {
+                                data = '<span class="text-muted">Nenhuma função encontrada</span>';
+                            }
+                            return data;
+                        },
+                        'targets': [3]
                     },
                     {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'className': 'text-nowrap',
+                        'targets': [-1, -4], //last column
+                        'orderable': false, //set not orderable
+                        'searchable': false //set not orderable
                     }
                 ],
-                "drawCallback": function () {
-                    if (id_cargo.length === 0) {
-                        $('#nova_funcao').addClass('btn-warning').removeClass('btn-info');
-                    } else {
-                        $('#nova_funcao').addClass('btn-info').removeClass('btn-warning');
-                    }
-                }
+                'rowsGroup': [0, 1, 2]
             });
 
         });
 
-        $('.modal').on('shown.bs.modal', function () {
-            $(this).find('[autofocus]').focus().select();
-        });
 
         function add_cargo() {
             save_method = 'add';
@@ -349,27 +271,24 @@
             $('.form-group').removeClass('has-error'); // clear error class
             $('.help-block').empty(); // clear error string
             $('#modal_cargo').modal('show'); // show bootstrap modal
-            $('#form_cargo [name="nome"]').focus();
             $('.modal-title').text('Adicionar novo cargo'); // Set Title to Bootstrap modal title
             $('.combo_nivel1').hide();
         }
 
-        function add_funcao() {
-            if (id_cargo.length === 0) {
-                alert('Selecione o cargo onde será adicionada a nova função.');
-                return false;
-            }
+
+        function add_funcao(id_cargo, nome_cargo) {
             save_method = 'add';
             $('#form_funcao')[0].reset(); // reset form on modals
             $('#form_funcao [name="id"]').val('');
-            $('#form_funcao [name="id_cargo"]').val(id_cargo);
+            $('#form_funcao [name="nome_cargo"]').val(nome_cargo);
+            $('#form_funcao [name="id_cargo"]').val(id_cargo).prop('readonly', true);
             $('.form-group').removeClass('has-error'); // clear error class
             $('.help-block').empty(); // clear error string
             $('#modal_funcao').modal('show'); // show bootstrap modal
-            $('#form_funcao [name="nome"]').focus();
             $('.modal-title').text('Adicionar nova função/ocupação'); // Set Title to Bootstrap modal title
             $('.combo_nivel1').hide();
         }
+
 
         function edit_cargo(id) {
             save_method = 'update';
@@ -379,26 +298,31 @@
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('cargo_funcao/ajax_editCargo') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (json) {
-                    $('[name="id"]').val(json.id);
-                    $('[name="id_empresa"]').val(json.id_empresa);
-                    $('[name="nome"]').val(json.nome);
-                    $('[name="familia_CBO"]').val(json.familia_CBO);
+                'url': '<?php echo site_url('cargo_funcao/editarCargo') ?>',
+                'type': 'POST',
+                'dataType': 'JSON',
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
+
+                    $.each(json, function (key, value) {
+                        $('#form_cargo [name="' + key + '"]').val(value);
+                    });
 
                     $('#modal_cargo').modal('show');
-                    $('.modal-title').text('Editar cargo - ' + json.nome); // Set title to Bootstrap modal title
+                    $('.modal-title').text('Editar cargo'); // Set title to Bootstrap modal title
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
-        function edit_funcao(id) {
+
+        function edit_funcao(id, nome_cargo) {
             save_method = 'update';
             $('#form_funcao')[0].reset(); // reset form on modals
             $('.form-group').removeClass('has-error'); // clear error class
@@ -406,128 +330,123 @@
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('cargo_funcao/ajax_editFuncao') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (json) {
-                    $('[name="id"]').val(json.id);
-                    $('[name="id_cargo"]').val(json.id_cargo);
-                    $('[name="nome"]').val(json.nome);
-                    $('[name="ocupacao_CBO"]').val(json.ocupacao_CBO);
+                'url': '<?php echo site_url('cargo_funcao/editarFuncao') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
 
+                    $.each(json, function (key, value) {
+                        $('#form_funcao [name="' + key + '"]').val(value);
+                    });
+
+                    $('#form_funcao [name="nome_cargo"]').val(nome_cargo).prop('readonly', true);
                     $('#modal_funcao').modal('show');
-                    $('.modal-title').text('Editar função/ocupação - ' + json.nome); // Set title to Bootstrap modal title
+                    $('.modal-title').text('Editar função/ocupação'); // Set title to Bootstrap modal title
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function save_cargo() {
-            $('#btnSaveCargo').text('Salvando...'); //change button text
-            $('#btnSaveCargo').attr('disabled', true); //set button disable
-            var url;
-
-            if (save_method === 'add') {
-                url = "<?php echo site_url('cargo_funcao/ajax_addCargo') ?>";
-            } else {
-                url = "<?php echo site_url('cargo_funcao/ajax_updateCargo') ?>";
-            }
-
-            // ajax adding data to database
             $.ajax({
-                url: url,
-                type: "POST",
-                data: $('#form_cargo').serialize(),
-                dataType: "JSON",
-                success: function (json) {
+                'url': '<?php echo site_url('cargo_funcao/salvarCargo') ?>',
+                'type': 'POST',
+                'data': $('#form_cargo').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveCargo').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     if (json.status) {
                         $('#modal_cargo').modal('hide');
                         reload_table();
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSaveCargo').text('Salvar'); //change button text
-                    $('#btnSaveCargo').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveCargo').text('Salvar'); //change button text
-                    $('#btnSaveCargo').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveCargo').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function save_funcao() {
-            $('#btnSaveFuncao').text('Salvando...'); //change button text
-            $('#btnSaveFuncao').attr('disabled', true); //set button disable
-            var url;
-
-            if (save_method === 'add') {
-                url = "<?php echo site_url('cargo_funcao/ajax_addFuncao') ?>";
-            } else {
-                url = "<?php echo site_url('cargo_funcao/ajax_updateFuncao') ?>";
-            }
-
-            // ajax adding data to database
             $.ajax({
-                url: url,
-                type: "POST",
-                data: $('#form_funcao').serialize(),
-                dataType: "JSON",
-                success: function (json) {
+                'url': '<?php echo site_url('cargo_funcao/salvarFuncao') ?>',
+                'type': 'POST',
+                'data': $('#form_funcao').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveFuncao').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     if (json.status) {
                         $('#modal_funcao').modal('hide');
                         reload_table();
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSaveFuncao').text('Salvar'); //change button text
-                    $('#btnSaveFuncao').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveFuncao').text('Salvar'); //change button text
-                    $('#btnSaveFuncao').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveFuncao').text('Salvar').attr('disabled', false);
                 }
             });
         }
+
 
         function delete_cargo(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: "<?php echo site_url('cargo_funcao/ajax_deleteCargo') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {id: id},
-                    success: function (data) {
-                        $('#modal_cargo').modal('hide');
-                        reload_table();
+                    'url': '<?php echo site_url('cargo_funcao/excluirCargo') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else if (json.erro) {
+                            alert(json.erro);
+                        }
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                         alert('Error deleting data');
                     }
                 });
             }
         }
+
 
         function delete_funcao(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: "<?php echo site_url('cargo_funcao/ajax_deleteFuncao') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {id: id},
-                    success: function (data) {
-                        $('#modal_funcao').modal('hide');
-                        reload_table();
+                    'url': '<?php echo site_url('cargo_funcao/excluirFuncao') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else if (json.erro) {
+                            alert(json.erro);
+                        }
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                         alert('Error deleting data');
                     }
@@ -535,17 +454,11 @@
             }
         }
 
+
         function reload_table() {
-            table_cargo.ajax.reload(null, false);
-            table_funcao.ajax.reload(null, false);
+            table.ajax.reload(null, false);
         }
 
-        function nextFuncao(id) {
-            id_cargo = id;
-            //steps.next(id);
-            $('#wizard-t-1').trigger('click');
-            reload_table();
-        }
     </script>
 
 <?php require_once "end_html.php"; ?>

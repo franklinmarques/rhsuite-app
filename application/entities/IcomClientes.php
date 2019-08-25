@@ -6,26 +6,30 @@ class IcomClientes extends Entity
 {
     protected $id;
     protected $id_empresa;
-    protected $id_setor;
     protected $nome;
+    protected $observacoes;
     protected $contato_principal;
-    protected $telefone_principal;
-    protected $email_principal;
+    protected $telefone_contato_principal;
+    protected $email_contato_principal;
+    protected $cargo_contato_principal;
     protected $contato_secundario;
-    protected $telefone_secundario;
-    protected $email_secundario;
+    protected $telefone_contato_secundario;
+    protected $email_contato_secundario;
+    protected $cargo_contato_secundario;
 
     protected $casts = [
         'id' => 'int',
         'id_empresa' => 'int',
-        'id_setor' => 'int',
         'nome' => 'string',
+        'observacoes' => '?string',
         'contrato_principal' => '?string',
-        'telefone_principal' => '?string',
-        'email_principal' => '?string',
+        'telefone_contato_principal' => '?string',
+        'email_contato_principal' => '?string',
+        'cargo_contato_principal' => '?string',
         'contrato_secundario' => '?string',
-        'telefone_secundario' => '?string',
-        'email_secundario' => '?string'
+        'telefone_contato_secundario' => '?string',
+        'email_contato_secundario' => '?string',
+        'cargo_contato_secundario' => '?string'
     ];
 
 }

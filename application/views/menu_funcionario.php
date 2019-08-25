@@ -242,6 +242,30 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                     </a>
                 </li>
 
+                <!-- coordenador, gerente, diretor e presidente -->
+                <?php if (in_array($this->session->userdata('nivel'), [7, 8, 9, 18])): ?>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-institution"></i>
+                            <span>Gestão Comercial</span>
+                        </a>
+                        <ul class="sub">
+                            <li>
+                                <a href="<?php echo site_url('icom/produtos'); ?>">Gerenciar produtos</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo site_url('icom/clientes'); ?>">Gerenciar clientes</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo site_url('icom/propostas'); ?>">Gerenciar propostas</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo site_url('icom/contratos'); ?>">Gerenciar contratos</a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+
                 <?php if (in_array($this->uri->rsegment(2), array('acessarcurso'))): ?>
                     <li class="sub-menu" id="menu-curso">
                         <a href="javascript:;"<?= (in_array($this->uri->rsegment(2), array('acessarcurso')) ? ' class="active"' : ''); ?>>
@@ -372,7 +396,22 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                             </ul>
                         </li>
                     <?php endif; ?>
+                    <?php if (isset($hash_acesso['ICOM'])): ?>
+                        <li class="sub-menu">
+                            <a href="javascript:;"<?php echo(in_array($this->uri->rsegment(1), array('apontamento', 'sessoes')) ? ' class="active"' : ''); ?>>
+                                <i class="fa fa-history"></i>
+                                <span>Gestão Operacional Libras</span>
+                            </a>
+                            <?php if (in_array(801, $hash_acesso['ICOM'])): ?>
+                                <ul class="sub">
+                                    <li><a href="<?php echo site_url('icom/sessoes'); ?>">Gerenciar eventos</a></li>
+                                </ul>
+                            <?php endif; ?>
+                        </li>
+                    <?php endif; ?>
                 <?php endif; ?>
+
+
 
                 <?php if (in_array($this->session->userdata('nivel'), array(7, 8, 18))): ?>
                     <li class="sub-menu">

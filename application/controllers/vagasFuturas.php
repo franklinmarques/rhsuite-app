@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class VagasCurriculo extends CI_Controller
+class VagasFuturas extends CI_Controller
 {
 
     public function index()

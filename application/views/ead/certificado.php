@@ -12,7 +12,7 @@ $data_atual = strftime('%d de %B de %Y', strtotime('today'));
 $background = base_url('assets/img/certificado.jpg');
 
 if ($logo) {
-    $logo = "<img src='$logo'>";
+    $logo = "<img src=''>";
 }
 if ($assinatura) {
     $assinatura = "

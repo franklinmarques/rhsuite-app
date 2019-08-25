@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <style>
     .btn-success {
@@ -276,7 +276,7 @@ require_once APPPATH . "views/header.php";
 <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
 <!-- Css -->
 <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -303,28 +303,28 @@ require_once APPPATH . "views/end_js.php";
     <?php foreach ($competencias as $competencia): ?>
     <?php foreach ($competencia->dimensao as $k => $dimensao): ?>
     tables[<?= $dimensao->id ?>] = $('#table_' + '<?= $dimensao->id ?>').DataTable({
-        "info": false,
-        "processing": true, //Feature control the processing indicator.
-        "serverSide": false, //Feature control DataTables' server-side processing mode.
-        searching: false,
-        lengthChange: false,
-        paging: false,
-        ordering: false,
-        "paginate": false,
-        "language": {
-            "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+        'info': false,
+        'processing': true,
+        'serverSide': false,
+        'searching': false,
+        'lengthChange': false,
+        'paging': false,
+        'ordering': false,
+        'paginate': false,
+        'language': {
+            'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
         },
-        "columnDefs": [
+        'columnDefs': [
             {
-                width: '100%',
-                targets: [0]
+                'width': '100%',
+                'targets': [0]
             },
             {
-                className: 'text-center text-nowrap',
-                targets: [1, 2, 3, 4, 5, 6]
+                'className': 'text-center text-nowrap',
+                'targets': [1, 2, 3, 4, 5, 6]
             },
             {
-                render: function (data, type, row) {
+                'render': function (data, type, row) {
                     if (data === null) {
                         data = '<span class="text-muted">0</span>';
                     } else if (row[1] > <?= $dimensao->nivel ?>) {
@@ -334,10 +334,10 @@ require_once APPPATH . "views/end_js.php";
                     }
                     return data;
                 },
-                targets: [1, 2]
+                'targets': [1, 2]
             },
             {
-                render: function (data, type, row) {
+                'render': function (data, type, row) {
                     if (data === null) {
                         data = '<span class="text-muted">0</span>';
                     } else if (row[3] > <?= $dimensao->atitude ?>) {
@@ -347,10 +347,10 @@ require_once APPPATH . "views/end_js.php";
                     }
                     return data;
                 },
-                targets: [3, 4]
+                'targets': [3, 4]
             },
             {
-                render: function (data, type, row) {
+                'render': function (data, type, row) {
                     if (data === null) {
                         data = '<span class="text-muted">0</span>';
                     } else if (row[5] > <?= $dimensao->IDc ?>) {
@@ -360,7 +360,7 @@ require_once APPPATH . "views/end_js.php";
                     }
                     return data;
                 },
-                targets: [5, 6]
+                'targets': [5, 6]
             }
         ]
     });
@@ -401,62 +401,71 @@ require_once APPPATH . "views/end_js.php";
 
 
     demo2 = $('#avaliados').bootstrapDualListbox({
-        nonSelectedListLabel: 'Colaboradores habilitados',
-        selectedListLabel: 'Colaboradores pesquisados',
-        moveOnSelect: false,
-        helperSelectNamePostfix: false,
-        selectorMinimalHeight: 182,
-        filterPlaceHolder: 'Filtrar',
-        infoText: false
+        'nonSelectedListLabel': 'Colaboradores habilitados',
+        'selectedListLabel': 'Colaboradores pesquisados',
+        'moveOnSelect': false,
+        'helperSelectNamePostfix': false,
+        'selectorMinimalHeight': 182,
+        'filterPlaceHolder': 'Filtrar',
+        'infoText': false
     });
+
+
     $('#avaliados').on('change', function () {
         avaliados = $(this).val();
     });
+
     $('.filtro').on('change', function () {
         filtra_colaboradores();
     });
+
     $('#limpa_filtro').on('click', function () {
         $('.filtro').val('');
         filtra_colaboradores();
     });
 
+
     function filtra_colaboradores() {
         $.ajax({
-            url: "<?php echo site_url('avaliacao/avaliadoravaliados/ajax_avaliados/' . $avaliacao->id) ?>/",
-            type: "POST",
-            dataType: "JSON",
-            data: $('.filtro').serialize(),
-            success: function (data) {
-                $('#avaliados').html(data).val(avaliados);
+            'url': '<?php echo site_url('avaliacao/avaliadoravaliados/ajax_avaliados/' . $avaliacao->id) ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': $('.filtro').serialize(),
+            'success': function (json) {
+                $('#avaliados').html(json).val(avaliados);
                 demo2.bootstrapDualListbox('refresh', true);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
     }
 
+
     function gerar_comparativo() {
-        $('#gerar_comparativo').attr('disabled', true).text('Gerando comparativo...');
         var form = $('#form').serialize();
+
         if (form.split('&').length < 2) {
             alert('Selecione ao menos um colaborador');
             $.each(tables, function (i) {
                 tables[i].clear().draw();
             });
-            $('html, body').animate({scrollTop: 600}, 'swing');
+            $('html, body').animate({'scrollTop': 600}, 'swing');
             $('#gerar_comparativo').attr('disabled', false).text('Gerar comparativo');
             return false;
         }
 
         $.ajax({
-            url: "<?php echo site_url('competencias/relatorios/ajax_analiseComparativa/') ?>/",
-            type: "POST",
-            dataType: "JSON",
-            data: form,
-            success: function (data) {
-                $('html, body').animate({scrollTop: 600}, 'swing');
-                if (data.length > 0) {
+            'url': '<?php echo site_url('competencias/relatorios/ajax_analiseComparativa') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': form,
+            'beforeSend': function () {
+                $('#gerar_comparativo').text('Gerando comparativo...').attr('disabled', true);
+            },
+            'success': function (json) {
+                $('html, body').animate({'scrollTop': 600}, 'swing');
+                if (json.length > 0) {
                     $(data).each(function (i, v) {
                         tables[v.id].clear().rows.add(v.dados).draw();
                     });
@@ -479,16 +488,17 @@ require_once APPPATH . "views/end_js.php";
 
                 $('#pdf').prop('href', "<?= site_url('competencias/relatorios/pdfAnalise_comparativa/' . $this->uri->rsegment(3)); ?>" + search);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
+            },
+            'complete': function () {
+                $('#gerar_comparativo').text('Gerar comparativo').attr('disabled', false);
             }
-        }).done(function () {
-            $('#gerar_comparativo').attr('disabled', false).text('Gerar comparativo');
         });
     }
 
 </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

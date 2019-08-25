@@ -44,7 +44,7 @@
                 <div class="col-md-12">
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
-                        <li class="active">Gerenciar Produtos</li>
+                        <li class="active">Gestão Comercial - Gerenciar Produtos</li>
                     </ol>
                     <form action="#" id="estrutura" class="form-horizontal" autocomplete="off">
                         <div class="row">
@@ -91,8 +91,11 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                            aria-hidden="true">&times;</span></button>
+                                <div style="float:right;">
+                                    <button type="button" class="btn btn-success" id="btnSave" onclick="save()">Salvar
+                                    </button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                </div>
                                 <h3 class="modal-title">Gerenciar produto</h3>
                             </div>
                             <div class="modal-body form">
@@ -102,33 +105,44 @@
                                     <input type="hidden" value="<?= $empresa; ?>" name="id_empresa"/>
                                     <div class="form-body">
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Código</label>
+                                            <label class="control-label col-md-3">Código produto</label>
                                             <div class="col-md-4">
                                                 <input name="codigo" class="form-control" type="text">
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Nome</label>
+                                            <label class="control-label col-md-3">Nome produto</label>
                                             <div class="col-md-8">
                                                 <input name="nome" class="form-control" type="text">
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Tipo</label>
+                                            <label class="control-label col-md-3">Tipo produto</label>
                                             <div class="col-md-4">
                                                 <?php echo form_dropdown('tipo', $tipos, '', 'class="form-control"'); ?>
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Preço de locação</label>
+                                            <label class="control-label col-md-3">Preço de venda</label>
                                             <div class="col-md-4">
                                                 <div class="input-group">
                                                     <span class="input-group-addon" id="basic-addon1">R$</span>
                                                     <input name="preco" type="text" class="form-control valor"
                                                            aria-describedby="basic-addon1">
+                                                </div>
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="control-label col-md-3">Custo produto</label>
+                                            <div class="col-md-4">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" id="basic-addon2">R$</span>
+                                                    <input name="custo" type="text" class="form-control valor"
+                                                           aria-describedby="basic-addon2">
                                                 </div>
                                                 <span class="help-block"></span>
                                             </div>
@@ -161,13 +175,15 @@
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
+                                        <div class="row form-group">
+                                            <label class="control-label col-md-3">Centro de custo</label>
+                                            <div class="col-md-8">
+                                                <input name="centro_custo" class="form-control" type="text">
+                                                <span class="help-block"></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-success" id="btnSave" onclick="save()">Salvar
-                                </button>
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                             </div>
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
@@ -186,7 +202,7 @@
     <!-- Js -->
     <script>
         $(document).ready(function () {
-            document.title = 'CORPORATE RH - LMS - Gerenciar Produtos';
+            document.title = 'CORPORATE RH - LMS - Gestão Comercial: Gerenciar Produtos';
         });
     </script>
 
@@ -253,14 +269,13 @@
                 'success': function (json) {
                     if (json.erro) {
                         alert(json.erro);
-                        return false;
+                    } else {
+                        $('#estrutura [name="id_area"]').html(json.areas);
+                        $('#estrutura [name="id_setor"]').html(json.setores);
+
+                        $('#estrutura select').prop('disabled', false);
+                        reload_table();
                     }
-
-                    $('#estrutura [name="id_area"]').html(json.areas);
-                    $('#estrutura [name="id_setor"]').html(json.setores);
-
-                    $('#estrutura select').prop('disabled', false);
-                    reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -276,6 +291,7 @@
             save_method = 'add';
             $('#form')[0].reset();
             $('#form [name="id"]').val('');
+            $('#id_depto option[value=""]').text('selecione...');
             $('#id_area, #id_setor').html('<option value="">selecione...</option>');
             $('.estrutura').val('');
             $('#modal_form').modal('show');
@@ -320,19 +336,11 @@
 
 
         function montar_estrutura() {
-            var id_depto = $('#id_depto').val();
-            var id_area = $('#id_area').val();
-            var id_setor = $('#id_setor').val();
-
             $.ajax({
                 'url': '<?php echo site_url('icom/produtos/montarEstrutura') ?>',
                 'type': 'POST',
                 'dataType': 'json',
-                'data': {
-                    'id_depto': id_depto,
-                    'id_area': id_area,
-                    'id_setor': id_setor
-                },
+                'data': $('.estrutura').serialize(),
                 'beforeSend': function () {
                     $('.estrutura, #btnSave').prop('disabled', true);
                 },

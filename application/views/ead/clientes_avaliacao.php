@@ -122,8 +122,11 @@
         var save_method;
 
         $('.nota').mask('#00', {
-            translation: {
-                '#': {pattern: /1/, optional: true}
+            'translation': {
+                '#': {
+                    'pattern': /1/,
+                    'optional': true
+                }
             }
         });
 
@@ -150,12 +153,14 @@
 
 
         function save() {
-            $('#btnSave').html('<i class="fa fa-save"></i> Salvando').prop('disabled', true);
             $.ajax({
                 'url': "<?php echo site_url('ead/clientes_treinamentos/ajaxSaveAvaliacao/' . $id_cliente . '/' . $id) ?>",
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form').serialize(),
+                'beforeSend': function () {
+                    $('#btnSave').html('<i class="fa fa-save"></i> Salvando').prop('disabled', true);
+                },
                 'success': function (json) {
                     if (json.retorno === 1) {
                         $('#alert').html('<div class="alert alert-success">' + json.aviso + '</div>').hide().fadeIn('slow', function () {
@@ -168,11 +173,11 @@
                             $('#alert').html('<div class="alert alert-warning">' + json.aviso + '</div>').hide().fadeIn('slow');
                         }
                     }
-
-                    $('#btnSave').html('<i class="fa fa-save"></i> Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Erro ao salvar a avaliação');
+                },
+                'complete': function () {
                     $('#btnSave').html('<i class="fa fa-save"></i> Salvar').prop('disabled', false);
                 }
             });

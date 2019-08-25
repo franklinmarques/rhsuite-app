@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <!--main content start-->
 <section id="main-content">
@@ -138,7 +138,7 @@ require_once APPPATH . "views/header.php";
 </section>
 <!--main content end-->
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
 <!-- Js -->
 <script>
@@ -159,11 +159,11 @@ require_once APPPATH . "views/end_js.php";
     var enviarResposta = 0;
     if (audio) {
         $('#audio').popover({
-            title: "Player",
-            html: true,
-            placement: 'bottom',
-            template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title text-primary"></h3><div class="popover-content"></div></div>',
-            content: '<audio id="player" controls<?= $row->autoplay ? ' autoplay' : '' ?> src="<?= base_url('arquivos/media/' . $row->audio); ?>"></audio>'
+            'title': 'Player',
+            'html': true,
+            'placement': 'bottom',
+            'template': '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title text-primary"></h3><div class="popover-content"></div></div>',
+            'content': '<audio id="player" controls<?= $row->autoplay ? ' autoplay' : '' ?> src="<?= base_url('arquivos/media/' . $row->audio); ?>"></audio>'
         });
     }
 
@@ -177,7 +177,6 @@ require_once APPPATH . "views/end_js.php";
         }
         zoom_percent += 10;
         $(document.body).css('zoom', (zoom_percent).toString() + '%');
-        console.log(zoom_percent);
     });
 
     $('#diminuir_zoom').on('click', function () {
@@ -186,7 +185,6 @@ require_once APPPATH . "views/end_js.php";
         }
         zoom_percent -= 10;
         $(document.body).css('zoom', (zoom_percent).toString() + '%');
-        console.log(zoom_percent);
     });
 
 
@@ -309,5 +307,5 @@ require_once APPPATH . "views/end_js.php";
 
 </script>
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

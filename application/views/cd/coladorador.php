@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
     <style>
         .jstree-defaulto {
@@ -126,7 +126,7 @@ require_once APPPATH . "views/header.php";
     </section>
     <!--main content end-->
 <?php
-require_once  APPPATH . "views/end_js.php";
+require_once  APPPATH . 'views/end_js.php';
 ?>
     <!-- Css -->
     <link rel="stylesheet" href="<?php echo base_url("assets/js/bootstrap-combobox/css/bootstrap-combobox.css"); ?>">
@@ -211,5 +211,5 @@ require_once  APPPATH . "views/end_js.php";
     </script>
 
 <?php
-require_once  APPPATH . "views/end_html.php";
+require_once  APPPATH . 'views/end_html.php';
 ?>

@@ -365,8 +365,9 @@ class Funcionario extends MY_Controller
             $hash_acesso = $this->input->post('hash_acesso');
             $id = $this->db->insert_id();
             if ($hash_acesso) {
-                $this->load->library('encrypt');
-                $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($id));
+//                $this->load->library('encrypt');
+//                $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($id));
+                $data['hash_acesso'] = json_encode($hash_acesso);
                 $this->db->update('usuarios', array('hash_acesso' => $data['hash_acesso']), array('id' => $id));
             }
             echo json_encode(array('retorno' => 1, 'aviso' => 'Cadastro de funcionário efetuado com sucesso', 'redireciona' => 1, 'pagina' => site_url('funcionario/editar/' . $id)));
@@ -400,8 +401,9 @@ class Funcionario extends MY_Controller
             redirect(site_url('home/funcionarios'));
         }
         if ($funcionario->hash_acesso) {
-            $this->load->library('encrypt');
-            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $this->load->library('encrypt');
+//            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $funcionario->hash_acesso = json_decode($funcionario->hash_acesso, true);
         } else {
             $funcionario->hash_acesso = 'null';
         }
@@ -692,8 +694,9 @@ class Funcionario extends MY_Controller
 
         $hash_acesso = $this->input->post('hash_acesso');
         if ($hash_acesso) {
-            $this->load->library('encrypt');
-            $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($funcionario->id));
+//            $this->load->library('encrypt');
+//            $data['hash_acesso'] = $this->encrypt->encode(json_encode($hash_acesso), base64_encode($funcionario->id));
+            $data['hash_acesso'] = json_encode($hash_acesso);
         } else {
             $data['hash_acesso'] = null;
         }

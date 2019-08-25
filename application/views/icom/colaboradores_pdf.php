@@ -68,9 +68,6 @@
                 <p>
                     <img src="<?= base_url('imagens/usuarios/' . $empresa->foto_descricao) ?>" align="left"
                          style="height: auto; width: auto; max-height: 92px; max-width: 508px; vertical-align: middle; padding: 0 10px 5px 5px;">
-                    <!--<span style="font-weight: bold;">Associação dos Amigos Metroviários dos Excepcionais - AME</span><br>
-                    <span style="font-size: small;">Rua Serra de Botucatu, 1.197 - São Paulo, Brasil ─ CEP 03317-001 ─ Tel.: 2360-8900</span><br>
-                    <span style="font-size: small;">Site: www.ame-sp.org.br ─ e-mail: ame@ame-sp.org.br</span>-->
                 </p>
             </td>
         </tr>
@@ -78,35 +75,31 @@
     <table id="table" class="table table-bordered table-condensed">
         <thead>
         <tr style='border-top: 5px solid #ddd;'>
-            <th colspan="6" style="padding-bottom: 8px; text-align: center;">
+            <th colspan="4" style="padding-bottom: 8px; text-align: center;">
                 <h3 style="font-weight: bold;">QUADRO DE COLABORADORES</h3>
             </th>
         </tr>
         <tr style='border-top: 5px solid #ddd;'>
-            <th colspan="3" class="text-nowrap" style="padding-bottom: 8px; border-right-width: 0px;">
+            <th colspan="2" class="text-nowrap" style="padding-bottom: 8px; border-right-width: 0px;">
                 <h6>N&ordm; de colaboradores: <?= count($colaboradores) ?></h6>
             </th>
-            <th colspan="3" class="text-right text-nowrap" style="padding-bottom: 8px; border-left-width: 0px;">
+            <th colspan="2" class="text-right text-nowrap" style="padding-bottom: 8px; border-left-width: 0px;">
                 <h6>Data: <?= date('d/m/Y') ?></h6>
             </th>
         </tr>
         <tr class="active">
-            <th class="text-center" width="9%">Contrato</th>
-            <th class="text-center" width="24%">Depto/área/setor</th>
-            <th class="text-center" width="25%">Funcionário</th>
-            <th class="text-center" width="9%">Matrícula</th>
-            <th class="text-center" width="24%">Cargo/função</th>
-            <th class="text-center text-nowrap" width="9%">Data admissão</th>
+            <th class="text-center" width="30%">Funcionário(a)</th>
+            <th class="text-center" width="30%">Depto/área/setor</th>
+            <th class="text-center" width="30%">Função</th>
+            <th class="text-center text-nowrap" width="10%">Data admissão</th>
         </tr>
         </thead>
         <tbody>
         <?php foreach ($colaboradores as $colaborador): ?>
             <tr>
-                <td><?= $colaborador->contrato ?></td>
-                <td><?= $colaborador->estrutura ?></td>
                 <td><?= $colaborador->nome ?></td>
-                <td><?= $colaborador->matricula ?></td>
-                <td><?= $colaborador->cargo_funcao ?></td>
+                <td><?= $colaborador->estrutura ?></td>
+                <td><?= $colaborador->funcao ?></td>
                 <td class="text-center"><?= $colaborador->data_admissao ?></td>
             </tr>
         <?php endforeach; ?>

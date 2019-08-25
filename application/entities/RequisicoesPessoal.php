@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class RequisicoesPessoal extends Entity
 {
     protected $id;
     protected $id_empresa;
-    protected $numero;
     protected $data_abertura;
     protected $data_fechamento;
     protected $data_solicitacao_exame;
@@ -83,7 +80,6 @@ class RequisicoesPessoal extends Entity
     protected $casts = [
         'id' => 'int',
         'id_empresa' => 'int',
-        'numero' => 'string',
         'data_abertura' => 'datetime',
         'data_fechamento' => '?datetime',
         'data_solicitacao_exame' => '?datetime',

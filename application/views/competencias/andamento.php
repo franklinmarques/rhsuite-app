@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <style>
     .btn-success {
@@ -151,7 +151,7 @@ require_once APPPATH . "views/header.php";
 <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
 <!-- Css -->
 <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -172,25 +172,25 @@ require_once APPPATH . "views/end_js.php";
 
     <?php foreach ($dadosAvaliadores as $id => $competencia) : ?>
     tables[<?= $competencia->id ?>] = $('#table_' + '<?= $competencia->id ?>').DataTable({
-        "info": false,
-        "processing": true, //Feature control the processing indicator.
-        "serverSide": false, //Feature control DataTables' server-side processing mode.
-        searching: false,
-        lengthChange: false,
-        paging: false,
-        ordering: false,
-        "paginate": false,
-        "language": {
-            "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+        'info': false,
+        'processing': true,
+        'serverSide': false,
+        'searching': false,
+        'lengthChange': false,
+        'paging': false,
+        'ordering': false,
+        'paginate': false,
+        'language': {
+            'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
         },
-        "columnDefs": [
+        'columnDefs': [
             {
-                width: '50%',
-                targets: [0, 1]
+                'width': '50%',
+                'targets': [0, 1]
             },
             {
-                className: 'text-center',
-                render: function (data) {
+                'className': 'text-center',
+                'render': function (data) {
                     if (data === 'Avaliado') {
                         data = '<strong class="text-success">' + data + '</strong>';
                     } else if (data === 'Avaliar') {
@@ -198,30 +198,31 @@ require_once APPPATH . "views/end_js.php";
                     }
                     return data;
                 },
-                targets: [2]
+                'targets': [2]
             }
         ]
     });
     <?php endforeach; ?>
 
+
     function filtrar_status() {
         var status = $('.status:checked').val();
 
         $.ajax({
-            url: "<?php echo site_url('competencias/relatorios/ajax_andamento/') ?>/",
-            type: "POST",
-            dataType: "JSON",
-            timeout: 9000,
-            data: {
-                id: '<?= $this->uri->rsegment(3, 0) ?>',
-                status: status
+            'url': '<?php echo site_url('competencias/relatorios/ajax_andamento') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'timeout': 9000,
+            'data': {
+                'id': '<?= $this->uri->rsegment(3, 0) ?>',
+                'status': status
             },
-            beforeSend: function () {
+            'beforeSend': function () {
                 $('.status').attr('disabled', true);
             },
-            success: function (data) {
-                if (data.length > 0) {
-                    $(data).each(function (i, v) {
+            'success': function (json) {
+                if (json.length > 0) {
+                    $(json).each(function (i, v) {
                         tables[v.id].clear().rows.add(v.dados).draw();
                     });
                 } else {
@@ -237,16 +238,17 @@ require_once APPPATH . "views/end_js.php";
 
                 $('#pdf').prop('href', "<?= site_url('competencias/relatorios/pdfAndamento/' . $this->uri->rsegment(3)); ?>" + search);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
+            },
+            'complete': function () {
+                $('.status').attr('disabled', false);
             }
-        }).done(function () {
-            $('.status').attr('disabled', false);
         });
     }
 
 </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

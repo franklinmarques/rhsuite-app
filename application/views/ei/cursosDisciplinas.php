@@ -1,4 +1,5 @@
 <?php require_once APPPATH . 'views/header.php'; ?>
+
     <style>
         .btn-success {
             background-color: #5cb85c;
@@ -138,9 +139,14 @@
                                 <div class="form-body">
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Nome</label>
-                                        <div class="col-md-9">
+                                        <div class="col-md-6">
                                             <input name="nome" class="form-control" type="text" maxlength="255"
                                                    autofocus>
+                                            <span class="help-block"></span>
+                                        </div>
+                                        <label class="control-label col-md-2">Qtde. semestres</label>
+                                        <div class="col-md-1">
+                                            <input name="qtde_semestres" class="form-control semestres" type="text">
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
@@ -230,6 +236,7 @@
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js'); ?>"></script>
     <script src="<?php echo base_url('assets/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js') ?>"></script>
     <script src="<?php echo base_url('assets/js/jquery-steps/jquery.steps.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
     <script src="<?php echo base_url('assets/datatables/plugins/dataTables.rowsGroup.js'); ?>"></script>
 
     <script>
@@ -238,105 +245,99 @@
         var demo2;
         var id_curso = '';
 
-        var steps = $("#wizard").steps({
-            headerTag: "h6",
-            bodyTag: "section",
-//        transitionEffect: "slideLeft",
-            transitionEffect: 0,
-            autoFocus: true,
-            enableFinishButton: false,
-            enablePagination: false,
-            enableAllSteps: true,
-            titleTemplate: "#title#",
-            startIndex: <?php echo $indice; ?>
+        var steps = $('#wizard').steps({
+            'headerTag': 'h6',
+            'bodyTag': 'section',
+//        'transitionEffect': 'slideLeft',
+            'transitionEffect': 0,
+            'autoFocus': true,
+            'enableFinishButton': false,
+            'enablePagination': false,
+            'enableAllSteps': true,
+            'titleTemplate': '#title#',
+            'startIndex': <?php echo $indice; ?>
         });
+
+        $('.semestres').mask('00');
 
         $(document).ready(function () {
 
             //datatables
             table_curso = $('#table_curso').DataTable({
-                "info": true,
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.
-                "order": [], //Initial no order.
-                "iDisplayLength": -1,
-                "bLengthChange": false,
-                "searching": false,
-                "paging": false,
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+                'processing': true, //Feature control the processing indicator.
+                'serverSide': true, //Feature control DataTables' server-side processing mode.
+                'order': [], //Initial no order.
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('ei/cursosDisciplinas/ajax_cursos/') ?>",
-                    "type": "POST"
+                'ajax': {
+                    'url': '<?php echo site_url('ei/cursosDisciplinas/ajax_cursos') ?>',
+                    'type': 'POST'
                 },
-
                 //Set column definition initialisation properties.
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        width: '33%',
-                        targets: [0, 2]
+                        'width': '33%',
+                        'targets': [0, 2]
                     },
                     {
-                        width: '34%',
-                        targets: [1]
+                        'width': '34%',
+                        'targets': [1]
                     },
                     {
-                        mRender: function (data) {
+                        'mRender': function (data) {
                             if (data === null) {
                                 data = '<span class="text-muted">Nenhuma unidade vinculada</span>';
                             }
                             return data;
                         },
-                        targets: [2]
+                        'targets': [2]
                     },
                     {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'className': 'text-nowrap',
+                        'targets': [-1], //last column
+                        'orderable': false, //set not orderable
+                        'searchable': false //set not orderable
                     }
                 ],
-                rowsGroup: [0, -1, 1, 2]
+                'rowsGroup': [0, -1, 1, 2]
             });
 
             table_disciplina = $('#table_disciplina').DataTable({
-                "info": true,
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.
-                "order": [], //Initial no order.
-                "iDisplayLength": -1,
-                "bLengthChange": false,
-                "searching": false,
-                "paging": false,
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+                'processing': true, //Feature control the processing indicator.
+                'serverSide': true, //Feature control DataTables' server-side processing mode.
+                'order': [], //Initial no order.
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('ei/cursosDisciplinas/ajax_disciplinas/') ?>",
-                    "type": "POST",
-                    "data": function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('ei/cursosDisciplinas/ajax_disciplinas') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.id_curso = id_curso;
                         return d;
                     }
                 },
-
                 //Set column definition initialisation properties.
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        width: '50%',
-                        targets: [0, 1]
+                        'width': '50%',
+                        'targets': [0, 1]
                     },
                     {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'className': 'text-nowrap',
+                        'targets': [-1], //last column
+                        'orderable': false, //set not orderable
+                        'searchable': false //set not orderable
                     }
                 ],
-                "drawCallback": function () {
+                'drawCallback': function () {
                     if (id_curso.length === 0) {
                         $('#nova_disciplina').addClass('btn-warning').removeClass('btn-info');
                     } else {
@@ -346,14 +347,14 @@
             });
 
             demo2 = $('.demo2').bootstrapDualListbox({
-                nonSelectedListLabel: 'Unidades de ensino disponíveis',
-                selectedListLabel: 'Unidades de ensino selecionadas',
-                preserveSelectionOnMove: 'moved',
-                moveOnSelect: false,
-                filterPlaceHolder: 'Filtrar',
-                helperSelectNamePostfix: false,
-                selectorMinimalHeight: 132,
-                infoText: false
+                'nonSelectedListLabel': 'Unidades de ensino disponíveis',
+                'selectedListLabel': 'Unidades de ensino selecionadas',
+                'preserveSelectionOnMove': 'moved',
+                'moveOnSelect': false,
+                'filterPlaceHolder': 'Filtrar',
+                'helperSelectNamePostfix': false,
+                'selectorMinimalHeight': 132,
+                'infoText': false
             });
 
         });
@@ -365,15 +366,15 @@
         $('#id_diretoria').on('change', function () {
             var id = this.value;
             $.ajax({
-                url: "<?php echo site_url('ei/cursosDisciplinas/atualizarEscolas') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (json) {
+                'url': '<?php echo site_url('ei/cursosDisciplinas/atualizarEscolas') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     $('#id_escola').html($(json.escolas).html());
                     demo2.bootstrapDualListbox('refresh', true);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -416,14 +417,15 @@
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('ei/cursosDisciplinas/ajax_editCurso') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (json) {
+                'url': '<?php echo site_url('ei/cursosDisciplinas/ajax_editCurso') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     $('[name="id"]').val(json.id);
                     $('[name="id_empresa"]').val(json.id_empresa);
                     $('[name="nome"]').val(json.nome);
+                    $('[name="qtde_semestres"]').val(json.qtde_semestres);
 
                     $('#id_diretoria').val(json.id_diretoria);
                     $('#id_escola').html($(json.escolas).html());
@@ -432,7 +434,7 @@
                     $('#modal_curso').modal('show');
                     $('.modal-title').text('Editar curso - ' + json.nome); // Set title to Bootstrap modal title
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -446,11 +448,11 @@
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('ei/cursosDisciplinas/ajax_editDisciplina') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (json) {
+                'url': '<?php echo site_url('ei/cursosDisciplinas/ajax_editDisciplina') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     $('[name="id"]').val(json.id);
                     $('[name="id_curso"]').val(json.id_curso);
                     $('[name="nome"]').val(json.nome);
@@ -458,80 +460,76 @@
                     $('#modal_disciplina').modal('show');
                     $('.modal-title').text('Editar disciplina - ' + json.nome); // Set title to Bootstrap modal title
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
         function save_curso() {
-            $('#btnSaveCurso').text('Salvando...'); //change button text
-            $('#btnSaveCurso').attr('disabled', true); //set button disable
             var url;
-
             if (save_method === 'add') {
-                url = "<?php echo site_url('ei/cursosDisciplinas/ajax_addCurso') ?>";
+                url = '<?php echo site_url('ei/cursosDisciplinas/ajax_addCurso') ?>';
             } else {
-                url = "<?php echo site_url('ei/cursosDisciplinas/ajax_updateCurso') ?>";
+                url = '<?php echo site_url('ei/cursosDisciplinas/ajax_updateCurso') ?>';
             }
 
             // ajax adding data to database
             $.ajax({
-                url: url,
-                type: "POST",
-                data: $('#form_curso').serialize(),
-                dataType: "JSON",
-                success: function (json) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form_curso').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveCurso').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     if (json.status) {
                         $('#modal_curso').modal('hide');
                         reload_table();
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSaveCurso').text('Salvar'); //change button text
-                    $('#btnSaveCurso').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveCurso').text('Salvar'); //change button text
-                    $('#btnSaveCurso').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveCurso').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
         function save_disciplina() {
-            $('#btnSaveDisciplina').text('Salvando...'); //change button text
-            $('#btnSaveDisciplina').attr('disabled', true); //set button disable
             var url;
-
             if (save_method === 'add') {
-                url = "<?php echo site_url('ei/cursosDisciplinas/ajax_addDisciplina') ?>";
+                url = '<?php echo site_url('ei/cursosDisciplinas/ajax_addDisciplina') ?>';
             } else {
-                url = "<?php echo site_url('ei/cursosDisciplinas/ajax_updateDisciplina') ?>";
+                url = '<?php echo site_url('ei/cursosDisciplinas/ajax_updateDisciplina') ?>';
             }
 
             // ajax adding data to database
             $.ajax({
-                url: url,
-                type: "POST",
-                data: $('#form_disciplina').serialize(),
-                dataType: "JSON",
-                success: function (json) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form_disciplina').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveDisciplina').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     if (json.status) {
                         $('#modal_disciplina').modal('hide');
                         reload_table();
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSaveDisciplina').text('Salvar'); //change button text
-                    $('#btnSaveDisciplina').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveDisciplina').text('Salvar'); //change button text
-                    $('#btnSaveDisciplina').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveDisciplina').text('Salvar').attr('disabled', false);
                 }
             });
         }
@@ -539,15 +537,15 @@
         function delete_curso(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: "<?php echo site_url('ei/cursosDisciplinas/ajax_deleteCurso') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {id: id},
-                    success: function (data) {
+                    'url': '<?php echo site_url('ei/cursosDisciplinas/ajax_deleteCurso') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
                         $('#modal_curso').modal('hide');
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                         alert('Error deleting data');
                     }
@@ -558,15 +556,15 @@
         function delete_disciplina(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: "<?php echo site_url('ei/cursosDisciplinas/ajax_deleteDisciplina') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: {id: id},
-                    success: function (data) {
+                    'url': '<?php echo site_url('ei/cursosDisciplinas/ajax_deleteDisciplina') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
                         $('#modal_disciplina').modal('hide');
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                         alert('Error deleting data');
                     }
@@ -585,6 +583,7 @@
             $('#wizard-t-1').trigger('click');
             reload_table();
         }
+
     </script>
 
 <?php require_once APPPATH . 'views/end_html.php'; ?>

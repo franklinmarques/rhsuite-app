@@ -213,7 +213,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('ei/escolas/ajax_list/') ?>',
+                    'url': '<?php echo site_url('ei/escolas/ajax_list') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.busca = $('#busca').serialize();
@@ -253,7 +253,7 @@
 
         function atualizarFiltro() {
             $.ajax({
-                'url': '<?php echo site_url('ei/escolas/atualizar_filtro/') ?>',
+                'url': '<?php echo site_url('ei/escolas/atualizar_filtro') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
@@ -289,7 +289,7 @@
             $('.help-block').empty();
 
             $.ajax({
-                'url': '<?php echo site_url('ei/escolas/ajax_edit/') ?>',
+                'url': '<?php echo site_url('ei/escolas/ajax_edit') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {id: id},
@@ -318,10 +318,7 @@
         }
 
         function save() {
-            $('#btnSave').text('Salvando...');
-            $('#btnSave').attr('disabled', true);
             var url;
-
             if (save_method === 'add') {
                 url = '<?php echo site_url('ei/escolas/ajax_add') ?>';
             } else {
@@ -333,19 +330,22 @@
                 'type': 'POST',
                 'data': $('#form').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
                     }
-
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }

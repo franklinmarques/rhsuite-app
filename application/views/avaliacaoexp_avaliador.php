@@ -59,9 +59,9 @@ require_once "header.php";
                         <li class="active"><?= $titulo; ?></li>
                     </ol>
                     <?php if ($this->session->userdata('tipo') === 'empresa'): ?>
-                        <button class="btn btn-info" onclick="add_pergunta()"><i
-                                    class="glyphicon glyphicon-plus"></i> Adicionar pergunta
-                        </button>
+                        <!--                        <button class="btn btn-info" onclick="add_pergunta()"><i-->
+                        <!--                                    class="glyphicon glyphicon-plus"></i> Adicionar pergunta-->
+                        <!--                        </button>-->
                     <?php endif; ?>
                     <!--<br/>
                     <br/>-->
@@ -82,16 +82,40 @@ require_once "header.php";
                         <small> Relatório</small>
                         <hr>
                     </div>
-
+                    <br>
                     <div class="row">
-                        <form action="#" id="busca" style="padding-top: 0px; padding-bottom: 0px;">
-                            <div class="col-md-6">
+                        <form action="#" id="busca" class="form-horizontal"
+                              style="padding-top: 0px; padding-bottom: 0px;">
+                            <div class="col-md-4">
                                 <div class="checkbox" style="padding-top: 0px; padding-bottom: 0px;">
                                     <label>
                                         <input type="checkbox" name="resultado" onchange="reload_table();"> Mostrar
                                         apenas avaliações não realizadas
                                     </label>
                                 </div>
+                            </div>
+                            <label class="col-md-1 control-label">Mês</label>
+                            <div class="col-md-2">
+                                <select name="mes" class="form-control" onchange="reload_table();" autocomplete="off">
+                                    <option value="">Todos</option>
+                                    <option value="01">Janeiro</option>
+                                    <option value="02">Fevereiro</option>
+                                    <option value="03">Março</option>
+                                    <option value="04">Abril</option>
+                                    <option value="05">Maio</option>
+                                    <option value="06">Junho</option>
+                                    <option value="07">Julho</option>
+                                    <option value="08">Agosto</option>
+                                    <option value="09">Setembro</option>
+                                    <option value="10">Outubro</option>
+                                    <option value="11">Novembro</option>
+                                    <option value="12">Dezembro</option>
+                                </select>
+                            </div>
+                            <label class=" col-md-1 control-label">Ano</label>
+                            <div class="col-md-2">
+                                <input name="ano" class="form-control text-center ano" type="text"
+                                       placeholder="aaaa" onchange="reload_table();" autocomplete="off">
                             </div>
                         </form>
                     </div>
@@ -206,6 +230,42 @@ require_once "header.php";
                             <form action="#" id="form_periodo" class="form-horizontal">
                                 <input type="hidden" id="id_avaliado" name="id_avaliado" value="">
                                 <div class="form-group">
+                                    <label class="col-sm-3 control-label">Aspectos positivos do colaborador</label>
+                                    <div class="col-sm-9 controls">
+                                        <textarea name="pontos_fortes" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Aspectos negativos do colaborador</label>
+                                    <div class="col-sm-9 controls">
+                                        <textarea name="pontos_fracos" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Feedback da 1&ordf; Avaliação<br>
+                                        <div class="help-block" id="data_feedback1">(data/feedback)</div>
+                                    </label>
+                                    <div class="col-sm-9 controls">
+                                        <textarea name="feedback1" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Feedback da 2&ordf; Avaliação<br>
+                                        <div class="help-block" id="data_feedback2">(data/feedback)</div>
+                                    </label>
+                                    <div class="col-sm-9 controls">
+                                        <textarea name="feedback2" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Feedback da 3&ordf; Avaliação<br>
+                                        <div class="help-block" id="data_feedback3">(data/feedback)</div>
+                                    </label>
+                                    <div class="col-sm-9 controls">
+                                        <textarea name="feedback3" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label class="col-sm-3 control-label">Parecer final</label>
                                     <?php if ($this->agent->is_mobile()): ?>
                                         <div class="col col-lg-9">
@@ -246,42 +306,6 @@ require_once "header.php";
                                         </label>
                                     <?php endif; ?>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">Aspectos positivos do colaborador</label>
-                                    <div class="col-sm-9 controls">
-                                        <textarea name="pontos_fortes" class="form-control" rows="3"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">Aspectos negativos do colaborador</label>
-                                    <div class="col-sm-9 controls">
-                                        <textarea name="pontos_fracos" class="form-control" rows="3"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">Feedback da 1&ordf; Avaliação<br>
-                                        <div class="help-block" id="data_feedback1">(data/feedback)</div>
-                                    </label>
-                                    <div class="col-sm-9 controls">
-                                        <textarea name="feedback1" class="form-control" rows="3"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">Feedback da 2&ordf; Avaliação<br>
-                                        <div class="help-block" id="data_feedback2">(data/feedback)</div>
-                                    </label>
-                                    <div class="col-sm-9 controls">
-                                        <textarea name="feedback2" class="form-control" rows="3"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">Feedback da 3&ordf; Avaliação<br>
-                                        <div class="help-block" id="data_feedback3">(data/feedback)</div>
-                                    </label>
-                                    <div class="col-sm-9 controls">
-                                        <textarea name="feedback3" class="form-control" rows="3"></textarea>
-                                    </div>
-                                </div>
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -315,11 +339,14 @@ require_once "end_js.php";
     </script>
     <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js') ?>"></script>
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js') ?>"></script>
+    <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
 
     <script>
 
         var table, table_avaliacao;
         var isMobile = <?php echo $this->agent->is_mobile() ? 'false' : 'true'; ?>;
+
+        $('.ano').mask('0000');
 
         $(document).ready(function () {
 

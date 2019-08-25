@@ -1,4 +1,4 @@
-<?php require_once APPPATH . "views/header.php"; ?>
+<?php require_once APPPATH . 'views/header.php'; ?>
     <!--main content start-->
     <section id="main-content">
         <section class="wrapper">
@@ -16,8 +16,10 @@
                                 <div class="panel-group m-bot20" id="accordion">
                                     <div class="well well-sm">
                                         <div class="">
-                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" style="height: 1px;">
-                                                <span style="padding-left: 40%; font-weight: bold;"><i class="fa fa-search"></i>&ensp;Pesquisa avançada</span>
+                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion"
+                                               href="#collapseOne" style="height: 1px;">
+                                                <span style="padding-left: 40%; font-weight: bold;"><i
+                                                            class="fa fa-search"></i>&ensp;Pesquisa avançada</span>
                                             </a>
                                         </div>
                                         <div id="collapseOne" class="panel-collapse collapse">
@@ -38,7 +40,9 @@
                                                         <?php echo form_dropdown('area_conhecimento', $areas_conhecimento, '', 'class="form-control input-sm"'); ?>
                                                     </div>
                                                     <div class="col-sm-3 col-lg-1">
-                                                        <button type="button" id="pesquisar" class="btn btn-primary busca"><i class="glyphicon glyphicon-search"></i></button>
+                                                        <button type="button" id="pesquisar"
+                                                                class="btn btn-primary busca"><i
+                                                                    class="glyphicon glyphicon-search"></i></button>
                                                     </div>
                                                 </div>
                                                 <?php echo form_close(); ?>
@@ -48,7 +52,7 @@
                                 </div>
                             </div>
 
-                            <br />
+                            <br/>
                             <table id="table" class="table table-striped" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
@@ -73,7 +77,7 @@
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
 
-<?php require_once APPPATH . "views/end_js.php"; ?>
+<?php require_once APPPATH . 'views/end_js.php'; ?>
     <!-- Js -->
     <script>
         $(document).ready(function () {
@@ -89,18 +93,18 @@
 
         $(document).ready(function () {
             table = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                iDisplayLength: -1,
-                lengthMenu: [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-                order: [[2, 'asc']],
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
+                'order': [[2, 'asc']],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('ead/cursos/ajax_list/') ?>',
-                    type: 'POST',
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('ead/cursos/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.categoria = $('[name="categoria"]').val();
                         d.area_conhecimento = $('[name="area_conhecimento"]').val();
                         d.tipo = $('[name="tipo"]').val();
@@ -109,28 +113,28 @@
                         return d;
                     }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        className: 'text-center',
-                        visible: <?= $this->session->userdata('tipo') == 'administrador' ? 'true' : 'false' ?>,
-                        searchable: false,
-                        targets: [0]
+                        'className': 'text-center',
+                        'visible': <?= $this->session->userdata('tipo') == 'administrador' ? 'true' : 'false' ?>,
+                        'searchable': false,
+                        'targets': [0]
                     },
                     {
-                        className: 'text-center',
-                        visible: <?= $this->session->userdata('tipo') == 'empresa' ? 'true' : 'false' ?>,
-                        searchable: false,
-                        targets: [1]
+                        'className': 'text-center',
+                        'visible': <?= $this->session->userdata('tipo') == 'empresa' ? 'true' : 'false' ?>,
+                        'searchable': false,
+                        'targets': [1]
                     },
                     {
-                        width: '100%',
-                        targets: [2]
+                        'width': '100%',
+                        'targets': [2]
                     },
                     {
-                        className: 'text-nowrap',
-                        targets: [-1],
-                        orderable: false,
-                        searchable: false
+                        'className': 'text-nowrap',
+                        'targets': [-1],
+                        'orderable': false,
+                        'searchable': false
                     }
                 ]
             });
@@ -143,14 +147,14 @@
         function copiaCursos(id) {
             if (confirm('Deseja copiar esse curso?')) {
                 $.ajax({
-                    url: '<?php echo site_url('ead/cursos/duplicar') ?>',
-                    type: "POST",
-                    dataType: "JSON",
-                    timeout: 9000,
-                    data: {
-                        id: id
+                    'url': '<?php echo site_url('ead/cursos/duplicar') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'timeout': 9000,
+                    'data': {
+                        'id': id
                     },
-                    success: function (json) {
+                    'success': function (json) {
                         if (json.status === 'sucesso') {
                             reload_table();
                         } else {
@@ -164,13 +168,13 @@
         function statusCursos(status, id) {
             if (confirm('Deseja alterar a situação desse curso?')) {
                 $.ajax({
-                    url: '<?php echo site_url('ead/cursos/status') ?>/' + status + '/' + id,
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data === 'sucesso') {
+                    'url': '<?php echo site_url('ead/cursos/status') ?>/' + status + '/' + id,
+                    'dataType': 'json',
+                    'success': function (json) {
+                        if (json === 'sucesso') {
                             reload_table();
                         } else {
-                            alert(data);
+                            alert(json);
                         }
                     }
                 });
@@ -179,12 +183,11 @@
 
         function detalhesCursos(id) {
             if (id > 0) {
-                var url = '<?php echo site_url('ead/cursos/detalhes'); ?>/' + id;
                 $.ajax({
-                    url: url,
-                    dataType: 'json',
-                    success: function (data) {
-                        $('#getDetalhes').html(data);
+                    'url': '<?php echo site_url('ead/cursos/detalhes'); ?>/' + id,
+                    'dataType': 'json',
+                    'success': function (json) {
+                        $('#getDetalhes').html(json);
                         $('#myModal').modal('show');
                     }
                 });
@@ -196,22 +199,22 @@
                 var aviso = $('#alert-solicitar');
 
                 $.ajax({
-                    url: "<?php echo site_url('ead/cursos/solicitar') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    timeout: 9000,
-                    data: {
-                        id: id
+                    'url': '<?php echo site_url('ead/cursos/solicitar') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'timeout': 9000,
+                    'data': {
+                        'id': id
                     },
-                    beforeSend: function () {
-                        $('html, body').animate({scrollTop: 0}, 1500);
+                    'beforeSend': function () {
+                        $('html, body').animate({'scrollTop': 0}, 1500);
                         aviso.html('<div class="alert alert-info">Carregando...</div>').hide().fadeIn('slow');
                     },
-                    error: function () {
+                    'error': function () {
                         aviso.html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                     },
-                    success: function (data) {
-                        $('html, body').animate({scrollTop: 0}, 1500);
+                    'success': function (data) {
+                        $('html, body').animate({'scrollTop': 0}, 1500);
                         if (parseInt(data['retorno'])) {
                             aviso.html('<div class="alert alert-success">' + data['aviso'] + '</div>').hide().fadeIn('slow', function () {
                                 if (parseInt(data['redireciona']))
@@ -225,28 +228,24 @@
             }
         }
 
-        function reload_table()
-        {
+        function reload_table() {
             table.ajax.reload(null, false);
         }
 
         function ajax_delete(id) {
-            if (confirm('Tem certeza que deseja excluir esse curso?'))
-            {
+            if (confirm('Tem certeza que deseja excluir esse curso?')) {
                 $.ajax({
-                    url: "<?php echo site_url('ead/cursos/ajax_delete') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    timeout: 9000,
-                    data: {
-                        id: id
+                    'url': '<?php echo site_url('ead/cursos/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'timeout': 9000,
+                    'data': {
+                        'id': id
                     },
-                    success: function (data)
-                    {
+                    'success': function (json) {
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown)
-                    {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Erro ao excluir o curso');
                     }
                 });
@@ -254,4 +253,4 @@
             }
         }
     </script>
-<?php require_once APPPATH . "views/end_html.php"; ?>
+<?php require_once APPPATH . 'views/end_html.php'; ?>

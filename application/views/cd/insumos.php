@@ -1,4 +1,4 @@
-<?php require_once APPPATH . "views/header.php"; ?>
+<?php require_once APPPATH . 'views/header.php'; ?>
 
     <section id="main-content">
         <section class="wrapper">
@@ -83,7 +83,7 @@
         </section>
     </section>
 
-<?php require_once APPPATH . "views/end_js.php"; ?>
+<?php require_once APPPATH . 'views/end_js.php'; ?>
 
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
 
@@ -104,27 +104,27 @@
         $(document).ready(function () {
 
             table = $('#table').DataTable({
-                info: false,
-                processing: true,
-                serverSide: true,
-                order: [],
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'info': false,
+                'processing': true,
+                'serverSide': true,
+                'order': [],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('cd/insumos/ajax_list/') ?>',
-                    type: 'POST'
+                'ajax': {
+                    'url': '<?php echo site_url('cd/insumos/ajax_list') ?>',
+                    'type': 'POST'
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        width: '50%',
-                        targets: [0, 1]
+                        'width': '50%',
+                        'targets': [0, 1]
                     },
                     {
-                        className: 'text-nowrap',
-                        targets: [-1],
-                        orderable: false,
-                        searchable: false
+                        'className': 'text-nowrap',
+                        'targets': [-1],
+                        'orderable': false,
+                        'searchable': false
                     }
                 ]
             });
@@ -148,33 +148,31 @@
             $('.help-block').empty();
 
             $.ajax({
-                url: '<?php echo site_url('cd/insumos/ajax_edit') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (json) {
+                'url': '<?php echo site_url('cd/insumos/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     $.each(json, function (key, value) {
                         $('[name="' + key + '"]').val(value);
                     });
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar insumo');
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
-
         }
+
 
         function reload_table() {
             table.ajax.reload(null, false);
         }
 
-        function save() {
-            $('#btnSave').text('Salvando...');
-            $('#btnSave').attr('disabled', true);
-            var url;
 
+        function save() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('cd/insumos/ajax_add') ?>';
             } else {
@@ -182,39 +180,41 @@
             }
 
             $.ajax({
-                url: url,
-                type: 'POST',
-                data: $('#form').serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    if (data.status) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave').attr('disabled', false);
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function delete_insumo(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: '<?php echo site_url('cd/insumos/ajax_delete') ?>',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {id: id},
-                    success: function (data) {
+                    'url': '<?php echo site_url('cd/insumos/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                         alert('Error deleting data');
                     }
@@ -225,4 +225,4 @@
 
     </script>
 
-<?php require_once APPPATH . "views/end_html.php"; ?>
+<?php require_once APPPATH . 'views/end_html.php'; ?>

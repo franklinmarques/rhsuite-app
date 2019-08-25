@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <!--main content start-->
 <section id="main-content">
@@ -96,9 +96,9 @@ require_once APPPATH . "views/header.php";
                             <label class="col-sm-2 col-lg-1 control-label">Avaliação presencial</label>
                             <div class="col-md-2">
                                 <input class="data form-control text-center input_presencial"
-                                       name="avaliacao_presencial" type="number"
-                                       value="<?= $row->avaliacao_presencial ?>" min="0"
-                                       max="100"<?= $row->tipo_treinamento != 'P' ? ' disabled=""' : ''; ?>>
+                                       name="avaliacao_presencial"
+                                       type="number"
+                                       value="<?= $row->avaliacao_presencial ?>" min="0" max="100">
                             </div>
                         </div>
 
@@ -107,7 +107,7 @@ require_once APPPATH . "views/header.php";
                             <div class="col-sm-9 col-lg-8 controls">
                                 <input name="nome_fornecedor" placeholder="Nome do fornecedor"
                                        class="form-control input_presencial" type="text"
-                                       value="<?= $row->nome_fornecedor ?>"<?= $row->tipo_treinamento != 'P' ? ' disabled=""' : ''; ?>>
+                                       value="<?= $row->nome_fornecedor ?>">
                             </div>
                         </div>
 
@@ -129,7 +129,7 @@ require_once APPPATH . "views/header.php";
 </section>
 <!--main content end-->
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
 <!-- Js -->
 <script>
@@ -157,5 +157,5 @@ require_once APPPATH . "views/end_js.php";
 </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

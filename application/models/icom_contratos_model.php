@@ -12,7 +12,6 @@ class Icom_contratos_model extends MY_Model
         'codigo' => 'required|is_natural_no_zero|max_length[11]',
         'id_empresa' => 'required|is_natural_no_zero|max_length[11]',
         'codigo_proposta' => 'required|is_natural_no_zero|max_length[11]',
-        'id_cliente' => 'required|is_natural_no_zero|max_length[11]',
         'centro_custo' => 'max_length[255]',
         'data_vencimento' => 'required|valid_date',
         'status_ativo' => 'required|in_list[0,1]',

@@ -9,16 +9,20 @@
                     <section class="panel">
                         <header class="panel-heading">
                             <i class="fa fa-file-text-o"></i> Páginas do Treinamento - <?php echo $row->nome; ?>
-                            <button class="btn btn-default btn-sm" onclick="javascript:history.back()" style="float:right; margin-top: -0.3%;"><i class="fa fa-reply"></i> Voltar</button>
+                            <button class="btn btn-default btn-sm" onclick="javascript:history.back()"
+                                    style="float:right; margin-top: -0.3%;"><i class="fa fa-reply"></i> Voltar
+                            </button>
                         </header>
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <a class="btn btn-success" href="<?php echo site_url('ead/pagina_curso/novo/' . $this->uri->rsegment(3)); ?>">
+                                    <a class="btn btn-success"
+                                       href="<?php echo site_url('ead/pagina_curso/novo/' . $this->uri->rsegment(3)); ?>">
                                         <i class="fa fa-plus"></i> <span>Adicionar página</span>
                                     </a>
                                     <?php if ($row->qtde_paginas > 0): ?>
-                                        <a class="btn btn-info" target="_blank" href="<?php echo site_url('ead/cursos/preview/' . $this->uri->rsegment(3)); ?>">
+                                        <a class="btn btn-info" target="_blank"
+                                           href="<?php echo site_url('ead/cursos/preview/' . $this->uri->rsegment(3)); ?>">
                                             <i class="glyphicon glyphicon-eye-open"></i>
                                             <span>Visualizar treinamento</span>
                                         </a>
@@ -35,7 +39,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <br />
+                            <br/>
                             <table id="table" class="table table-striped" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
@@ -58,7 +62,8 @@
 
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo base_url("assets/datatables/extensions/rowReorder.dataTables.min.css"); ?>"/>
+    <link rel="stylesheet"
+          href="<?php echo base_url("assets/datatables/extensions/rowReorder.dataTables.min.css"); ?>"/>
 
 <?php require_once APPPATH . 'views/end_js.php'; ?>
     <!-- Js -->
@@ -77,42 +82,42 @@
 
         $(document).ready(function () {
             table = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                iDisplayLength: 25,
-                "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-                rowReorder: {
-                    selector: 'td.reorder',
-                    update: false
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
+                'rowReorder': {
+                    'selector': 'td.reorder',
+                    'update': false
                 },
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('ead/pagina_curso/ajax_list/') ?>',
-                    type: 'POST',
-                    data: {
-                        id: '<?= $row->id ?>'
+                'ajax': {
+                    'url': '<?php echo site_url('ead/pagina_curso/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': {
+                        'id': '<?= $row->id ?>'
                     }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        "createdCell": function (td) {
+                        'createdCell': function (td) {
                             $(td).addClass('active');
                         },
-                        className: 'reorder text-center',
-                        searchable: false,
-                        targets: [0]
+                        'className': 'reorder text-center',
+                        'searchable': false,
+                        'targets': [0]
                     },
                     {
-                        width: '100%',
-                        targets: [1]
+                        'width': '100%',
+                        'targets': [1]
                     },
                     {
-                        className: 'text-nowrap',
-                        targets: [-1],
-                        orderable: false,
-                        searchable: false
+                        'className': 'text-nowrap',
+                        'targets': [-1],
+                        'orderable': false,
+                        'searchable': false
                     }
                 ]
             }).on('row-reorder', function (e, diff) {
@@ -123,10 +128,10 @@
                     }
 
                     $.ajax({
-                        url: '<?php echo site_url('ead/pagina_curso/ordenar/' . $this->uri->rsegment(3)); ?>',
-                        type: 'POST',
-                        data: {'table-dnd': colunas},
-                        success: function () {
+                        'url': '<?php echo site_url('ead/pagina_curso/ordenar/' . $this->uri->rsegment(3)); ?>',
+                        'type': 'POST',
+                        'data': {'table-dnd': colunas},
+                        'success': function () {
                             e.preventDefault();
                             reload_table();
                         }
@@ -138,46 +143,42 @@
         function copiar(id) {
             if (confirm('Deseja copiar essa página?')) {
                 $.ajax({
-                    url: '<?php echo site_url('ead/pagina_curso/duplicar') ?>',
-                    type: "POST",
-                    dataType: "JSON",
-                    timeout: 9000,
-                    data: {
-                        id: id
+                    'url': '<?php echo site_url('ead/pagina_curso/duplicar') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'timeout': 9000,
+                    'data': {
+                        'id': id
                     },
-                    success: function (data) {
-                        if (data === 'sucesso') {
+                    'success': function (json) {
+                        if (json === 'sucesso') {
                             reload_table();
                         } else {
-                            alert(data);
+                            alert(json);
                         }
                     }
                 });
             }
         }
 
-        function reload_table()
-        {
+        function reload_table() {
             table.ajax.reload(null, false);
         }
 
         function ajax_delete(id) {
-            if (confirm('Tem certeza que deseja excluir essa página do curso?'))
-            {
+            if (confirm('Tem certeza que deseja excluir essa página do curso?')) {
                 $.ajax({
-                    url: "<?php echo site_url('ead/pagina_curso/ajax_delete') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    timeout: 9000,
-                    data: {
+                    'url': '<?php echo site_url('ead/pagina_curso/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'timeout': 9000,
+                    'data': {
                         id: id
                     },
-                    success: function (data)
-                    {
+                    'success': function (json) {
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown)
-                    {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Erro ao excluir a página do curso');
                     }
                 });

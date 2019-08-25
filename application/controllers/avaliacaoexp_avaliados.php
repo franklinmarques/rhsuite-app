@@ -744,21 +744,23 @@ class Avaliacaoexp_avaliados extends MY_Controller
 
         foreach ($avaliadores as $id => $id_evento) {
             $query = "SELECT a.id_avaliador, 
-                             b.nome, 
+                             d.nome, 
                              c.id_avaliado, 
                              a.data_avaliacao, 
-                             d.usuario_referenciado, 
-                             e.nome AS nome_referenciado, 
-                             d.date_to 
+                             e.usuario_referenciado, 
+                             f.nome AS nome_referenciado, 
+                             e.date_to 
                       FROM avaliacaoexp_avaliadores a
                       INNER JOIN usuarios b ON 
                                  b.id = a.id_avaliador
                       INNER JOIN avaliacaoexp_avaliados c ON
                                  c.id = a.id_avaliado
-                      LEFT JOIN eventos d ON 
-                                d.id = a.id_evento
-                      LEFT JOIN usuarios e ON 
-                                 e.id = d.usuario_referenciado
+                      INNER JOIN usuarios d ON 
+                                 d.id = c.id_avaliado
+                      LEFT JOIN eventos e ON 
+                                e.id = a.id_evento
+                      LEFT JOIN usuarios f ON 
+                                 f.id = e.usuario_referenciado
                       WHERE a.id = {$id} AND 
                             a.id_evento " . ($id_evento ? "= {$id_evento}" : 'IS NULL');
             $row = $this->db->query($query)->row();
@@ -1044,7 +1046,7 @@ class Avaliacaoexp_avaliados extends MY_Controller
         if ($busca['funcao']) {
             $sql .= " AND b.funcao = '{$busca['funcao']}'";
         }
-        if (strlen($busca['data_avaliacao']) > 0) {
+        if (strlen($busca['data_avaliacao'])) {
             $sql .= " AND c.data_avaliacao >= '" . date("Y-m-d", strtotime(str_replace('/', '-', $busca['data_avaliacao']))) . "'";
         }
         if (isset($busca['resultado']) and !empty($busca['resultado'])) {

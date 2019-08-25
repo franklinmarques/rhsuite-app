@@ -335,7 +335,7 @@
                                                 <?php echo form_dropdown('complexidade', ['' => 'Todos'], '', 'id="complexidade" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
                                             </div>
                                             <div class="col-md-3">
-                                                <label for="complexidade">Peso/massa</label>
+                                                <label for="peso_item">Peso/massa</label>
                                                 <?php echo form_dropdown('peso_item', ['' => 'Todos'], '', 'id="peso_item" class="form-control input-sm" onchange="filtrar_medicao();"'); ?>
                                             </div>
                                             <div class="col-md-3">
@@ -375,6 +375,43 @@
 
                             <div class="collapse" id="opcoes_medicao">
                                 <br>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="tipo_item">Volume trabalho</label>
+                                        <input type="text" id="volume_trabalho" class="form-control valor"
+                                               autocomplete="off">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="complexidade">IndProdução a ser utilizado</label>
+                                        <select id="ind_producao" class="form-control" autocomplete="off">
+                                            <option value="2" selected>Médio</option>
+                                            <option value="1">Menor</option>
+                                            <option value="3">Maior</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <br>
+                                        <button type="button" class="btn btn-info" onclick="reload_table_medicoes();">
+                                            Calcular
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="complexidade">Horário início programado</label>
+                                        <input type="text" id="horario_inicio_programado"
+                                               class="form-control text-center hora" autocomplete="off">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="complexidade">IndMãoObra a ser utilizado</label>
+                                        <select id="ind_mao_obra" class="form-control" autocomplete="off">
+                                            <option value="2" selected>Média</option>
+                                            <option value="1">Menor</option>
+                                            <option value="3">Maior</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <br>
                                 <span class="text-primary"><strong>Use as Opções de Estrutura e de CronoAnálise para filtrar os dados desta lista.</strong></span>
                                 <table id="table_medicoes" class="table table-bordered table-condensed"
                                        width="100%">
@@ -382,16 +419,18 @@
                                     <tr>
                                         <th rowspan="2">Ação</th>
                                         <th rowspan="2">Equipe/Colaborador(a)</th>
-                                        <th colspan="3" class="text-center">Ind.Produção</th>
-                                        <th colspan="3" class="text-center">Ind.MãoObra</th>
+                                        <th class="text-center">Ind.Produção</th>
+                                        <th class="text-center">Ind.MãoObra</th>
+                                        <th rowspan="2" class="text-center">Volume trabalho</th>
+                                        <th rowspan="2" class="text-center">H.horas necessárias</th>
+                                        <th rowspan="2" class="text-center">Início estimado</th>
+                                        <th rowspan="2" class="text-center">Término estimado</th>
+                                        <th rowspan="2" class="text-center">Início real</th>
+                                        <th rowspan="2" class="text-center">Término real</th>
                                     </tr>
                                     <tr>
                                         <th>Menor</th>
-                                        <th>Média</th>
-                                        <th>Maior</th>
                                         <th>Menor</th>
-                                        <th>Média</th>
-                                        <th>Maior</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -574,15 +613,17 @@
 
         $(document).ready(function () {
 
+            var url_language = '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>';
+
             table = $('#table').DataTable({
                 'processing': true,
                 'serverSide': true,
                 'order': [],
                 'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                    'url': url_language
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('dimensionamento/planoTrabalho/ajaxList/') ?>',
+                    'url': '<?php echo site_url('dimensionamento/planoTrabalho/ajaxList') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.dia = $('#dia').val();
@@ -634,15 +675,19 @@
                 'serverSide': true,
                 'order': [['1', 'asc']],
                 'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                    'url': url_language
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('dimensionamento/planoTrabalho/ajaxListMedicoes/') ?>',
+                    'url': '<?php echo site_url('dimensionamento/planoTrabalho/ajaxListMedicoes') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.id = $('[name="id_medicao"]:checked').val();
                         d.busca = $('#form_medicao').serialize();
                         d.id_job = $('#form_programa [name="id_job"]').val();
+                        d.volume_trabalho = $('#volume_trabalho').val();
+                        d.horario_inicio_programado = $('#horario_inicio_programado').val();
+                        d.ind_producao = $('#ind_producao').val();
+                        d.ind_mao_obra = $('#ind_mao_obra').val();
 
                         return d;
                     },
@@ -1033,9 +1078,7 @@
 
 
         function save() {
-            $('#btnSave').text('Salvando...').attr('disabled', true);
             var url;
-
             if (save_method === 'add') {
                 url = '<?php echo site_url('dimensionamento/planoTrabalho/ajaxAdd') ?>';
             } else {
@@ -1047,6 +1090,9 @@
                 'type': 'POST',
                 'data': $('#form').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
@@ -1054,11 +1100,11 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSave').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
+                },
+                'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
@@ -1066,9 +1112,7 @@
 
 
         function save_job() {
-            $('#btnSaveJob').text('Salvando...').attr('disabled', true);
             var url;
-
             if (save_method === 'add') {
                 url = '<?php echo site_url('dimensionamento/planoTrabalho/ajaxAddJob') ?>';
             } else {
@@ -1080,6 +1124,9 @@
                 'type': 'POST',
                 'data': $('#form_job').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveJob').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_job').modal('hide');
@@ -1087,11 +1134,11 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSaveJob').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
+                },
+                'complete': function () {
                     $('#btnSaveJob').text('Salvar').attr('disabled', false);
                 }
             });
@@ -1099,9 +1146,7 @@
 
 
         function save_programa() {
-            $('#btnSavePrograma').text('Salvando...').attr('disabled', true);
             var url;
-
             if (save_method === 'add') {
                 url = '<?php echo site_url('dimensionamento/planoTrabalho/ajaxAddPrograma') ?>';
             } else {
@@ -1113,6 +1158,9 @@
                 'type': 'POST',
                 'data': $('#form_programa').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSavePrograma').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_programa').modal('hide');
@@ -1120,11 +1168,11 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSavePrograma').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
+                },
+                'complete': function () {
                     $('#btnSavePrograma').text('Salvar').attr('disabled', false);
                 }
             });

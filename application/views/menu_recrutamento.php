@@ -18,6 +18,21 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                         <span>Início</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="<?php echo site_url('atividades'); ?>">
+                        <i class="fa fa-calendar"></i>
+                        <span>Lista de Pendências</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="<?php echo site_url('atividades_scheduler'); ?>">
+                        <i class="fa fa-address-book"></i>
+                        <span>Scheduler - Atividades</span>
+                    </a>
+                </li>
+
                 <?php if (in_array($this->session->userdata('tipo'), array('selecionador'))) : ?>
                     <?php
                     $this->db->select('depto, nivel_acesso');
@@ -50,12 +65,13 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                             <?php endif; ?>
                             <li><a href="<?php echo site_url('requisicaoPessoal'); ?>">Gerenciar Requisições Pessoal</a>
                             </li>
-                            <li><a href="<?php echo site_url('requisicaoPessoal_fontes'); ?>">Gerenciar fontes/aprovadores</a>
+                            <li><a href="<?php echo site_url('requisicaoPessoal_fontes'); ?>">Gerenciar
+                                    fontes/aprovadores</a>
                             </li>
                         </ul>
                     </li>
-                    <!--<li<?/*= (in_array($this->uri->rsegment(2), array('entrada')) ? ' class="active"' : ''); */?>>
-                        <a href="<?php /*echo site_url('email/entrada'); */?>">
+                    <!--<li<? /*= (in_array($this->uri->rsegment(2), array('entrada')) ? ' class="active"' : ''); */ ?>>
+                        <a href="<?php /*echo site_url('email/entrada'); */ ?>">
                             <i class="fa fa-envelope"></i>
                             <span>Mensagens Internas</span>
                         </a>
@@ -118,6 +134,14 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                         </ul>
                     </li>
                 <?php endif; ?>
+
+                <li>
+                    <a href="<?php echo site_url('facilities/ordensServico'); ?>">
+                        <i class="fa fa-sticky-note-o"></i>
+                        <span>Gerenciar Ordens de Serviço</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
 

@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 
     <section id="main-content">
@@ -493,7 +493,7 @@ require_once APPPATH . "views/header.php";
         </section>
     </section>
 
-<?php require_once APPPATH . "views/end_js.php"; ?>
+<?php require_once APPPATH . 'views/end_js.php'; ?>
 
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/bootstrap-duallistbox/bootstrap-duallistbox.css') ?>" rel="stylesheet">
@@ -522,65 +522,65 @@ require_once APPPATH . "views/header.php";
             $('.valor').mask('##.###.##0,00', {reverse: true});
 
             table = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                iDisplayLength: 100,
-                lengthMenu: [[5, 10, 25, 50, 100, 500], [5, 10, 25, 50, 100, 500]],
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 100,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500], [5, 10, 25, 50, 100, 500]],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('cd/diretorias/ajax_list/') ?>',
-                    type: 'POST',
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('cd/diretorias/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.busca = $('#busca').serialize();
                         return d;
                     }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        width: '60%',
-                        targets: [0]
+                        'width': '60%',
+                        'targets': [0]
                     },
                     {
-                        width: '40%',
-                        targets: [1]
+                        'width': '40%',
+                        'targets': [1]
                     },
                     {
-                        className: 'text-nowrap',
-                        targets: [-1],
-                        orderable: false,
-                        searchable: false
+                        'className': 'text-nowrap',
+                        'orderable': false,
+                        'searchable': false,
+                        'targets': [-1]
                     }
                 ]
             });
 
             demo2 = $('#unidades').bootstrapDualListbox({
-                nonSelectedListLabel: 'Unidades disponíveis',
-                selectedListLabel: 'Unidades selecionadas',
-                preserveSelectionOnMove: 'moved',
-                moveOnSelect: false,
-                filterPlaceHolder: 'Filtrar',
-                helperSelectNamePostfix: false,
-                selectorMinimalHeight: 132,
-                infoText: false
+                'nonSelectedListLabel': 'Unidades disponíveis',
+                'selectedListLabel': 'Unidades selecionadas',
+                'preserveSelectionOnMove': 'moved',
+                'moveOnSelect': false,
+                'filterPlaceHolder': 'Filtrar',
+                'helperSelectNamePostfix': false,
+                'selectorMinimalHeight': 132,
+                'infoText': false
             });
 
         });
 
         function atualizarFiltro() {
             $.ajax({
-                url: '<?php echo site_url('cd/diretorias/atualizar_filtro/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: $('#busca').serialize(),
-                success: function (data) {
-                    $('[name="busca[diretoria]"]').html($(data.diretoria).html());
-                    $('[name="busca[coordenador]"]').html($(data.coordenador).html());
-                    $('[name="busca[contrato]"]').html($(data.contrato).html());
+                'url': '<?php echo site_url('cd/diretorias/atualizar_filtro') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
+                    $('[name="busca[diretoria]"]').html($(json.diretoria).html());
+                    $('[name="busca[coordenador]"]').html($(json.coordenador).html());
+                    $('[name="busca[contrato]"]').html($(json.contrato).html());
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -601,17 +601,17 @@ require_once APPPATH . "views/header.php";
 
         function atualizar_estrutura(id_coordenador = '') {
             $.ajax({
-                url: '<?php echo site_url('cd/diretorias/ajax_estrutura/') ?>',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    depto: $('#depto').val(),
-                    id_coordenador: id_coordenador
+                'url': '<?php echo site_url('cd/diretorias/ajax_estrutura') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'depto': $('#depto').val(),
+                    'id_coordenador': id_coordenador
                 },
-                success: function (data) {
-                    $('[name="id_coordenador"]').html($(data.id_coordenador).html());
+                'success': function (json) {
+                    $('[name="id_coordenador"]').html($(json.id_coordenador).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -636,11 +636,11 @@ require_once APPPATH . "views/header.php";
             $('.help-block').empty();
 
             $.ajax({
-                url: '<?php echo site_url('cd/diretorias/ajax_edit/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (json) {
+                'url': '<?php echo site_url('cd/diretorias/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
                     $.each(json, function (key, value) {
                         if (key !== 'id_coordenador') {
                             $('#modal_form [name="' + key + '"]').val(value);
@@ -649,9 +649,8 @@ require_once APPPATH . "views/header.php";
                     atualizar_estrutura(json.id_coordenador);
 
                     $('#modal_form').modal('show');
-
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -664,27 +663,28 @@ require_once APPPATH . "views/header.php";
             $('#form_unidades .help-block').empty();
 
             $.ajax({
-                url: '<?php echo site_url('cd/diretorias/ajax_unidades/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (data) {
-                    $('#unidade_contrato').text(data.cliente.contrato);
-                    $('#unidade_cliente').text(data.cliente.nome);
-                    $('#unidade_depto').text(data.cliente.depto);
-                    $('#unidade_area').text(data.cliente.area);
+                'url': '<?php echo site_url('cd/diretorias/ajax_unidades') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $('#unidade_contrato').text(json.cliente.contrato);
+                    $('#unidade_cliente').text(json.cliente.nome);
+                    $('#unidade_depto').text(json.cliente.depto);
+                    $('#unidade_area').text(json.cliente.area);
 
-                    $('#form_unidades [name="id_contrato"]').val(data.id_contrato);
-                    $('#form_unidades #unidades').html(data.setores);
+                    $('#form_unidades [name="id_contrato"]').val(json.id_contrato);
+                    $('#form_unidades #unidades').html(json.setores);
                     $('#modal_unidades').modal('show');
 
                     demo2.bootstrapDualListbox('refresh', true);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function edit_servicos(id) {
             $('.form_servicos')[0].reset();
@@ -694,52 +694,53 @@ require_once APPPATH . "views/header.php";
             $('.form_servicos .help-block').empty();
 
             $.ajax({
-                url: '<?php echo site_url('cd/diretorias/ajax_servicos/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (data) {
-                    $('#servicos_contrato').text(data.contrato.contrato);
-                    $('#servicos_cliente').text(data.contrato.nome);
-                    $('#servicos_depto').text(data.contrato.depto);
-                    $('#servicos_area').text(data.contrato.area);
+                'url': '<?php echo site_url('cd/diretorias/ajax_servicos') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $('#servicos_contrato').text(json.contrato.contrato);
+                    $('#servicos_cliente').text(json.contrato.nome);
+                    $('#servicos_depto').text(json.contrato.depto);
+                    $('#servicos_area').text(json.contrato.area);
 
-                    $('.form_servicos [name="id_contrato"]').val(data.contrato.id);
-                    $.each(data.compartilhados, function (i, v) {
+                    $('.form_servicos [name="id_contrato"]').val(json.contrato.id);
+                    $.each(json.compartilhados, function (i, v) {
                         $('#form_servicos_compartilhados [name="id[]"]:eq(' + i + ')').val(v.id);
                         $('#form_servicos_compartilhados [name="descricao[]"]:eq(' + i + ')').val(v.descricao);
                         $('#form_servicos_compartilhados [name="valor[]"]:eq(' + i + ')').val(v.valor);
                     });
-                    $.each(data.nao_compartilhados, function (i, v) {
+                    $.each(json.nao_compartilhados, function (i, v) {
                         $('#form_servicos_nao_compartilhados [name="id[]"]:eq(' + i + ')').val(v.id);
                         $('#form_servicos_nao_compartilhados [name="descricao[]"]:eq(' + i + ')').val(v.descricao);
                         $('#form_servicos_nao_compartilhados [name="valor[]"]:eq(' + i + ')').val(v.valor);
                     });
                     $('#modal_servicos').modal('show');
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function edit_reajuste(id) {
             $('#form_reajuste')[0].reset();
             $('#form_reajuste input[type="hidden"]').val('');
 
             $.ajax({
-                url: '<?php echo site_url('cd/diretorias/ajax_reajuste/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (data) {
-                    $('#reajuste_contrato').text(data.cliente.contrato);
-                    $('#reajuste_cliente').text(data.cliente.nome);
-                    $('#reajuste_depto').text(data.cliente.depto);
-                    $('#reajuste_area').text(data.cliente.area);
+                'url': '<?php echo site_url('cd/diretorias/ajax_reajuste') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $('#reajuste_contrato').text(json.cliente.contrato);
+                    $('#reajuste_cliente').text(json.cliente.nome);
+                    $('#reajuste_depto').text(json.cliente.depto);
+                    $('#reajuste_area').text(json.cliente.area);
 
-                    $('#id_cliente').val(data.cliente.id);
-                    $.each(data.values, function (i, v) {
+                    $('#id_cliente').val(json.cliente.id);
+                    $.each(json.values, function (i, v) {
                         $('#form_reajuste [name="id[]"]:eq(' + i + ')').val(v.id);
                         $('#form_reajuste [name="data_reajuste[]"]:eq(' + i + ')').val(v.data_reajuste);
                         $('#form_reajuste [name="valor_indice[]"]:eq(' + i + ')').val(v.valor_indice);
@@ -747,21 +748,20 @@ require_once APPPATH . "views/header.php";
 
                     $('#modal_reajuste').modal('show');
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function reload_table() {
             table.ajax.reload(null, false);
         }
 
-        function save() {
-            $('#btnSave').text('Salvando...');
-            $('#btnSave').attr('disabled', true);
-            var url;
 
+        function save() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('cd/diretorias/ajax_add') ?>';
             } else {
@@ -769,115 +769,115 @@ require_once APPPATH . "views/header.php";
             }
 
             $.ajax({
-                url: url,
-                type: 'POST',
-                data: $('#form').serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    if (data.status) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_form').modal('hide');
                         atualizarFiltro();
                     }
-
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave').attr('disabled', false);
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function save_unidade_ensino() {
-            $('#btnSaveUnidades').text('Salvando...');
-            $('#btnSaveUnidades').attr('disabled', true);
             demo2.bootstrapDualListbox('refresh', true);
 
             $.ajax({
-                url: '<?php echo site_url('cd/diretorias/save_unidades') ?>',
-                type: 'POST',
-                data: $('#form_unidades').serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    if (data.status) {
+                'url': '<?php echo site_url('cd/diretorias/save_unidades') ?>',
+                'type': 'POST',
+                'data': $('#form_unidades').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveUnidades').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_unidades').modal('hide');
                     }
-
-                    $('#btnSaveUnidades').text('Salvar');
-                    $('#btnSaveUnidades').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveUnidades').text('Salvar');
-                    $('#btnSaveUnidades').attr('disabled', false);
+                },
+                'complete': function () {
+                    $('#btnSaveUnidades').text('Salvar').attr('disabled', false);
                 }
             });
         }
+
 
         function save_servicos() {
-            $('#btnSaveServicos').text('Salvando...');
-            $('#btnSaveServicos').attr('disabled', true);
-
             $.ajax({
-                url: '<?php echo site_url('cd/diretorias/save_servicos') ?>',
-                type: 'POST',
-                data: $('.form_servicos').serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    if (data.status) {
+                'url': '<?php echo site_url('cd/diretorias/save_servicos') ?>',
+                'type': 'POST',
+                'data': $('.form_servicos').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveServicos').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_servicos').modal('hide');
                     }
-
-                    $('#btnSaveServicos').text('Salvar');
-                    $('#btnSaveServicos').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveServicos').text('Salvar');
-                    $('#btnSaveServicos').attr('disabled', false);
+                },
+                'complete': function () {
+                    $('#btnSaveServicos').text('Salvar').attr('disabled', false);
                 }
             });
         }
+
 
         function save_reajuste() {
-            $('#btnSaveReajuste').text('Salvando...');
-            $('#btnSaveReajuste').attr('disabled', true);
-
             $.ajax({
-                url: '<?php echo site_url('cd/diretorias/save_reajuste') ?>',
-                type: 'POST',
-                data: $('#form_reajuste').serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    if (data.status) {
+                'url': '<?php echo site_url('cd/diretorias/save_reajuste') ?>',
+                'type': 'POST',
+                'data': $('#form_reajuste').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveReajuste').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_reajuste').modal('hide');
                     }
-
-                    $('#btnSaveReajuste').text('Salvar');
-                    $('#btnSaveReajuste').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveReajuste').text('Salvar');
-                    $('#btnSaveReajuste').attr('disabled', false);
+                },
+                'complete': function () {
+                    $('#btnSaveReajuste').text('Salvar').attr('disabled', false);
                 }
             });
         }
+
 
         function delete_diretoria(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: '<?php echo site_url('cd/diretorias/ajax_delete') ?>',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {id: id},
-                    success: function (data) {
+                    'url': '<?php echo site_url('cd/diretorias/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'success': function (json) {
                         $('#modal_form').modal('hide');
                         atualizarFiltro();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
@@ -887,5 +887,5 @@ require_once APPPATH . "views/header.php";
     </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

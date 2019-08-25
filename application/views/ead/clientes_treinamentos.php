@@ -17,10 +17,10 @@
                     <button class="btn btn-info" onclick="add_treinamento();"><i class="glyphicon glyphicon-plus"></i>
                         Adicionar treinamento
                     </button>
-<!--                    <button id="email" class="btn btn-warning" onclick="enviar_email()"-->
-<!--                            title="Enviar e-mail de convocação"><i class="glyphicon glyphicon-envelope"></i>Enviar-->
-<!--                        e-mail de convocação-->
-<!--                    </button>-->
+                    <!--                    <button id="email" class="btn btn-warning" onclick="enviar_email()"-->
+                    <!--                            title="Enviar e-mail de convocação"><i class="glyphicon glyphicon-envelope"></i>Enviar-->
+                    <!--                        e-mail de convocação-->
+                    <!--                    </button>-->
                     <br/>
                     <br/>
 
@@ -182,7 +182,10 @@
             $('.data').mask('00/00/0000');
             $('.hora').mask('#00:00', {
                 'translation': {
-                    '#': {'pattern': /\d/, 'optional': true}
+                    '#': {
+                        'pattern': /\d/,
+                        'optional': true
+                    }
                 },
                 'reverse': true
             });
@@ -196,7 +199,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('ead/clientes_treinamentos/ajaxList/') ?>',
+                    'url': '<?php echo site_url('ead/clientes_treinamentos/ajaxList') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.id_cliente = '<?= $idCliente; ?>';
@@ -251,7 +254,7 @@
             $('#form span.help-block').html('');
 
             $.ajax({
-                'url': "<?php echo site_url('ead/clientes_treinamentos/ajaxEdit'); ?>",
+                'url': '<?php echo site_url('ead/clientes_treinamentos/ajaxEdit'); ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -279,7 +282,7 @@
             $('#form span.help-block').html('');
 
             $.ajax({
-                'url': "<?php echo site_url('ead/clientes_treinamentos/ajaxEdit'); ?>",
+                'url': '<?php echo site_url('ead/clientes_treinamentos/ajaxEdit'); ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -314,7 +317,6 @@
 
 
         function save() {
-            $('#btnSave').text('Salvando...').attr('disabled', true);
             $('#form .form-group').removeClass('has-error');
             $('#form span.help-block').html('');
             var url = '<?php echo site_url('ead/clientes_treinamentos/ajaxUpdate') ?>';
@@ -327,6 +329,9 @@
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form').serialize(),
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
@@ -343,11 +348,11 @@
                             $('#alert_form').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
                         }
                     }
-
-                    $('#btnSave').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     $('#alert_form').html('<div class="alert alert-danger">Erro ao salvar treinamento</div>').hide().fadeIn('slow');
+                },
+                'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
@@ -357,7 +362,7 @@
         function delete_treinamento(id) {
             if (confirm('Tem certeza que deseja excluir esse treinamento?')) {
                 $.ajax({
-                    'url': "<?php echo site_url('ead/clientes_treinamentos/ajaxDelete') ?>",
+                    'url': '<?php echo site_url('ead/clientes_treinamentos/ajaxDelete') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {
@@ -376,7 +381,6 @@
                 });
             }
         }
-
 
     </script>
 

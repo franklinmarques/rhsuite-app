@@ -295,6 +295,9 @@ class ExamePeriodico extends MY_Controller
         $idArea = $this->input->get('id_area');
         $mes = $this->input->get('mes');
         $ano = $this->input->get('ano');
+        if (empty($ano)) {
+            $ano = date('Y');
+        }
         $tipoVinculo = $this->input->get('tipo_vinculo');
         $status = $this->input->get('status');
 
@@ -321,13 +324,21 @@ class ExamePeriodico extends MY_Controller
         $this->db->join('usuarios b', 'b.id = a.id_usuario');
         $this->db->join('empresa_departamentos c', 'c.id = b.id_depto OR c.nome = b.depto', 'left');
         $this->db->join('empresa_areas d', 'd.id = b.id_area OR d.nome = b.area', 'left');
+        $this->db->join('usuarios_exame_periodico e', "e.id_usuario = a.id_usuario AND YEAR(e.data_programada) > YEAR(a.data_realizacao)", 'left');
         $this->db->where('b.empresa', $empresa);
         if ($realizados === '0') {
-            $this->db->where('a.data_realizacao IS NULL');
+            $this->db->where('a.data_realizacao', null);
         } elseif ($realizados === '1') {
             $this->db->where('a.data_realizacao IS NOT NULL');
         } elseif ($realizados === '2') {
-            $this->db->where('a.data_programada IS NULL');
+            $this->db->where("YEAR(a.data_realizacao) = '{$ano}' AND e.id IS NULL");
+            /*if ($ano) {
+                $this->db->where("(YEAR(a.data_realizacao) = '{$ano}' AND NOT YEAR(a.data_programada) > '{$ano}')", null, false);
+            } else {
+                $this->db->where('(YEAR(a.data_realizacao) = YEAR(NOW()) AND NOT YEAR(a.data_programada) > YEAR(NOW()))', null, false);
+            }*/
+        } elseif ($realizados === '3') {
+            $this->db->where('a.data_entrega', null);
         }
         if ($idDepto) {
             $this->db->where('c.id', $idDepto);
@@ -407,6 +418,8 @@ class ExamePeriodico extends MY_Controller
             $post['tipo_vinculo'] = '01';
             $post['status'] = 1;
             $post['mes'] = '';
+        }
+        if (!empty($post['ano']) == false) {
             $post['ano'] = date('Y');
         }
 
@@ -421,6 +434,7 @@ class ExamePeriodico extends MY_Controller
             ->join('usuarios b', 'b.id = a.id_usuario')
             ->join('empresa_departamentos c', 'c.id = b.id_depto OR c.nome = b.depto', 'left')
             ->join('empresa_areas d', 'd.id = b.id_area OR d.nome = b.area', 'left')
+            ->join('usuarios_exame_periodico e', "e.id_usuario = a.id_usuario AND YEAR(e.data_programada) > YEAR(a.data_realizacao)", 'left')
             ->where('b.empresa', $this->session->userdata('empresa'));
         if (!empty($post['id_depto'])) {
             $this->db->where('c.id', $post['id_depto']);
@@ -433,13 +447,22 @@ class ExamePeriodico extends MY_Controller
         } elseif ($post['realizados'] === '1') {
             $this->db->where('a.data_realizacao IS NOT NULL');
         } elseif ($post['realizados'] === '2') {
-            $this->db->where('a.data_programada', null);
+            $this->db->where("YEAR(a.data_realizacao) = '{$post['ano']}' AND e.id IS NULL");
+            /*if (!empty($post['ano'])) {
+                $this->db->where("(YEAR(a.data_realizacao) = '{$post['ano']}' AND NOT YEAR(a.data_programada) > '{$post['ano']}')", null, false);
+            } else {
+                $this->db->where('(YEAR(a.data_realizacao) = YEAR(NOW()) AND NOT YEAR(a.data_programada) > YEAR(NOW()))', null, false);
+            }*/
+        } elseif ($post['realizados'] === '3') {
+            $this->db->where('a.data_entrega', null);
         }
         if (!empty($post['mes'])) {
             $this->db->where('MONTH(a.data_programada)', $post['mes']);
         }
-        if (!empty($post['ano'])) {
+        if (!empty($post['ano']) and $post['realizados'] !== '2') {
             $this->db->where('YEAR(a.data_programada)', $post['ano']);
+        } else {
+
         }
         if (!empty($post['tipo_vinculo'])) {
             $this->db->where('b.tipo_vinculo', $post['tipo_vinculo']);

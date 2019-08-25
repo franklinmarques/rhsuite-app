@@ -280,7 +280,7 @@
             $('#form span.help-block').html('');
 
             $.ajax({
-                'url': "<?php echo site_url('ead/clientes/editarPerfil') ?>",
+                'url': '<?php echo site_url('ead/clientes/editarPerfil') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'success': function (json) {
@@ -322,7 +322,6 @@
 
 
         function save() {
-            $('#btnSave, #btnSave2').text('Salvando...').attr('disabled', true);
             $('#form .form-group').removeClass('has-error');
             $('#form span.help-block').html('');
 
@@ -338,6 +337,9 @@
                 'processData': false,
                 'contentType': false,
                 'cache': false,
+                'beforeSend': function () {
+                    $('#btnSave, #btnSave2').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
@@ -357,11 +359,11 @@
                             $('#alert_form').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
                         }
                     }
-
-                    $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     $('#alert_form').html('<div class="alert alert-warning">Erro ao salvar cliente/usuário</div>').hide().fadeIn('slow');
+                },
+                'complete': function () {
                     $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);
                 }
             });

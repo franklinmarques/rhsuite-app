@@ -1244,29 +1244,34 @@ class Relatorios extends MY_Controller
         $mes = $this->input->get('mes');
         $ano = $this->input->get('ano');
         $semestre = $this->input->get('semestre');
+
         $saldoMes = $this->input->post('saldo_mes');
         $saldoAcumulado = $this->input->post('saldo_acumulado');
 
 
-        $this->db->select('id, diretoria, supervisor');
-        $this->db->where('id_empresa', $empresa);
-        $this->db->where('depto', $depto);
-        $this->db->where('id_diretoria', $idDiretoria);
-        $this->db->where('id_supervisor', $idSupervisor);
-        $this->db->where('ano', $ano);
-        $this->db->where('semestre', $semestre);
-        $alocacao = $this->db->get('ei_alocacao')->row();
-
+        $diretoria = $this->db->select('nome')->where('id', $idDiretoria)->get('ei_diretorias')->row();
+        $supervisor = $this->db->select('nome')->where('id', $idSupervisor)->get('usuarios')->row();
 
         $this->load->library('calendar');
 
-
         $data['departamento'] = $depto;
-        $data['diretoria'] = $alocacao->diretoria;
-        $data['supervisor'] = $alocacao->supervisor;
+        $data['diretoria'] = $diretoria->nome;
+        $data['supervisor'] = $supervisor->nome;
         $data['mes'] = $this->calendar->get_month_name($mes);
         $data['ano'] = $ano;
         $data['semestre'] = $semestre;
+
+        $coordenacao = $this->db
+            ->select('id, saldo_acumulado_horas')
+            ->where('id_usuario', $idSupervisor)
+            ->where('ano', $ano)
+            ->where('semestre', $semestre)
+            ->get('ei_coordenacao')
+            ->row();
+
+        $this->load->helper('time');
+
+        $data['saldo_acumulado_horas'] = timeSimpleFormat($coordenacao->saldo_acumulado_horas ?? '');
 
 
         $this->db
@@ -1278,19 +1283,22 @@ class Relatorios extends MY_Controller
             ->select(["TIME_FORMAT(a.total, '%H:%i') AS total"], false)
             ->select(["TIME_FORMAT(a.saldo_dia, '%H:%i') AS saldo_dia"], false)
             ->select('a.observacoes')
-            ->join('ei_alocacao b', 'b.id = a.id_alocacao')
-            ->where('b.id', $alocacao->id);
+            ->join('ei_coordenacao b', 'b.id = a.id_supervisao')
+            ->where('b.id', $coordenacao->id ?? null)
+            ->where('MONTH(data)', $mes)
+            ->where('YEAR(data)', $ano);
         if ($saldoMes) {
             $this->db->where("TIME_FORMAT(a.saldo_dia, '%H:%i') = '{$saldoMes}'", null, false);
         }
         if ($saldoAcumulado) {
             $this->db->where("TIME_FORMAT(a.saldo_dia, '%H:%i') = '{$saldoAcumulado}'", null, false);
         }
-        $data['rows'] = $this->db->get('ei_carga_horaria a')->result();
+        $data['rows'] = $this->db
+            ->group_by('a.id')
+            ->get('ei_carga_horaria a')->result();
 
 
         $this->load->library('m_pdf');
-
 
         $stylesheet = '#table thead th { font-size: 12px; padding: 5px; background-color: #f5f5f5;} ';
         $stylesheet .= '#table tbody td { font-size: 14px; padding: 5px; vertical-align: top; } ';

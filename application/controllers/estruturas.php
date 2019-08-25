@@ -2,51 +2,25 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-/**
- * Classe Estruturas
- *
- * Trabalha com as estruturas (departamentos, áreas e setores) de uma empresa
- *
- * @author frank
- * @access public
- * @package CI_Controller\MY_Controller
- * @version 1.0
- */
 class Estruturas extends MY_Controller
 {
 
-    /**
-     * Construtor da classe
-     *
-     *
-     * @access public
-     */
     public function __construct()
     {
         parent::__construct();
+
+        $this->load->model('empresa_departamentos_model', 'departamentos');
+        $this->load->model('empresa_areas_model', 'areas');
+        $this->load->model('empresa_setores_model', 'setores');
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Abre a tela de estruturas
-     *
-     * @access public
-     * @uses ..\views\estruturas.php View
-     */
+    //==========================================================================
     public function index()
     {
         $this->departamentos();
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Abre a tela de estruturas na prmeira aba
-     *
-     * @access public
-     * @uses ..\views\estruturas.php View
-     */
+    //==========================================================================
     public function departamentos()
     {
         $data = $this->input->get();
@@ -55,14 +29,7 @@ class Estruturas extends MY_Controller
         $this->load->view('estruturas', $data);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Abre a tela de estruturas na segunda aba
-     *
-     * @access public
-     * @uses ..\views\estruturas.php View
-     */
+    //==========================================================================
     public function areas()
     {
         $data = $this->input->get();
@@ -71,14 +38,7 @@ class Estruturas extends MY_Controller
         $this->load->view('estruturas', $data);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Abre a tela de estruturas na terceira aba
-     *
-     * @access public
-     * @uses ..\views\estruturas.php View
-     */
+    //==========================================================================
     public function setores()
     {
         $data = $this->input->get();
@@ -87,452 +47,242 @@ class Estruturas extends MY_Controller
         $this->load->view('estruturas', $data);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Retorna lista de departamentos existentes
-     *
-     * Se o usuário for do tipo gestor, lista somente os registros da sua empresa
-     *
-     * @access public
-     */
-    public function ajax_departamento()
+    //==========================================================================
+    public function listarDepartamentos()
     {
-        $post = $this->input->post();
+        $query = $this->db
+            ->select('nome, id')
+            ->where('id_empresa', $this->session->userdata('empresa'))
+            ->get('empresa_departamentos');
 
-        $sql = "SELECT s.id, 
-                       s.depto
-                FROM (SELECT a.id, 
-                             a.nome AS depto
-                      FROM empresa_departamentos a
-                      WHERE a.id_empresa = {$this->session->userdata('empresa')}) s";
+        $this->load->library('dataTables');
 
-        $recordsTotal = $this->db->query($sql)->num_rows();
+        $output = $this->datatables->generate($query);
 
-        $columns = array('s.id', 's.depto');
-        if ($post['search']['value']) {
-            foreach ($columns as $key => $column) {
-                if ($key > 1) {
-                    $sql .= " OR
-                         {$column} LIKE '%{$post['search']['value']}%'";
-                } elseif ($key == 1) {
-                    $sql .= " 
-                        WHERE {$column} LIKE '%{$post['search']['value']}%'";
-                }
-            }
-        }
-        $recordsFiltered = $this->db->query($sql)->num_rows();
+        $data = [];
 
-        if (isset($post['order'])) {
-            $orderBy = array();
-            foreach ($post['order'] as $order) {
-                $orderBy[] = ($order['column'] + 1) . ' ' . $order['dir'];
-            }
-            $sql .= ' 
-                    ORDER BY ' . implode(', ', $orderBy);
-        }
-        if ($post['length'] > 0) {
-            $sql .= " LIMIT {$post['start']}, {$post['length']}";
-        }
-        $list = $this->db->query($sql)->result();
-
-        $data = array();
-        foreach ($list as $departamento) {
-            $row = array();
-            $row[] = $departamento->depto;
-            $row[] = '
-                      <button class="btn btn-sm btn-info" onclick="edit_depto(' . $departamento->id . ')" title="Editar departamento"><i class="glyphicon glyphicon-pencil"></i></button>
-                      <button class="btn btn-sm btn-danger" onclick="delete_depto(' . $departamento->id . ')" title="Excluir departamento"><i class="glyphicon glyphicon-trash"></i></button>
-                      <button class="btn btn-sm btn-primary" onclick="nextArea(' . $departamento->id . ')" title="Áreas"><i class="glyphicon glyphicon-list"></i> Áreas</button>
-                     ';
-
-            $data[] = $row;
+        foreach ($output->data as $row) {
+            $data[] = [
+                $row->nome,
+                '<button class="btn btn-sm btn-info" onclick="edit_depto(' . $row->id . ')" title="Editar departamento"><i class="glyphicon glyphicon-pencil"></i></button>
+                 <button class="btn btn-sm btn-danger" onclick="delete_depto(' . $row->id . ')" title="Excluir departamento"><i class="glyphicon glyphicon-trash"></i></button>
+                 <button class="btn btn-sm btn-primary" onclick="nextArea(' . $row->id . ',\'' . $row->nome . '\')" title="Áreas"><i class="glyphicon glyphicon-list"></i> Áreas</button>'
+            ];
         }
 
-        $output = array(
-            "draw" => $this->input->post('draw'),
-            "recordsTotal" => $recordsTotal,
-            "recordsFiltered" => $recordsFiltered,
-            "data" => $data,
-        );
-        //output to json format
+        $output->data = $data;
+
         echo json_encode($output);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Retorna lista de áreas existentes
-     *
-     * Se o usuário for do tipo gestor, lista somente os registros da sua empresa
-     *
-     * @access public
-     */
-    public function ajax_area()
+    //==========================================================================
+    public function listarAreas()
     {
-        $post = $this->input->post();
+        $idDepartamento = $this->input->post('id_depto');
 
-        $sql = "SELECT s.id, 
-                       s.depto,
-                       s.area
-                FROM (SELECT a.id, 
-                             b.nome AS depto,
-                             a.nome AS area
-                      FROM empresa_departamentos b
-                      LEFT JOIN empresa_areas a
-                                 ON b.id = a.id_departamento
-                      WHERE b.id_empresa = {$this->session->userdata('empresa')}
-                            AND (b.id = '{$post['id_depto']}' OR CHAR_LENGTH('{$post['id_depto']}') = 0)) s";
-
-        $recordsTotal = $this->db->query($sql)->num_rows();
-
-        $columns = array('s.id', 's.depto', 's.area');
-        if ($post['search']['value']) {
-            foreach ($columns as $key => $column) {
-                if ($key > 1) {
-                    $sql .= " OR
-                         {$column} LIKE '%{$post['search']['value']}%'";
-                } elseif ($key == 1) {
-                    $sql .= " 
-                        WHERE {$column} LIKE '%{$post['search']['value']}%'";
-                }
-            }
+        $this->db
+            ->select('a.nome AS nome_departamento, b.nome AS nome_area, b.id AS id_area')
+            ->join('empresa_areas b', 'b.id_departamento = a.id', 'left')
+            ->where('a.id_empresa', $this->session->userdata('empresa'));
+        if ($idDepartamento) {
+            $this->db->where('a.id', $idDepartamento);
         }
-        $recordsFiltered = $this->db->query($sql)->num_rows();
+        $query = $this->db->get('empresa_departamentos a');
 
-        if (isset($post['order'])) {
-            $orderBy = array();
-            foreach ($post['order'] as $order) {
-                $orderBy[] = ($order['column'] + 1) . ' ' . $order['dir'];
-            }
-            $sql .= ' 
-                    ORDER BY ' . implode(', ', $orderBy);
-        }
-        if ($post['length'] > 0) {
-            $sql .= " LIMIT {$post['start']}, {$post['length']}";
-        }
-        $list = $this->db->query($sql)->result();
+        $this->load->library('dataTables');
 
-        $data = array();
-        foreach ($list as $area) {
-            $row = array();
-            $row[] = $area->depto;
-            if ($area->id) {
-                $row[] = $area->area;
-                $row[] = '
-                          <button class="btn btn-sm btn-info" onclick="edit_area(' . $area->id . ')" title="Editar área"><i class="glyphicon glyphicon-pencil"></i></button>
-                          <button class="btn btn-sm btn-danger" onclick="delete_area(' . $area->id . ')" title="Excluir área"><i class="glyphicon glyphicon-trash"></i></button>
-                          <button class="btn btn-sm btn-primary" onclick="nextSetor(' . $area->id . ')" title="Setores"><i class="glyphicon glyphicon-list"></i> Setores</button>
-                         ';
+        $output = $this->datatables->generate($query);
+
+        $data = [];
+
+        foreach ($output->data as $row) {
+            if ($row->id_area) {
+                $btn = '<button class="btn btn-sm btn-info" onclick="edit_area(' . $row->id_area . ',\'' . $row->nome_departamento . '\')" title="Editar área"><i class="glyphicon glyphicon-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="delete_area(' . $row->id_area . ')" title="Excluir área"><i class="glyphicon glyphicon-trash"></i></button>
+                        <button class="btn btn-sm btn-primary" onclick="nextSetor(' . $row->id_area . ',\'' . $row->nome_departamento . '\',\'' . $row->nome_area . '\')" title="Setores"><i class="glyphicon glyphicon-list"></i> Setores</button>';
             } else {
-                $row[] = '<span class="text-muted">Nenhuma área encontrada</span>';
-                $row[] = '
-                          <button class="btn btn-sm btn-info disabled" title="Editar área"><i class="glyphicon glyphicon-pencil"></i></button>
-                          <button class="btn btn-sm btn-danger disabled" title="Excluir área"><i class="glyphicon glyphicon-trash"></i></button>
-                          <button class="btn btn-sm btn-primary disabled" title="Setores"><i class="glyphicon glyphicon-list"></i> Setores</button>
-                         ';
+                $btn = '<button class="btn btn-sm btn-info disabled" title="Editar área"><i class="glyphicon glyphicon-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger disabled" title="Excluir área"><i class="glyphicon glyphicon-trash"></i></button>
+                        <button class="btn btn-sm btn-primary disabled" title="Setores"><i class="glyphicon glyphicon-list"></i> Setores</button>';
             }
-            $data[] = $row;
+            $data[] = [
+                $row->nome_departamento,
+                $row->nome_area,
+                $btn
+            ];
         }
 
-        $output = array(
-            "draw" => $this->input->post('draw'),
-            "recordsTotal" => $recordsTotal,
-            "recordsFiltered" => $recordsFiltered,
-            "data" => $data,
-        );
-        //output to json format
+        $output->data = $data;
+
         echo json_encode($output);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Retorna lista de setores existentes
-     *
-     * Se o usuário for do tipo gestor, lista somente os registros da sua empresa
-     *
-     * @access public
-     */
-    public function ajax_setor()
+    //==========================================================================
+    public function listarSetores()
     {
-        $post = $this->input->post();
+        $idDepartamento = $this->input->post('id_depto');
+        $idArea = $this->input->post('id_area');
 
-        $sql = "SELECT s.id, 
-                       s.depto,
-                       s.area,
-                       s.setor
-                FROM (SELECT a.id, 
-                             c.nome AS depto,
-                             b.nome AS area,
-                             a.nome AS setor
-                      FROM empresa_departamentos c 
-                      INNER JOIN empresa_areas b
-                                 ON c.id = b.id_departamento 
-                      LEFT JOIN empresa_setores a
-                                ON b.id = a.id_area
-                      WHERE c.id_empresa = {$this->session->userdata('empresa')}
-                            AND (c.id = '{$post['id_depto']}' OR CHAR_LENGTH('{$post['id_depto']}') = 0)
-                            AND (b.id = '{$post['id_area']}' OR CHAR_LENGTH('{$post['id_area']}') = 0)) s";
-
-        $recordsTotal = $this->db->query($sql)->num_rows();
-
-        $columns = array('s.id', 's.depto', 's.area', 's.setor');
-        if ($post['search']['value']) {
-            foreach ($columns as $key => $column) {
-                if ($key > 1) {
-                    $sql .= " OR
-                         {$column} LIKE '%{$post['search']['value']}%'";
-                } elseif ($key == 1) {
-                    $sql .= " 
-                        WHERE {$column} LIKE '%{$post['search']['value']}%'";
-                }
-            }
+        $this->db
+            ->select('a.nome AS nome_departamento, b.nome AS nome_area, c.nome AS nome_setor, c.id AS id_setor')
+            ->join('empresa_areas b', 'b.id_departamento = a.id')
+            ->join('empresa_setores c', 'c.id_area = b.id', 'left')
+            ->where('a.id_empresa', $this->session->userdata('empresa'));
+        if ($idDepartamento) {
+            $this->db->where('a.id', $idDepartamento);
         }
-        $recordsFiltered = $this->db->query($sql)->num_rows();
-
-        if (isset($post['order'])) {
-            $orderBy = array();
-            foreach ($post['order'] as $order) {
-                $orderBy[] = ($order['column'] + 1) . ' ' . $order['dir'];
-            }
-            $sql .= ' 
-                    ORDER BY ' . implode(', ', $orderBy);
+        if ($idArea) {
+            $this->db->where('b.id', $idArea);
         }
-        if ($post['length'] > 0) {
-            $sql .= " LIMIT {$post['start']}, {$post['length']}";
-        }
-        $list = $this->db->query($sql)->result();
+        $query = $this->db->get('empresa_departamentos a');
 
-        $data = array();
-        foreach ($list as $setor) {
-            $row = array();
-            $row[] = $setor->depto;
-            $row[] = $setor->area;
-            if ($setor->id) {
-                $row[] = $setor->setor;
-                $row[] = '
-                          <button class="btn btn-sm btn-info" onclick="edit_setor(' . $setor->id . ')" title="Editar setor"><i class="glyphicon glyphicon-pencil"></i></button>
-                          <button class="btn btn-sm btn-danger" onclick="delete_setor(' . $setor->id . ')" title="Excluir setor"><i class="glyphicon glyphicon-trash"></i></button>
-                         ';
+        $this->load->library('dataTables');
+
+        $output = $this->datatables->generate($query);
+
+        $data = [];
+
+        foreach ($output->data as $row) {
+            if ($row->id_setor) {
+                $btn = '<button class="btn btn-sm btn-info" onclick="edit_setor(' . $row->id_setor . ',\'' . $row->nome_departamento . '\',\'' . $row->nome_area . '\')" title="Editar setor"><i class="glyphicon glyphicon-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="delete_setor(' . $row->id_setor . ')" title="Excluir setor"><i class="glyphicon glyphicon-trash"></i></button>';
             } else {
-                $row[] = '<span class="text-muted">Nenhum setor encontrado</span>';
-                $row[] = '
-                          <button class="btn btn-sm btn-info disabled" title="Editar setor"><i class="glyphicon glyphicon-pencil"></i></button>
-                          <button class="btn btn-sm btn-danger disabled" title="Excluir setor"><i class="glyphicon glyphicon-trash"></i></button>
-                         ';
+                $btn = '<button class="btn btn-sm btn-info disabled" title="Editar setor"><i class="glyphicon glyphicon-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger disabled" title="Excluir setor"><i class="glyphicon glyphicon-trash"></i></button>';
             }
-            $data[] = $row;
+            $data[] = [
+                $row->nome_departamento,
+                $row->nome_area,
+                $row->nome_setor,
+                $btn
+            ];
         }
 
-        $output = array(
-            "draw" => $this->input->post('draw'),
-            "recordsTotal" => $recordsTotal,
-            "recordsFiltered" => $recordsFiltered,
-            "data" => $data,
-        );
-        //output to json format
+        $output->data = $data;
+
         echo json_encode($output);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Retorna dados para edição de um departamento
-     *
-     * @access public
-     */
-    public function ajax_editDepto()
+    //==========================================================================
+    public function editarDepartamento()
     {
-        $id = $this->input->post('id');
-        $data = $this->db->get_where('empresa_departamentos', array('id' => $id))->row();
+        $data = $this->departamentos->find($this->input->post('id'));
+
+        if (empty($data)) {
+            exit(json_encode(['erro' => $this->departamentos->errors()]));
+        };
+
         echo json_encode($data);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Retorna dados para edição de uma área
-     *
-     * @access public
-     */
-    public function ajax_editArea()
+    //==========================================================================
+    public function editarArea()
     {
-        $id = $this->input->post('id');
-        $data = $this->db->get_where('empresa_areas', array('id' => $id))->row();
+        $data = $this->areas->find($this->input->post('id'));
+
+        if (empty($data)) {
+            exit(json_encode(['erro' => $this->areas->errors()]));
+        };
+
         echo json_encode($data);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Retorna dados para edição de um setor
-     *
-     * @access public
-     */
-    public function ajax_editSetor()
+    //==========================================================================
+    public function editarSetor()
     {
-        $id = $this->input->post('id');
-        $data = $this->db->get_where('empresa_setores', array('id' => $id))->row();
+        $data = $this->setores->find($this->input->post('id'));
+
+        if (empty($data)) {
+            exit(json_encode(['erro' => $this->setores->errors()]));
+        };
+
         echo json_encode($data);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Cadastra um novo departamento
-     *
-     * @access public
-     */
-    public function ajax_addDepto()
+    //==========================================================================
+    public function salvarDepartamento()
     {
-        $data = $this->input->post();
-        $status = $this->db->insert('empresa_departamentos', $data);
-        echo json_encode(array("status" => $status));
+        $this->load->library('entities');
+
+        $data = $this->entities->create('empresaDepartamentos', $this->input->post());
+
+        $this->departamentos->setValidationLabel('nome', 'Depto.');
+
+        $this->departamentos->save($data) or exit(json_encode(['erro' => $this->departamentos->errors()]));
+
+        echo json_encode(['status' => true]);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Cadastra uma nova área
-     *
-     * @access public
-     */
-    public function ajax_addArea()
+    //==========================================================================
+    public function salvarArea()
     {
-        $data = $this->input->post();
-        $status = $this->db->insert('empresa_areas', $data);
-        echo json_encode(array("status" => $status));
+        $this->load->library('entities');
+
+        $data = $this->entities->create('empresaAreas', $this->input->post());
+
+        $this->areas->setValidationRule('nome_depto', 'required|max_length[255]');
+
+        $this->areas->setValidationLabel('nome_depto', 'Depto.');
+        $this->areas->setValidationLabel('nome', 'Área');
+
+        $this->areas->validate($data) or exit(json_encode(['erro' => $this->areas->errors()]));
+
+        unset($data->nome_depto);
+
+        $this->areas->skipValidation();
+
+        $this->areas->save($data) or exit(json_encode(['erro' => $this->areas->errors()]));
+
+        echo json_encode(['status' => true]);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Cadastra um novo setor
-     *
-     * @access public
-     */
-    public function ajax_addSetor()
+    //==========================================================================
+    public function salvarSetor()
     {
-        $data = $this->input->post();
-        $status = $this->db->insert('empresa_setores', $data);
-        echo json_encode(array("status" => $status));
+        $this->load->library('entities');
+
+        $data = $this->entities->create('empresaSetores', $this->input->post());
+
+        $this->setores->setValidationRule('nome_depto', 'required|max_length[255]');
+        $this->setores->setValidationRule('nome_area', 'required|max_length[255]');
+
+        $this->setores->setValidationLabel('nome_depto', 'Depto.');
+        $this->setores->setValidationLabel('nome_area', 'Área');
+        $this->setores->setValidationLabel('nome', 'Setor');
+
+        $this->setores->validate($data) or exit(json_encode(['erro' => $this->setores->errors()]));
+
+        unset($data->nome_depto, $data->nome_area);
+
+        $this->setores->skipValidation();
+
+        $this->setores->save($data) or exit(json_encode(['erro' => $this->setores->errors()]));
+
+        echo json_encode(['status' => true]);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Valida os dados para inserção de estruturas
-     *
-     * @access public
-     * @return  bool|string    TRUE para sucesso, FALSE ou string para falha
-     */
-    public function validar()
+    //==========================================================================
+    public function excluirDepartamento()
     {
-        return $this->email->validar();
+        $this->departamentos->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->departamentos->errors()]));
+
+        echo json_encode(['status' => true]);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Altera um departamento
-     *
-     * @access public
-     */
-    public function ajax_updateDepto()
+    //==========================================================================
+    public function excluirArea()
     {
-        $data = $this->input->post();
-        $id = $this->input->post('id');
-        unset($data['id']);
-        $status = $this->db->update('empresa_departamentos', $data, array('id' => $id));
-        echo json_encode(array("status" => $status));
+        $this->areas->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->areas->errors()]));
+
+        echo json_encode(['status' => true]);
     }
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Altera uma área
-     *
-     * @access public
-     */
-    public function ajax_updateArea()
+    //==========================================================================
+    public function excluirSetor()
     {
-        $data = $this->input->post();
-        $id = $this->input->post('id');
-        unset($data['id']);
-        $status = $this->db->update('empresa_areas', $data, array('id' => $id));
-        echo json_encode(array("status" => $status));
-    }
+        $this->setores->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->setores->errors()]));
 
-    // -------------------------------------------------------------------------
-
-    /**
-     * Altera um setor
-     *
-     * @access public
-     */
-    public function ajax_updateSetor()
-    {
-        $data = $this->input->post();
-        $id = $this->input->post('id');
-        unset($data['id']);
-        $status = $this->db->update('empresa_setores', $data, array('id' => $id));
-        echo json_encode(array("status" => $status));
-    }
-
-    // -------------------------------------------------------------------------
-
-    /**
-     * Valida os dados para alteração de estruturas
-     *
-     * @access public
-     * @return  bool|string    TRUE para sucesso, FALSE ou string para falha
-     */
-    public function revalidar()
-    {
-        return $this->email->revalidar();
-    }
-
-    // -------------------------------------------------------------------------
-
-    /**
-     * Exclui um departamento
-     *
-     * @access public
-     */
-    public function ajax_deleteDepto()
-    {
-        $id = $this->input->post('id');
-        $status = $this->db->delete('empresa_departamentos', array('id' => $id));
-        echo json_encode(array("status" => $status));
-    }
-
-    // -------------------------------------------------------------------------
-
-    /**
-     * Exclui uma área
-     *
-     * @access public
-     */
-    public function ajax_deleteArea()
-    {
-        $id = $this->input->post('id');
-        $status = $this->db->delete('empresa_areas', array('id' => $id));
-        echo json_encode(array("status" => $status));
-    }
-
-    // -------------------------------------------------------------------------
-
-    /**
-     * Exclui um setor
-     *
-     * @access public
-     */
-    public function ajax_deleteSetor()
-    {
-        $id = $this->input->post('id');
-        $status = $this->db->delete('empresa_setores', array('id' => $id));
-        echo json_encode(array("status" => $status));
+        echo json_encode(['status' => true]);
     }
 
 }

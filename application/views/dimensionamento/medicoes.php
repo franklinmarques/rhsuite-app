@@ -325,7 +325,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('dimensionamento/medicoes/ajaxList/') ?>',
+                    'url': '<?php echo site_url('dimensionamento/medicoes/ajaxList') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.id_processo = $('#processo').val();
@@ -520,6 +520,9 @@
                 'type': 'POST',
                 'data': $('#form').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
@@ -527,11 +530,11 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSave').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
+                },
+                'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });

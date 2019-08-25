@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
     <style>
         #table_processing,
@@ -133,7 +133,7 @@ require_once APPPATH . "views/header.php";
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
                         <li class="active">Apontamentos Diários</li>
-<!--                        --><?php //$this->load->view('modal_processos', ['url' => 'cd/apontamento']); ?>
+                        <!--                        --><?php //$this->load->view('modal_processos', ['url' => 'cd/apontamento']); ?>
                     </ol>
                     <div class="row">
                         <div class="col-md-6">
@@ -1652,7 +1652,7 @@ require_once APPPATH . "views/header.php";
     <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -1682,46 +1682,51 @@ require_once APPPATH . "views/end_js.php";
         var drawing_table_cuidadores = false;
         var drawing_table_frequencias = false;
 
-        $('.tags').tagsInput({width: 'auto', defaultText: 'Telefone', placeholderColor: '#999', delimiter: '/'});
+        $('.tags').tagsInput({
+            'width': 'auto',
+            'defaultText': 'Telefone',
+            'placeholderColor': '#999',
+            'delimiter': '/'
+        });
         $('[name="data_recesso"], [name="data_retorno"], [name="data_desligamento"], [name="data_afastamento"]').mask('00/00/0000');
         $('.hora').mask('00:00');
-        $('.valor').mask('##.###.##0,00', {reverse: true});
+        $('.valor').mask('##.###.##0,00', {'reverse': true});
         $(function () {
             $('[data-tooltip="tooltip"]').tooltip();
         });
 
         $(document).ready(function () {
             busca = $('#busca').serialize();
-            var url = "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>";
+            var url = '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>';
 
             table = $('#table').DataTable({
-                dom: "<'row'<'col-sm-3'l><'#legenda.col-sm-5'><'col-sm-4'f>>" +
+                'dom': "<'row'<'col-sm-3'l><'#legenda.col-sm-5'><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                "processing": true,
-                "serverSide": true,
-                "iDisplayLength": 500,
-                "lengthMenu": [[5, 10, 25, 50, 100, 500, 1000], [5, 10, 25, 50, 100, 500, 1000]],
-                "orderFixed": [1, 'asc'],
-                rowGroup: {
-                    className: 'active',
-                    startRender: function (rows, group) {
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 500,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, 1000], [5, 10, 25, 50, 100, 500, 1000]],
+                'orderFixed': [1, 'asc'],
+                'rowGroup': {
+                    'className': 'active',
+                    'startRender': function (rows, group) {
                         return '<strong>Municipio: </strong>' + group;
                     },
-                    dataSrc: 1
+                    'dataSrc': 1
                 },
-                "language": {
-                    "url": url
+                'language': {
+                    'url': url
                 },
-                "ajax": {
-                    "url": "<?php echo site_url('cd/apontamento/ajax_list') ?>",
-                    "type": "POST",
-                    timeout: 90000,
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('cd/apontamento/ajax_list') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
                         d.busca = busca;
                         return d;
                     },
-                    "dataSrc": function (json) {
+                    'dataSrc': function (json) {
                         var dt1 = new Date();
                         var dt2 = new Date();
                         dt2.setFullYear(json.calendar.ano, (json.calendar.mes - 1));
@@ -1776,7 +1781,7 @@ require_once APPPATH . "views/end_js.php";
                         return json.data;
                     }
                 },
-                "columnDefs": [
+                'columnDefs': [
                     {
                         'visible': false,
                         'targets': [0, 1]
@@ -1786,7 +1791,7 @@ require_once APPPATH . "views/end_js.php";
                         'targets': [3]
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[col][1] === null) {
                                 $(td).css('cursor', 'pointer');
                                 $(td).on('click', function () {
@@ -1824,7 +1829,7 @@ require_once APPPATH . "views/end_js.php";
                         'targets': [4]
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             $(td).css('padding', '8px 1px');
                             if (rowData[col] === null) {
                                 $(td).css('background-color', '#dbdbdb').html('');
@@ -1943,10 +1948,10 @@ require_once APPPATH . "views/end_js.php";
                                 $(td).html(rowData[col][7] !== 'AE' ? rowData[col][7] : '');
                             }
                         },
-                        "className": 'text-center',
-                        "targets": 'date-width',
-                        "orderable": false,
-                        "searchable": false
+                        'className': 'text-center',
+                        'targets': 'date-width',
+                        'orderable': false,
+                        'searchable': false
                     }
                 ],
                 'preDrawCallback': function () {
@@ -1956,38 +1961,38 @@ require_once APPPATH . "views/end_js.php";
                     drawing_table = false;
                     set_edicao_evento();
                 },
-                rowsGroup: [1, 2, 3, 4]
+                'rowsGroup': [1, 2, 3, 4]
             });
 
             if ('<?= $modo_privilegiado ?>') {
                 table_funcionarios = $('#table_funcionarios').DataTable({
-                    dom: "<'row'<'col-sm-3'l><'#legenda2.col-sm-5'><'col-sm-4'f>>" +
+                    'dom': "<'row'<'col-sm-3'l><'#legenda2.col-sm-5'><'col-sm-4'f>>" +
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    "processing": true,
-                    "serverSide": true,
-                    "iDisplayLength": 500,
-                    "lengthMenu": [[5, 10, 25, 50, 100, 500], [5, 10, 25, 50, 100, 500]],
-                    "order": [[0, 'asc']],
-                    rowGroup: {
-                        className: 'active',
-                        startRender: function (rows, group) {
+                    'processing': true,
+                    'serverSide': true,
+                    'iDisplayLength': 500,
+                    'lengthMenu': [[5, 10, 25, 50, 100, 500], [5, 10, 25, 50, 100, 500]],
+                    'order': [[0, 'asc']],
+                    'rowGroup': {
+                        'className': 'active',
+                        'startRender': function (rows, group) {
                             return '<strong>Municipio: </strong>' + group;
                         },
-                        dataSrc: 1
+                        'dataSrc': 1
                     },
-                    "language": {
-                        "url": url
+                    'language': {
+                        'url': url
                     },
-                    ajax: {
-                        "url": "<?php echo site_url('cd/apontamento/ajax_funcionarios') ?>",
-                        "type": "POST",
-                        timeout: 90000,
-                        data: function (d) {
+                    'ajax': {
+                        'url': '<?php echo site_url('cd/apontamento/ajax_funcionarios') ?>',
+                        'type': 'POST',
+                        'timeout': 90000,
+                        'data': function (d) {
                             d.busca = busca;
                             return d;
                         },
-                        "dataSrc": function (json) {
+                        'dataSrc': function (json) {
                             $('[name="mes"]').val(json.calendar.mes);
                             $('[name="ano"]').val(json.calendar.ano);
                             $('#mes_ano').html(json.calendar.mes_ano[0].toUpperCase() + json.calendar.mes_ano.slice(1));
@@ -2037,17 +2042,17 @@ require_once APPPATH . "views/end_js.php";
                             return json.data;
                         }
                     },
-                    columnDefs: [
+                    'columnDefs': [
                         {
-                            visible: false,
-                            targets: [0, 1, 4]
+                            'visible': false,
+                            'targets': [0, 1, 4]
                         },
                         {
-                            className: 'text-center',
-                            targets: [5]
+                            'className': 'text-center',
+                            'targets': [5]
                         },
                         {
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            'createdCell': function (td, cellData, rowData, row, col) {
                                 if (rowData[4] === null) {
                                     $(td).addClass('text-danger text-center text-nowrap').html(rowData[col]);
                                 } else {
@@ -2057,7 +2062,7 @@ require_once APPPATH . "views/end_js.php";
                             'targets': [3]
                         },
                         {
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            'createdCell': function (td, cellData, rowData, row, col) {
                                 $(td).css('padding', '8px 1px');
                                 if (rowData[col] === null) {
                                     $(td).css('background-color', '#dbdbdb').html('');
@@ -2116,10 +2121,10 @@ require_once APPPATH . "views/end_js.php";
                                     $(td).html(rowData[col][7] !== 'AE' ? rowData[col][7] : '');
                                 }
                             },
-                            className: 'text-center',
-                            orderable: false,
-                            searchable: false,
-                            targets: 'date-width'
+                            'className': 'text-center',
+                            'orderable': false,
+                            'searchable': false,
+                            'targets': 'date-width'
                         }
                     ],
                     'preDrawCallback': function () {
@@ -2129,38 +2134,38 @@ require_once APPPATH . "views/end_js.php";
                         drawing_table_funcionarios = false;
                         set_edicao_evento();
                     },
-                    rowsGroup: [1, 2, 3]
+                    'rowsGroup': [1, 2, 3]
                 });
             }
 
             table_cuidadores = $('#table_cuidadores').DataTable({
-                dom: "<'row'<'col-sm-3'l><'#legenda3.col-sm-5'><'col-sm-4'f>>" +
+                'dom': "<'row'<'col-sm-3'l><'#legenda3.col-sm-5'><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                "processing": true,
-                "serverSide": true,
-                "iDisplayLength": 500,
-                "lengthMenu": [[5, 10, 25, 50, 100, 250, 500], [5, 10, 25, 50, 100, 250, 500]],
-                "orderFixed": [1, 'asc'],
-                rowGroup: {
-                    className: 'active',
-                    startRender: function (rows, group) {
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 500,
+                'lengthMenu': [[5, 10, 25, 50, 100, 250, 500], [5, 10, 25, 50, 100, 250, 500]],
+                'orderFixed': [1, 'asc'],
+                'rowGroup': {
+                    'className': 'active',
+                    'startRender': function (rows, group) {
                         return '<strong>Municipio: </strong>' + group;
                     },
-                    dataSrc: 1
+                    'dataSrc': 1
                 },
-                "language": {
-                    "url": url
+                'language': {
+                    'url': url
                 },
-                "ajax": {
-                    "url": "<?php echo site_url('cd/apontamento/ajax_cuidadores') ?>",
-                    "type": "POST",
-                    timeout: 90000,
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('cd/apontamento/ajax_cuidadores') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
                         d.busca = busca;
                         return d;
                     },
-                    "dataSrc": function (json) {
+                    'dataSrc': function (json) {
                         if (json.draw === '1') {
                             $("#legenda3").html('<button title="Mostrar legenda de atributos" data-toggle="modal" data-target="#modal_legenda2" style="margin: 15px 10px 0;" class="btn btn-default btn-sm">' +
                                 '<i class="glyphicon glyphicon-exclamation-sign"></i> <span class="hidden-xs"> Mostrar legenda de atributos</span>' +
@@ -2169,38 +2174,38 @@ require_once APPPATH . "views/end_js.php";
                         return json.data;
                     }
                 },
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        visible: false,
-                        targets: [0, 1]
+                        'visible': false,
+                        'targets': [0, 1]
                     },
                     {
-                        width: '30%',
-                        targets: [2, 6]
+                        'width': '30%',
+                        'targets': [2, 6]
                     },
                     {
-                        width: '40%',
-                        targets: [7]
+                        'width': '40%',
+                        'targets': [7]
                     },
                     {
-                        className: 'text-center',
-                        targets: [3, 5]
+                        'className': 'text-center',
+                        'targets': [3, 5]
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[2] === null) {
                                 $(td).addClass('danger');
                             }
                         },
-                        targets: [2, 3, 4]
+                        'targets': [2, 3, 4]
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[6] === null) {
                                 $(td).addClass('danger');
                             }
                         },
-                        targets: [6, 7]
+                        'targets': [6, 7]
                     }
                 ],
                 'preDrawCallback': function () {
@@ -2210,37 +2215,37 @@ require_once APPPATH . "views/end_js.php";
                     drawing_table_cuidadores = false;
                     set_edicao_evento();
                 },
-                rowsGroup: [1, 2, 3, 4, 5]
+                'rowsGroup': [1, 2, 3, 4, 5]
             });
 
             table_frequencias = $('#table_frequencias').DataTable({
-                dom: "<'row'<'col-sm-3'l><'#legenda4.col-sm-5'><'col-sm-4'f>>" +
+                'dom': "<'row'<'col-sm-3'l><'#legenda4.col-sm-5'><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                "processing": true,
-                "serverSide": true,
-                "iDisplayLength": 500,
-                "lengthMenu": [[5, 10, 25, 50, 100, 500], [5, 10, 25, 50, 100, 500]],
-                "orderFixed": [1, 'asc'],
-                rowGroup: {
-                    className: 'active',
-                    startRender: function (rows, group) {
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 500,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500], [5, 10, 25, 50, 100, 500]],
+                'orderFixed': [1, 'asc'],
+                'rowGroup': {
+                    'className': 'active',
+                    'startRender': function (rows, group) {
                         return '<strong>Municipio: </strong>' + group;
                     },
-                    dataSrc: 1
+                    'dataSrc': 1
                 },
-                "language": {
-                    "url": url
+                'language': {
+                    'url': url
                 },
-                ajax: {
-                    "url": "<?php echo site_url('cd/apontamento/ajax_frequencias') ?>",
-                    "type": "POST",
-                    timeout: 90000,
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('cd/apontamento/ajax_frequencias') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
                         d.busca = busca;
                         return d;
                     },
-                    "dataSrc": function (json) {
+                    'dataSrc': function (json) {
                         var dt1 = new Date();
                         var dt2 = new Date();
                         dt2.setFullYear(json.calendar.ano, (json.calendar.mes - 1));
@@ -2283,25 +2288,25 @@ require_once APPPATH . "views/end_js.php";
                         return json.data;
                     }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        visible: false,
-                        targets: [0, 1, 3, 6]
+                        'visible': false,
+                        'targets': [0, 1, 3, 6]
                     },
                     {
-                        className: 'text-center',
-                        targets: [4]
+                        'className': 'text-center',
+                        'targets': [4]
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[5] === null) {
                                 $(td).addClass('danger');
                             }
                         },
-                        targets: [5]
+                        'targets': [5]
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[5] === null) {
                                 $(td).addClass('danger');
                             } else if (rowData[col] === null) {
@@ -2347,10 +2352,10 @@ require_once APPPATH . "views/end_js.php";
                             }
 
                         },
-                        className: 'text-center',
-                        orderable: false,
-                        searchable: false,
-                        targets: 'date-width'
+                        'className': 'text-center',
+                        'orderable': false,
+                        'searchable': false,
+                        'targets': 'date-width'
                     }
                 ],
                 'preDrawCallback': function () {
@@ -2360,12 +2365,11 @@ require_once APPPATH . "views/end_js.php";
                     drawing_table_frequencias = false;
                     set_edicao_evento();
                 },
-                rowsGroup: [2, 4, 5]
+                'rowsGroup': [2, 4, 5]
             });
 
             atualizarColaboradores();
             setPdf_atributes();
-
         });
 
 
@@ -2377,40 +2381,42 @@ require_once APPPATH . "views/end_js.php";
             }
         });
 
+
         function atualizarFiltro() {
             var data = $('#busca').serialize();
-            $('#busca [name="depto"], #busca [name="diretoria"], #busca [name="supervisor"]').prop('disabled', true);
-
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/atualizar_filtro/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: data,
-                success: function (json) {
-                    $('#busca [name="depto"]').prop('disabled', false);
-                    $('#busca [name="diretoria"]').prop('disabled', false).replaceWith(json.diretoria);
-                    $('#busca [name="supervisor"]').prop('disabled', false).replaceWith(json.supervisor);
+                'url': '<?php echo site_url('cd/apontamento/atualizar_filtro') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': data,
+                'beforeSend': function () {
+                    $('#busca [name="depto"], #busca [name="diretoria"], #busca [name="supervisor"]').prop('disabled', true);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'success': function (json) {
+                    $('#busca [name="diretoria"]').replaceWith(json.diretoria);
+                    $('#busca [name="supervisor"]').replaceWith(json.supervisor);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
-                    $('#busca [name="depto"]').prop('disabled', false);
-                    $('#busca [name="diretoria"]').prop('disabled', false);
-                    $('#busca [name="supervisor"]').prop('disabled', false);
+                },
+                'complete': function () {
+                    $('#busca [name="depto"], #busca [name="diretoria"], #busca [name="supervisor"]').prop('disabled', false);
                 }
             });
         }
 
+
         function atualizarColaboradores(turno, value) {
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_cuidadores_sub/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    busca: busca,
-                    turno: turno,
-                    value: value
+                'url': '<?php echo site_url('cd/apontamento/ajax_cuidadores_sub') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'busca': busca,
+                    'turno': turno,
+                    'value': value
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#id_diretoria, #id_diretoria_matr').html($(json.id_diretoria).html());
                     $('#id_escola, #id_escola_matr').html($(json.id_escola).html());
                     $('#form_colaborador [name="id_vinculado"]').html($(json.id_usuario).html());
@@ -2419,59 +2425,62 @@ require_once APPPATH . "views/end_js.php";
                     $('#form_colaborador_alocado [name="id_vinculado"]').html($(json.id_usuario_alocado).html());
                     $('[name="id_cuidador_sub"]').html($(json.id_cuidador_sub).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function atualizarDetalhes() {
             $.ajax({
-                url: "<?php echo site_url('apontamento/ajax_edit/') ?>",
-                type: "POST",
-                dataType: "html",
-                success: function (data) {
-                    $('#detalhes').replaceWith(data);
+                'url': '<?php echo site_url('apontamento/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'html',
+                'success': function (json) {
+                    $('#detalhes').replaceWith(json);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function atualizarCuidadores() {
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_novo_cuidador/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    diretoria: $('#form_colaborador #id_diretoria').val(),
-                    escola: $('#form_colaborador #id_escola').val(),
-                    vinculado: $('#form_colaborador [name="id_vinculado"]').val()
+                'url': '<?php echo site_url('cd/apontamento/ajax_novo_cuidador') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'diretoria': $('#form_colaborador #id_diretoria').val(),
+                    'escola': $('#form_colaborador #id_escola').val(),
+                    'vinculado': $('#form_colaborador [name="id_vinculado"]').val()
                 },
-                success: function (data) {
-                    $('#form_colaborador #id_escola').html($(data.id_escola).html());
-                    $('#form_colaborador [name="id_vinculado"]').html($(data.id_vinculado).html());
+                'success': function (json) {
+                    $('#form_colaborador #id_escola').html($(json.id_escola).html());
+                    $('#form_colaborador [name="id_vinculado"]').html($(json.id_vinculado).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function atualizarMatriculados() {
             $.ajax({
-                url: '<?php echo site_url('cd/apontamento/ajax_novo_matriculado/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {
-                    diretoria: $('#form_matriculados #id_diretoria_matr').val(),
-                    escola: $('#form_matriculados #id_escola_matr').val()
+                'url': '<?php echo site_url('cd/apontamento/ajax_novo_matriculado') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'diretoria': $('#form_matriculados #id_diretoria_matr').val(),
+                    'escola': $('#form_matriculados #id_escola_matr').val()
                 },
-                success: function (data) {
-                    $('#form_matriculados #id_escola_matr').html($(data.id_escola).html());
+                'success': function (json) {
+                    $('#form_matriculados #id_escola_matr').html($(json.id_escola).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -2487,9 +2496,9 @@ require_once APPPATH . "views/end_js.php";
                     $("[name='" + vals[0] + "']").val($("[name='" + vals[0] + "'] option:first").val());
                 }
             });
-
             atualizarFiltro();
         });
+
 
         $('#modal_form').on('show.bs.modal', function (event) {
             var event = $(event.relatedTarget);
@@ -2497,14 +2506,15 @@ require_once APPPATH . "views/end_js.php";
             $('[name="dado2"]').val(event.data('text'));
         });
 
+
         $('#modal_config').on('show.bs.modal', function (event) {
             $('#form_config')[0].reset();
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_config') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: busca,
-                success: function (json) {
+                'url': '<?php echo site_url('cd/apontamento/ajax_config') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': busca,
+                'success': function (json) {
                     $('#form_config [name="id"]').val(json.id);
                     $('#form_config [name="id_alocacao"]').val(json.id_alocacao);
                     $('#form_config [name="mes"]').val(json.mes);
@@ -2538,11 +2548,12 @@ require_once APPPATH . "views/end_js.php";
                     $('#form_config [name="faturamento_realizado"]').val(json.faturamento_realizado);
 
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         });
+
 
         $('[name="status"]').on('change', function () {
             var status = $(this).val();
@@ -2584,6 +2595,7 @@ require_once APPPATH . "views/end_js.php";
             calcular_valores();
         });
 
+
         $('#modal_colaborador').on('show.bs.modal', function () {
             $('#form_colaborador #id_diretoria').val($('#busca [name="diretoria"]').val());
             atualizarCuidadores();
@@ -2603,6 +2615,7 @@ require_once APPPATH . "views/end_js.php";
             $('[name="total_dias_mensais"], [name="total_horas_diarias"]').val('');
             $('#copiar_posto').prop('disabled', true);
         });
+
 
         function calcular_valores() {
             var valor = $('[name="valor_posto"]').val();
@@ -2624,28 +2637,31 @@ require_once APPPATH . "views/end_js.php";
             $('[name="valor_hora"]').val(valor_hora.toFixed(2));
         }
 
+
         function get_posto_anterior() {
             $.ajax({
-                url: "<?php echo site_url('apontamento_postos/ajax_posto/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id_usuario: $('[name="id_usuario"]').val()},
-                success: function (data) {
-                    $('[name="total_dias_mensais"]').val(data.total_dias_mensais);
-                    $('[name="total_horas_diarias"]').val(data.total_horas_diarias);
-                    $('[name="valor_posto"]').val(data.valor_posto);
-                    $('[name="valor_dia"]').val(data.valor_dia);
-                    $('[name="valor_hora"]').val(data.valor_hora);
+                'url': '<?php echo site_url('apontamento_postos/ajax_posto') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id_usuario': $('[name="id_usuario"]').val()},
+                'success': function (json) {
+                    $('[name="total_dias_mensais"]').val(json.total_dias_mensais);
+                    $('[name="total_horas_diarias"]').val(json.total_horas_diarias);
+                    $('[name="valor_posto"]').val(json.valor_posto);
+                    $('[name="valor_dia"]').val(json.valor_dia);
+                    $('[name="valor_hora"]').val(json.valor_hora);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function sugestao_detalhe(event) {
             $('[name="detalhes"]').val($(event).text());
         }
+
 
         function selecionar_status(value) {
             if (value === 'FA' || value === 'FS' || value === 'FE' || value === 'PD' || value === 'PI' ||
@@ -2660,18 +2676,19 @@ require_once APPPATH . "views/end_js.php";
             }
         }
 
+
         function edit_frequencia(id_frequencia) {
             if (id_frequencia === undefined) {
                 id_frequencia = '';
             }
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_edit_frequencia/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    id_frequencia: id_frequencia
+                'url': '<?php echo site_url('cd/apontamento/ajax_edit_frequencia') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_frequencia': id_frequencia
                 },
-                success: function (json) {
+                'success': function (json) {
                     $('#insumos').html(json.qtde_insumos);
                     $('#form_frequencias [name="status"]:checked').trigger('change');
                     if (id_frequencia.length > 0) {
@@ -2680,11 +2697,12 @@ require_once APPPATH . "views/end_js.php";
                         $('#btnLimparfrequencia').hide();
                     }
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function proximo_mes(value = 1) {
             if ($('#mes_seguinte').hasClass('disabled') && value === 1) {
@@ -2702,6 +2720,7 @@ require_once APPPATH . "views/end_js.php";
             setPdf_atributes();
             $('#mes_anterior, #mes_seguinte').prop('disabled', false);
         }
+
 
         function filtrar() {
             var data_proximo_mes = new Date();
@@ -2722,57 +2741,60 @@ require_once APPPATH . "views/end_js.php";
             $('#alerta_supervisor').text($('[name="supervisor"] option:selected').html());
         }
 
+
         function add_mes() {
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/novo/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: busca,
-                success: function (json) {
+                'url': '<?php echo site_url('cd/apontamento/novo') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': busca,
+                'success': function (json) {
                     if (json.erro !== undefined) {
                         alert(json.erro);
                     } else {
                         reload_table();
                     }
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function add_colaborador() {
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento_colaboradores/novo/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: busca,
-                success: function (data) {
+                'url': '<?php echo site_url('cd/apontamento_colaboradores/novo') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': busca,
+                'success': function (json) {
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function excluir_mes() {
             if (confirm('Deseja limpar o mês selecionado?')) {
-
                 $.ajax({
-                    url: "<?= site_url('cd/apontamento/ajax_limpar/') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: busca,
-                    success: function (data) {
+                    'url': '<?= site_url('cd/apontamento/ajax_limpar') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': busca,
+                    'success': function (json) {
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error get data from ajax');
                     }
                 });
             }
         }
+
 
         function edit_colaboradores(id) {
             $('#form_colaborador')[0].reset(); // reset form on modals
@@ -2781,27 +2803,28 @@ require_once APPPATH . "views/end_js.php";
             $('.help-block').empty(); // clear error string
 
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_colaboradores/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (data) {
-                    $('#form_colaborador [name="id"]').val(data.id);
-                    $('#form_colaborador [name="area"]').val(data.area);
-                    $('#form_colaborador [name="setor"]').val(data.setor);
+                'url': '<?php echo site_url('cd/apontamento/ajax_colaboradores/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $('#form_colaborador [name="id"]').val(json.id);
+                    $('#form_colaborador [name="area"]').val(json.area);
+                    $('#form_colaborador [name="setor"]').val(json.setor);
                     atualizarSetor();
-                    $('#form_colaborador [name="contrato"]').val(data.contrato);
-                    $('#form_colaborador [name="telefone"]').val(data.telefone);
-                    $('#form_colaborador [name="email"]').val(data.email);
-                    $('#form_colaborador [name="status"]').val(data.status);
-                    $('#colaborador').html(data.nome);
+                    $('#form_colaborador [name="contrato"]').val(json.contrato);
+                    $('#form_colaborador [name="telefone"]').val(json.telefone);
+                    $('#form_colaborador [name="email"]').val(json.email);
+                    $('#form_colaborador [name="status"]').val(json.status);
+                    $('#colaborador').html(json.nome);
                     $('#modal_colaboradores').modal('show');
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function edit_status(id) {
             $('#form')[0].reset(); // reset form on modals
@@ -2811,21 +2834,22 @@ require_once APPPATH . "views/end_js.php";
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('avaliacaoexp_avaliados/edit_status/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (data) {
-                    $('[name="id"]').val(data.id);
-                    $('#nome').text(data.nome);
-                    $('[name="observacoes"]').val(data.observacoes);
+                'url': '<?php echo site_url('avaliacaoexp_avaliados/edit_status') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $('[name="id"]').val(json.id);
+                    $('#nome').text(json.nome);
+                    $('[name="observacoes"]').val(json.observacoes);
                     $('#modal_form').modal('show');
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function reload_table(reset = false) {
             edicaoEvento = false;
@@ -2840,6 +2864,7 @@ require_once APPPATH . "views/end_js.php";
             table_frequencias.ajax.reload(null, reset); //reload datatable ajax
         }
 
+
         function set_edicao_evento() {
             var a = drawing_table;
             var b = drawing_table_funcionarios;
@@ -2853,14 +2878,17 @@ require_once APPPATH . "views/end_js.php";
             }
         }
 
+
         function buscar_configuracoes() {
-            $('#btnBuscarConfig').text('Buscando...').attr('disabled', true);
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_editConfig') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: (busca + '&' + $('#form_config').serialize()),
-                success: function (json) {
+                'url': '<?php echo site_url('cd/apontamento/ajax_editConfig') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': (busca + '&' + $('#form_config').serialize()),
+                'beforeSend': function () {
+                    $('#btnBuscarConfig').text('Buscando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     $('#total_faltas').val(json.total_faltas);
                     $('#total_faltas_justificadas').val(json.total_faltas_justificadas);
                     $('#form_config [name="intercorrencias_diretoria"]').val(json.intercorrencias_diretoria);
@@ -2874,59 +2902,69 @@ require_once APPPATH . "views/end_js.php";
                     $('#form_config [name="total_cuidadores"]').val(json.total_cuidadores);
                     $('#form_config [name="total_cuidadores_ativos"]').val(json.total_cuidadores_ativos);
                     $('#form_config [name="total_supervisores_ativos"]').val(json.total_supervisores_ativos);
-                    $('#btnBuscarConfig').text('Buscar valores').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnBuscarConfig').text('Buscar valores').attr('disabled', false);
                 }
             });
         }
+
 
         function salvar_configuracoes() {
-            $('#btnSaveConfig').text('Salvando...').attr('disabled', true);
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_saveConfig') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: (busca + '&' + $('#form_config').serialize()),
-                success: function (data) {
-                    $('#modal_config').modal('hide');
-                    $('#btnSaveConfig').text('Salvar').attr('disabled', false);
+                'url': '<?php echo site_url('cd/apontamento/ajax_saveConfig') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': (busca + '&' + $('#form_config').serialize()),
+                'beforeSend': function () {
+                    $('#btnSaveConfig').text('Salvando...').attr('disabled', true);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'success': function (json) {
+                    $('#modal_config').modal('hide');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveConfig').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function save_remanejado() {
-            $('#btnSaveRemanejado').text('Salvando...').attr('disabled', true);
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_saveRemanejado') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: $('#form_remanejado').serialize(),
-                success: function (data) {
+                'url': '<?php echo site_url('cd/apontamento/ajax_saveRemanejado') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#form_remanejado').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveRemanejado').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     $('#modal_remanejado').modal('hide');
-                    $('#btnSaveRemanejado').text('Salvar').attr('disabled', false);
                     table.ajax.reload(null, false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveRemanejado').text('Salvar').attr('disabled', false);
                 }
             });
         }
+
 
         function editar_alocado(id_alocado) {
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_editAlocado') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id_alocado},
-                success: function (json) {
+                'url': "<?php echo site_url('cd/apontamento/ajax_editAlocado') ?>",
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id_alocado},
+                'success': function (json) {
                     $('#alocado_municipio').html(json.municipio);
                     $('#alocado_escola').html(json.escola);
                     $('#alocado_turno').html(json.turno);
@@ -2935,133 +2973,131 @@ require_once APPPATH . "views/end_js.php";
                     $('#form_alocado [name="id_vinculado"]').html($(json.id_vinculado).html());
                     $('#modal_alocado').modal('show');
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function save_alocado() {
-            $('#btnSaveAlocado').text('Salvando...').attr('disabled', true);
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_saveAlocado') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: $('#form_alocado').serialize(),
-                success: function (json) {
+                'url': '<?php echo site_url('cd/apontamento/ajax_saveAlocado') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#form_alocado').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveAlocado').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     if (json.erro !== undefined) {
                         alert(json.erro);
                     } else {
                         $('#modal_alocado').modal('hide');
                         table.ajax.reload(null, false);
                     }
-                    $('#btnSaveAlocado').text('Salvar').attr('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveAlocado').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
         function salvar_ferias() {
-            $('#btnSaveBackup').text('Salvando...'); //change button text
-            $('#btnSaveBackup, #btnLimparBackup').attr('disabled', true); //set button disable
-
-            // ajax adding data to database
             $.ajax({
-                url: "<?php echo site_url('apontamento/ajax_ferias') ?>",
-                type: "POST",
-                data: $('#form_backup').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'url': '<?php echo site_url('apontamento/ajax_ferias') ?>',
+                'type': 'POST',
+                'data': $('#form_backup').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveBackup').text('Salvando...');
+                    $('#btnSaveBackup, #btnLimparBackup').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_backup').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveBackup').text('Salvar'); //change button text
-                    $('#btnSaveBackup, #btnLimparBackup').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.statusText === 'OK') {
                         alert(jqXHR.responseText);
                     } else {
                         alert('Erro ao enviar formulário');
                     }
-
-                    $('#btnSaveBackup').text('Salvar'); //change button text
-                    $('#btnSaveBackup, #btnLimparBackup').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveBackup').text('Salvar');
+                    $('#btnSaveBackup, #btnLimparBackup').attr('disabled', false);
                 }
             });
         }
 
-        function salvar_substituto() {
-            $('#btnSaveSubstituto').text('Salvando...'); //change button text
-            $('#btnSaveSubstituto, #btnLimparSubstituto').attr('disabled', true); //set button disable
 
-            // ajax adding data to database
+        function salvar_substituto() {
             $.ajax({
-                url: "<?php echo site_url('apontamento/ajax_substituto') ?>",
-                type: "POST",
-                data: $('#form_substituto').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'url': '<?php echo site_url('apontamento/ajax_substituto') ?>',
+                'type': 'POST',
+                'data': $('#form_substituto').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveSubstituto').text('Salvando...');
+                    $('#btnSaveSubstituto, #btnLimparSubstituto').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_substituto').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveSubstituto').text('Salvar'); //change button text
-                    $('#btnSaveSubstituto, #btnLimparSubstituto').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.statusText === 'OK') {
                         alert(jqXHR.responseText);
                     } else {
                         alert('Erro ao enviar formulário');
                     }
-
-                    $('#btnSaveSubstituto').text('Salvar'); //change button text
-                    $('#btnSaveSubstituto, #btnLimparSubstituto').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveSubstituto').text('Salvar');
+                    $('#btnSaveSubstituto, #btnLimparSubstituto').attr('disabled', false);
                 }
             });
         }
 
-        function salvar_backup2() {
-            $('#btnSaveBackup2').text('Salvando...'); //change button text
-            $('#btnSaveBackup2, #btnLimparBackup2').attr('disabled', true); //set button disable
 
-            // ajax adding data to database
+        function salvar_backup2() {
             $.ajax({
-                url: "<?php echo site_url('apontamento/ajax_backup2') ?>",
-                type: "POST",
-                data: $('#form_backup2').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'url': '<?php echo site_url('apontamento/ajax_backup2') ?>',
+                'type': 'POST',
+                'data': $('#form_backup2').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveBackup2').text('Salvando...');
+                    $('#btnSaveBackup2, #btnLimparBackup2').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_backup2').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveBackup2').text('Salvar'); //change button text
-                    $('#btnSaveBackup2, #btnLimparBackup2').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.statusText === 'OK') {
                         alert(jqXHR.responseText);
                     } else {
                         alert('Erro ao enviar formulário');
                     }
-
-                    $('#btnSaveBackup2').text('Salvar'); //change button text
-                    $('#btnSaveBackup2, #btnLimparBackup2').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveBackup2').text('Salvar');
+                    $('#btnSaveBackup2, #btnLimparBackup2').attr('disabled', false);
                 }
             });
         }
+
 
         function limpar_ferias() {
             if (confirm('Deseja limpar o evento?')) {
@@ -3084,37 +3120,35 @@ require_once APPPATH . "views/end_js.php";
             }
         }
 
-        function save() {
-            $('#btnSave').text('Salvando...'); //change button text
-            $('#btnSave, #btnApagar').attr('disabled', true); //set button disable
 
-            // ajax adding data to database
+        function save() {
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_save') ?>",
-                type: "POST",
-                data: $('#form').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'url': '<?php echo site_url('cd/apontamento/ajax_save') ?>',
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...');
+                    $('#btnSave, #btnApagar').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave, #btnApagar').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave, #btnApagar').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar');
+                    $('#btnSave, #btnApagar').attr('disabled', false);
                 }
             });
         }
 
+
         function save_eventos() {
-            $('#btnSaveEventos').text('Replicando...');
-            $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('cd/apontamento/ajaxSaveEventos') ?>',
                 'type': 'POST',
@@ -3123,24 +3157,27 @@ require_once APPPATH . "views/end_js.php";
                     'busca': busca,
                     'eventos': $('#form_eventos').serialize()
                 },
-                'success': function (data) {
+                'beforeSend': function () {
+                    $('#btnSaveEventos').text('Replicando...');
+                    $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', true);
+                },
+                'success': function (json) {
                     $('#modal_eventos').modal('hide');
-                    $('#btnSaveEventos').text('Replicar');
-                    $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveEventos').text('Replicar');
                     $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
                 }
             });
         }
 
+
         function delete_eventos() {
             if (confirm('Deseja limpar os eventos desta data?')) {
-                $('#btnDeleteEventos').text('Limpando...');
-                $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', true);
                 $.ajax({
                     'url': '<?php echo site_url('cd/apontamento/ajaxDeleteEventos') ?>',
                     'type': 'POST',
@@ -3149,14 +3186,18 @@ require_once APPPATH . "views/end_js.php";
                         'busca': busca,
                         'eventos': $('#form_eventos').serialize()
                     },
-                    'success': function (data) {
+                    'beforeSend': function () {
+                        $('#btnDeleteEventos').text('Limpando...');
+                        $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', true);
+                    },
+                    'success': function (json) {
                         $('#modal_eventos').modal('hide');
-                        $('#btnDeleteEventos').text('Limpar');
-                        $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
                         reload_table();
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error get data from ajax');
+                    },
+                    'complete': function () {
                         $('#btnDeleteEventos').text('Limpar');
                         $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
                     }
@@ -3164,223 +3205,207 @@ require_once APPPATH . "views/end_js.php";
             }
         }
 
+
         if ('<?= $modo_privilegiado ?>') {
             function save_totalizacao() {
-                $('#btnSaveTotalizacao').text('Salvando...'); //change button text
-                $('#btnSaveTotalizacao').attr('disabled', true); //set button disable
-
-                // ajax adding data to database
                 $.ajax({
-                    url: "<?php echo site_url('apontamento_totalizacao/ajax_save') ?>",
-                    type: "POST",
-                    data: $('#form_totalizacao').serialize(),
-                    dataType: "JSON",
-                    success: function (data) {
-                        if (data.status) //if success close modal and reload ajax table
-                        {
+                    'url': '<?php echo site_url('apontamento_totalizacao/ajax_save') ?>',
+                    'type': 'POST',
+                    'data': $('#form_totalizacao').serialize(),
+                    'dataType': 'json',
+                    'beforeSend': function () {
+                        $('#btnSaveTotalizacao').text('Salvando...').attr('disabled', true);
+                    },
+                    'success': function (json) {
+                        if (json.status) {
                             $('#modal_totalizacao').modal('hide');
                             reload_table();
                         }
-
-                        $('#btnSaveTotalizacao').text('Salvar'); //change button text
-                        $('#btnSaveTotalizacao').attr('disabled', false); //set button enable
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error adding / update data');
-                        $('#btnSaveTotalizacao').text('Salvar'); //change button text
-                        $('#btnSaveTotalizacao').attr('disabled', false); //set button enable
+                    },
+                    'complete': function () {
+                        $('#btnSaveTotalizacao').text('Salvar').attr('disabled', false);
                     }
                 });
             }
         }
 
         function save_aluno() {
-            $('#btnSaveFrequencia').text('Salvando...'); //change button text
-            $('#btnSaveFrequencia, #btnLimparfrequencia').attr('disabled', true); //set button disable
-
-            // ajax adding data to database
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_save_frequencia') ?>",
-                type: "POST",
-                data: $('#form_frequencias').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'url': '<?php echo site_url('cd/apontamento/ajax_save_frequencia') ?>',
+                'type': 'POST',
+                'data': $('#form_frequencias').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveFrequencia').text('Salvando...');
+                    $('#btnSaveFrequencia, #btnLimparfrequencia').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_alunos').modal('hide');
                         table_frequencias.ajax.reload(null, false);
                     }
-
-                    $('#btnSaveFrequencia').text('Salvar'); //change button text
-                    $('#btnSaveFrequencia, #btnLimparfrequencia').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveFrequencia').text('Salvar'); //change button text
-                    $('#btnSaveFrequencia, #btnLimparfrequencia').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveFrequencia').text('Salvar');
+                    $('#btnSaveFrequencia, #btnLimparfrequencia').attr('disabled', false);
                 }
             });
         }
 
-        function save_colaborador() {
-            $('#btnSaveColaborador').text('Alocando...'); //change button text
-            $('#btnSaveColaborador').attr('disabled', true); //set button disable
 
-            // ajax adding data to database
+        function save_colaborador() {
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_save_cuidador') ?>",
-                type: "POST",
-                data: {
-                    id_escola: $('#form_colaborador [name="id_escola"]').val(),
-                    mes: $('#form_colaborador [name="mes"]').val(),
-                    ano: $('#form_colaborador [name="ano"]').val()
+                'url': '<?php echo site_url('cd/apontamento/ajax_save_cuidador') ?>',
+                'type': 'POST',
+                'data': {
+                    'id_escola': $('#form_colaborador [name="id_escola"]').val(),
+                    'mes': $('#form_colaborador [name="mes"]').val(),
+                    'ano': $('#form_colaborador [name="ano"]').val()
                 },
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveColaborador').text('Alocando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_colaborador').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveColaborador').text('Alocar'); //change button text
-                    $('#btnSaveColaborador').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveColaborador').text('Alocar'); //change button text
-                    $('#btnSaveColaborador').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveColaborador').text('Alocar').attr('disabled', false);
                 }
             });
         }
 
-        function save_matriculados() {
-            $('#btnSaveMatriculados').text('Alocando...'); //change button text
-            $('#btnSaveMatriculados').attr('disabled', true); //set button disable
 
-            // ajax adding data to database
+        function save_matriculados() {
             $.ajax({
-                url: "<?php echo site_url('cd/apontamento/ajax_save_matriculados') ?>",
-                type: "POST",
-                data: $('#form_matriculados').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
-                    {
+                'url': '<?php echo site_url('cd/apontamento/ajax_save_matriculados') ?>',
+                'type': 'POST',
+                'data': $('#form_matriculados').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveMatriculados').text('Alocando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
                         $('#modal_matriculados').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveMatriculados').text('Alocar'); //change button text
-                    $('#btnSaveMatriculados').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveMatriculados').text('Alocar'); //change button text
-                    $('#btnSaveMatriculados').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSaveMatriculados').text('Alocar').attr('disabled', false);
                 }
             });
         }
 
+
         function limpar_frequencia() {
             if (confirm('Deseja limpar o evento?')) {
-                $('#btnLimparfrequencia').text('Limpando evento...');
-                $('#btnLimparfrequencia').attr('disabled', true);
-
                 $.ajax({
-                    url: "<?php echo site_url('cd/apontamento/ajax_limpar_frequencia') ?>",
-                    type: "POST",
-                    data: {
-                        id: $('#form_frequencias [name="id"]').val()
+                    'url': '<?php echo site_url('cd/apontamento/ajax_limpar_frequencia') ?>',
+                    'type': 'POST',
+                    'data': {
+                        'id': $('#form_frequencias [name="id"]').val()
                     },
-                    dataType: "JSON",
-                    success: function (data) {
-                        if (data.status) {
+                    'dataType': 'json',
+                    'beforeSend': function () {
+                        $('#btnLimparfrequencia').text('Limpando evento...').attr('disabled', true);
+                    },
+                    'success': function (json) {
+                        if (json.status) {
                             $('#modal_alunos').modal('hide');
                             reload_table();
                         }
-
-                        $('#btnLimparfrequencia').text('Limpar evento');
-                        $('#btnLimparfrequencia').prop('disabled', true);
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error adding / update data');
-                        $('#btnLimparfrequencia').text('Limpar evento');
-                        $('#btnLimparfrequencia').attr('disabled', false);
+                    },
+                    'complete': function () {
+                        $('#btnLimparfrequencia').text('Limpar evento').attr('disabled', false);
                     }
                 });
             }
         }
+
 
         function delete_colaborador() {
             if (confirm('Deseja remover a alocação do colaborador selecionado?')) {
-                $('#btnDeleteColaborador').text('Desalocando...'); //change button text
-                $('#btnDeleteColaborador').attr('disabled', true); //set button disable
-
-                // ajax adding data to database
                 $.ajax({
-                    url: "<?php echo site_url('cd/apontamento/ajax_delete_cuidador') ?>",
-                    type: "POST",
-                    data: {
-                        busca: busca,
-                        id_vinculado: $('#form_colaborador_alocado [name="id_vinculado"]').val()
+                    'url': '<?php echo site_url('cd/apontamento/ajax_delete_cuidador') ?>',
+                    'type': 'POST',
+                    'data': {
+                        'busca': busca,
+                        'id_vinculado': $('#form_colaborador_alocado [name="id_vinculado"]').val()
                     },
-                    dataType: "JSON",
-                    success: function (data) {
-                        if (data.status) //if success close modal and reload ajax table
-                        {
+                    'dataType': 'json',
+                    'beforeSend': function () {
+                        $('#btnDeleteColaborador').text('Desalocando...').attr('disabled', true);
+                    },
+                    'success': function (json) {
+                        if (json.status) {
                             $('#modal_colaborador_alocado').modal('hide');
                             reload_table();
+                        } else if (json.erro) {
+                            alert(json.erro);
                         }
-
-                        $('#btnDeleteColaborador').text('Desalocar'); //change button text
-                        $('#btnDeleteColaborador').prop('disabled', true); //set button enable
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error adding / update data');
-                        $('#btnDeleteColaborador').text('Desalocar'); //change button text
-                        $('#btnDeleteColaborador').attr('disabled', false); //set button enable
+                    },
+                    'complete': function () {
+                        $('#btnDeleteColaborador').text('Desalocar').attr('disabled', false);
                     }
                 });
             }
         }
+
 
         function apagar() {
             if (confirm('Deseja limpar o evento selecionado?')) {
-
-                $('#btnApagar').text('Limpando...'); //change button text
-                $('#btnApagar').attr('disabled', true); //set button disable
-                $('#btnSave').attr('disabled', true); //set button disable
-
-                // ajax adding data to database
                 $.ajax({
-                    url: "<?php echo site_url('cd/apontamento/ajax_delete') ?>",
-                    type: "POST",
-                    data: {
-                        id: $('[name="id"]').val()
+                    'url': '<?php echo site_url('cd/apontamento/ajax_delete') ?>',
+                    'type': 'POST',
+                    'data': {
+                        'id': $('[name="id"]').val()
                     },
-                    dataType: "JSON",
-                    success: function (data) {
-                        if (data.status) //if success close modal and reload ajax table
-                        {
+                    'dataType': 'json',
+                    'beforeSend': function () {
+                        $('#btnApagar').text('Limpando...').attr('disabled', true);
+                        $('#btnSave').attr('disabled', true);
+                    },
+                    'success': function (json) {
+                        if (json.status) {
                             $('#modal_form').modal('hide');
                             reload_table();
+                        } else if (json.erro) {
+                            alert(json.erro);
                         }
-
-                        $('#btnApagar').text('Limpar evento'); //change button text
-                        $('#btnApagar').attr('disabled', false); //set button enable
-                        $('#btnSave').attr('disabled', false); //set button enable
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        alert(textStatus);
-                        alert('Error adding / update data');
-                        $('#btnApagar').text('Limpar evento'); //change button text
-                        $('#btnApagar').attr('disabled', false); //set button enable
-                        $('#btnSave').attr('disabled', false); //set button enable
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert(textStatus ? textStatus : 'Error adding / update data');
+                    },
+                    'complete': function () {
+                        $('#btnApagar').text('Limpar evento').attr('disabled', false);
+                        $('#btnSave').attr('disabled', false);
                     }
                 });
             }
         }
+
 
         function setPdf_atributes() {
             var search = '';
@@ -3430,6 +3455,4 @@ require_once APPPATH . "views/end_js.php";
 
     </script>
 
-<?php
-require_once APPPATH . "views/end_html.php";
-?>
+<?php require_once APPPATH . 'views/end_html.php'; ?>

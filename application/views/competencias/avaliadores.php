@@ -1,35 +1,40 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <style>
-    .btn-success{
+    .btn-success {
         background-color: #5cb85c;
         border-color: #4cae4c;
         color: #fff;
     }
+
     .btn-primary {
         background-color: #337ab7 !important;
         border-color: #2e6da4 !important;
         color: #fff;
     }
+
     .btn-info {
         color: #fff;
         background-color: #5bc0de;
         border-color: #46b8da;
     }
+
     .btn-warning {
         color: #fff;
         background-color: #f0ad4e;
         border-color: #eea236;
     }
+
     .btn-danger {
         color: #fff;
         background-color: #d9534f;
         border-color: #d43f3a;
     }
-    .text-nowrap{
+
+    .text-nowrap {
         white-space: nowrap;
-    }    
+    }
 </style>
 <!--main content start-->
 <section id="main-content">
@@ -39,8 +44,8 @@ require_once APPPATH . "views/header.php";
         <div class="row">
             <div class="col-md-12">
                 <form id="demoform" action="" method="post">
-                    <input type="hidden" name="id_competencia" id="id_competencia" value="<?= $id_competencia ?>" />
-                    <input type="hidden" name="id" id="id" value="<?= $id ?>" />
+                    <input type="hidden" name="id_competencia" id="id_competencia" value="<?= $id_competencia ?>"/>
+                    <input type="hidden" name="id" id="id" value="<?= $id ?>"/>
 
                     <div class="row">
                         <div class="col col-sm-7">
@@ -52,15 +57,19 @@ require_once APPPATH . "views/header.php";
                                         <option value="<?= $row->id ?>"<?= $row->cargo && $row->funcao ? '' : ' class="text-danger"' ?><?= $row->id == $avaliado ? ' selected' : '' ?>><?= $row->nome ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                                <small class="help-block"><i>* Os colaboradores em vermelho não possuem cargo ou função definidos.</i></small>
+                                <small class="help-block"><i>* Os colaboradores em vermelho não possuem cargo ou função
+                                        definidos.</i></small>
                             </div>
                         </div>
                         <div class="col-sm-5 text-right">
                             <br>
-                            <a id="associar" class="btn btn-primary disabled" href="#" role="button">Editar colaborador selecionado</a>
+                            <a id="associar" class="btn btn-primary disabled" href="#" role="button">Editar colaborador
+                                selecionado</a>
                             <!--<button type="button" id="salvar" class="btn btn-primary">Associar avaliado ao cargo-função</button>-->
                             <button type="button" id="salvar" class="btn btn-success">Salvar</button>
-                            <button class="btn btn-default" onclick="javascript:history.back()"><i class="glyphicon glyphicon-circle-arrow-left"></i> Voltar</button>
+                            <button class="btn btn-default" onclick="javascript:history.back()"><i
+                                        class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
+                            </button>
                         </div>
                     </div>
                     <div class="row">
@@ -82,15 +91,17 @@ require_once APPPATH . "views/header.php";
                                     <div class="col-md-3">
                                         <label>&nbsp;</label><br>
                                         <div class="btn-group" role="group" aria-label="...">
-                                            <button type="button" id="limpa_filtro" class="btn btn-sm btn-default">Limpar filtros</button>
-                                        </div>    
+                                            <button type="button" id="limpa_filtro" class="btn btn-sm btn-default">
+                                                Limpar filtros
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="tab-pane" role="tabpanel" id="step2">
-                        <?php echo form_multiselect('id_usuario_avaliadores[]', $duallistAvaliadores, $avaliadores, 'size="10" id="id_usuario_avaliadores" class="avaliadores"') ?>                            
+                        <?php echo form_multiselect('id_usuario_avaliadores[]', $duallistAvaliadores, $avaliadores, 'size="10" id="id_usuario_avaliadores" class="avaliadores"') ?>
                     </div>
                 </form>
             </div>
@@ -102,7 +113,7 @@ require_once APPPATH . "views/header.php";
 <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
 <!-- Css -->
 <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -128,35 +139,38 @@ require_once APPPATH . "views/end_js.php";
 
         verificar_cargo($('#avaliado').val());
         demo2 = $('.avaliadores').bootstrapDualListbox({
-            nonSelectedListLabel: 'Colaboradores disponíveis',
-            selectedListLabel: 'Colaboradores selecionados',
-            preserveSelectionOnMove: 'moved',
-            moveOnSelect: false,
-            helperSelectNamePostfix: false,
-            filterPlaceHolder: 'Filtrar',
-            infoText: false
+            'nonSelectedListLabel': 'Colaboradores disponíveis',
+            'selectedListLabel': 'Colaboradores selecionados',
+            'preserveSelectionOnMove': 'moved',
+            'moveOnSelect': false,
+            'helperSelectNamePostfix': false,
+            'filterPlaceHolder': 'Filtrar',
+            'infoText': false
         });
 
     });
 
 
-    $("#salvar").click(function () {
-
-        var dados = {"id": $("#id").val(), "id_competencia": $("#id_competencia").val(), "avaliado": $("#avaliado").val(), "id_usuario_avaliadores": $('#id_usuario_avaliadores').val(), <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'};
+    $('#salvar').click(function () {
+        var dados = {
+            'id': $('#id').val(),
+            'id_competencia': $('#id_competencia').val(),
+            'avaliado': $('#avaliado').val(),
+            'id_usuario_avaliadores': $('#id_usuario_avaliadores').val(),
+            '<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>'
+        };
 
         $.ajax({
-            url: "<?= site_url('competencias/avaliados/ajax_save') ?>",
-            type: "POST",
-            data: dados,
-            dataType: "JSON",
-            timeout: 9000,
-            success: function (data)
-            {
+            'url': '<?= site_url('competencias/avaliados/ajax_save') ?>',
+            'type': 'POST',
+            'data': dados,
+            'dataType': 'json',
+            'timeout': 9000,
+            'success': function (data) {
                 //console.log(data);
                 history.go(-1);
             },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 history.go(-1);
             }
         });
@@ -206,25 +220,24 @@ require_once APPPATH . "views/end_js.php";
 
     function filtra_colaboradores() {
         $.ajax({
-            url: "<?php echo site_url('competencias/avaliados/ajax_edit/') ?>/",
-            type: "POST",
-            dataType: "JSON",
-            timeout: 9000,
-            data: {
-                depto: $('[name="depto"]').val(),
-                area: $('[name="area"]').val(),
-                setor: $('[name="setor"]').val(),
-                selecionados: avaliadores
+            'url': '<?php echo site_url('competencias/avaliados/ajax_edit') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'timeout': 9000,
+            'data': {
+                'depto': $('[name="depto"]').val(),
+                'area': $('[name="area"]').val(),
+                'setor': $('[name="setor"]').val(),
+                'selecionados': avaliadores
             },
-            success: function (data)
-            {
-                $('[name="area"]').html(data.area);
-                $('[name="setor"]').html(data.setor);
-                $('#id_usuario_avaliadores').html(data.avaliadores).val(avaliadores);
+            'success': function (json) {
+                $('[name="area"]').html(json.area);
+                $('[name="setor"]').html(json.setor);
+                $('#id_usuario_avaliadores').html(json.avaliadores).val(avaliadores);
+
                 demo2.bootstrapDualListbox('refresh', true);
             },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
@@ -233,5 +246,5 @@ require_once APPPATH . "views/end_js.php";
 </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

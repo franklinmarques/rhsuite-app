@@ -495,8 +495,9 @@ class Apontamento_colaboradores extends MY_Controller
 //            redirect(site_url('apontamento_colaboradores'));
 //        }
         if ($funcionario->hash_acesso) {
-            $this->load->library('encrypt');
-            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $this->load->library('encrypt');
+//            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+//            $funcionario->hash_acesso = json_decode($funcionario->hash_acesso, true);
         } else {
             $funcionario->hash_acesso = 'null';
         }

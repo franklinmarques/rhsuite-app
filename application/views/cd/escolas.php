@@ -184,42 +184,43 @@
             $('[name="cep"]').mask('00000-000');
 
             table = $('#table').DataTable({
-                processing: true,
-                serverSide: true,
-                iDisplayLength: 500,
-                lengthMenu: [[5, 10, 25, 50, 100, 500, 1000], [5, 10, 25, 50, 100, 500, 1000]],
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 500,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, 1000], [5, 10, 25, 50, 100, 500, 1000]],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('cd/escolas/ajax_list/') ?>',
-                    type: 'POST',
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('cd/escolas/ajax_list') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.busca = $('#busca').serialize();
                         d.id_diretoria = '<?= $this->uri->rsegment(3, '') ?>';
                         return d;
                     }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        width: '40%',
-                        targets: [0, 1]
+                        'width': '40%',
+                        'targets': [0, 1]
                     },
                     {
-                        width: '20%',
-                        targets: [2]
+                        'width': '20%',
+                        'targets': [2]
                     },
                     {
-                        className: 'text-nowrap',
-                        targets: [-1],
-                        orderable: false,
-                        searchable: false
+                        'className': 'text-nowrap',
+                        'orderable': false,
+                        'searchable': false,
+                        'targets': [-1]
                     }
                 ]
             });
 
             atualizarFiltro();
         });
+
 
         $('#limpa_filtro').on('click', function () {
             var busca = unescape($('#busca').serialize());
@@ -230,22 +231,24 @@
             atualizarFiltro();
         });
 
+
         function atualizarFiltro() {
             $.ajax({
-                url: '<?php echo site_url('cd/escolas/atualizar_filtro/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: $('#busca').serialize(),
-                success: function (json) {
+                'url': '<?php echo site_url('cd/escolas/atualizar_filtro/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
                     $('[name="busca[diretoria]"]').html($(json.diretoria).html());
                     $('[name="busca[supervisor]"]').html($(json.supervisor).html());
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
+
 
         function add_escola() {
             save_method = 'add';
@@ -259,6 +262,7 @@
             $('.combo_nivel1').hide();
         }
 
+
         function edit_escola(id) {
             save_method = 'update';
             $('#form')[0].reset();
@@ -267,12 +271,12 @@
             $('.help-block').empty();
 
             $.ajax({
-                url: '<?php echo site_url('cd/escolas/ajax_edit/') ?>',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: id},
-                success: function (data) {
-                    $.each(data, function (key, value) {
+                'url': '<?php echo site_url('cd/escolas/ajax_edit') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $.each(json, function (key, value) {
                         if ($('[name="' + key + '"]').is(':checkbox') === false) {
                             $('[name="' + key + '"]').val(value);
                         } else {
@@ -282,23 +286,21 @@
 
                     $('.modal-title').text('Editar unidade escolar');
                     $('#modal_form').modal('show');
-
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function reload_table() {
             table.ajax.reload(null, false);
         }
 
-        function save() {
-            $('#btnSave').text('Salvando...');
-            $('#btnSave').attr('disabled', true);
-            var url;
 
+        function save() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('cd/escolas/ajax_add') ?>';
             } else {
@@ -306,42 +308,43 @@
             }
 
             $.ajax({
-                url: url,
-                type: 'POST',
-                data: $('#form').serialize(),
-                dataType: 'JSON',
-                success: function (json) {
+                'url': url,
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
-                    } else if (json.erro){
+                    } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function delete_escola(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    url: '<?php echo site_url('cd/escolas/ajax_delete') ?>/',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {id: id},
-                    success: function (data) {
-                        //if success reload ajax table
+                    'url': '<?php echo site_url('cd/escolas/ajax_delete') ?>/',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {id: id},
+                    'success': function (json) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });

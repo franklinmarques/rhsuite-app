@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <style>
     <?php if ($this->agent->is_mobile()): ?>
@@ -89,7 +89,7 @@ require_once APPPATH . "views/header.php";
 <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
 <!-- Css -->
 <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -112,56 +112,54 @@ require_once APPPATH . "views/end_js.php";
 
         //datatables
         table = $('#table').DataTable({
-            "processing": true, //Feature control the processing indicator.
-            "serverSide": true, //Feature control DataTables' server-side processing mode.
-            "order": [], //Initial no order.
-            "iDisplayLength": -1,
-            "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-            "lengthChange": (is_mobile === false),
-            "searching": (is_mobile === false),
-            "language": {
-                "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+            'processing': true, //Feature control the processing indicator.
+            'serverSide': true, //Feature control DataTables' server-side processing mode.
+            'order': [], //Initial no order.
+            'iDisplayLength': -1,
+            'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
+            'lengthChange': (is_mobile === false),
+            'searching': (is_mobile === false),
+            'language': {
+                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
             },
             // Load data for the table's content from an Ajax source
-            "ajax": {
-                "url": "<?php echo site_url('competencias/avaliador/ajax_tipo/' . $id_usuario . '/' . $id_avaliado . '/' . $tipo_competencia) ?>",
-                "type": "POST"
+            'ajax': {
+                'url': '<?php echo site_url('competencias/avaliador/ajax_tipo/' . $id_usuario . '/' . $id_avaliado . '/' . $tipo_competencia) ?>',
+                'type': 'POST'
             },
-
             //Set column definition initialisation properties.
-            "columnDefs": [
+            'columnDefs': [
                 {
-                    width: '100%',
-                    targets: [0]
+                    'width': '100%',
+                    'targets': [0]
                 },
                 {
-                    className: "text-center",
-                    targets: [1]
+                    'className': 'text-center',
+                    'targets': [1]
                 },
                 {
-                    className: "text-nowrap",
-                    "targets": [-1], //last column
-                    "orderable": false, //set not orderable
-                    "searchable": false //set not orderable
+                    'className': 'text-nowrap',
+                    'targets': [-1], //last column
+                    'orderable': false, //set not orderable
+                    'searchable': false //set not orderable
                 }
             ],
-            "createdRow": function (row, data, index) {
+            'createdRow': function (row, data, index) {
                 if (data[1] === 'Avaliado') {
                     $('td', row).eq(1).addClass('text-success').html('<strong>' + data[1] + '</strong>');
                 } else {
                     $('td', row).eq(1).addClass('text-danger').html('<strong>' + data[1] + '</strong>');
                 }
             }
-
         });
 
         //datepicker
         $('.datepicker').datepicker({
-            autoclose: true,
-            format: "yyyy-mm-dd",
-            todayHighlight: true,
-            orientation: "top auto",
-            todayBtn: true
+            'autoclose': true,
+            'format': 'yyyy-mm-dd',
+            'todayHighlight': true,
+            'orientation': 'top auto',
+            'todayBtn': true
         });
 
     });
@@ -184,35 +182,31 @@ require_once APPPATH . "views/end_js.php";
 
         //Ajax Load data from ajax
         $.ajax({
-            url: "<?php echo site_url('avaliacao/avaliacao/ajax_edit/') ?>/" + id,
-            type: "GET",
-            dataType: "JSON",
-            success: function (data) {
-
-                $('[name="id"]').val(data.id);
-                $('[name="nome"]').val(data.nome);
-                $('[name="data"]').val(data.data);
+            'url': '<?php echo site_url('avaliacao/avaliacao/ajax_edit') ?>/' + id,
+            'type': 'GET',
+            'dataType': 'json',
+            'success': function (json) {
+                $('[name="id"]').val(json.id);
+                $('[name="nome"]').val(json.nome);
+                $('[name="data"]').val(json.data);
 
                 $('#modal_form').modal('show');
                 $('.modal-title').text('Editar avaliação'); // Set title to Bootstrap modal title
-
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
-
     }
+
 
     function reload_table() {
         table.ajax.reload(null, false); //reload datatable ajax 
     }
 
-    function save() {
-        $('#btnSave').text('Salvando...'); //change button text
-        $('#btnSave').attr('disabled', true); //set button disable 
-        var url;
 
+    function save() {
+        var url;
         if (save_method === 'add') {
             url = "<?php echo site_url('avaliacao/avaliacao/ajax_add') ?>";
         } else {
@@ -221,27 +215,25 @@ require_once APPPATH . "views/end_js.php";
 
         // ajax adding data to database
         $.ajax({
-            url: url,
-            type: "POST",
-            data: $('#form').serialize(),
-            dataType: "JSON",
-            success: function (data) {
-                if (data.status) //if success close modal and reload ajax table
+            'url': url,
+            'type': 'POST',
+            'data': $('#form').serialize(),
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSave').text('Salvando...').attr('disabled', true);
+            },
+            'success': function (json) {
+                if (json.status) //if success close modal and reload ajax table
                 {
                     $('#modal_form').modal('hide');
                     reload_table();
                 }
-
-                $('#btnSave').text('Salvar'); //change button text
-                $('#btnSave').attr('disabled', false); //set button enable 
-
-
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
-                $('#btnSave').text('Salvar'); //change button text
-                $('#btnSave').attr('disabled', false); //set button enable 
-
+            },
+            'complete': function () {
+                $('#btnSave').text('Salvar').attr('disabled', false);
             }
         });
     }
@@ -250,15 +242,15 @@ require_once APPPATH . "views/end_js.php";
         if (confirm('Deseja remover?')) {
             // ajax delete data to database
             $.ajax({
-                url: "<?php echo site_url('avaliacao/avaliacao/ajax_delete') ?>/" + id,
-                type: "POST",
-                dataType: "JSON",
-                success: function (data) {
+                'url': '<?php echo site_url('avaliacao/avaliacao/ajax_delete') ?>/' + id,
+                'type': 'POST',
+                'dataType': 'json',
+                'success': function (data) {
                     //if success reload ajax table
                     $('#modal_form').modal('hide');
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error deleting data');
                 }
             });
@@ -269,5 +261,5 @@ require_once APPPATH . "views/end_js.php";
 </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

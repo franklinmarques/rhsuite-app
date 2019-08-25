@@ -144,7 +144,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('ead/pilulasConhecimento/ajaxList/') ?>',
+                    'url': '<?php echo site_url('ead/pilulasConhecimento/ajaxList') ?>',
                     'type': 'POST'
                 },
                 'columnDefs': [
@@ -206,7 +206,7 @@
 
         $('.estrutura').on('change', function () {
             $.ajax({
-                'url': "<?php echo site_url('ead/pilulasConhecimento/montarEstrutura') ?>",
+                'url': '<?php echo site_url('ead/pilulasConhecimento/montarEstrutura') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -257,7 +257,7 @@
             $('#form span.help-block').html('');
 
             $.ajax({
-                'url': "<?php echo site_url('ead/pilulasConhecimento/ajaxEdit') ?>",
+                'url': '<?php echo site_url('ead/pilulasConhecimento/ajaxEdit') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -292,7 +292,6 @@
 
 
         function save() {
-            $('#btnSave, #btnSave2').text('Salvando...').attr('disabled', true);
             $('#form .form-group').removeClass('has-error');
             $('#form span.help-block').html('');
             var url = '<?php echo site_url('ead/pilulasConhecimento/ajaxUpdate') ?>';
@@ -305,6 +304,9 @@
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form').serialize(),
+                'beforeSend': function () {
+                    $('#btnSave, #btnSave2').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
@@ -321,11 +323,11 @@
                             $('#alert_form').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
                         }
                     }
-
-                    $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     $('#alert_form').html('<div class="alert alert-warning">Erro ao salvar cliente/usuário</div>').hide().fadeIn('slow');
+                },
+                'complete': function () {
                     $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);
                 }
             });
@@ -335,7 +337,7 @@
         function delete_pilula(id) {
             if (confirm('Tem certeza que deseja excluir?')) {
                 $.ajax({
-                    'url': "<?php echo site_url('ead/pilulasConhecimento/ajaxDelete') ?>",
+                    'url': '<?php echo site_url('ead/pilulasConhecimento/ajaxDelete') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {

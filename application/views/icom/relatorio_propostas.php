@@ -109,8 +109,8 @@
                         <td width="20%"><?= $row->nome_cliente; ?></td>
                         <td width="20%"><?= $row->descricao; ?></td>
                         <td width="20%"><?= $row->contato_principal; ?></td>
-                        <td width="20%"><?= $row->telefone_principal; ?></td>
-                        <td width="20%"><?= $row->email_principal; ?></td>
+                        <td width="20%"><?= $row->telefone_contato_principal; ?></td>
+                        <td width="20%"><?= $row->email_contato_principal; ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>

@@ -45,22 +45,24 @@ class Atividades_scheduler extends MY_Controller
 
         foreach ($output->data as $row) {
             if ($row->documento_1 or $row->documento_2 or $row->documento_3) {
-                $processo = '<button class="btn btn-sm btn-info" onclick="processo(' . $row->id . ');" title="Processo"><i class="glyphicon glyphicon-print"></i></button>';
+                $btn = '<button class="btn btn-sm btn-info" onclick="edit_atividade(' . $row->id . ');" title="Editar"><i class="glyphicon glyphicon-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="delete_atividade(' . $row->id . ');" title="Excluir"><i class="glyphicon glyphicon-trash"></i></button>
+                        <button class="btn btn-sm btn-info" onclick="visualizar_documentos(' . $row->id . ');" title="Ver documentos">Documentos</button>';
             } else {
-                $processo = '<button class="btn btn-sm btn-info disabled" title="Processo"><i class="glyphicon glyphicon-print"></i></button>';
+                $btn = '<button class="btn btn-sm btn-info" onclick="edit_atividade(' . $row->id . ');" title="Editar"><i class="glyphicon glyphicon-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="delete_atividade(' . $row->id . ');" title="Excluir"><i class="glyphicon glyphicon-trash"></i></button>
+                        <button class="btn btn-sm btn-info disabled" title="Ver documentos">Documentos</button>';
             }
             $data[] = array(
                 $row->dia,
-                $row->semana,
+//                $row->semana,
                 $row->mes,
                 $row->atividade,
                 $row->objetivos,
                 $row->data_limite,
                 $row->envolvidos,
                 $row->observacoes,
-                $processo,
-                '<button class="btn btn-sm btn-info" onclick="edit_atividade(' . $row->id . ');" title="Editar"><i class="glyphicon glyphicon-pencil"></i></button>
-                 <button class="btn btn-sm btn-danger" onclick="delete_atividade(' . $row->id . ');" title="Excluir"><i class="glyphicon glyphicon-trash"></i></button>'
+                $btn
             );
         }
 
@@ -297,7 +299,7 @@ class Atividades_scheduler extends MY_Controller
     }
 
 
-    public function ajaxProcesso()
+    public function visualizarDocumentos()
     {
         $this->db->select('documento_1, documento_2, documento_3');
         $this->db->where('id', $this->input->get('id'));

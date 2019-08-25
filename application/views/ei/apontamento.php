@@ -1,4 +1,5 @@
 <?php require_once APPPATH . 'views/header.php'; ?>
+
     <style>
         #table_processing,
         #table_funcionarios_processing,
@@ -189,8 +190,15 @@
                                                     class="glyphicon glyphicon-minus text-danger"></i> Limpar
                                             semestre</a>
                                     </li>
-                                    <li><a href="eventos"><i class="glyphicon glyphicon-list-alt text-primary"></i>
+                                    <!--<li><a href="eventos"><i class="glyphicon glyphicon-list-alt text-primary"></i>
                                             Relatório de eventos</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="javascript:;" onclick="iniciar_mapa_visitacao2();"><i
+                                                    class="glyphicon glyphicon-plus text-info"></i> Iniciar
+                                            Mapa de Visitação 2</a></li>
+                                    <li><a href="javascript:;" onclick="limpar_mapa_visitacao2();"><i
+                                                    class="glyphicon glyphicon-minus text-danger"></i> Limpar
+                                            Mapa de Visitação 2</a></li>-->
                                 </ul>
                             </div>
                         </div>
@@ -265,6 +273,9 @@
                                 <li role="presentation" style="font-size: 13px; font-weight: bolder"><a
                                             href="#visitas" aria-controls="visitas" role="tab"
                                             data-toggle="tab">Mapa de visitação</a></li>
+                                <li role="presentation" style="display:none; font-size: 13px; font-weight: bolder"><a
+                                            href="#visitas2" aria-controls="visitas2" role="tab"
+                                            data-toggle="tab">Mapa de visitação 2</a></li>
                                 <li role="presentation" style="font-size: 13px; font-weight: bolder"><a
                                             href="#dias_letivos" aria-controls="dias_letivos" role="tab"
                                             data-toggle="tab">Dias letivos</a></li>
@@ -445,6 +456,31 @@
                                     </table>
                                 </div>
 
+                                <div role="tabpane" class="tab-pane" id="visitas2">
+                                    <table id="table_visitas2"
+                                           class="table table-hover table-condensed table-bordered" cellspacing="0"
+                                           width="100%" style="border-radius: 0 !important;">
+                                        <thead>
+                                        <tr>
+                                            <th rowspan="2" class="warning">Município</th>
+                                            <th rowspan="2" class="warning" style="vertical-align: middle;">Unidade</th>
+                                            <th colspan="7" class="text-center">Mapa de Visitas do semestre</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center nome_mes1"><?= $semestre[0]; ?></th>
+                                            <th class="text-center nome_mes2"><?= $semestre[1]; ?></th>
+                                            <th class="text-center nome_mes3"><?= $semestre[2]; ?></th>
+                                            <th class="text-center nome_mes4"><?= $semestre[3]; ?></th>
+                                            <th class="text-center nome_mes5"><?= $semestre[4]; ?></th>
+                                            <th class="text-center nome_mes6"><?= $semestre[5]; ?></th>
+                                            <th class="text-center nome_mes7"><?= $semestre[6]; ?></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+
                                 <div role="tabpane" class="tab-pane" id="dias_letivos">
                                     <table id="table_dias_letivos"
                                            class="table table-hover table-condensed table-bordered" cellspacing="0"
@@ -484,20 +520,22 @@
                                                         class="glyphicon glyphicon-plus"></i> Cadastrar carga horária
                                             </button>
                                         </div>
-                                        <div class="col-sm-5 form-inline">
-                                            <div class="form-group">
+                                        <div class="col-sm-6 form-inline">
+                                            <div class="form-group" style="display:none;">
                                                 <label>Saldo do mês</label>
                                                 <input type="text" class="form-control text-center input-sm hora"
                                                        id="saldo_mes" placeholder="hh:mm" style="width: 70px;" readonly>
                                             </div>&emsp;
                                             <div class="form-group">
-                                                <label>Saldo acumulado</label>
+                                                <label style="font-size:14px;">Saldo acumulado na data
+                                                    de <?= date('d/m/Y'); ?></label>
                                                 <input type="text" class="form-control text-center input-sm hora"
-                                                       id="saldo_acumulado" placeholder="hh:mm" style="width: 70px;"
+                                                       id="saldo_acumulado" placeholder="hh:mm"
+                                                       style="width: 120px; font-weight: bold;"
                                                        readonly>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4 text-right">
+                                        <div class="col-sm-3 text-right">
                                             <button type="button" class="btn btn-sm btn-info" id="pdfBancoHoras"
                                                     onclick="imprimir_banco_horas();"><i
                                                         class="glyphicon glyphicon-print"></i> Imprimir relatório do mês
@@ -1827,7 +1865,7 @@
                         <div class="modal-body form">
                             <form action="#" id="form_banco_horas" class="form-horizontal">
                                 <input type="hidden" value="" name="id"/>
-                                <input type="hidden" value="" name="id_alocacao"/>
+                                <input type="hidden" value="" name="id_supervisao"/>
                                 <div class="row form-group">
                                     <label class="control-label col-md-2">Dia</label>
                                     <div class="col-md-5">
@@ -1953,7 +1991,8 @@
 
     <script>
 
-        var table, table_faturamento, table_controle_materiais, table_visitas, table_dias_letivos, table_banco_horas;
+        var table, table_faturamento, table_controle_materiais, table_visitas, table_visitas2, table_dias_letivos,
+            table_banco_horas;
         var busca, save_method, demo1;
         var edicaoEvento = true;
 
@@ -1974,7 +2013,7 @@
                 }
             }
         });
-        $('.valor').mask('##.###.##0,00', {reverse: true});
+        $('.valor').mask('##.###.##0,00', {'reverse': true});
         $('.desconto').mask('00:00', {
             'onChange': function (desconto, e, field, options) {
                 var status = $('#form [name="status"]:checked').val();
@@ -2714,6 +2753,110 @@
                 ]
             });
 
+            table_visitas2 = $('#table_visitas2').DataTable({
+                'dom': "<'row'<'col-sm-5'l><'#pdf_visitas.col-sm-3'><'col-sm-4'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 50,
+                'language': {
+                    'url': language
+                },
+                'rowGroup': {
+                    'className': 'active',
+                    'startRender': function (rows, group) {
+                        return '<strong>Município: </strong>' + group;
+                    },
+                    'dataSrc': 0
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('ei/apontamento/ajaxListVisitas2') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
+                        d.busca = busca;
+                        return d;
+                    },
+                    'dataSrc': function (json) {
+                        $('#table_visitas2 .nome_mes1').text(json.semestre[0]).attr('data-mes', json.meses[0]);
+                        $('#table_visitas2 .nome_mes2').text(json.semestre[1]).attr('data-mes', json.meses[1]);
+                        $('#table_visitas2 .nome_mes3').text(json.semestre[2]).attr('data-mes', json.meses[2]);
+                        $('#table_visitas2 .nome_mes4').text(json.semestre[3]).attr('data-mes', json.meses[3]);
+                        $('#table_visitas2 .nome_mes5').text(json.semestre[4]).attr('data-mes', json.meses[4]);
+                        $('#table_visitas2 .nome_mes6').text(json.semestre[5]).attr('data-mes', json.meses[5]);
+                        $('#table_visitas2 .nome_mes7').text(json.semestre[6]).attr('data-mes', json.meses[6]);
+
+                        if (table_visitas2.context[0].json.semestre.length === 6) {
+                            table_visitas2.column(8).visible(false);
+                        } else {
+                            table_visitas2.column(8).visible(true);
+                        }
+
+                        if (json.draw === 1) {
+                            $("#pdf_visitas2").html('<button title="Imprimir" style="margin: 15px 10px 0;" class="btn btn-info btn-sm" onclick="imprimir_mapa_visitacao();">' +
+                                '<i class="fa fa-print"></i> <span class="hidden-xs"> Imprimir relatório</span>' +
+                                '</button>');
+                        }
+
+                        return json.data;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'visible': false,
+                        'targets': [0]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            $(td).css({
+                                'cursor': 'pointer'
+                                // }).on('click', function () {
+                                //     unidade_visitada(rowData[9]);
+                            }).html('<a href="<?= site_url('ei/relatorios/unidadeVisitada2') ?>/q?id_mapa_unidade=' + rowData[9] + '" target="_blank">' + cellData + '</a>');
+                        },
+                        'width': '40%',
+                        'targets': [1]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            $(td).css({
+                                'cursor': 'pointer'
+                            });
+                            $(td).addClass('total_horas_mes');
+                            if (rowData[col] !== null) {
+                                // if ((rowData[col + 8]) !== null && (rowData[col + 8]) !== '0') {
+                                if (rowData[col + 22] === '1') {
+                                    $(td).css({
+                                        'background-color': '#5cb85c',
+                                        'color': '#fff'
+                                    }).html(moment(rowData[col + 15]).format('DD/MM/YYYY'));
+                                    // } else if (rowData[col + 22] > 0) {
+                                } else if (rowData[col + 22] === '2') {
+                                    $(td).css({
+                                        'background-color': '#c9302c',
+                                        'color': '#fff'
+                                    }).html(moment(rowData[col + 15]).format('DD/MM/YYYY'));
+                                } else {
+                                    $(td).css({
+                                        'background-color': '#f0ad4e',
+                                        'color': '#fff'
+                                    }).html(moment(rowData[col + 15]).format('DD/MM/YYYY'));
+                                }
+                            }
+                            $(td).on('click', function () {
+                                gerenciar_visitas2(rowData[9], table_visitas2.column(col).header().dataset.mes);
+                            });
+                        },
+                        'width': '10%',
+                        'className': 'text-center',
+                        'orderable': false,
+                        'searchable': false,
+                        'targets': [2, 3, 4, 5, 6, 7, 8]
+                    }
+                ]
+            });
+
             table_dias_letivos = $('#table_dias_letivos').DataTable({
                 'processing': true,
                 'serverSide': true,
@@ -2832,6 +2975,7 @@
             atualizarSemestre();
         });
 
+
         function ocultar_mes(value) {
             var col = parseInt(value);
             for (var i = 0; i < 20; i++) {
@@ -2907,26 +3051,23 @@
 
         function atualizarFiltro() {
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/atualizarFiltro/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/atualizarFiltro') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
                 'beforeSend': function () {
-                    $('#busca [name="depto"]').prop('disabled', true);
-                    $('#busca [name="diretoria"]').prop('disabled', true);
-                    $('#busca [name="supervisor"]').prop('disabled', true);
+                    $('#busca [name="depto"], #busca [name="diretoria"], #busca [name="supervisor"]').prop('disabled', true);
                 },
                 'success': function (json) {
-                    $('#busca [name="depto"]').prop('disabled', false);
-                    $('#busca [name="diretoria"]').replaceWith(json.diretoria).prop;
+                    $('#busca [name="diretoria"]').replaceWith(json.diretoria);
                     $('#busca [name="supervisor"]').replaceWith(json.supervisor);
                     $('#form_visitas [name="supervisor_visitante"]').replaceWith(json.supervisor_visitante);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
-                    $('#busca [name="depto"]').prop('disabled', false);
-                    $('#busca [name="diretoria"]').prop('disabled', false);
-                    $('#busca [name="supervisor"]').prop('disabled', false);
+                },
+                'complete': function () {
+                    $('#busca [name="depto"], #busca [name="diretoria"], #busca [name="supervisor"]').prop('disabled', false);
                 }
             });
         }
@@ -2948,7 +3089,7 @@
 
         $('#municipio_sub1').on('change', function () {
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/atualizarSubstituto/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/atualizarSubstituto') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -2964,9 +3105,10 @@
             });
         });
 
+
         $('#municipio_sub2').on('change', function () {
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/atualizarSubstituto/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/atualizarSubstituto') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -2993,6 +3135,7 @@
             }
         });
 
+
         $('#form_controle_materiais [name="status"]').on('change', function () {
             if ($(this).val().length > 0) {
                 $('.qtde_insumos').prop('readonly', true).val(0);
@@ -3000,6 +3143,7 @@
                 $('.qtde_insumos').prop('readonly', false);
             }
         });
+
 
         function calcular_horas_faturadas(elem) {
             if ($(elem).is(':checked')) {
@@ -3096,6 +3240,7 @@
             $('#alerta_semestre').html($('#busca [name="semestre"]:checked').val() + '&ordm;');
         }
 
+
         function habilitar_meses() {
             $('input.toggle-vis').prop({'disabled': false, 'checked': false});
         }
@@ -3106,8 +3251,9 @@
                 alert('Para iniciar o semestre, ajuste os filtros de Departamento, Cliente e Supervisor.');
                 return false;
             }
+
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/prepararOS/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/prepararOS') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': busca,
@@ -3137,9 +3283,10 @@
             });
         }
 
+
         function filtrar_os_escolas() {
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/filtrarOSEscolas/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/filtrarOSEscolas') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_os').serialize(),
@@ -3153,13 +3300,16 @@
             });
         }
 
+
         function iniciar_semestre() {
-            $('#btnSaveOS').text('Alocando...').attr('disabled', true);
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/iniciarSemestre/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/iniciarSemestre') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_os').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveOS').text('Alocando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.erro !== undefined) {
                         alert(json.erro);
@@ -3167,10 +3317,11 @@
                         $('#modal_os').modal('hide');
                         reload_table();
                     }
-                    $('#btnSaveOS').text('Alocar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveOS').text('Alocar').attr('disabled', false);
                 }
             });
@@ -3182,8 +3333,9 @@
                 alert('Para alocar OS individual, ajuste os filtros de Departamento, Cliente e Supervisor.');
                 return false;
             }
+
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/prepararOSIndividual/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/prepararOSIndividual') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': busca,
@@ -3204,13 +3356,15 @@
             });
         }
 
+
         function preparar_exclusao_os() {
             if ($('#busca [name="depto"]').val() === '' || $('#busca [name="diretoria"]').val() === '' || $('#busca [name="supervisor"]').val() === '') {
                 alert('Para limpar os semestre, ajuste os filtros de Departamento, Cliente e Supervisor.');
                 return false;
             }
+
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/prepararOSIndividual/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/prepararOSIndividual') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': busca,
@@ -3236,13 +3390,16 @@
                 alert('Para limpar o semestre, ajuste os filtros de Departamento, Cliente e Supervisor.');
                 return false;
             }
+
             if (confirm('Deseja limpar o semestre do mês corrente?')) {
-                $('#btnLimparOS').text('Limpando...').attr('disabled', true);
                 $.ajax({
-                    'url': '<?= site_url('ei/apontamento/limparSemestre/') ?>',
+                    'url': '<?= site_url('ei/apontamento/limparSemestre') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': $('#form_os_exclusao').serialize(),
+                    'beforeSend': function () {
+                        $('#btnLimparOS').text('Limpando...').attr('disabled', true);
+                    },
                     'success': function (json) {
                         if (json.erro !== undefined) {
                             alert(json.erro);
@@ -3250,10 +3407,11 @@
                             $('#modal_os_exclusao').modal('hide');
                             reload_table();
                         }
-                        $('#btnLimparOS').text('Limpar').attr('disabled', false);
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error get data from ajax');
+                    },
+                    'complete': function () {
                         $('#btnLimparOS').text('Limpar').attr('disabled', false);
                     }
                 });
@@ -3273,6 +3431,11 @@
                 'day': 1
             }).locale('pt-br').format('MMMM YYYY').replace(' ', ' de '));
             $('#form_banco_horas [name="carga_horaria"]').val(table_banco_horas.context[0].json.carga_horaria);
+            $('#form_banco_horas [name="dia"]').val('<?= date('d'); ?>');
+            $('#form_banco_horas [name="horario_entrada"]').val('08:00');
+            $('#form_banco_horas [name="horario_saida"]').val('12:00');
+            $('#form_banco_horas [name="horario_entrada_1"]').val('13:00');
+            $('#form_banco_horas [name="horario_saida_1"]').val('17:00');
             $('#modal_banco_horas').modal('show');
             $('.modal-title').text('Cadastro de horas');
             $('.combo_nivel1').hide();
@@ -3281,8 +3444,9 @@
 
         function edit_cuidador(id) {
             $('#form_cuidador')[0].reset();
+
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxEditCuidador/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxEditCuidador') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3303,9 +3467,10 @@
             });
         }
 
+
         function filtrar_cuidador() {
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxFiltrarCuidador/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxFiltrarCuidador') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3326,8 +3491,9 @@
         function edit_evento(id, date, periodo) {
             $('#form')[0].reset();
             $('#form [name="id"], #form [name="id_aloacao"]').val('');
+
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxEdit/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxEdit') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3374,8 +3540,9 @@
         function edit_faturamento(id_faturamento, mes, substituto) {
             $('#form_faturamento')[0].reset();
             $('#form_faturamento [name="id"], #form [name="id_aloacao"]').val('');
+
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxEditFaturamento/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxEditFaturamento') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3397,10 +3564,12 @@
             });
         }
 
+
         function edit_data_real_totalizacao(id_alocado, periodo, fechamento) {
             $('#form_data_real_totalizacao')[0].reset();
+
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxEditDataRealTotalizacao/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxEditDataRealTotalizacao') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3436,8 +3605,9 @@
 
         function edit_desalocacao(id_alocado, periodo) {
             $('#form_delete_alocados')[0].reset();
+
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxEditDesalocacao/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxEditDesalocacao') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3459,7 +3629,6 @@
                             $('#desalocar_alunos').text(json.alunos + ' (' + json.periodo + ')').parents('.radio').removeClass('disabled');
                         }
 
-
                         $('#modal_delete_alocados').modal('show');
                     }
                 },
@@ -3469,26 +3638,29 @@
             });
         }
 
+
         function delete_alocados() {
             if (confirm('Deseja desalocar o item selecionado?')) {
-                $('#btnDeleteAlocados').text('Excluindo...').attr('disabled', true);
                 $.ajax({
                     'url': '<?php echo site_url('ei/apontamento/ajaxDeleteAlocados') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': $('#form_delete_alocados').serialize(),
+                    'beforeSend': function () {
+                        $('#btnDeleteAlocados').text('Excluindo...').attr('disabled', true);
+                    },
                     'success': function (json) {
                         if (json.erro) {
                             alert(json.erro);
-                        }
-                        if (json.status) {
+                        } else if (json.status) {
                             $('#modal_delete_alocados').modal('hide');
                             reload_table();
                         }
-                        $('#btnDeleteAlocados').text('Excluir').attr('disabled', false);
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error get data from ajax');
+                    },
+                    'complete': function () {
                         $('#btnDeleteAlocados').text('Excluir').attr('disabled', false);
                     }
                 });
@@ -3512,14 +3684,15 @@
                         alert(json.erro);
                         return false;
                     }
+
                     $.each(json, function (key, value) {
                         $('#form_banco_horas [name="' + key + '"]').val(value);
                     });
+
                     $('#banco_horas_mes_ano').html('&nbsp;de ' + moment(json.data).locale('pt-br').format('MMMM YYYY').replace(' ', ' de '));
 
                     $('#modal_banco_horas').modal('show');
                     $('.modal-title').text('Editar medição');
-
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -3529,9 +3702,7 @@
 
 
         function save_banco_hora() {
-            $('#btnSaveBancoHoras').text('Salvando...').attr('disabled', true);
             var url;
-
             if (save_method === 'add') {
                 url = '<?php echo site_url('ei/apontamento/ajaxAddCargaHoraria') ?>';
             } else {
@@ -3543,6 +3714,9 @@
                 'type': 'POST',
                 'data': $('#form_banco_horas, #busca').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveBancoHoras').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_banco_horas').modal('hide');
@@ -3550,11 +3724,11 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSaveBancoHoras').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
+                },
+                'complete': function () {
                     $('#btnSaveBancoHoras').text('Salvar').attr('disabled', false);
                 }
             });
@@ -3579,15 +3753,16 @@
                         alert('Error deleting data');
                     }
                 });
-
             }
         }
+
 
         function edit_horario(id_horario, mes) {
             $('#form_horario')[0].reset();
             $('#form_horario [name="id"], #form_horario [name="mes"]').val('');
+
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxEditHorario/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxEditHorario') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3615,11 +3790,13 @@
             });
         }
 
+
         function edit_substituto(id_horario, mes) {
             $('#form_substituto')[0].reset();
             $('#form_substituto [name="id"], #form [name="id_aloacao"]').val('');
+
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxEditSubstituto/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxEditSubstituto') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3653,11 +3830,13 @@
             });
         }
 
+
         function edit_totalizacao(id_alocado, mes, periodo, substituto) {
             $('#form_totalizacao')[0].reset();
             $('#form_totalizacao [name="id"], #form [name="id_aloacao"]').val('');
+
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxEditTotalizacao/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxEditTotalizacao') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3699,9 +3878,10 @@
             });
         }
 
+
         function planilha_faturamento_consolidado() {
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/faturamentoConsolidado/') ?>',
+                'url': '<?= site_url('ei/apontamento/faturamentoConsolidado') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
@@ -3721,8 +3901,9 @@
         function edit_ajuste_mensal(id_alocado, mes, periodo, substituto) {
             $('#form_ajuste_mensal')[0].reset();
             $('#form_ajuste_mensal [name="id"], #form_ajuste_mensal [name="mes"]').val('');
+
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxEditAjusteMensal/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxEditAjusteMensal') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3736,6 +3917,7 @@
                         alert(json.erro);
                         return false;
                     }
+
                     $('#form_ajuste_mensal [name="id"]').val(json.id);
                     $('#form_ajuste_mensal [name="mes"]').val(json.mes);
                     $('#form_ajuste_mensal [name="substituto"]').val(substituto);
@@ -3749,13 +3931,15 @@
             });
         }
 
+
         function edit_pagamento_prestador(id_horario, mes, substituto) {
             $('#form_pagamento_prestador')[0].reset();
             $('#form_pagamento_prestador [name="id"], #form [name="id_aloacao"]').val('');
+
             $.ajax({
-                'url': '<?= site_url('ei/apontamento/ajaxEditPagamentoPrestador/') ?>',
+                'url': '<?= site_url('ei/apontamento/ajaxEditPagamentoPrestador') ?>',
                 'type': 'POST',
-                'dataType': 'JSON',
+                'dataType': 'json',
                 'data': {
                     'id_horario': id_horario,
                     'mes': mes,
@@ -3794,6 +3978,7 @@
             });
         }
 
+
         function edit_controle_materiais(id_matriculado, col) {
             var date = table_controle_materiais.column(col).header().dataset.dia
             if (id_matriculado === undefined) {
@@ -3802,7 +3987,7 @@
             $('#form_controle_materiais')[0].reset();
 
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/ajaxEditControleMateriais/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/ajaxEditControleMateriais') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3846,7 +4031,7 @@
             $('.help-block').empty();
 
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/ajaxVisitas/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/ajaxVisitas') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'async': false,
@@ -3889,6 +4074,7 @@
             });
         }
 
+
         $('#id_visita').on('change', function () {
             edit_visita(this.value);
         });
@@ -3896,7 +4082,7 @@
 
         function unidade_visitada(id) {
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/ajaxUnidadeVisitada/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/ajaxUnidadeVisitada') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
@@ -3930,7 +4116,7 @@
 
         function edit_visita(id) {
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/ajaxEditVisita/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/ajaxEditVisita') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'async': false,
@@ -3972,7 +4158,7 @@
 
         function atualizarFiltrosVisitas() {
             $.ajax({
-                'url': '<?php echo site_url('ei/apontamento/atualizarFiltrosVisitas/') ?>',
+                'url': '<?php echo site_url('ei/apontamento/atualizarFiltrosVisitas') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -3997,54 +4183,58 @@
 
 
         function salvar_os_individual() {
-            $('#btnSaveOSIndividual').text('Salvando...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/adicionarOSIndividual') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_os_individual').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveOSIndividual').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.erro) {
                         alert(json.erro);
-                    }
-                    if (json.status) {
+                    } else if (json.status) {
                         $('#modal_os_individual').modal('hide');
                         reload_table();
                     }
-                    $('#btnSaveOSIndividual').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveOSIndividual').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function save() {
-            $('#btnSave').text('Salvando...');
-            $('#btnSave, #btnApagar').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSave') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form').serialize(),
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...');
+                    $('#btnSave, #btnApagar').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#modal_form').modal('hide');
-                    $('#btnSave').text('Salvar');
-                    $('#btnSave, #btnApagar').attr('disabled', false);
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSave').text('Salvar');
                     $('#btnSave, #btnApagar').attr('disabled', false);
                 }
             });
         }
 
+
         function save_eventos() {
-            $('#btnSaveEventos').text('Replicando...');
-            $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSaveEventos') ?>',
                 'type': 'POST',
@@ -4053,34 +4243,42 @@
                     'busca': busca,
                     'eventos': $('#form_eventos').serialize()
                 },
+                'beforeSend': function () {
+                    $('#btnSaveEventos').text('Replicando...');
+                    $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#modal_eventos').modal('hide');
-                    $('#btnSaveEventos').text('Replicar');
-                    $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveEventos').text('Replicar');
                     $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
                 }
             });
         }
 
+
         function save_cuidador() {
-            $('#btnSaveCuidador').text('Salvando...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSaveCuidador') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_cuidador').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveCuidador').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#modal_cuidador').modal('hide');
-                    $('#btnSaveCuidador').text('Salvar').attr('disabled', false);
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveCuidador').text('Salvar').attr('disabled', false);
                 }
             });
@@ -4089,8 +4287,6 @@
 
         function delete_eventos() {
             if (confirm('Deseja limpar os eventos desta data?')) {
-                $('#btnDeleteEventos').text('Limpando...');
-                $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', true);
                 $.ajax({
                     'url': '<?php echo site_url('ei/apontamento/ajaxDeleteEventos') ?>',
                     'type': 'POST',
@@ -4099,14 +4295,18 @@
                         'busca': busca,
                         'eventos': $('#form_eventos').serialize()
                     },
+                    'beforeSend': function () {
+                        $('#btnDeleteEventos').text('Limpando...');
+                        $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', true);
+                    },
                     'success': function (json) {
                         $('#modal_eventos').modal('hide');
-                        $('#btnDeleteEventos').text('Limpar');
-                        $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
                         reload_table();
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error get data from ajax');
+                    },
+                    'complete': function () {
                         $('#btnDeleteEventos').text('Limpar');
                         $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
                     }
@@ -4114,44 +4314,51 @@
             }
         }
 
+
         function save_faturamento() {
-            $('#btnSaveFaturamento').text('Salvando...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSaveFaturamento') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_faturamento').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveFaturamento').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#modal_faturamento').modal('hide');
-                    $('#btnSaveFaturamento').text('Salvar').attr('disabled', false);
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveFaturamento').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function save_data_real_totalizacao() {
-            $('#btnSaveDataRealTotalizacao').text('Salvando...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSaveDataRealTotalizacao') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_data_real_totalizacao').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveDataRealTotalizacao').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
-                    $('#btnSaveDataRealTotalizacao').text('Salvar').attr('disabled', false);
                     if (json.erro) {
                         alert(json.erro);
                     } else {
                         $('#modal_data_real_totalizacao').modal('hide');
-
                         reload_table();
                     }
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveDataRealTotalizacao').text('Salvar').attr('disabled', false);
                 }
             });
@@ -4159,19 +4366,22 @@
 
 
         function save_faturamento_consolidado() {
-            $('#btnSaveFaturamentoConsolidado').text('Salvando...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSaveFaturamentoConsolidado') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca, #form_faturamento_consolidado').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveFaturamentoConsolidado').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#modal_faturamento_consolidado').modal('hide');
-                    $('#btnSaveFaturamentoConsolidado').text('Salvar').attr('disabled', false);
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveFaturamentoConsolidado').text('Salvar').attr('disabled', false);
                 }
             });
@@ -4179,18 +4389,21 @@
 
 
         function filtrar_faturamento_consolidado(elem) {
-            $(elem).attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/faturamentoConsolidado') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize() + '&supervisor_filtrado=' + elem.value,
+                'beforeSend': function () {
+                    $(elem).attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#planilha_faturamento_consolidado').html(json.planilha_faturamento_consolidado);
-                    $(elem).attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $(elem).attr('disabled', false);
                 }
             });
@@ -4198,22 +4411,24 @@
 
 
         function recuperar_faturamento_consolidado() {
-            $('#btnRecuperarFaturamentoConsolidado').text('Recuperando e validando base...').attr('disabled', true);
             var id_supervisor = $('#form_faturamento_consolidado [name="id_supervisor"]').val();
-            $('#form_faturamento_consolidado [name="id_supervisor"]').attr('disabled', true);
 
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/recuperarFaturamentoConsolidado') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize() + '&supervisor_filtrado=' + id_supervisor,
+                'beforeSend': function () {
+                    $('#btnRecuperarFaturamentoConsolidado').text('Recuperando e validando base...').attr('disabled', true);
+                    $('#form_faturamento_consolidado [name="id_supervisor"]').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#planilha_faturamento_consolidado').html(json.planilha_faturamento_consolidado);
-                    $('#btnRecuperarFaturamentoConsolidado').text('Recuperar e validar base').attr('disabled', false);
-                    $('#form_faturamento_consolidado [name="id_supervisor"]').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnRecuperarFaturamentoConsolidado').text('Recuperar e validar base').attr('disabled', false);
                     $('#form_faturamento_consolidado [name="id_supervisor"]').attr('disabled', false);
                 }
@@ -4221,12 +4436,14 @@
         }
 
         function save_horario() {
-            $('#btnSaveHorario').text('Salvando...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSaveHorario') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_horario').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveHorario').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.erro) {
                         alert(json.erro);
@@ -4234,34 +4451,39 @@
                         $('#modal_horario').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveHorario').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveHorario').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function save_substituto() {
-            $('#btnSaveSubstituto').text('Salvando...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSaveSubstituto') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_substituto').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveSubstituto').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#modal_substituto').modal('hide');
-                    $('#btnSaveSubstituto').text('Salvar').attr('disabled', false);
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveSubstituto').text('Salvar').attr('disabled', false);
                 }
             });
         }
+
 
         function limpar_substituto(elem) {
             if (elem !== 1 && elem !== 2) {
@@ -4273,49 +4495,31 @@
             save_substituto();
         }
 
+
         function save_totalizacao() {
-            $('#btnSaveTotalizacao').text('Salvando...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSaveTotalizacao') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_totalizacao').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveTotalizacao').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#modal_totalizacao').modal('hide');
-                    $('#btnSaveTotalizacao').text('Salvar').attr('disabled', false);
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveTotalizacao').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
-        //function recuperar_totalizacao() {
-        //    var id_alocado = $('#form_totalizacao [name="id_alocado"]').val();
-        //    var periodo = $('#form_totalizacao [name="periodo"]').val();
-        //
-        //    $('#btnRecuperarTotalizacao').text('Recuperando e validando base...').attr('disabled', true);
-        //    $.ajax({
-        //        'url': '<?php //echo site_url('ei/apontamento/totalizarMes') ?>//',
-        //        'type': 'POST',
-        //        'dataType': 'json',
-        //        'data': $('#busca').serialize() + '&id_alocado=' + id_alocado + '&periodo=' + periodo,
-        //        'success': function (json) {
-        //            $('#planilha_faturamento').html(json.planilha_faturamento);
-        //            $('#btnRecuperarTotalizacao').text('Recuperar e validar base').attr('disabled', false);
-        //            $('#modal_totalizacao').modal('hide');
-        //        },
-        //        'error': function (jqXHR, textStatus, errorThrown) {
-        //            alert('Error get data from ajax');
-        //            $('#btnRecuperarTotalizacao').text('Recuperar e validar base').attr('disabled', false);
-        //        }
-        //    });
-        //}
 
         function recuperar_totalizacao() {
-            $('#btnRecuperarTotalizacao').text('Recuperando e validando base...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxRecuperarTotalizacao') ?>',
                 'type': 'POST',
@@ -4327,52 +4531,64 @@
                     'periodo': $('#form_totalizacao [name="temp_periodo"]').val(),
                     'substituto': $('#form_totalizacao [name="substituto"]').val()
                 },
+                'beforeSend': function () {
+                    $('#btnRecuperarTotalizacao').text('Recuperando e validando base...').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#form_totalizacao [name="data_aprovacao"]').val(json.data_aprovacao);
                     $('#form_totalizacao [name="observacoes"]').val(json.observacoes);
                     $('#planilha_faturamento').html(json.planilha_faturamento);
-                    $('#btnRecuperarTotalizacao').text('Recuperar e validar base').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnRecuperarTotalizacao').text('Recuperar e validar base').attr('disabled', false);
                 }
             });
         }
 
+
         function save_ajuste_mensal() {
-            $('#btnSaveAjusteMensal').text('Salvando...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSaveAjusteMensal') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_ajuste_mensal').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveAjusteMensal').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#modal_ajuste_mensal').modal('hide');
-                    $('#btnSaveAjusteMensal').text('Salvar').attr('disabled', false);
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSaveAjusteMensal').text('Salvar').attr('disabled', false);
                 }
             });
         }
 
+
         function save_pagamento_prestador() {
-            $('#btnSavePagamentoPrestador').text('Salvando...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSavePagamentoPrestador') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#form_pagamento_prestador').serialize(),
+                'beforeSend': function () {
+                    $('#btnSavePagamentoPrestador').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#modal_pagamento_prestador').modal('hide');
-                    $('#btnSavePagamentoPrestador').text('Salvar').attr('disabled', false);
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnSavePagamentoPrestador').text('Salvar').attr('disabled', false);
                 }
             });
@@ -4380,7 +4596,6 @@
 
 
         function recuperar_pagamento_prestador() {
-            $('#btnRecuperarPagamentoPrestador').text('Recuperando e validando base...').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxRecuperarPagamentoPrestador') ?>',
                 'type': 'POST',
@@ -4390,48 +4605,53 @@
                     'mes': $('#form_pagamento_prestador [name="mes"]').val(),
                     'substituto': $('#form_pagamento_prestador [name="substituto"]').val()
                 },
+                'beforeSend': function () {
+                    $('#btnRecuperarPagamentoPrestador').text('Recuperando e validando base...').attr('disabled', true);
+                },
                 'success': function (json) {
                     $('#planilha_pagamento_prestador').html(json.planilha_pagamento_prestador);
-                    $('#btnRecuperarPagamentoPrestador').text('Recuperar e validar base').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnRecuperarPagamentoPrestador').text('Recuperar e validar base').attr('disabled', false);
                 }
             });
         }
 
-        function save_controle_materiais() {
-            $('#btnSaveControleMateriais').text('Salvando...'); //change button text
-            $('#btnSaveControleMateriais, #btnApagarControleMateriais').attr('disabled', true); //set button disable
 
+        function save_controle_materiais() {
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxSaveControleMateriais') ?>',
                 'type': 'POST',
                 'data': $('#form_controle_materiais').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveControleMateriais').text('Salvando...');
+                    $('#btnSaveControleMateriais, #btnApagarControleMateriais').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_controle_materiais').modal('hide');
                         table_controle_materiais.ajax.reload(null, false);
+                    } else if (json.erro) {
+                        alert(json.erro);
                     }
-
-                    $('#btnSaveControleMateriais').text('Salvar');
-                    $('#btnSaveControleMateriais, #btnApagarControleMateriais').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
+                },
+                'complete': function () {
                     $('#btnSaveControleMateriais').text('Salvar');
                     $('#btnSaveControleMateriais, #btnApagarControleMateriais').attr('disabled', false);
                 }
             });
         }
 
-        function save_visita() {
-            $('#btnSaveVisitas').text('Salvando...');
-            $('#btnSaveVisitas, #btnLimparVisitas').attr('disabled', true);
-            var url;
 
+        function save_visita() {
+            var url;
             if (save_method === 'add') {
                 url = '<?php echo site_url('ei/apontamento/ajaxAddVisita') ?>';
             } else {
@@ -4443,34 +4663,39 @@
                 'type': 'POST',
                 'data': $('#form_visitas').serialize(),
                 'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveVisitas').text('Salvando...');
+                    $('#btnSaveVisitas, #btnLimparVisitas').attr('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_visitas').modal('hide');
                         reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
                     }
-
-                    $('#btnSaveVisitas').text('Salvar');
-                    $('#btnSaveVisitas, #btnLimparVisitas').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
+                },
+                'complete': function () {
                     $('#btnSaveVisitas').text('Salvar');
                     $('#btnSaveVisitas, #btnLimparVisitas').attr('disabled', false);
                 }
             });
         }
 
+
         function limpar_visita() {
             if (confirm('Deseja limpar o evento?')) {
                 $.ajax({
-                    'url': '<?php echo site_url('ei/apontamento/ajaxDeleteVisita') ?>/',
+                    'url': '<?php echo site_url('ei/apontamento/ajaxDeleteVisita') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {
                         'id': $('#form_visitas [name="id"]').val()
                     },
                     'success': function (json) {
-                        //if success reload ajax table
                         $('#modal_visitas').modal('hide');
                         reload_table();
                     },
@@ -4481,17 +4706,17 @@
             }
         }
 
+
         function delete_controle_materiais() {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    'url': '<?php echo site_url('ei/apontamento/ajaxDeleteControleMateriais') ?>/',
+                    'url': '<?php echo site_url('ei/apontamento/ajaxDeleteControleMateriais') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {
                         'id': $('#form_controle_materiais [name="id"]').val()
                     },
                     'success': function (json) {
-                        //if success reload ajax table
                         $('#modal_controle_materiais').modal('hide');
                         reload_table();
                     },
@@ -4502,14 +4727,15 @@
             }
         }
 
+
         function delete_visita(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    'url': '<?php echo site_url('ei/apontamento/ajaxDeleteVisita') ?>/',
+                    'url': '<?php echo site_url('ei/apontamento/ajaxDeleteVisita') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {'id': id},
-                    'success': function (data) {
+                    'success': function (json) {
                         $('#modal_visitas').modal('hide');
                         reload_table();
                     },
@@ -4522,8 +4748,6 @@
 
 
         function apagar() {
-            $('#btnApagar').text('Excluindo...');
-            $('#btnSave, #btnApagar').attr('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/ajaxDelete') ?>',
                 'type': 'POST',
@@ -4531,7 +4755,11 @@
                 'data': {
                     'id': $('#form [name="id"]').val()
                 },
-                'success': function (data) {
+                'beforeSend': function () {
+                    $('#btnApagar').text('Excluindo...');
+                    $('#btnSave, #btnApagar').attr('disabled', true);
+                },
+                'success': function (json) {
                     $('#modal_form').modal('hide');
                     $('#btnApagar').text('Excluir');
                     $('#btnSave, #btnApagar').attr('disabled', false);
@@ -4539,6 +4767,8 @@
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnApagar').text('Excluir');
                     $('#btnSave, #btnApagar').attr('disabled', false);
                 }
@@ -4556,7 +4786,7 @@
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize() + '&id_alocado=' + id_alocado + '&periodo=' + periodo,
-                'success': function (data) {
+                'success': function (json) {
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -4576,7 +4806,7 @@
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize() + '&id_alocado=' + id_alocado + '&periodo=' + periodo,
-                'success': function (data) {
+                'success': function (json) {
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -4614,22 +4844,26 @@
                 alert('Para recalcular a data de início do semestre, ajuste os filtros de Departamento, Cliente e Supervisor.');
                 return false;
             }
-            $('#btnRecalcularIngresso').attr('disabled', true).text('Recalculando datas início reais...');
+
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/recalcularIngresso') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
+                'beforeSend': function () {
+                    $('#btnRecalcularIngresso').attr('disabled', true).text('Recalculando datas início reais...');
+                },
                 'success': function (json) {
                     if (json.erro) {
                         alert(json.erro);
                     } else {
                         table_faturamento.ajax.reload(null, false);
                     }
-                    $('#btnRecalcularIngresso').attr('disabled', false).text('Recalcular datas início reais');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnRecalcularIngresso').attr('disabled', false).text('Recalcular datas início reais');
                 }
             });
@@ -4641,22 +4875,26 @@
                 alert('Para recalcular a data de término do semestre, ajuste os filtros de Departamento, Cliente e Supervisor.');
                 return false;
             }
-            $('#btnRecalcularRecesso').attr('disabled', true).text('Recalculando datas término reais...');
+
             $.ajax({
                 'url': '<?php echo site_url('ei/apontamento/recalcularRecesso') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
+                'beforeSend': function () {
+                    $('#btnRecalcularRecesso').attr('disabled', true).text('Recalculando datas término reais...');
+                },
                 'success': function (json) {
                     if (json.erro) {
                         alert(json.erro);
                     } else {
                         table_faturamento.ajax.reload(null, false);
                     }
-                    $('#btnRecalcularRecesso').attr('disabled', false).text('Recalcular datas término reais');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                },
+                'complete': function () {
                     $('#btnRecalcularRecesso').attr('disabled', false).text('Recalcular datas término reais');
                 }
             });
@@ -4750,8 +4988,49 @@
             table_faturamento.ajax.reload(stmt, reset);
             table_controle_materiais.ajax.reload(stmt, reset);
             table_visitas.ajax.reload(stmt, reset);
+            table_visitas2.ajax.reload(stmt, reset);
             table_dias_letivos.ajax.reload(stmt, reset);
             table_banco_horas.ajax.reload(stmt, reset);
+        }
+
+
+        function iniciar_mapa_visitacao2() {
+            $.ajax({
+                'url': '<?php echo site_url('ei/apontamento/iniciarMapaVisitacao2') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        table_banco_horas2.ajax.reload(null, false);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function limpar_mapa_visitacao2() {
+            $.ajax({
+                'url': '<?php echo site_url('ei/apontamento/limparMapaVisitacao2') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        table_banco_horas2.ajax.reload(null, false);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
         }
 
     </script>

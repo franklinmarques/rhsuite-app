@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <!--main content start-->
 <section id="main-content">
@@ -182,6 +182,6 @@ require_once APPPATH . "views/header.php";
 
 <script src="<?php echo base_url("assets/js/bootstrap-fileinput/bootstrap-fileinput.js"); ?>"></script>
 <?php
-require_once APPPATH . "views/end_js.php";
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_js.php';
+require_once APPPATH . 'views/end_html.php';
 ?>

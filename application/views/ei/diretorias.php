@@ -1,6 +1,4 @@
-<?php
-require_once APPPATH . "views/header.php";
-?>
+<?php require_once APPPATH . 'views/header.php'; ?>
 
     <section id="main-content">
         <section class="wrapper">
@@ -27,19 +25,19 @@ require_once APPPATH . "views/header.php";
                                     <div class="row">
                                         <div class="col-md-3">
                                             <label class="control-label">Departamento</label>
-                                            <?php echo form_dropdown('busca[depto]', $depto, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('busca[depto]', $depto, '', 'onchange="atualizar_filtro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="control-label">Área/cliente</label>
-                                            <?php echo form_dropdown('busca[diretoria]', $diretoria, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('busca[diretoria]', $diretoria, '', 'onchange="atualizar_filtro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="control-label">coordenador</label>
-                                            <?php echo form_dropdown('busca[coordenador]', $coordenador, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('busca[coordenador]', $coordenador, '', 'onchange="atualizar_filtro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="control-label">Contrato</label>
-                                            <?php echo form_dropdown('busca[contrato]', $contrato, '', 'class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('busca[contrato]', $contrato, '', 'onchange="atualizar_filtro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-1">
                                             <label>&nbsp;</label><br>
@@ -375,7 +373,7 @@ require_once APPPATH . "views/header.php";
         </section>
     </section>
 
-<?php require_once APPPATH . "views/end_js.php"; ?>
+<?php require_once APPPATH . 'views/end_js.php'; ?>
 
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
 
@@ -439,9 +437,9 @@ require_once APPPATH . "views/header.php";
                     },
                     {
                         'className': 'text-nowrap',
-                        'targets': [1, 3, -1],
                         'orderable': false,
-                        'searchable: false
+                        'searchable': false,
+                        'targets': [1, 3, -1]
                     }
                 ],
                 'rowsGroup': [1, 0, 3, 2, 4]
@@ -450,7 +448,7 @@ require_once APPPATH . "views/header.php";
         });
 
 
-        function atualizarFiltro() {
+        function atualizar_filtro() {
             $.ajax({
                 'url': '<?php echo site_url('ei/diretorias/atualizar_filtro') ?>',
                 'type': 'POST',
@@ -475,7 +473,7 @@ require_once APPPATH . "views/header.php";
                 var vals = elem.split('=');
                 $("[name='" + vals[0] + "']").val($("[name='" + vals[0] + "'] option:first").val());
             });
-            atualizarFiltro();
+            atualizar_filtro();
         });
 
 
@@ -672,7 +670,7 @@ require_once APPPATH . "views/header.php";
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_form').modal('hide');
-                        atualizarFiltro();
+                        atualizar_filtro();
                     }
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -704,7 +702,7 @@ require_once APPPATH . "views/header.php";
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_contrato').modal('hide');
-                        atualizarFiltro();
+                        atualizar_filtro();
                     }
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -736,7 +734,7 @@ require_once APPPATH . "views/header.php";
                 'success': function (json) {
                     if (json.status) {
                         $('#modal_valores').modal('hide');
-                        atualizarFiltro();
+                        atualizar_filtro();
                     }
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -758,7 +756,7 @@ require_once APPPATH . "views/header.php";
                     'data': {'id': id},
                     'success': function (json) {
                         $('#modal_form').modal('hide');
-                        atualizarFiltro();
+                        atualizar_filtro();
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
@@ -777,7 +775,7 @@ require_once APPPATH . "views/header.php";
                     'data': {'id': id},
                     'success': function (json) {
                         $('#modal_contrato').modal('hide');
-                        atualizarFiltro();
+                        atualizar_filtro();
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
@@ -806,6 +804,4 @@ require_once APPPATH . "views/header.php";
 
     </script>
 
-<?php
-require_once APPPATH . "views/end_html.php";
-?>
+<?php require_once APPPATH . 'views/end_html.php'; ?>

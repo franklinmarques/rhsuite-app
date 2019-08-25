@@ -278,7 +278,7 @@ class OrdemServico_profissionais extends MY_Controller
         $id = $this->input->post('id');
         $idOSProfissional = $this->input->post('id_os_profissional');
 
-        $this->db->select('a.*, e.ano, e.semestre, b.id_usuario, b.id_supervisor, b.id_ordem_servico_escola, c.nome AS nome_usuario', false);
+        $this->db->select('a.*, e.ano, e.semestre, b.id_usuario, b.id_supervisor, b.id_ordem_servico_escola, c.nome AS nome_usuario, b.pagamento_inicio, b.pagamento_reajuste', false);
         $this->db->select("(CASE a.dia_semana WHEN 0 THEN 'Domingo' WHEN 1 THEN 'Segunda-feira' WHEN 2 THEN 'Terça-feira' WHEN 3 THEN 'Quarta-feira' WHEN 4 THEN 'Quinta-feira' WHEN 5 THEN 'Sexta-feira' WHEN 6 THEN 'Sábado' END) AS nome_semana", false);
         $this->db->select("(CASE a.periodo WHEN 0 THEN 'Madrugada' WHEN 1 THEN 'Manhã' WHEN 2 THEN 'Tarde' WHEN 3 THEN 'Noite' END) AS nome_periodo", false);
         $this->db->join('ei_ordem_servico_profissionais b', 'b.id = a.id_os_profissional');
@@ -358,6 +358,12 @@ class OrdemServico_profissionais extends MY_Controller
             }
             if ($data->data_termino_contrato) {
                 $data->data_termino_contrato = date('d/m/Y', strtotime($data->data_termino_contrato));
+            }
+            if ($data->pagamento_inicio) {
+                $data->pagamento_inicio = number_format($data->pagamento_inicio, 2, ',', '.');
+            }
+            if ($data->pagamento_reajuste) {
+                $data->pagamento_reajuste = number_format($data->pagamento_reajuste, 2, ',', '.');
             }
 
         } else {

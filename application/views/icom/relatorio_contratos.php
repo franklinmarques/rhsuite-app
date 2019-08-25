@@ -108,7 +108,7 @@
                         <td class="text-center"><?= $row->status; ?></td>
                         <td class="text-center"><?= $row->data_vencimento; ?></td>
                         <td width="40%"><?= $row->contato_principal; ?></td>
-                        <td width="20%"><?= $row->telefone_principal; ?></td>
+                        <td width="20%"><?= $row->telefone_contato_principal; ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -127,7 +127,7 @@
 
 <script>
     $(document).ready(function () {
-        document.title = 'CORPORATE RH - LMS - Mapa de Contratos';
+        document.title = 'CORPORATE RH - LMS - Gestão Comercial: Mapa de Contratos';
     });
 </script>
 

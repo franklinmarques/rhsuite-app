@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class RequisicoesPessoalCandidatos extends Entity
 {
@@ -18,10 +16,12 @@ class RequisicoesPessoalCandidatos extends Entity
     protected $antecedentes_criminais;
     protected $restricoes_financeiras;
     protected $data_exame_admissional;
+    protected $endereco_exame_admissional;
     protected $resultado_exame_admissional;
     protected $aprovado;
     protected $data_admissao;
     protected $observacoes;
+    protected $desempenho_perfil;
 
     protected $casts = [
         'id' => 'int',
@@ -36,10 +36,12 @@ class RequisicoesPessoalCandidatos extends Entity
         'antecedentes_criminais' => '?int',
         'restricoes_financeiras' => '?int',
         'data_exame_admissional' => '?datetime',
+        'endereco_exame_admissional' => '?string',
         'resultado_exame_admissional' => '?int',
         'aprovado' => '?int',
         'data_admissao' => '?datetime',
-        'observacoes' => '?string'
+        'observacoes' => '?string',
+        'desempenho_perfil' => '?string'
     ];
 
 }

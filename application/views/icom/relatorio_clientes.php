@@ -70,20 +70,8 @@
                 </td>
                 <td class="text-right">
                     <a id="pdf" class="btn btn-sm btn-info"
-                       href="<?= site_url('icom/clientes/pdf/q?' . http_build_query($this->input->get())); ?>"
+                       href="<?= site_url('icom/clientes/pdf'); ?>"
                        title="Exportar PDF" target="_blank"><i class="glyphicon glyphicon-print"></i> Exportar PDF</a>
-                </td>
-            </tr>
-            <tr style='border-bottom: 5px solid #ddd;'>
-                <td style="padding: 0px;">
-                    <h5><strong>Departamento: </strong><span id="depto"><?= $depto ?></span></h5>
-                </td>
-                <td style="padding: 0px;">
-                    <h5><strong>Áera: </strong><span id="area"><?= $area ?></span>
-                    </h5>
-                </td>
-                <td style="padding: 0px;">
-                    <h5><strong>Setor: </strong><span id="setor"><?= $setor ?></span></h5>
                 </td>
             </tr>
             </tbody>
@@ -103,8 +91,8 @@
                     <tr>
                         <td width="25%"><?= $row->nome; ?></td>
                         <td width="25%"><?= $row->contato_principal; ?></td>
-                        <td width="25%"><?= $row->telefone_principal; ?></td>
-                        <td width="25%"><?= $row->email_principal; ?></td>
+                        <td width="25%"><?= $row->telefone_contato_principal; ?></td>
+                        <td width="25%"><?= $row->email_contato_principal; ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -123,7 +111,7 @@
 
 <script>
     $(document).ready(function () {
-        document.title = 'CORPORATE RH - LMS - Mapa de Clientes/Prospects';
+        document.title = 'CORPORATE RH - LMS - Gestão Comercial: Mapa de Clientes/Prospects';
     });
 </script>
 

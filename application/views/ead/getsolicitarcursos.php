@@ -1,40 +1,40 @@
 <div class="col-sm-12">
-    <div id="alert-solicitar"></div>                                
+    <div id="alert-solicitar"></div>
 </div>
 <table class="table table-striped table-hover fill-head">
     <thead>
-        <tr>
-            <th>Treinamento</th>
-            <th>Ações</th>
-        </tr>
+    <tr>
+        <th>Treinamento</th>
+        <th>Ações</th>
+    </tr>
     </thead>
     <tbody>
-        <?php foreach ($query as $row): ?>
-            <tr>
-                <td><?php echo $row->nome; ?></td>
-                <td>
-                    <button class="btn btn-warning btn-sm" onclick="detalhesCursos(<?= $row->id; ?>);">
-                        <i class="glyphicon glyphicon-align-justify"></i> Ficha do treinamento
-                    </button>
-                    <!--<button class="btn btn-info btn-sm" onclick="solicitaCursos(<?/*= $row->id; */?>);">
+    <?php foreach ($query as $row): ?>
+        <tr>
+            <td><?php echo $row->nome; ?></td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="detalhesCursos(<?= $row->id; ?>);">
+                    <i class="glyphicon glyphicon-align-justify"></i> Ficha do treinamento
+                </button>
+                <!--<button class="btn btn-info btn-sm" onclick="solicitaCursos(<? /*= $row->id; */ ?>);">
                         <i class="fa fa-shopping-cart"></i> Solicitar
                     </button>-->
-                </td>
-            </tr>
-        <?php endforeach; ?>
-        <?php if (count($query) == 0): ?>
-            <tr>
-                <th colspan="3">Nenhum curso encontrado</th>
-            </tr>
-        <?php endif; ?>
-        <tr>
-            <th colspan="3">Total de treinamentos: <?php echo $total; ?></th>
+            </td>
         </tr>
-        <?php if (count($query) != $total && count($query) !== 0): ?>
-            <tr>
-                <th colspan="3">Total de treinamentos encontrados: <?php echo count($query); ?></th>
-            </tr>
-        <?php endif; ?>
+    <?php endforeach; ?>
+    <?php if (count($query) == 0): ?>
+        <tr>
+            <th colspan="3">Nenhum curso encontrado</th>
+        </tr>
+    <?php endif; ?>
+    <tr>
+        <th colspan="3">Total de treinamentos: <?php echo $total; ?></th>
+    </tr>
+    <?php if (count($query) != $total && count($query) !== 0): ?>
+        <tr>
+            <th colspan="3">Total de treinamentos encontrados: <?php echo count($query); ?></th>
+        </tr>
+    <?php endif; ?>
     </tbody>
 </table>
 <div class="text-center" data-html="html-solicitar-cursos" data-query="<?php echo $busca; ?>">
@@ -71,12 +71,11 @@
 
     function detalhesCursos(id) {
         if (id > 0) {
-            var url = '<?php echo site_url('ead/cursos/detalhes'); ?>/' + id;
             $.ajax({
-                url: url,
-                dataType: 'json',
-                success: function (data) {
-                    $('#getDetalhes').html(data);
+                'url': '<?php echo site_url('ead/cursos/detalhes'); ?>/' + id,
+                'dataType': 'json',
+                'success': function (json) {
+                    $('#getDetalhes').html(json);
                     $('#myModal').modal('show');
                 }
             });
@@ -88,30 +87,30 @@
             var aviso = $('#alert-solicitar');
 
             $.ajax({
-                url: "<?php echo site_url('ead/cursos/solicitar') ?>",
-                type: "POST",
-                dataType: "JSON",
-                timeout: 9000,
-                data: {
-                    id: id
+                'url': '<?php echo site_url('ead/cursos/solicitar') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'timeout': 9000,
+                'data': {
+                    'id': id
                 },
-                beforeSend: function () {
-                    $('html, body').animate({scrollTop: 0}, 1500);
+                'beforeSend': function () {
+                    $('html, body').animate({'scrollTop': 0}, 1500);
                     aviso.html('<div class="alert alert-info">Carregando...</div>').hide().fadeIn('slow');
                 },
-                error: function () {
+                'error': function () {
                     aviso.html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
                 },
-                success: function (data) {
+                'success': function (json) {
                     $('html, body').animate({scrollTop: 0}, 1500);
-                    if (parseInt(data['retorno'])) {
-                        aviso.html('<div class="alert alert-success">' + data['aviso'] + '</div>').hide().fadeIn('slow', function () {
-                            if (parseInt(data['redireciona'])) {
-                                window.location = data['pagina'];
+                    if (parseInt(json['retorno'])) {
+                        aviso.html('<div class="alert alert-success">' + json['aviso'] + '</div>').hide().fadeIn('slow', function () {
+                            if (parseInt(json['redireciona'])) {
+                                window.location = json['pagina'];
                             }
                         });
                     } else {
-                        aviso.html('<div class="alert alert-danger">' + data['aviso'] + '</div>').hide().fadeIn('slow');
+                        aviso.html('<div class="alert alert-danger">' + json['aviso'] + '</div>').hide().fadeIn('slow');
                         //aviso.html('<div class="alert alert-success" style="text-align:center"><h5><i class="fa fa-check" aria-hidden="true"></i> ' + data['aviso'] + '</h5></div>').hide().fadeIn('slow');
                     }
                 }

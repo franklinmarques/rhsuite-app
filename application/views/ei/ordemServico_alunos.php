@@ -220,7 +220,7 @@
 
     $('#aluno').on('change', function () {
         $.ajax({
-            'url': '<?php echo site_url('ei/ordemServico_alunos/montarEstrutura/') ?>',
+            'url': '<?php echo site_url('ei/ordemServico_alunos/montarEstrutura') ?>',
             'type': 'POST',
             'dataType': 'json',
             'data': {
@@ -259,7 +259,7 @@
         $('.combo_nivel1').hide();
 
         $.ajax({
-            'url': '<?php echo site_url('ei/ordemServico_alunos/ajaxEdit/') ?>',
+            'url': '<?php echo site_url('ei/ordemServico_alunos/ajaxEdit') ?>',
             'type': 'POST',
             'dataType': 'json',
             'data': {
@@ -284,7 +284,6 @@
 
 
     function save() {
-        $('#btnSave').text('Salvando...').attr('disabled', true);
         var url;
         if (save_method === 'add') {
             url = '<?php echo site_url('ei/ordemServico_alunos/ajaxAdd') ?>';
@@ -297,6 +296,9 @@
             'type': 'POST',
             'data': $('#form').serialize(),
             'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSave').text('Salvando...').attr('disabled', true);
+            },
             'success': function (json) {
                 if (json.status) {
                     $('#modal_form').modal('hide');
@@ -304,8 +306,6 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSave').text('Salvar').attr('disabled', false);
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 if (textStatus) {
@@ -313,6 +313,8 @@
                 } else {
                     alert('Error adding / update data');
                 }
+            },
+            'complete': function () {
                 $('#btnSave').text('Salvar').attr('disabled', false);
             }
         });
@@ -334,7 +336,6 @@
                     alert('Error deleting data');
                 }
             });
-
         }
     }
 

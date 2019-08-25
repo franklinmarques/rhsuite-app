@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . "views/header.php";
+require_once APPPATH . 'views/header.php';
 ?>
 <style>
     <?php if ($this->agent->is_mobile()): ?>
@@ -9,7 +9,7 @@ require_once APPPATH . "views/header.php";
     }
 
     <?php endif; ?>
-    
+
     .btn-success {
         background-color: #5cb85c;
         border-color: #4cae4c;
@@ -179,7 +179,7 @@ require_once APPPATH . "views/header.php";
 <!--main content end-->
 
 <?php
-require_once APPPATH . "views/end_js.php";
+require_once APPPATH . 'views/end_js.php';
 ?>
 <!-- Css -->
 <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
@@ -203,57 +203,54 @@ require_once APPPATH . "views/end_js.php";
 
         //datatables
         table = $('#table').DataTable({
-            "iDisplayLength": -1,
-            "lengthMenu": [[5, 10, 25, 50, 100, 250, 500, -1], [5, 10, 25, 50, 100, 250, 500, 'Todos']],
-            "lengthChange": (is_mobile === false),
-            "searching": (is_mobile === false),
-            "processing": true, //Feature control the processing indicator.
-            "serverSide": true, //Feature control DataTables' server-side processing mode.
-            "order": [], //Initial no order.
-            "language": {
-                "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
+            'iDisplayLength': -1,
+            'lengthMenu': [[5, 10, 25, 50, 100, 250, 500, -1], [5, 10, 25, 50, 100, 250, 500, 'Todos']],
+            'lengthChange': (is_mobile === false),
+            'searching': (is_mobile === false),
+            'processing': true, //Feature control the processing indicator.
+            'serverSide': true, //Feature control DataTables' server-side processing mode.
+            'order': [], //Initial no order.
+            'language': {
+                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
             },
-            // Load data for the table's content from an Ajax source
-            "ajax": {
-                "url": "<?php echo site_url('competencias/avaliador/ajax_list/' . $id_usuario) ?>",
-                "type": "POST"
+            'ajax': {
+                'url': '<?php echo site_url('competencias/avaliador/ajax_list/' . $id_usuario) ?>',
+                'type': 'POST'
             },
-
-            //Set column definition initialisation properties.
-            "columnDefs": [
+            'columnDefs': [
                 {
-                    visible: <?= ($this->agent->is_mobile() ? 'false' : 'true') ?>,
-                    targets: [1]
+                    'visible': <?= ($this->agent->is_mobile() ? 'false' : 'true') ?>,
+                    'targets': [1]
                 },
                 {
-                    width: '50%',
-                    targets: [0, 1]
+                    'width': '50%',
+                    'targets': [0, 1]
                 },
                 {
-                    className: "text-nowrap",
-                    cellType: 'th',
-                    targets: [2]
+                    'className': 'text-nowrap',
+                    'cellType': 'th',
+                    'targets': [2]
                 },
                 {
-                    className: "text-nowrap",
-                    "targets": [-1], //last column
-                    "orderable": false, //set not orderable
-                    "searchable": false //set not orderable
+                    'className': 'text-nowrap',
+                    'orderable': false,
+                    'searchable': false,
+                    'targets': [-1]
                 }
             ]
-
         });
 
         //datepicker
         $('.datepicker').datepicker({
-            autoclose: true,
-            format: "yyyy-mm-dd",
-            todayHighlight: true,
-            orientation: "top auto",
-            todayBtn: true
+            'autoclose': true,
+            'format': 'yyyy-mm-dd',
+            'todayHighlight': true,
+            'orientation': 'top auto',
+            'todayBtn': true
         });
 
     });
+
 
     function add_cargo() {
         save_method = 'add';
@@ -265,10 +262,12 @@ require_once APPPATH . "views/end_js.php";
         $('.combo_nivel1').hide();
     }
 
+
     function help() {
         $('#modal_help').modal('show'); // show bootstrap modal
         $('.modal-title').text('Ajuda'); // Set Title to Bootstrap modal title
     }
+
 
     function edit_cargo(id) {
         save_method = 'update';
@@ -276,93 +275,82 @@ require_once APPPATH . "views/end_js.php";
         $('.form-group').removeClass('has-error'); // clear error class
         $('.help-block').empty(); // clear error string
 
-        //Ajax Load data from ajax
         $.ajax({
-            url: "<?php echo site_url('avaliacao/cargos/ajax_edit/') ?>/" + id,
-            type: "GET",
-            dataType: "JSON",
-            success: function (data) {
+            'url': "<?php echo site_url('avaliacao/cargos/ajax_edit') ?>/" + id,
+            'type': "GET",
+            'dataType': "json",
+            'success': function (json) {
+                $('[name="id"]').val(json.id);
+                $('[name="nome"]').val(json.nome);
+                $('[name="peso_competencias_tecnicas"]').val(json.peso_competencias_tecnicas);
+                $('[name="peso_competencias_comportamentais"]').val(json.peso_competencias_comportamentais);
 
-                $('[name="id"]').val(data.id);
-                $('[name="nome"]').val(data.nome);
-                $('[name="peso_competencias_tecnicas"]').val(data.peso_competencias_tecnicas);
-                $('[name="peso_competencias_comportamentais"]').val(data.peso_competencias_comportamentais);
-
+                $('.modal-title').text('Editar cargo/função');
                 $('#modal_form').modal('show');
-                $('.modal-title').text('Editar cargo/função'); // Set title to Bootstrap modal title
-
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
             }
         });
-
     }
+
 
     function reload_table() {
         table.ajax.reload(null, false); //reload datatable ajax 
     }
 
-    function save() {
-        $('#btnSave').text('Salvando...'); //change button text
-        $('#btnSave').attr('disabled', true); //set button disable 
-        var url;
 
+    function save() {
+        var url;
         if (save_method === 'add') {
-            url = "<?php echo site_url('avaliacao/cargos/ajax_add') ?>";
+            url = '<?php echo site_url('avaliacao/cargos/ajax_add') ?>';
         } else {
-            url = "<?php echo site_url('avaliacao/cargos/ajax_update') ?>";
+            url = '<?php echo site_url('avaliacao/cargos/ajax_update') ?>';
         }
 
-        // ajax adding data to database
         $.ajax({
-            url: url,
-            type: "POST",
-            data: $('#form').serialize(),
-            dataType: "JSON",
-            success: function (data) {
-                if (data.status) //if success close modal and reload ajax table
-                {
+            'url': url,
+            'type': 'POST',
+            'data': $('#form').serialize(),
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSave').text('Salvando...').attr('disabled', true);
+            },
+            'success': function (json) {
+                if (json.status) {
                     $('#modal_form').modal('hide');
                     reload_table();
                 }
-
-                $('#btnSave').text('Salvar'); //change button text
-                $('#btnSave').attr('disabled', false); //set button enable 
-
-
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error adding / update data');
-                $('#btnSave').text('Salvar'); //change button text
-                $('#btnSave').attr('disabled', false); //set button enable 
-
+            },
+            'complete': function () {
+                $('#btnSave').text('Salvar').attr('disabled', false);
             }
         });
     }
 
+
     function delete_cargo(id) {
         if (confirm('Deseja remover?')) {
-            // ajax delete data to database
             $.ajax({
-                url: "<?php echo site_url('avaliacao/cargos/ajax_delete') ?>/" + id,
-                type: "POST",
-                dataType: "JSON",
-                success: function (data) {
-                    //if success reload ajax table
+                'url': '<?php echo site_url('avaliacao/cargos/ajax_delete') ?>/' + id,
+                'type': 'POST',
+                'dataType': 'json',
+                'success': function (json) {
                     $('#modal_form').modal('hide');
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error deleting data');
                 }
             });
-
         }
     }
 
 </script>
 
 <?php
-require_once APPPATH . "views/end_html.php";
+require_once APPPATH . 'views/end_html.php';
 ?>

@@ -2,15 +2,16 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Apontamento extends MY_Controller
+class Colaboradores extends MY_Controller
 {
     //==========================================================================
     public function __construct()
     {
         parent::__construct();
 
-        $this->load->model('icom_alocacao_model', 'alocacao');
-        $this->load->model('icom_apontamento_model', 'apontamento');
+        $this->load->model('empresa_departamentos_model', 'departamentos');
+        $this->load->model('empresa_areas_model', 'areas');
+        $this->load->model('empresa_setores_model', 'setores');
     }
 
     //==========================================================================
@@ -21,53 +22,60 @@ class Apontamento extends MY_Controller
         $deptos = $this->db
             ->select('id, nome')
             ->where('id_empresa', $empresa)
+            ->where('nome', 'ICOM')
             ->order_by('nome', 'asc')
             ->get('empresa_departamentos')
             ->result();
 
         $data = [
             'empresa' => $empresa,
-            'tipo_evento' => ['' => 'selecione...'] + $this->apontamento::tipoEvento(),
-            'deptos' => ['' => 'selecione...'] + array_column($deptos, 'nome', 'id'),
-            'areas' => ['' => 'selecione...'],
-            'setores' => ['' => 'selecione...'],
+            'deptos' => array_column($deptos, 'nome', 'id'),
+            'areas' => ['' => 'Todas'],
+            'setores' => ['' => 'Todos'],
             'depto_atual' => '',
             'area_atual' => '',
-            'setor_atual' => '',
-            'meses' => [
-                '01' => 'Janeiro',
-                '02' => 'Fevereiro',
-                '03' => 'Março',
-                '04' => 'Abril',
-                '05' => 'Maio',
-                '06' => 'Junho',
-                '07' => 'Julho',
-                '08' => 'Agosto',
-                '09' => 'Setembro',
-                '10' => 'Outubro',
-                '11' => 'Novembro',
-                '12' => 'Dezembro'
-            ]
+            'setor_atual' => ''
         ];
 
-        $this->load->view('icom/apontamento', $data);
+        $this->load->view('icom/colaboradores', $data);
     }
 
     //==========================================================================
-    public function filtrarAlocacao()
+    public function filtrarEstrutura()
     {
         $depto = $this->input->post('id_depto');
         $area = $this->input->post('id_area');
         $setor = $this->input->post('id_setor');
 
-        $data = $this->montarEstrutura($depto, $area, $setor);
+        $data = $this->carregarEstrutura($depto, $area, $setor, true);
 
         echo json_encode($data);
     }
 
     //==========================================================================
-    private function montarEstrutura($depto = '', $area = '', $setor = '')
+    public function montarEstrutura()
     {
+        $depto = $this->input->post('id_depto');
+        $area = $this->input->post('id_area');
+        $setor = $this->input->post('id_setor');
+
+        $data = $this->carregarEstrutura($depto, $area, $setor);
+
+        echo json_encode($data);
+    }
+
+    //==========================================================================
+    private function carregarEstrutura($depto = 0, $area = 0, $setor = 0, $todos = false)
+    {
+        $rowDeptos = $this->db
+            ->select('id, nome')
+            ->where('id_empresa', $this->session->userdata('empresa'))
+            ->order_by('nome', 'asc')
+            ->get('empresa_departamentos')
+            ->result();
+
+        $deptos = ['' => ($todos ? 'Todos' : 'selecione...')] + array_column($rowDeptos, 'nome', 'id');
+
         $rowAreas = $this->db
             ->select('id, nome')
             ->where('id_departamento', $depto)
@@ -75,7 +83,7 @@ class Apontamento extends MY_Controller
             ->get('empresa_areas')
             ->result();
 
-        $areas = ['' => 'selecione...'] + array_column($rowAreas, 'nome', 'id');
+        $areas = ['' => ($todos ? 'Todas' : 'selecione...')] + array_column($rowAreas, 'nome', 'id');
 
         $rowSetores = $this->db
             ->select('a.id, a.nome')
@@ -86,102 +94,59 @@ class Apontamento extends MY_Controller
             ->get('empresa_setores a')
             ->result();
 
-        $setores = ['' => 'selecione...'] + array_column($rowSetores, 'nome', 'id');
+        $setores = ['' => ($todos ? 'Todos' : 'selecione...')] + array_column($rowSetores, 'nome', 'id');
 
         $data = [
-            'areas' => form_dropdown('', $areas, $area),
-            'setores' => form_dropdown('', $setores, $setor)
+            'deptos' => form_dropdown('id_depto', $deptos, $depto, 'onchange="filtrar_alocacao();" class="form-control input-sm"'),
+            'areas' => form_dropdown('id_area', $areas, $area, 'onchange="filtrar_alocacao();" class="form-control input-sm"'),
+            'setores' => form_dropdown('id_setor', $setores, $setor, 'class="form-control input-sm"')
         ];
 
         return $data;
     }
 
     //==========================================================================
-    public function alocarNovoMes()
-    {
-        $this->load->library('entities');
-
-        $data = $this->entities->create('icomAlocacao', $this->input->post());
-
-        $this->alocacao->save($data) or exit(json_encode(['erro' => $this->alocacao->errors()]));
-
-        echo json_encode(['status' => true]);
-    }
-
-    //==========================================================================
-    public function desalocarMes()
-    {
-        $this->alocacao->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->alocacao->errors()]));
-
-        echo json_encode(['status' => true]);
-    }
-
-    //==========================================================================
-    public function listarEventos()
+    public function listar()
     {
         parse_str($this->input->post('busca'), $busca);
 
-        $alocacao = $this->alocacao->where($busca)->find();
-
-        $dir = $this->input->post('order')[0]['dir'];
-
-        if ($alocacao) {
-            $periodos = array_keys($this->apontamento::periodo());
-            array_shift($periodos);
-            if ($dir === 'desc') {
-                $periodos = array_reverse($periodos);
-            }
-            $periodos = array_combine($periodos, array([], [], []));
-
-            $apontamento = $this->apontamento
-                ->select("periodo, COUNT(id) AS total, DATE_FORMAT(data, '%d') AS dia", false)
-                ->where('id_alocacao', $alocacao->id)
-                ->group_by(['data', 'periodo'])
-                ->order_by('periodo', $dir)
-                ->findAll();
-        } else {
-            $periodos = [];
-            $apontamento = [];
+        $this->db
+            ->select(["a.nome, CONCAT_WS('/', b.nome, c.nome, d.nome) AS estrutura"], false)
+            ->select('e.nome AS funcao, a.id')
+            ->join('empresa_departamentos b', 'b.id = a.id_depto')
+            ->join('empresa_areas c', 'c.id = a.id_area')
+            ->join('empresa_setores d', 'd.id = a.id_setor')
+            ->join('empresa_funcoes e', 'e.id = a.id_funcao')
+            ->where('empresa', $this->session->userdata('empresa'));
+        if ($busca['id_depto']) {
+            $this->db->where('b.id', $busca['id_depto']);
         }
-
-        foreach ($apontamento as $dados) {
-            $periodos[$dados->periodo][$dados->dia] = $dados->total;
+        if ($busca['id_area']) {
+            $this->db->where('c.id', $busca['id_area']);
         }
+        if ($busca['id_setor']) {
+            $this->db->where('d.id', $busca['id_setor']);
+        }
+        $query = $this->db
+            ->group_by('a.id')
+            ->get('usuarios a');
+
+        $this->load->library('dataTables');
+
+        $output = $this->datatables->generate($query);
 
         $data = [];
 
-//        $this->load->library('calendar');
-//        $dias = range(1, get_total_days($busca['mes'], $busca['ano']));
-        $dias = range(1, 31);
-
-        foreach ($periodos as $periodo => $eventos) {
-            $row = [$this->apontamento::periodo($periodo)];
-
-            foreach ($dias as $dia) {
-                $row[] = $eventos[$dia] ?? '';
-            }
-
-            $data[] = $row;
+        foreach ($output->data as $row) {
+            $data[] = [
+                $row->nome,
+                $row->estrutura,
+                $row->funcao,
+                '<a class="btn btn-sm btn-primary" href="' . site_url('icom/colaboradores/editar/' . $row->id) . '" title="Edição rápida"><i class="glyphicon glyphicon-pencil"></i> Edição rápida</a>
+                 <a class="btn btn-sm btn-primary" href="' . site_url('icom/colaboradores/editar/' . $row->id) . '" title="Treinamentos"><i class="glyphicon glyphicon-list-alt"></i> Treinamentos</a>
+                 <a class="btn btn-sm btn-primary" href="' . site_url('icom/colaboradores/editar/' . $row->id) . '" title="PDIs"><i class="glyphicon glyphicon-list-alt"></i> PDIs</a>'
+            ];
         }
-
-        $output = new stdClass();
-        $output->draw = (int)$this->input->post('draw');
-        $output->recordsTotal = count($periodos);
-        $output->recordsFiltered = $output->recordsTotal;
-
-        $this->load->library('Calendar');
-        $dias_semana = $this->calendar->get_day_names('long');
-        $semana = array();
-        for ($i = 1; $i <= 7; $i++) {
-            $semana[$i] = $dias_semana[date('w', mktime(0, 0, 0, $busca['mes'], $i, $busca['ano']))];
-        }
-        $output->calendar = array(
-            'mes' => $busca['mes'],
-            'ano' => $busca['ano'],
-            'mes_ano' => $this->calendar->get_month_name($busca['mes']) . ' ' . $busca['ano'],
-            'qtde_dias' => $this->calendar->get_total_days($busca['mes'], $busca['ano']),
-            'semana' => $semana
-        );
 
         $output->data = $data;
 
@@ -189,199 +154,143 @@ class Apontamento extends MY_Controller
     }
 
     //==========================================================================
-    public function gerenciarEventos()
+    public function editar()
     {
-        parse_str($this->input->post('busca'), $busca);
-        $periodo = $this->input->post('periodo');
-        $date = date('Y-m-d', mktime(0, 0, 0, $busca['mes'], $this->input->post('dia'), $busca['ano']));
-        $dia = date('d/m/Y', strtotime($date));
-
-        $alocacao = $this->alocacao->where($busca)->find();
-
-        if (empty($alocacao)) {
-            exit(json_encode(['erro' => 'Nenhuma alocação encontrada ou excluída recentemente.']));
-        }
-
-        $apontamentos = $this->apontamento
-            ->where('id_alocacao', $alocacao->id)
-            ->where('periodo', $periodo)
-            ->where('data', $date)
-            ->findAll();
-
-        $eventos = ['' => '-- Novo evento --'];
-
-        $this->load->helper('time');
-
-        foreach ($apontamentos as $apontamento) {
-            $eventos[$apontamento->id] = 'Das ' . timeSimpleFormat($apontamento->horario_inicio) . 'h às ' . timeSimpleFormat($apontamento->horario_termino) . 'h';
-        }
-
-        if ($apontamentos) {
-            $data = (array)array_pop($apontamentos);
-            $data['data'] = $date;
-            $data['data_periodo'] = $dia . ' - ' . $this->apontamento::periodo($data['periodo']);
-
-            $this->load->helper('time');
-            $data['horario_inicio'] = timeSimpleFormat($data['horario_inicio']);
-            $data['horario_termino'] = timeSimpleFormat($data['horario_termino']);
-            $data['total_horas'] = timeSimpleFormat($data['total_horas']);
-        } else {
-            $listFields = $this->db->list_fields($this->apontamento::table());
-            $data = array_combine($listFields, array_pad([], count($listFields), null));
-            $data['id_alocacao'] = $alocacao->id;
-            $data['data'] = $date;
-            $data['periodo'] = $periodo;
-            $data['data_periodo'] = $dia . ' - ' . $this->apontamento::periodo($periodo);
-        }
-
-        $data['id'] = form_dropdown('', $eventos, $data['id']);
-
-        $rowClientes = $this->db
-            ->select('id, nome')
-            ->where('id_setor', $busca['id_setor'])
-            ->order_by('nome', 'asc')
-            ->get('icom_clientes')
-            ->result();
-
-        $clientes = ['' => 'selecione...'] + array_column($rowClientes, 'nome', 'id');
-
-        $data['id_cliente'] = form_dropdown('', $clientes, $data['id_cliente']);
-
-        $rowContratos = $this->db
-            ->select('a.codigo')
-            ->join('icom_propostas b', 'b.codigo = a.codigo_proposta')
-            ->join('icom_clientes c', 'c.id = b.id_cliente')
-            ->where('c.id_setor', $busca['id_setor'])
-            ->order_by('a.codigo', 'asc')
-            ->get('icom_contratos a')
-            ->result();
-
-        $contratos = ['' => 'selecione...'] + array_column($rowContratos, 'codigo', 'codigo');
-
-        $data['codigo_contrato'] = form_dropdown('', $contratos, $data['codigo_contrato']);
-
-        echo json_encode($data);
-    }
-
-    //==========================================================================
-    public function editarEvento()
-    {
-        $data = $this->apontamento->find($this->input->post('id'));
-
-        if (($msgErro = $this->apontamento->errors())) {
-            exit(json_encode(['erro' => $msgErro]));
-        }
-
-        if ($data) {
-            $this->load->helper('time');
-
-            $data->horario_inicio = timeSimpleFormat($data->horario_inicio);
-            $data->horario_termino = timeSimpleFormat($data->horario_termino);
-            $data->total_horas = timeSimpleFormat($data->total_horas);
-        } else {
-            $listFields = $this->db->list_fields($this->apontamento::table());
-            $data = array_combine($listFields, array_pad([], count($listFields), null));
-            unset($data['id_alocacao'], $data['data'], $data['periodo']);
-        }
-
-        echo json_encode($data);
-    }
-
-    //==========================================================================
-    public function salvarEvento()
-    {
-        $this->load->library('entities');
-
-        $data = $this->entities->create('icomApontamento', $this->input->post());
-
-        $this->load->helper('time');
-
-        $totalHoras = timeToSec($data->horario_termino) - timeToSec($data->horario_inicio);
-        $data->total_horas = secToTime($totalHoras >= 0 ? $totalHoras : 0);
-
-        $this->apontamento->setValidationLabel('id', 'Lista de eventos');
-        $this->apontamento->setValidationLabel('tipo', 'Tipo de Evento');
-        $this->apontamento->setValidationLabel('id_cliente', 'Cliente');
-        $this->apontamento->setValidationLabel('codigo_contrato', 'Número Contrato');
-        $this->apontamento->setValidationLabel('centro_custo', 'Centro de Custo');
-        $this->apontamento->setValidationLabel('horario_inicio', 'Horário Início');
-        $this->apontamento->setValidationLabel('horario_termino', 'Horário Término');
-        $this->apontamento->setValidationLabel('total_horas', 'Total Horas');
-        $this->apontamento->setValidationLabel('colaboradores_alocados', 'Colaborador(es) Alocado(s)');
-        $this->apontamento->setValidationLabel('telefones_emails', 'Telefone(s)/Email(s)');
-        $this->apontamento->setValidationLabel('custo_colaboradores', 'Custo Colaborador(es)');
-        $this->apontamento->setValidationLabel('custo_operacional', 'Custo Operacional');
-        $this->apontamento->setValidationLabel('impostos', 'Impostos');
-        $this->apontamento->setValidationLabel('valor_cobrado', 'Valor Cobrado');
-        $this->apontamento->setValidationLabel('receita_liquida', 'Receita Líquida');
-
-        $this->apontamento->save($data) or exit(json_encode(['erro' => $this->apontamento->errors()]));
-
-        echo json_encode(['status' => true]);
-    }
-
-    //==========================================================================
-    public function excluirEvento()
-    {
-        $this->apontamento->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->apontamento->errors()]));
-
-        echo json_encode(['status' => true]);
-    }
-
-    //==========================================================================
-    public function editarPosto()
-    {
-        $depto = $this->input->post('id_depto');
-        $area = $this->input->post('id_area');
-        $setor = $this->input->post('id_setor');
-
-        $estrutura = $this->db
-            ->select('a.id AS id_setor, a.nome AS nome_setor, b.id AS id_area, c.id AS id_depto')
-            ->join('empresa_areas b', 'b.id = a.id_area')
-            ->join('empresa_departamentos c', 'c.id = b.id_departamento')
-            ->where('a.id', $depto)
-            ->where('b.id', $area)
-            ->where('c.id', $setor)
-            ->get('empresa_setores a')
+        $funcionario = $this->db
+            ->get_where('usuarios', ['id' => $this->uri->rsegment(3)])
             ->row();
 
-        if ($estrutura) {
-            $this->load->model('icom_postos_model', 'postos');
-
-            $data = $this->postos->where('id_setor', $estrutura->id_setor)->find();
-            if (empty($data)) {
-                exit(json_encode(['erro' => $this->postos->errors()]));
-            }
-        } else {
-            $data = new stdClass();
+        if (empty($funcionario)) {
+            redirect(site_url('icom/colaboradores'));
         }
 
-        $arrDeptos = $this->db
-            ->select('id, nome')
-            ->where('id_empresa', $this->session->userdata('empresa'))
-            ->order_by('nome', 'asc')
-            ->get('empresa_departamentos')
+        if ($funcionario->hash_acesso) {
+            $this->load->library('encrypt');
+            $funcionario->hash_acesso = $this->encrypt->decode($funcionario->hash_acesso, base64_encode($funcionario->id));
+        } else {
+            $funcionario->hash_acesso = 'null';
+        }
+
+        $dataFormatada = date("d/m/Y", strtotime(str_replace('-', '/', $funcionario->data_admissao)));
+        $funcionario->data_admissao = $dataFormatada;
+        $funcionario->saldo_apontamentos = $this->db->query("SELECT TIME_FORMAT('{$funcionario->saldo_apontamentos}', '%H:%i') AS hora")->row()->hora;
+        $data['row'] = $funcionario;
+        $data['status'] = array(
+            '1' => 'Ativo',
+            '2' => 'Inativo',
+            '3' => 'Em experiência',
+            '4' => 'Em desligamento',
+            '5' => 'Desligado',
+            '6' => 'Afastado (maternidade)',
+            '7' => 'Afastado (aposentadoria)',
+            '8' => 'Afastado (doença)',
+            '9' => 'Afastado (acidente)'
+        );
+
+        $this->db->select('DISTINCT(area) AS nome');
+        $this->db->where('empresa', $this->session->userdata('empresa'));
+        $this->db->where('depto', $funcionario->depto);
+        $this->db->where('CHAR_LENGTH(area) >', 0);
+        $areas = $this->db->get('usuarios')->result();
+        $data['area'] = array('' => 'digite ou selecione...');
+        foreach ($areas as $area) {
+            $data['area'][$area->nome] = $area->nome;
+        }
+
+        $this->db->select('DISTINCT(setor) AS nome');
+        $this->db->where('empresa', $this->session->userdata('empresa'));
+        $this->db->where('depto', $funcionario->depto);
+        $this->db->where('area', $funcionario->area);
+        $this->db->where('CHAR_LENGTH(setor) >', 0);
+        $setores = $this->db->get('usuarios')->result();
+        $data['setor'] = array('' => 'digite ou selecione...');
+        foreach ($setores as $setor) {
+            $data['setor'][$setor->nome] = $setor->nome;
+        }
+
+        $this->db->select('DISTINCT(contrato) AS nome');
+        $this->db->where('empresa', $this->session->userdata('empresa'));
+        $this->db->where('CHAR_LENGTH(contrato) >', 0);
+        $contratos = $this->db->get('usuarios')->result();
+        $data['contrato'] = array('' => 'digite ou selecione...');
+        foreach ($contratos as $contrato) {
+            $data['contrato'][$contrato->nome] = $contrato->nome;
+        }
+
+        $this->load->view('icom/colaborador_perfil', $data);
+    }
+
+    //==========================================================================
+    public function salvar()
+    {
+        header('Content-type: text/json');
+        $this->load->helper(array('date'));
+
+        $this->db->where('id', $this->uri->rsegment(3, 0));
+        $this->db->where_in('tipo', array('funcionario', 'selecionador'));
+        $funcionario = $this->db->get('usuarios')->row();
+
+        if ($funcionario->empresa != $this->session->userdata('empresa')) {
+            exit(json_encode(array('retorno' => 0, 'aviso' => 'Você não tem acesso a essa página!')));
+        }
+
+        $data['area'] = $this->input->post('area');
+        $data['setor'] = $this->input->post('setor');
+        $data['contrato'] = $this->input->post('contrato');
+        $data['dataeditado'] = mdate("%Y-%m-%d %H:%i:%s");
+        $data['status'] = $this->input->post('status');
+        $saldo_apontamentos = $this->input->post('saldo_apontamentos');
+        $data['saldo_apontamentos'] = $this->db->query("SELECT TIME('{$saldo_apontamentos}') AS hora")->row()->hora;
+
+        if ($this->db->where('id', $funcionario->id)->update('usuarios', $data)) {
+            echo json_encode(array('retorno' => 1, 'aviso' => 'Funcionário editado com sucesso', 'redireciona' => 1, 'pagina' => site_url('icom/colaboradores')));
+        } else {
+            echo json_encode(array('retorno' => 0, 'aviso' => 'Erro ao editar funcionário, tente novamente, se o erro persistir entre em contato com o administrador'));
+        }
+    }
+
+    //==========================================================================
+    public function pdf()
+    {
+        $this->db->select('foto, foto_descricao');
+        $this->db->where('id', $this->session->userdata('empresa'));
+        $data['empresa'] = $this->db->get('usuarios')->row();
+
+        $busca = $this->input->get();
+
+        $this->db
+            ->select(["a.nome, CONCAT_WS('/', b.nome, c.nome, d.nome) AS estrutura"], false)
+            ->select(["DATE_FORMAT(a.data_admissao, '%d/%m/%Y') AS data_admissao"], false)
+            ->select('e.nome AS funcao, a.id')
+            ->join('empresa_departamentos b', 'b.id = a.id_depto')
+            ->join('empresa_areas c', 'c.id = a.id_area')
+            ->join('empresa_setores d', 'd.id = a.id_setor')
+            ->join('empresa_funcoes e', 'e.id = a.id_funcao')
+            ->where('empresa', $this->session->userdata('empresa'));
+        if (!empty($busca['id_depto'])) {
+            $this->db->where('b.id', $busca['id_depto']);
+        }
+        if (!empty($busca['id_area'])) {
+            $this->db->where('c.id', $busca['id_area']);
+        }
+        if (!empty($busca['id_setor'])) {
+            $this->db->where('d.id', $busca['id_setor']);
+        }
+        $data['colaboradores'] = $this->db
+            ->group_by('a.id')
+            ->get('usuarios a')
             ->result();
 
-        $deptos = ['' => 'selecione...'] + array_column($arrDeptos, 'nome', 'id');
+        $this->load->library('m_pdf');
 
-        $data->deptos = form_dropdown('', $deptos, $depto);
+        $stylesheet = '#table thead th { font-size: 12px; padding: 4px; background-color: #f5f5f5;} ';
+        $stylesheet .= '#table tbody td { font-size: 12px; padding: 4px; vertical-align: top; } ';
 
-        $estruturaMontada = $this->montarEstrutura($depto, $area, $setor);
+        $this->m_pdf->pdf->writeHTML($stylesheet, 1);
+        $this->m_pdf->pdf->writeHTML($this->load->view('icom/colaboradores_pdf', $data, true));
 
-        $data->areas = $estruturaMontada['areas'];
-        $data->setores = $estruturaMontada['setores'];
-
-        $nomeSetor = $estrutura->nome_setor ?? '';
-        $arrUsuarios = $this->db->select('id, nome')
-            ->where('empresa', $this->session->userdata('empresa'))
-            ->where("(setor = '{$nomeSetor}' OR id_setor = '{$setor}')")
-            ->get('usuarios')
-            ->row_array();
-
-        $data->usuarios = form_dropdown('', ['' => 'selecione...'] + array_column($arrUsuarios, 'nome', 'id'), '');
-
-        echo json_encode($data);
+        $this->m_pdf->pdf->Output('Colaboradores.pdf', 'D');
     }
+
 
 }

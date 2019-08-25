@@ -1,6 +1,17 @@
 <?php require_once 'header.php'; ?>
 
     <style>
+        #table_processing,
+        #table_ame_processing,
+        #table_google_processing,
+        #table_interessados_processing {
+            position: fixed;
+            font-weight: bold;
+            left: 56%;
+            /*color: #c9302c;*/
+            font-size: 16px;
+        }
+
         div.dataTables_wrapper div.dataTables_processing {
             position: absolute;
             top: 50%;
@@ -105,106 +116,143 @@
                         </tr>
                         </tbody>
                     </table>
-
-
-                    <div id="ocultar_colunas" class="form-inline">
-                        <label>Ocultar as seguintes colunas: &nbsp;</label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="toggle-vis" value="2" autocomplete="off"> Telefone
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="toggle-vis" value="3" autocomplete="off"> E-mail
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="toggle-vis" value="4" autocomplete="off"> Deficiência
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="toggle-vis" value="5" autocomplete="off"> Fonte
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="toggle-vis" value="6" autocomplete="off"> Status
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="toggle-vis" value="11" autocomplete="off"> Pesquisa
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="toggle-vis" value="17" autocomplete="off"> Testes Online
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="toggle-vis" value="19" autocomplete="off"> Testes Presenciais
-                        </label>
-                        <label style="padding-left: 80px;">Filtrar por status: &nbsp;</label>
-                        <select id="status" class="form-control input-sm" onchange="reload_table();">
-                            <option value="">Todos</option>
-                            <option value="A">Agendado</option>
-                            <option value="P">Em processo</option>
-                            <option value="A,P">Agendado + Em processo</option>
-                            <option value="F">Fora do perfil</option>
-                            <option value="N">Não atende ou recado</option>
-                            <option value="S">Sem interesse</option>
-                            <option value="I">Telefone errado ou inexistente</option>
-                        </select>
-                    </div>
-
-
-                    <table id="table" class="table table-striped table-bordered table-condensed" cellspacing="0"
-                           width="100%">
-                        <thead>
-                        <tr class="success">
-                            <th colspan="7" class="text-center">Triagem</th>
-                            <th colspan="4" class="text-center">Entrevista</th>
-                            <th colspan="4" class="text-center">Pesquisa</th>
-                            <th colspan="2" class="text-center">Contratação</th>
-                            <th colspan="4" class="text-center">Seleção</th>
-                        </tr>
-                        <tr>
-                            <th rowspan="2" class="text-center" style="vertical-align: middle;">Ação</th>
-                            <th colspan="6">
-                                <div class="form-inline">
-                                    <button class="btn btn-sm btn-info" title="Adicionar candidato"
-                                            onclick="add_candidato(<?= $requisicao ?>)"><i
-                                                class="glyphicon glyphicon-plus"></i> Candidato
-                                    </button>
-                                    <label class="text-center" style="width:calc(100% - 100px);">Candidato</label>
-                                </div>
-                            </th>
-                            <th colspan="2" class="text-center">Seleção</th>
-                            <th colspan="2" class="text-center">Requisitante</th>
-                            <th class="text-center">Antecedentes Criminais</th>
-                            <th class="text-center">Restrições Financeiras</th>
-                            <th colspan="2" class="text-center">Exame Médico Admissional</th>
-                            <th rowspan="2" class="text-center" style="vertical-align: middle;">Contratar candidato</th>
-                            <th rowspan="2" class="text-center" style="vertical-align: middle;">Data admissão</th>
-
-                            <th colspan="2" class="text-center">Testes online</th>
-                            <th colspan="2" class="text-center">Testes presenciais</th>
-                        </tr>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Telefone</th>
-                            <th>E-mail</th>
-                            <th>Deficiência</th>
-                            <th>Fonte</th>
-                            <th>Status</th>
-                            <th>Data</th>
-                            <th>Resultado</th>
-                            <th>Data</th>
-                            <th>Resultado</th>
-                            <th>Resultado</th>
-                            <th>Resultado</th>
-                            <th>Data</th>
-                            <th>Resultado</th>
-                            <th>Nota</th>
-                            <th>Ação</th>
-                            <th>Nota</th>
-                            <th>Ação</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
                 </div>
             </div>
+            <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#form_email"
+                    aria-expanded="false" aria-controls="form_email">
+                <i class="fa fa-envelope"></i> Gerenciar comunicação via com candidatos
+            </button>
+            <form action="#" id="form_email" class="collapse form-horizontal">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="tipo" value="1">
+                                Entrevista seleção (candidatos agendados)
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="tipo" value="2">
+                                Entrevista requisitante (candidatos agendados)
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="tipo" value="3">
+                                Aprovação + exame médico admissional (candidatos aprovados)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label">Texto email</label>
+                        <textarea name="mensagem" class="form-control"></textarea>
+                    </div>
+                    <div class="col-md-2 text-right">
+                        <button type="button" id="btnEnviarEmail" class="btn btn-warning"
+                                onclick="enviar_email();">Enviar e-mail
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <hr>
+
+            <div id="ocultar_colunas" class="form-inline">
+                <label>Ocultar as seguintes colunas: &nbsp;</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="toggle-vis" value="2" autocomplete="off"> Telefone
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="toggle-vis" value="3" autocomplete="off"> E-mail
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="toggle-vis" value="4" autocomplete="off"> Deficiência
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="toggle-vis" value="5" autocomplete="off"> Fonte
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="toggle-vis" value="6" autocomplete="off"> Status
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="toggle-vis" value="11" autocomplete="off"> Pesquisa
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="toggle-vis" value="17" autocomplete="off"> Testes Online
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="toggle-vis" value="19" autocomplete="off"> Testes Presenciais
+                </label>
+                <label style="padding-left: 80px;">Filtrar por status: &nbsp;</label>
+                <select id="status" class="form-control input-sm" onchange="reload_table();">
+                    <option value="">Todos</option>
+                    <option value="A">Agendado</option>
+                    <option value="P">Em processo</option>
+                    <option value="A,P">Agendado + Em processo</option>
+                    <option value="F">Fora do perfil</option>
+                    <option value="N">Não atende ou recado</option>
+                    <option value="S">Sem interesse</option>
+                    <option value="I">Telefone errado ou inexistente</option>
+                </select>
+            </div>
+
+
+            <table id="table" class="table table-striped table-bordered table-condensed" cellspacing="0"
+                   width="100%">
+                <thead>
+                <tr class="success">
+                    <th colspan="7" class="text-center">Triagem</th>
+                    <th colspan="4" class="text-center">Entrevista</th>
+                    <th colspan="4" class="text-center">Pesquisa</th>
+                    <th colspan="2" class="text-center">Contratação</th>
+                    <th colspan="4" class="text-center">Seleção</th>
+                </tr>
+                <tr>
+                    <th rowspan="2" class="text-center" style="vertical-align: middle;">Ação</th>
+                    <th colspan="6">
+                        <div class="form-inline">
+                            <button class="btn btn-sm btn-info" title="Adicionar candidato"
+                                    onclick="add_candidato(<?= $requisicao ?>)"><i
+                                        class="glyphicon glyphicon-plus"></i> Candidato
+                            </button>
+                            <label class="text-center" style="width:calc(100% - 100px);">Candidato</label>
+                        </div>
+                    </th>
+                    <th colspan="2" class="text-center">Seleção</th>
+                    <th colspan="2" class="text-center">Requisitante</th>
+                    <th class="text-center">Antecedentes Criminais</th>
+                    <th class="text-center">Restrições Financeiras</th>
+                    <th colspan="2" class="text-center">Exame Médico Admissional</th>
+                    <th rowspan="2" class="text-center" style="vertical-align: middle;">Contratar candidato</th>
+                    <th rowspan="2" class="text-center" style="vertical-align: middle;">Data admissão</th>
+
+                    <th colspan="2" class="text-center">Testes online</th>
+                    <th colspan="2" class="text-center">Testes presenciais</th>
+                </tr>
+                <tr>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>E-mail</th>
+                    <th>Deficiência</th>
+                    <th>Fonte</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                    <th>Resultado</th>
+                    <th>Data</th>
+                    <th>Resultado</th>
+                    <th>Resultado</th>
+                    <th>Resultado</th>
+                    <th>Data</th>
+                    <th>Resultado</th>
+                    <th>Nota</th>
+                    <th>Ação</th>
+                    <th>Nota</th>
+                    <th>Ação</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
             <!-- page end-->
 
             <!-- Bootstrap modal -->
@@ -289,12 +337,16 @@
                                         </div>
                                         <div class="form-body" style="padding-top: 0px;">
                                             <div class="row form-group">
-                                                <div class="col-md-12">
+                                                <div class="col-md-9">
                                                     <label class="control-label">Novo candidato a ser incluso no
                                                         processo seletivo<span class="text-danger"> *</span></label>
                                                     <input type="text" name="nome"
                                                            placeholder="Nome completo do novo candidato"
                                                            value="" class="form-control"/>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="control-label">CPF</label>
+                                                    <input type="text" name="cpf" value="" class="form-control cpf"/>
                                                 </div>
                                             </div>
                                             <div class="row form-group">
@@ -309,6 +361,16 @@
                                                     <input type="text" name="senha" autocomplete="new-password"
                                                            placeholder="Senha do novo candidato" value=""
                                                            class="form-control"/>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col-md-3">
+                                                    <label class="control-label">Estado</label>
+                                                    <?php echo form_dropdown('estado', $estados, 35, 'id="estado1" class="form-control"'); ?>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <label class="control-label">Cidade</label>
+                                                    <?php echo form_dropdown('cidade', $cidades, '', 'id="cidade1" class="form-control"'); ?>
                                                 </div>
                                             </div>
                                             <div class="row form-group">
@@ -459,7 +521,21 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="row">
-                                                                        <div class="col-md-5">
+                                                                        <div class="col-md-2">
+                                                                            <label class="control-label">Idade
+                                                                                mínima</label>
+                                                                            <input type="text" id="idade_minima"
+                                                                                   name="idade_minima"
+                                                                                   class="form-control filtro idade input-sm">
+                                                                        </div>
+                                                                        <div class="col-md-2">
+                                                                            <label class="control-label">Idade
+                                                                                máxima</label>
+                                                                            <input type="text" id="idade_maxima"
+                                                                                   name="idade_maxima"
+                                                                                   class="form-control filtro idade input-sm">
+                                                                        </div>
+                                                                        <div class="col-md-3">
                                                                             <label class="control-label">Resultado
                                                                                 entrevista
                                                                                 seleção</label>
@@ -472,7 +548,7 @@
                                                                                 <option value="S">Stand by</option>
                                                                             </select>
                                                                         </div>
-                                                                        <div class="col-md-5">
+                                                                        <div class="col-md-3">
                                                                             <label class="control-label">Resultado
                                                                                 entrevista
                                                                                 cliente</label>
@@ -497,50 +573,50 @@
                                                 <div class="form-inline">
                                                     <label class="control-label">Ocultar as colunas abaixo:
                                                         &nbsp;</label>
-<!--                                                    <label class="checkbox-inline">-->
-<!--                                                        <input type="checkbox" class="toggle-vis" value="1"-->
-<!--                                                               autocomplete="off"> Cliente-->
-<!--                                                    </label>-->
-<!--                                                    <label class="checkbox-inline">-->
-<!--                                                        <input type="checkbox" class="toggle-vis" value="1"-->
-<!--                                                               autocomplete="off"> Cargo-->
-<!--                                                    </label>-->
-                                                    <label class="checkbox-inline">
-                                                        <input type="checkbox" class="toggle-vis" value="1"
-                                                               autocomplete="off"> Cidade
-                                                    </label>
+                                                    <!--                                                    <label class="checkbox-inline">-->
+                                                    <!--                                                        <input type="checkbox" class="toggle-vis" value="1"-->
+                                                    <!--                                                               autocomplete="off"> Cliente-->
+                                                    <!--                                                    </label>-->
+                                                    <!--                                                    <label class="checkbox-inline">-->
+                                                    <!--                                                        <input type="checkbox" class="toggle-vis" value="1"-->
+                                                    <!--                                                               autocomplete="off"> Cargo-->
+                                                    <!--                                                    </label>-->
                                                     <label class="checkbox-inline">
                                                         <input type="checkbox" class="toggle-vis" value="3"
-                                                               autocomplete="off"> Deficiência
+                                                               autocomplete="off"> Data contratação
                                                     </label>
                                                     <label class="checkbox-inline">
                                                         <input type="checkbox" class="toggle-vis" value="4"
-                                                               autocomplete="off"> Telefone
+                                                               autocomplete="off"> Cidade
                                                     </label>
                                                     <label class="checkbox-inline">
                                                         <input type="checkbox" class="toggle-vis" value="5"
-                                                               autocomplete="off"> E-mail
+                                                               autocomplete="off"> Deficiência
                                                     </label>
                                                     <label class="checkbox-inline">
                                                         <input type="checkbox" class="toggle-vis" value="6"
-                                                               autocomplete="off"> Fonte
+                                                               autocomplete="off"> Telefone
                                                     </label>
                                                     <label class="checkbox-inline">
                                                         <input type="checkbox" class="toggle-vis" value="7"
+                                                               autocomplete="off"> Fonte
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" class="toggle-vis" value="8"
                                                                autocomplete="off"> Status
                                                     </label>
-<!--                                                    <label class="checkbox-inline">-->
-<!--                                                        <input type="checkbox" class="toggle-vis" value="10"-->
-<!--                                                               autocomplete="off"> Data entrevista RH-->
-<!--                                                    </label>-->
-<!--                                                    <label class="checkbox-inline">-->
-<!--                                                        <input type="checkbox" class="toggle-vis" value="12"-->
-<!--                                                               autocomplete="off"> Data entrevista cliente-->
-<!--                                                    </label>-->
-<!--                                                    <label class="checkbox-inline">-->
-<!--                                                        <input type="checkbox" class="toggle-vis" value="14"-->
-<!--                                                               autocomplete="off"> Observações-->
-<!--                                                    </label>-->
+                                                    <!--                                                    <label class="checkbox-inline">-->
+                                                    <!--                                                        <input type="checkbox" class="toggle-vis" value="10"-->
+                                                    <!--                                                               autocomplete="off"> Data entrevista RH-->
+                                                    <!--                                                    </label>-->
+                                                    <!--                                                    <label class="checkbox-inline">-->
+                                                    <!--                                                        <input type="checkbox" class="toggle-vis" value="12"-->
+                                                    <!--                                                               autocomplete="off"> Data entrevista cliente-->
+                                                    <!--                                                    </label>-->
+                                                    <!--                                                    <label class="checkbox-inline">-->
+                                                    <!--                                                        <input type="checkbox" class="toggle-vis" value="14"-->
+                                                    <!--                                                               autocomplete="off"> Observações-->
+                                                    <!--                                                    </label>-->
                                                 </div>
                                                 <hr style="margin-top: 10px; margin-bottom: 0px;">
                                                 <table id="table_ame" class="table table-striped table-condensed"
@@ -548,20 +624,26 @@
                                                     <thead>
                                                     <tr>
                                                         <th>Ação</th>
-<!--                                                        <th>Cliente</th>-->
-<!--                                                        <th>Cargo</th>-->
+                                                        <!--                                                        <th>Cliente</th>-->
+                                                        <!--                                                        <th>Cargo</th>-->
+                                                        <th class="text-center">
+                                                            <button type="button" class="btn btn-success"
+                                                                    id="btnSaveBancoNovoGrupo"
+                                                                    onclick="salvar_banco_novo_grupo();">
+                                                                <i class="glyphicon glyphicon-plus"></i>
+                                                            </button>
+                                                        </th>
+                                                        <th>Data contratação</th>
                                                         <th>Cidade</th>
                                                         <th>Nome do candidato</th>
                                                         <th>Deficiência</th>
                                                         <th>Telefone</th>
-                                                        <th>E-mail</th>
                                                         <th>Fonte</th>
-                                                        <th>Status</th>
-<!--                                                        <th>Data entrevista RH</th>-->
-<!--                                                        <th>Resultado entrevista RH</th>-->
-<!--                                                        <th>Data entrevista cliente</th>-->
-<!--                                                        <th>Resultado entrevista cliente</th>-->
-<!--                                                        <th>Observações</th>-->
+                                                        <!--                                                        <th>Data entrevista RH</th>-->
+                                                        <!--                                                        <th>Resultado entrevista RH</th>-->
+                                                        <!--                                                        <th>Data entrevista cliente</th>-->
+                                                        <!--                                                        <th>Resultado entrevista cliente</th>-->
+                                                        <!--                                                        <th>Observações</th>-->
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -624,10 +706,23 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="row">
-                                                                        <div class="col-md-4">
+                                                                        <div class="col-md-2">
+                                                                            <label class="control-label">Idade
+                                                                                mínima</label>
+                                                                            <input type="text" id="idade_minima_google"
+                                                                                   name="idade_minima"
+                                                                                   class="form-control filtro idade input-sm">
+                                                                        </div>
+                                                                        <div class="col-md-2">
+                                                                            <label class="control-label">Idade
+                                                                                máxima</label>
+                                                                            <input type="text" id="idade_maxima_google"
+                                                                                   name="idade_maxima"
+                                                                                   class="form-control filtro idade input-sm">
+                                                                        </div>
+                                                                        <div class="col-md-3">
                                                                             <label class="control-label">Resultado
-                                                                                entrevista
-                                                                                seleção</label>
+                                                                                entrevista seleção</label>
                                                                             <select name="resultado_entrevista_rh"
                                                                                     id="resultado_selecao_google"
                                                                                     class="form-control filtro_google input-sm">
@@ -637,10 +732,9 @@
                                                                                 <option value="S">Stand by</option>
                                                                             </select>
                                                                         </div>
-                                                                        <div class="col-md-4">
+                                                                        <div class="col-md-3">
                                                                             <label class="control-label">Resultado
-                                                                                entrevista
-                                                                                cliente</label>
+                                                                                entrevista cliente</label>
                                                                             <select name="resultado_entrevista_cliente"
                                                                                     id="resultado_representante_google"
                                                                                     class="form-control filtro_google input-sm">
@@ -662,7 +756,7 @@
                                                                             <button type="button"
                                                                                     id="btnSaveBancoGoogle"
                                                                                     onclick="table_google.ajax.reload(null, false);"
-                                                                                    class="btn btn-info">pesquisar
+                                                                                    class="btn btn-info">Pesquisar
                                                                             </button>
                                                                         </div>
                                                                     </div>
@@ -976,6 +1070,23 @@
                                             <textarea name="observacoes" class="form-control" rows="4"></textarea>
                                         </div>
                                     </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Perfil</label>
+                                        <div class="col-md-9">
+                                            <label class="radio-inline text-success">
+                                                <input type="radio" name="desempenho_perfil" value="A"> <i
+                                                        class="fa fa-smile-o" style="font-size: 24px;"></i> Bom
+                                            </label>
+                                            <label class="radio-inline text-warning">
+                                                <input type="radio" name="desempenho_perfil" value="M"> <i
+                                                        class="fa fa-meh-o" style="font-size: 24px;"></i> Regular
+                                            </label>
+                                            <label class="radio-inline text-danger">
+                                                <input type="radio" name="desempenho_perfil" value="B"> <i
+                                                        class="fa fa-frown-o" style="font-size: 24px;"></i> Ruim
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -1254,25 +1365,35 @@
                             <h3 class="modal-title">Edição de exame admissional</h3>
                         </div>
                         <div class="modal-body form">
-                            <form action="#" id="form_exame_admissional" class="form-horizontal">
+                            <form action="#" id="form_exame_admissional" class="form-horizontal" autocomplete="off">
                                 <input type="hidden" value="" name="id"/>
                                 <div class="form-body">
                                     <div class="row form-group">
-                                        <label class="control-label col-md-4">Candidato(a):</label>
-                                        <div class="col-md-7">
+                                        <label class="control-label col-md-3">Candidato(a):</label>
+                                        <div class="col-md-8">
                                             <p class="nome_candidato form-control-static"></p>
                                         </div>
                                     </div>
                                     <div class="row form-group">
-                                        <label class="control-label col-md-4">Data do exame:</label>
+                                        <label class="control-label col-md-3">Data do exame:</label>
                                         <div class="col-md-3">
                                             <input name="data_exame_admissional" placeholder="dd/mm/aaaa"
-                                                   class="form-control text-center data" autocomplete="off"
-                                                   type="text">
+                                                   class="form-control text-center data" type="text">
+                                        </div>
+                                        <label class="control-label col-md-2">Horário:</label>
+                                        <div class="col-md-3">
+                                            <input name="hora_exame_admissional" placeholder="hh:mm"
+                                                   class="form-control text-center hora" type="text">
                                         </div>
                                     </div>
                                     <div class="row form-group">
-                                        <label class="control-label col-md-4">Resultado:</label>
+                                        <label class="control-label col-md-3">Endereço:</label>
+                                        <div class="col-md-8">
+                                            <textarea name="endereco_exame_admissional" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-3">Resultado:</label>
                                         <div class="col-md-4">
                                             <select name="resultado_exame_admissional" class="form-control">
                                                 <option value="">selecione...</option>
@@ -1358,6 +1479,7 @@
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js'); ?>"></script>
     <script src="<?php echo base_url('assets/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js') ?>"></script>
     <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/js/moment.js'); ?>"></script>
 
     <script>
         var save_method;
@@ -1368,9 +1490,10 @@
 
         $(document).ready(function () {
             $('.data').mask('00/00/0000');
-            $('[name="idade"]').mask('000');
+            $('.idade').mask('000');
             $('.hora').mask('00:00');
             $('.valor').mask('##0,0', {'reverse': true});
+            $('.cpf').mask('000.000.000-00');
 
             //datatables
             table_ame = $('#table_ame').DataTable({
@@ -1394,6 +1517,10 @@
                     {
                         'className': 'text-nowrap',
                         'targets': [0]
+                    },
+                    {
+                        'className': 'text-center',
+                        'targets': [1, 2]
                     }
                 ]
             });
@@ -1449,7 +1576,6 @@
             });
 
             table = $('#table').DataTable({
-                'info': false,
                 'processing': true,
                 'serverSide': true,
                 'lengthChange': false,
@@ -1606,11 +1732,14 @@
                             $(td).on('click', function () {
                                 $('#form_exame_admissional .nome_candidato').html(rowData[24]);
                                 $('#form_exame_admissional [name="id"]').val(rowData[21]);
-                                $('#form_exame_admissional [name="data_exame_admissional"]').val(rowData[13]);
+                                $('#form_exame_admissional [name="data_exame_admissional"]').val(moment(rowData[13], 'DD/MM/YYYY HH:mm').format('DD/MM/YYYY'));
+                                $('#form_exame_admissional [name="hora_exame_admissional"]').val(moment(rowData[13], 'DD/MM/YYYY HH:mm').format('HH:mm'));
+                                $('#form_exame_admissional [name="endereco_exame_admissional"]').val(rowData[25]);
                                 $('#form_exame_admissional [name="resultado_exame_admissional"]').val(exameAdmissional);
                                 $('#modal_exame_admissional').modal('show');
                             });
                         },
+                        'className': 'text-center',
                         'targets': [13, 14]
                     },
                     {
@@ -1725,6 +1854,28 @@
             filtra_candidatos_google();
         });
 
+        $('#estado1').on('change', function () {
+            $.ajax({
+                'url': '<?php echo site_url('recrutamentoPresencial_cargos/filtrarCidades') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'async': true,
+                'data': {'cod_uf': this.value},
+                'beforeSend': function () {
+                    $('#estado1, #cidade1').prop('disabled', true);
+                },
+                'success': function (json) {
+                    $('#cidade1').html($(json.cidades).html());
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                },
+                'complete': function () {
+                    $('#estado1, #cidade1').prop('disabled', false);
+                }
+            });
+        });
+
 
         function filtra_candidatos_banco() {
             $.ajax({
@@ -1818,10 +1969,15 @@
             $('.combo_nivel1').hide();
         }
 
-        function edit_observacoes(nome_candidato, id_candidato, observacoes) {
+        function edit_observacoes(nome_candidato, id_candidato, observacoes, desempenho_perfil) {
             $('#form_observacoes .nome_candidato').html(nome_candidato);
             $('#form_observacoes [name="id"]').val(id_candidato);
             $('#form_observacoes [name="observacoes"]').val(observacoes);
+            if (desempenho_perfil) {
+                $('#form_observacoes [name="desempenho_perfil"][value="' + desempenho_perfil + '"]').prop('checked', true);
+            } else {
+                $('#form_observacoes [name="desempenho_perfil"]').prop('checked', false);
+            }
             $('#modal_observacoes').modal('show');
         }
 
@@ -1931,16 +2087,52 @@
                 'success': function (json) {
                     if (json.status) //if success close modal and reload ajax table
                     {
+                        alert('Candidato(a) incluído(a) com sucesso.');
                         reload_table();
                     } else if (json.erro) {
                         alert(json.erro);
                     }
 
-                    $('#btnSaveBancoNovo').text('Salvar').attr('disabled', false);
+                    // $('#btnSaveBancoNovo').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSaveBancoNovo').text('Salvar').attr('disabled', false);
+                    // $('#btnSaveBancoNovo').text('Salvar').attr('disabled', false);
+                }
+            });
+        }
+
+        function salvar_banco_novo_grupo() {
+            if ($('.id_banco:checked').length === 0) {
+                alert('Nenhum candidato selecionado.');
+                return false;
+            }
+
+            $.ajax({
+                'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_addGrupoCandidatos') ?>',
+                'type': 'POST',
+                'data': {
+                    'id': $('.id_banco').serialize(),
+                    'id_requisicao': $('#form_banco_novo [name="id_requisicao"]').val()
+                },
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveBancoNovoGrupo').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
+                        alert('Candidatos(a) selecionados(as) incluídos(as) com sucesso.');
+                        $('.id_banco').prop('checked', false);
+                        reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                },
+                'complete': function () {
+                    $('#btnSaveBancoNovoGrupo').attr('disabled', false);
                 }
             });
         }
@@ -2340,6 +2532,36 @@
             } else {
                 window.open("<?php echo site_url('home/sair'); ?>");
             }
+        }
+
+        function enviar_email() {
+            $.ajax({
+                'url': '<?php echo site_url('recrutamentoPresencial_cargos/enviarEmail') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_requisicao': '<?= $requisicao; ?>',
+                    'tipo': $('#form_email [name="tipo"]:checked').val(),
+                    'mensagem': $('#form_email [name="mensagem"]').val()
+                },
+                'beforeSend': function () {
+                    $('#btnEnviarEmail').prop('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else if (json.status) {
+                        alert('E-mail enviado com sucesso.');
+                        $('#form_email')[0].reset()
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error sending e-mail');
+                },
+                'complete': function () {
+                    $('#btnEnviarEmail').prop('disabled', false);
+                }
+            });
         }
     </script>
 

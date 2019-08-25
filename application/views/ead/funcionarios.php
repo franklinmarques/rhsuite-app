@@ -123,58 +123,58 @@
             table = $('#table').on('preXhr.dt', function () {
                 setPdf_atributes();
             }).DataTable({
-                processing: true,
-                serverSide: true,
-                iDisplayLength: -1,
-                "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-                language: {
-                    url: '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
-                ajax: {
-                    url: '<?php echo site_url('ead/funcionarios/ajaxList/') ?>',
-                    type: 'POST',
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('ead/funcionarios/ajaxList') ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.busca = busca;
                         return d;
-                    },
+                    }
                 },
-                columnDefs: [
+                'columnDefs': [
                     {
-                        visible: false,
-                        targets: [0]
+                        'visible': false,
+                        'targets': [0]
                     },
                     {
-                        width: '50%',
-                        targets: [1, 2]
+                        'width': '50%',
+                        'targets': [1, 2]
                     },
                     {
-                        className: 'text-center',
-                        searchable: false,
-                        targets: [3, 4, 5, 6, 7]
+                        'className': 'text-center',
+                        'searchable': false,
+                        'targets': [3, 4, 5, 6, 7]
                     },
                     {
-                        className: 'text-nowrap',
-                        targets: [-1],
-                        orderable: false,
-                        searchable: false
+                        'className': 'text-nowrap',
+                        'targets': [-1],
+                        'orderable': false,
+                        'searchable': false
                     }
                 ],
-                rowsGroup: [0, 1]
+                'rowsGroup': [0, 1]
             });
         });
 
         function atualizarFiltro() {
             $.ajax({
-                url: "<?php echo site_url('ead/funcionarios/atualizar_filtro/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: $('#busca').serialize(),
-                success: function (json) {
+                'url': '<?php echo site_url('ead/funcionarios/atualizar_filtro') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'success': function (json) {
                     $('#busca [name="area"]').html($(json.area).html());
                     $('#busca [name="setor"]').html($(json.setor).html());
                     $('#busca [name="treinamento"]').html($(json.treinamento).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -201,17 +201,17 @@
         function ajax_delete(id) {
             if (confirm('Tem certeza que deseja excluir esse curso do funcionário?')) {
                 $.ajax({
-                    url: '<?php echo site_url('ead/cursos_funcionario/ajax_delete') ?>',
-                    type: 'POST',
-                    dataType: 'JSON',
-                    timeout: 9000,
-                    data: {
-                        id: id
+                    'url': '<?php echo site_url('ead/cursos_funcionario/ajax_delete') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'timeout': 9000,
+                    'data': {
+                        'id': id
                     },
-                    success: function (data) {
+                    'success': function (json) {
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Erro ao excluir treinamento');
                     }
                 });

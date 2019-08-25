@@ -7,7 +7,7 @@ class Candidatos extends CI_Controller
 
     public function index()
     {
-        $this->load->view('candidatos');
+        $this->load->view('candidatos_vagas');
     }
 
 

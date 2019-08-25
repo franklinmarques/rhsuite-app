@@ -1,4 +1,4 @@
-<?php require_once APPPATH . "views/header.php"; ?>
+<?php require_once APPPATH . 'views/header.php'; ?>
 
 <section id="main-content">
     <section class="wrapper">
@@ -69,7 +69,7 @@
     </section>
 </section>
 
-<?php require_once APPPATH . "views/end_js.php"; ?>
+<?php require_once APPPATH . 'views/end_js.php'; ?>
 
 <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
 
@@ -223,4 +223,4 @@
 
 </script>
 
-<?php require_once APPPATH . "views/end_html.php"; ?>
+<?php require_once APPPATH . 'views/end_html.php'; ?>

@@ -2,24 +2,20 @@
 
 include_once APPPATH . 'entities/Entity.php';
 
-class IcomAlocacao extends Entity
+class IcomAlocados extends Entity
 {
     protected $id;
-    protected $id_empresa;
-    protected $id_depto;
-    protected $id_area;
-    protected $id_setor;
-    protected $mes;
-    protected $ano;
+    protected $id_alocacao;
+    protected $id_usuario;
+    protected $nome_usuario;
+    protected $banco_horas;
 
     protected $casts = [
         'id' => 'int',
-        'id_empresa' => 'int',
-        'id_depto' => 'int',
-        'id_area' => 'int',
-        'id_setor' => 'int',
-        'mes' => 'int',
-        'ano' => 'int'
+        'id_alocacao' => 'int',
+        'id_usuario' => '?int',
+        'nome_usuario' => 'string',
+        'banco_horas' => '?string'
     ];
 
 }

@@ -1,4 +1,4 @@
-<?php require_once APPPATH . "views/header.php"; ?>
+<?php require_once APPPATH . 'views/header.php'; ?>
 <!--main content start-->
 <section id="main-content">
     <section class="wrapper">
@@ -53,7 +53,7 @@
     </section>
 </section>
 <!--main content end-->
-<?php require_once APPPATH . "views/end_js.php"; ?>
+<?php require_once APPPATH . 'views/end_js.php'; ?>
 <!-- Js -->
 <script>
     $(document).ready(function () {
@@ -65,4 +65,4 @@
         return false;
     }).submit();
 </script>
-<?php require_once APPPATH . "views/end_html.php"; ?>
+<?php require_once APPPATH . 'views/end_html.php'; ?>

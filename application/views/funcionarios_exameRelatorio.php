@@ -60,19 +60,23 @@ require_once "header.php";
                                 <label class="radio-inline">
                                     <input type="radio" name="realizados" value="" onchange="buscar()"
                                            autocomplete="off">
-                                    Todos os exames
+                                    Todos
                                 </label>
                                 <label class="radio-inline">
                                     <input type="radio" name="realizados" value="1" onchange="buscar()"
-                                           autocomplete="off"> Somente realizados
+                                           autocomplete="off"> Realizados
                                 </label>
                                 <label class="radio-inline">
                                     <input type="radio" name="realizados" value="0" checked="" onchange="buscar()"
-                                           autocomplete="off"> Somente não-realizados
+                                           autocomplete="off"> Não-realizados
                                 </label>
                                 <label class="radio-inline">
                                     <input type="radio" name="realizados" value="2"="" onchange="buscar()" autocomplete=
                                     "off"> Data não-programada
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="realizados" value="3"="" onchange="buscar()" autocomplete=
+                                    "off"> Não entrega original
                                 </label>
                             </div>
                             <div class="col-sm-5 text-right">

@@ -100,9 +100,21 @@
                     será
                     automaticamente incluído no processo seletivo da mesma.</h5>
                 <?php if (!$this->session->userdata('logado')): ?>
-                    <div class="controls">
-                        <a type="button" class="btn" href="login"
-                           style="width: 250px; color: #fff; background-color: #111343;">Entrar no portal</a>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a type="button" class="btn" href="<?php echo site_url('vagas/novoCandidato'); ?>"
+                               style="width: 250px; color: #fff; background-color: #111343;">Cadastrar currículo</a>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn" data-toggle="modal" data-target="#modal_recuperacao_senha"
+                                    style="width: 250px; color: #fff; background-color: #111343;">Recuperar senha
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <a type="button" class="btn" href="login"
+                               style="width: 250px; color: #fff; background-color: #111343;">Entrar no portal de
+                                vagas</a>
+                        </div>
                     </div>
                 <?php endif; ?>
             </div>
@@ -118,7 +130,6 @@
                         <th>Cargo/Função</th>
                         <th nowrap>N&ordm; vagas</th>
                         <th>Cidade</th>
-                        <th>Bairro</th>
                         <?php if ($this->session->userdata('logado')): ?>
                             <th>Ações</th>
                         <?php else: ?>
@@ -176,12 +187,8 @@
                         </div>
                         <div class="row">
                             <label class="control-label col-md-3">Cidade da vaga</label>
-                            <div class="col-md-3">
+                            <div class="col-md-8">
                                 <p id="cidade_vaga" class="form-control-static"></p>
-                            </div>
-                            <label class="control-label col-md-2">Bairro da vaga</label>
-                            <div class="col-md-3">
-                                <p id="bairro_vaga" class="form-control-static"></p>
                             </div>
                         </div>
                         <div class="row">
@@ -203,15 +210,9 @@
                             </div>
                         </div>
                         <div class="row">
-                            <label class="control-label col-md-3">Formação mínima</label>
+                            <label class="control-label col-md-3">Observações sobre a vaga</label>
                             <div class="col-md-8">
-                                <p id="formacao_minima" class="form-control-static"></p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <label class="control-label col-md-3">Contato do selecionador</label>
-                            <div class="col-md-8">
-                                <p id="contato_selecionador" class="form-control-static"></p>
+                                <p id="observacoes_selecionador" class="form-control-static"></p>
                             </div>
                         </div>
                     </form>
@@ -240,13 +241,52 @@
                             <a type="button" class="btn btn-primary btn-block" href="login">Entrar no portal</a>
                         </div>
                         <div class="col-md-6 text-center">
-                            <h4>Quero me candidatar</h4>
+                            <h4>Quero me cadastrar</h4>
                             <a type="button" class="btn btn-primary btn-block" href="#" id="url_cadastro">Cadastrar
                                 currículo</a>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div id="modal_recuperacao_senha" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title">Recuperar senha</h3>
+                </div>
+                <div class="modal-body">
+                    <form id="form_recuperacao_senha" action="#" class="form-horizontal" autocomplete="off">
+                        <p>Digite abaixo o endereço de
+                            e-mail que receberá o token para a redefinição da
+                            senha. Caso não lembre do e-mail, digite o seu CPF para preenchimento automático
+                            do campo de e-mail.</p>
+                        <div class="row form-group">
+                            <label class="control-label col-md-3">Buscar por CPF</label>
+                            <div class="col-md-4">
+                                <input id="cpf" placeholder="CPF" class="form-control cpf" type="text">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label class="control-label col-md-2">E-mail <span class="text-danger">*</span></label>
+                            <div class="col-md-9">
+                                <input name="email" placeholder="E-mail" id="email" class="form-control" type="text">
+                                <i id="alert_cpf"></i>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnRecuperarSenha" type="button" class="btn btn-warning" onclick="recuperar_senha();">
+                        Enviar
+                    </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                 </div>
             </div><!-- /.modal-content -->
@@ -279,10 +319,13 @@
 
 <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js') ?>"></script>
 <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js') ?>"></script>
+<script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
 
 <script>
 
     var table;
+
+    $('.cpf').mask('000.000.000-00');
 
     $(document).ready(function () {
 
@@ -293,10 +336,10 @@
             'searching': false,
             'language': {
                 'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>',
-                "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ vagas"
+                'sInfo': 'Mostrando de _START_ até _END_ de _TOTAL_ vagas'
             },
             'ajax': {
-                'url': '<?php echo site_url('vagas/listar/') ?>',
+                'url': '<?php echo site_url('vagas/listar') ?>',
                 'type': 'POST'
             },
             'columnDefs': [
@@ -329,7 +372,7 @@
 
     function visualizar_vaga(codigo) {
         $.ajax({
-            'url': '<?php echo site_url('vagas/visualizarDetalhes/') ?>',
+            'url': '<?php echo site_url('vagas/visualizarDetalhes') ?>',
             'type': 'GET',
             'dataType': 'json',
             'data': {'codigo': codigo},
@@ -340,7 +383,6 @@
                 });
 
                 $('#modal_vaga').modal('show');
-
             },
             'error': function (jqXHR, textStatus, errorThrown) {
                 alert('Error get data from ajax');
@@ -354,6 +396,69 @@
         $('#modal_candidato').modal('show');
     }
 
+
+    $('#modal_recuperacao_senha').on('show.bs.modal', function (e) {
+        $('#form_recuperacao_senha')[0].reset();
+    })
+
+    $('#cpf').on('change', function () {
+        var cpf = this.value;
+        $.ajax({
+            'url': '<?php echo site_url('vagas/verificarCPF') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {'cpf': cpf},
+            'beforeSend': function () {
+                if (cpf.length === 0) {
+                    $('#alert_cpf').removeClass('text-danger').html('');
+                    return false;
+                }
+                $('#cpf').prop('disabled', true);
+            },
+            'success': function (json) {
+                if (json.email) {
+                    $('#email').val(json.email);
+                    $('#alert_cpf').removeClass('text-danger').html('');
+                } else if (json.status) {
+                    $('#email').val('');
+                    $('#alert_cpf').addClass('text-danger').html('Nenhum cadastro de e-mail encontrado com o CPF acima.');
+                }
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Error get data from ajax');
+            },
+            'complete': function () {
+                $('#cpf').prop('disabled', false);
+            }
+        });
+    });
+
+
+    function recuperar_senha() {
+        $.ajax({
+            'url': '<?php echo site_url('vagas/recuperarSenhaCandidato') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': $('#form_recuperacao_senha').serialize(),
+            'beforeSend': function () {
+                $('#btnRecuperarSenha').text('Enviando...').prop('disabled', true);
+            },
+            'success': function (json) {
+                if (json.status) {
+                    alert('E-mail enviado com sucesso.');
+                    $('#modal_candidato').modal('hide');
+                } else if (json.erro) {
+                    alert(json.erro);
+                }
+            },
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert('Error send e-mail from ajax');
+            },
+            'complete': function () {
+                $('#btnRecuperarSenha').text('Enviar').prop('disabled', false);
+            }
+        });
+    }
 
 </script>
 </body>

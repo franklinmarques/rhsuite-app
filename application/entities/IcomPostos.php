@@ -2,34 +2,38 @@
 
 include_once APPPATH . 'entities/Entity.php';
 
-class IcomClientes extends Entity
+class IcomPostos extends Entity
 {
     protected $id;
-    protected $id_empresa;
-    protected $nome;
-    protected $observacoes;
-    protected $contato_principal;
-    protected $telefone_contato_principal;
-    protected $email_contato_principal;
-    protected $cargo_contato_principal;
-    protected $contato_secundario;
-    protected $telefone_contato_secundario;
-    protected $email_contato_secundario;
-    protected $cargo_contato_secundario;
+    protected $id_setor;
+    protected $id_usuario;
+    protected $id_funcao;
+    protected $matricula;
+    protected $categoria;
+    protected $valor_hora_mei;
+    protected $valor_mes_clt;
+    protected $qtde_horas_mei;
+    protected $qtde_meses_clt;
+    protected $horario_entrada;
+    protected $horario_intervalo;
+    protected $horario_retorno;
+    protected $horario_saida;
 
     protected $casts = [
         'id' => 'int',
-        'id_empresa' => 'int',
-        'nome' => 'string',
-        'observacoes' => '?string',
-        'contrato_principal' => '?string',
-        'telefone_contato_principal' => '?string',
-        'email_contato_principal' => '?string',
-        'cargo_contato_principal' => '?string',
-        'contrato_secundario' => '?string',
-        'telefone_contato_secundario' => '?string',
-        'email_contato_secundario' => '?string',
-        'cargo_contato_secundario' => '?string'
+        'id_setor' => 'int',
+        'id_usuario' => 'int',
+        'id_funcao' => 'int',
+        'matricula' => 'int',
+        'categoria' => 'string',
+        'valor_hora_mei' => '?float',
+        'valor_mes_clt' => '?float',
+        'qtde_horas_mei' => '?int',
+        'qtde_meses_clt' => '?int',
+        'horario_entrada' => '?string',
+        'horario_intervalo' => '?string',
+        'horario_retorno' => '?string',
+        'horario_saida' => '?string'
     ];
 
 }

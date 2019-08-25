@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CORPORATE RH - LMS - Mapa de Clientes/Prospects</title>
+    <title>CORPORATE RH - LMS - Gestão Comercial: Mapa de Clientes/Prospects</title>
     <link href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
 
@@ -50,17 +50,6 @@
                 <h5><span style="font-weight: bold;">Data: </span><?= $data ?></h5>
             </td>
         </tr>
-        <tr style='border-bottom: 5px solid #ddd;'>
-            <td style="padding: 0px;">
-                <h5><strong>Departamento: </strong><span id="depto"><?= $depto ?></span></h5>
-            </td>
-            <td style="padding: 0px;">
-                <h5><strong>Áera: </strong><span id="area"><?= $area ?></span></h5>
-            </td>
-            <td style="padding: 0px;">
-                <h5><strong>Setor: </strong><span id="setor"><?= $setor ?></span></h5>
-            </td>
-        </tr>
         </tbody>
     </table>
     <table id="table" class="table table-bordered table-condensed" width="100%">
@@ -78,8 +67,8 @@
                 <tr>
                     <td width="25%"><?= $row->nome; ?></td>
                     <td width="25%"><?= $row->contato_principal; ?></td>
-                    <td width="25%"><?= $row->telefone_principal; ?></td>
-                    <td width="25%"><?= $row->email_principal; ?></td>
+                    <td width="25%"><?= $row->telefone_contato_principal; ?></td>
+                    <td width="25%"><?= $row->email_contato_principal; ?></td>
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>
