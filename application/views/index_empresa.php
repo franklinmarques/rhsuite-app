@@ -1,6 +1,26 @@
 <?php
 require_once "header.php";
 ?>
+
+    <style>
+        #busca_scheduler .btn {
+            padding: 5px;
+        }
+
+
+        #busca_scheduler .btn-default.active {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        #busca_scheduler .btn-default.active:hover {
+            color: #fff;
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+    </style>
+
     <!--main content start-->
     <section id="main-content">
         <section class="wrapper">
@@ -117,33 +137,66 @@ require_once "header.php";
     <!--main content end-->
 
     <div id="modal_scheduler" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Você possui tarefas pendentes</h4>
+                    <h4 class="modal-title"><strong>Você possui tarefas pendentes</strong></h4>
                 </div>
                 <div class="modal-body">
-                    <form id="form_scheduler" action="#" method="POST" autocomplete="off">
-                        <input type="hidden" name="dia" value="<?= $scheduler['dia'] ?>">
-                        <input type="hidden" name="semana" value="<?= $scheduler['semana'] ?>">
-                        <input type="hidden" name="mes" value="<?= $scheduler['mes'] ?>">
 
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#dia" aria-controls="home" role="tab"
+                                                                  data-toggle="tab">Hoje</a>
+                        </li>
+                        <li role="presentation"><a href="#semana" aria-controls="profile" role="tab" data-toggle="tab">2 semana</a></li>
+                        <li role="presentation"><a href="#mes" aria-controls="messages" role="tab" data-toggle="tab">Tarefas deste mês</a></li>
+                    </ul>
+
+                    <!--<div class="row form-group">
+                        <label class="control-label col-md-5 text-primary"><strong>Ocultar as atividades
+                                recorrentes</strong></label>
+                        <div class="col-md-7">
+                            <div id="busca_scheduler" class="btn-group btn-group-sm" data-toggle="buttons">
+                                <label class="btn btn-default">
+                                    <input type="checkbox" name="mes" value="1"> Deste mês
+                                </label>
+                                <label class="btn btn-default">
+                                    <input type="checkbox" name="semana" value="1"> Do número
+                                    desta semana
+                                </label>
+                                <label class="btn btn-default">
+                                    <input type="checkbox" name="dia" value="1"> De hoje
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>-->
+                    <form id="form_scheduler" action="#" method="POST" autocomplete="off">
                         <?php foreach ($scheduler['atividades'] as $k => $atividades): ?>
-                            <h4><strong>Atividade:</strong> <?= nl2br($atividades->atividade); ?></h4>
-                            <div><strong>Objetivo(s):</strong> <?= nl2br($atividades->objetivos); ?></div>
-                            <?php if ($k < $scheduler['total']): ?>
-                                <hr>
-                            <?php endif; ?>
+                            <div id="scheduler_<?= $atividades->atividade; ?>"
+                                 class="scheduler_item <?= $atividades->class_dia; ?> <?= $atividades->class_semana; ?> <?= $atividades->class_mes; ?>">
+                                <h4><strong>Atividade:</strong> <?= nl2br($atividades->atividade); ?></h4>
+                                <div><strong>Objetivo(s):</strong> <?= nl2br($atividades->objetivos); ?></div>
+                                <div class="text-right">
+                                    <button type="button" class="btn btn-danger btn-xs"
+                                            onclick="excluir_scheduler('<?= $atividades->atividade; ?>')">Excluir
+                                    </button>
+                                    <button type="button" class="btn btn-warning btn-xs"
+                                            onclick="salvar_scheduler('<?= $atividades->atividade; ?>');">Não lembrar
+                                        novamente
+                                    </button>
+                                </div>
+                                <?php if ($k < $scheduler['total']): ?>
+                                    <hr>
+                                <?php endif; ?>
+                            </div>
                         <?php endforeach; ?>
                         <br>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button id="btnSaveScheduler" type="button" class="btn btn-warning" onclick="salvar_scheduler();">
-                        Não lembrar novamente
-                    </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
                 </div>
             </div><!-- /.modal-content -->
@@ -216,27 +269,85 @@ require_once "header.php";
             }
         });
 
-        function salvar_scheduler() {
+        $('#busca_scheduler .btn').on('click', function () {
+            setTimeout(function () {
+                var dia = $('#busca_scheduler [name="dia"]').is(':checked') === false;
+                var semana = $('#busca_scheduler [name="semana"]').is(':checked') === false;
+                var mes = $('#busca_scheduler [name="mes"]').is(':checked') === false;
+                console.log([dia, semana, mes]);
+                $('#form_scheduler .scheduler_item').hide();
+                if (dia) {
+                    $('#form_scheduler .scheduler_dia').show();
+                }
+                if (semana) {
+                    $('#form_scheduler .scheduler_semana').show();
+                }
+                if (mes) {
+                    $('#form_scheduler .scheduler_mes').show();
+                }
+            });
+        });
+
+        function salvar_scheduler(atividade) {
             $('#btnSaveScheduler').prop('disabled', true);
             $.ajax({
                 'url': '<?php echo site_url('home/atualizarScheduler') ?>',
                 'type': 'POST',
                 'dataType': 'json',
-                'data': $('#form_scheduler').serialize(),
+                'data': {'atividade': atividade},
+                'beforeSend': function () {
+                    $('#modal_scheduler .btn').prop('disabled', true);
+                },
                 'success': function (json) {
                     if (json.status) {
-                        $('#form_scheduler')[0].reset();
-                        $('#modal_scheduler').modal('hide');
+                        $('#scheduler_' + atividade).remove();
+                        if ($('.scheduler_item').size() === 0) {
+                            $('#modal_scheduler').modal('hide');
+                        }
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-                    $('#btnSaveScheduler').prop('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                     $('#btnSaveScheduler').prop('disabled', false);
+                },
+                'beforeSend': function () {
+                    $('#modal_scheduler .btn').prop('disabled', false);
                 }
             });
+        }
+
+        function excluir_scheduler(atividade) {
+            if (confirm('Deseja excluir a atividade?')) {
+                $('#btnSaveScheduler').prop('disabled', true);
+                $.ajax({
+                    'url': '<?php echo site_url('home/excluirScheduler') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'atividade': atividade},
+                    'beforeSend': function () {
+                        $('#modal_scheduler .btn').prop('disabled', true);
+                    },
+                    'success': function (json) {
+                        if (json.status) {
+                            $('#scheduler_' + atividade).remove();
+                            if ($('.scheduler_item').size() === 0) {
+                                $('#modal_scheduler').modal('hide');
+                            }
+                        } else if (json.erro) {
+                            alert(json.erro);
+                        }
+                    },
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert('Error get data from ajax');
+                        $('#btnSaveScheduler').prop('disabled', false);
+                    },
+                    'beforeSend': function () {
+                        $('#modal_scheduler .btn').prop('disabled', false);
+                    }
+                });
+            }
         }
 
 
