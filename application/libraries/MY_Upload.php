@@ -6,35 +6,16 @@
  * Time: 06:34
  */
 
-class MY_Session extends CI_Session
+class MY_Upload extends CI_Upload
 {
 
-    /**
-     * Grava a última atividade no banco de dados a cada 5 minutos por padrão
-     */
-    function sess_update()
+    public function set_filename($path, $filename)
     {
-        if ($this->CI->input->is_ajax_request() OR ($this->userdata['last_activity'] + $this->sess_time_to_update) >= $this->now) {
-            return;
+        if (strlen($filename) > 0 and $this->encrypt_name == false) {
+            $filename = convert_accented_characters(utf8_encode($filename)) . '_' . substr(md5(uniqid()), 0, rand(4, 6));
         }
 
-        if (($this->userdata['last_activity'] + $this->sess_expiration) >= $this->now) {
-
-            $CI = &get_instance();
-
-            $CI->db->select('id');
-            $CI->db->where('usuario', $this->userdata('id'));
-            $CI->db->order_by('id', 'desc');
-            $CI->db->limit(1);
-            $log = $CI->db->get('acessosistema')->row();
-
-            $data = array(
-                'data_atualizacao' => date('Y-m-d H:i:s')
-            );
-            $CI->db->update('acessosistema', $data, array('id' => $log->id));
-        }
-
-        parent::sess_update();
+        return parent::set_filename($path, $filename);
     }
 
 }
