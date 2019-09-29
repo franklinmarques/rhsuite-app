@@ -13,14 +13,14 @@ class Insumos extends MY_Controller
         }
     }
 
-
+    //==========================================================================
     public function index()
     {
         $data['empresa'] = $this->session->userdata('empresa');
         $this->load->view('ei/insumos', $data);
     }
 
-
+    //==========================================================================
     public function gerenciar($id_aluno = null)
     {
         /*$this->db->select('id, nome');
@@ -44,7 +44,7 @@ class Insumos extends MY_Controller
         $this->load->view('ei/insumos', $data);
     }
 
-
+    //==========================================================================
     public function ajax_list()
     {
         $post = $this->input->post();
@@ -108,7 +108,7 @@ class Insumos extends MY_Controller
         echo json_encode($output);
     }
 
-
+    //==========================================================================
     public function ajax_edit()
     {
         $id = $this->input->post('id');
@@ -117,6 +117,7 @@ class Insumos extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_add()
     {
         $data = $this->input->post();
@@ -126,7 +127,7 @@ class Insumos extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
-
+    //==========================================================================
     public function ajax_update()
     {
         $data = $this->input->post();
@@ -137,7 +138,7 @@ class Insumos extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
-
+    //==========================================================================
     public function ajax_delete()
     {
         $id = $this->input->post('id');

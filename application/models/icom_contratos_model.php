@@ -15,7 +15,7 @@ class Icom_contratos_model extends MY_Model
         'centro_custo' => 'max_length[255]',
         'data_vencimento' => 'required|valid_date',
         'status_ativo' => 'required|in_list[0,1]',
-        'arquivo' => 'uploaded[arquivo]|mime_in[pdf]|max_length[255]'
+        'arquivo' => 'uploaded[arquivo]|mime_in[arquivo.pdf]|max_length[255]'
     ];
 
     protected $uploadConfig = ['arquivo' => ['upload_path' => './arquivos/icom/contratos/', 'allowed_types' => 'pdf']];

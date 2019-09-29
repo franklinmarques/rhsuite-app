@@ -160,7 +160,7 @@ class Login extends CI_Controller
 
         $this->session->set_flashdata('scheduler', true);
 
-        # Atuaiza o ID da session para acessar o registro de log atual
+        # Atualiza o ID da session para acessar o registro de log atual
 //        $this->session->sess_update();
 
         # Insere a data e hora da login

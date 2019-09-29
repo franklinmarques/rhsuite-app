@@ -5,11 +5,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Alunos extends MY_Controller
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    //==========================================================================
     public function index()
     {
         $this->gerenciar();
     }
 
+    //==========================================================================
     public function gerenciar($id_escola = null)
     {
         $qtde_escolas = $this->db->get_where('ei_escolas', array('id' => $id_escola))->num_rows();
@@ -121,6 +128,7 @@ class Alunos extends MY_Controller
         $this->load->view('ei/alunos', $data);
     }
 
+    //==========================================================================
     public function atualizar_filtro()
     {
         $empresa = $this->session->userdata('empresa');
@@ -182,6 +190,7 @@ class Alunos extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_list()
     {
         $post = $this->input->post();
@@ -309,6 +318,7 @@ class Alunos extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajax_edit()
     {
         $id = $this->input->post('id');
@@ -327,6 +337,7 @@ class Alunos extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_editCurso()
     {
         $id = $this->input->post('id');
@@ -340,6 +351,7 @@ class Alunos extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function atualizar_escolas()
     {
         $municipio = $this->input->post('municipio');
@@ -378,6 +390,7 @@ class Alunos extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function atualizar_periodos()
     {
         $id = $this->input->post('id');
@@ -390,6 +403,7 @@ class Alunos extends MY_Controller
         echo json_encode(array('cursos' => $data));
     }
 
+    //==========================================================================
     public function ajax_add()
     {
         $data = $this->input->post();
@@ -460,6 +474,7 @@ class Alunos extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_addCurso()
     {
         $data = $this->input->post();
@@ -477,6 +492,7 @@ class Alunos extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_update()
     {
         $data = $this->input->post();
@@ -578,6 +594,7 @@ class Alunos extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_updateCurso()
     {
         $data = $this->input->post();
@@ -604,6 +621,7 @@ class Alunos extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_delete()
     {
         $id = $this->input->post('id');
@@ -611,6 +629,7 @@ class Alunos extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_deleteCurso()
     {
         $id = $this->input->post('id');
@@ -618,11 +637,13 @@ class Alunos extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function importar()
     {
         $this->load->view('ei/importarAlunos');
     }
 
+    //==========================================================================
     public function importarCsv()
     {
         header('Content-type: text/json; charset=UTF-8');
@@ -749,6 +770,7 @@ class Alunos extends MY_Controller
         exit(json_encode(array('retorno' => 0, 'aviso' => 'Erro no envio do arquivo. Por favor, tente mais tarde', 'redireciona' => 0, 'pagina' => '')));
     }
 
+    //==========================================================================
     private function validaCsv($label)
     {
         $this->load->library('form_validation');
@@ -842,7 +864,7 @@ class Alunos extends MY_Controller
         return $this->form_validation->run();
     }
 
-
+    //==========================================================================
     public function pdf()
     {
         $empresa = $this->session->userdata('empresa');

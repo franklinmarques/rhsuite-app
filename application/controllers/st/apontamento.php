@@ -5,6 +5,447 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Apontamento extends MY_Controller
 {
 
+    private function getAlocacao($busca, $consolidado = '')
+    {
+        $this->db->select('id, data, mes_bloqueado, NULL as id_anterior, NULL AS data_abertura', false);
+        $this->db->select("NULLIF(dia_fechamento, 0) AS dia_fechamento", false);
+        $this->db->where('depto', $busca['depto']);
+        $this->db->where('area', $busca['area']);
+        $this->db->where('setor', $busca['setor']);
+        $this->db->where('MONTH(data)', $busca['mes']);
+        $this->db->where('YEAR(data)', $busca['ano']);
+        $alocacao = $this->db->get('st_alocacao')->row();
+
+        if (empty($alocacao)) {
+            $alocacao = new stdClass();
+            $alocacao->id = null;
+            $alocacao->mes_bloqueado = null;
+            $alocacao->dia_fechamento = null;
+            $alocacao->id_anterior = null;
+        }
+
+        if ($consolidado and $alocacao->dia_fechamento) {
+            $sql = "SELECT DATE_ADD(DATE_SUB(STR_TO_DATE('{$busca['ano']}-{$busca['mes']}-{$alocacao->dia_fechamento}', '%Y-%m-%d'), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS mes_ano";
+            $alocacao->mes_ano = $this->db->query($sql)->row()->mes_ano;
+
+            $this->db->select('id');
+            $this->db->where("DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT('{$alocacao->mes_ano}', '%Y-%m')", null, false);
+            $this->db->where('depto', $busca['depto']);
+            $this->db->where('area', $busca['area']);
+            $this->db->where('setor', $busca['setor']);
+            $alocacaoAnterior = $this->db->get('st_alocacao')->row();
+
+//            $buscaAnterior = $busca;
+//            $mesAnterior = strtotime('-1 month', strtotime($alocacao->data));
+//            $buscaAnterior['ano'] = date('Y', $mesAnterior);
+//            $buscaAnterior['mes'] = date('m', $mesAnterior);
+//            $alocacaoAnterior = $this->getAlocacao($buscaAnterior);
+            $alocacao->id_anterior = $alocacaoAnterior->id ?? null;
+
+            $alocacao->data_abertura = date('Y-m-d', strtotime($alocacao->mes_ano));
+            $alocacao->data_fechamento = date('Y-m-d', strtotime("{$busca['ano']}-{$busca['mes']}-{$alocacao->dia_fechamento}"));
+        } else {
+            $alocacao->mes_ano = date('Y-m-d', strtotime("{$busca['ano']}-{$busca['mes']}-01"));
+            $alocacao->data_abertura = $alocacao->mes_ano;
+            $alocacao->data_fechamento = date('Y-m-t', strtotime($alocacao->data_abertura));
+        }
+
+        return $alocacao;
+    }
+
+    //==========================================================================
+    public function ajax_list()
+    {
+        $post = $this->input->post();
+        parse_str($this->input->post('busca'), $busca);
+
+
+        $alocacao = $this->getAlocacao($busca, $post['consolidado']);
+
+
+        $sql = "SELECT s.nome,
+                       s.bck_sub, 
+                       IFNULL(s.total_saldo, '') AS total_saldo, 
+                       SUM(s.total_faltas) AS total_faltas, 
+                       TIME_FORMAT(SEC_TO_TIME(SUM(s.total_atrasos)), '%H:%i') AS total_atrasos, 
+                       s.id,
+                       s.id_alocacao, 
+                       s.id_usuario_bck, 
+                       s.id_bck, 
+                       s.nome_bck, 
+                       s.id_usuario_sub, 
+                       s.id_sub, 
+                       s.nome_sub, 
+                       s.data_recesso, 
+                       s.data_retorno, 
+                       s.data_desligamento, 
+                       s.id_usuario, 
+                       s.data, 
+                       s.tipo_bck 
+                FROM (SELECT a.id, 
+                             a.id_alocacao, 
+                             b1.nome, 
+                             IFNULL(a.nome_bck, a.nome_sub) AS bck_sub,
+                             TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(e.apontamento_saldo))), '%H:%i') AS total_saldo, 
+                             SUM(CASE WHEN f.status IN ('FJ', 'FN', 'PD', 'PI') 
+                                      THEN f.qtde_dias 
+                                      END) AS total_faltas,
+                             SUM(CASE WHEN f.status IN ('AJ', 'AN', 'SJ', 'SN') 
+                                      THEN TIME_TO_SEC(f.hora_atraso) 
+                                      END) AS total_atrasos,
+                             a.id_usuario_bck, 
+                             c1.id AS id_bck,
+                             a.nome_bck, 
+                             a.id_usuario_sub, 
+                             d1.id AS id_sub, 
+                             a.nome_sub, 
+                             DATE_FORMAT(a.data_recesso, '%d/%m/%Y') AS data_recesso, 
+                             DATE_FORMAT(a.data_retorno, '%d/%m/%Y') AS data_retorno,
+                             DATE_FORMAT(a.data_desligamento, '%d/%m/%Y') AS data_desligamento, 
+                             a.id_usuario, 
+                             b.data,
+                             a.tipo_bck
+                      FROM st_alocados a
+                      INNER JOIN st_alocacao b ON 
+                                 b.id = a.id_alocacao
+                      INNER JOIN usuarios b1 ON b1.id = a.id_usuario
+                      LEFT JOIN usuarios c ON c.id = a.id_usuario_bck
+                      LEFT JOIN (SELECT x.id, x.id_usuario, y.depto, y.area, y.setor, y.data 
+                                 FROM st_alocados x 
+                                 INNER JOIN st_alocacao y ON 
+                                            y.id = x.id_alocacao) c1 ON 
+                                c1.id_usuario = c.id AND
+                                c1.depto = b.depto AND 
+                                c1.area = b.area AND 
+                                c1.setor = 'Backup' AND 
+                                DATE_FORMAT(c1.data, '%Y-%m') = DATE_FORMAT(b.data, '%Y-%m')
+                      LEFT JOIN usuarios d ON d.id = a.id_usuario_sub
+                      LEFT JOIN (SELECT x2.id, x2.id_usuario, y2.depto, y2.area, y2.setor, y2.data 
+                                 FROM st_alocados x2 
+                                 INNER JOIN st_alocacao y2 ON 
+                                            y2.id = x2.id_alocacao) d1 ON 
+                                d1.id_usuario = d.id AND
+                                d1.depto = b.depto AND 
+                                d1.area = b.area AND 
+                                d1.setor = b.setor AND 
+                                DATE_FORMAT(d1.data, '%Y-%m') = DATE_FORMAT(b.data, '%Y-%m')
+                      LEFT JOIN (SELECT e1.id, 
+                                        e1.apontamento_saldo, 
+                                        e2.id_usuario
+                                 FROM st_apontamento e1 
+                                 INNER JOIN st_alocados e2 ON 
+                                            e2.id = e1.id_alocado
+                                 WHERE e1.data <= '{$alocacao->data_fechamento}') e ON 
+                                e.id_usuario = a.id_usuario
+                      LEFT JOIN (SELECT f1.id, 
+                                        f1.id_alocado,
+                                        f1.qtde_dias, 
+                                        f1.hora_atraso,
+                                        f1.status
+                                 FROM st_apontamento f1
+                                 INNER JOIN st_alocados f2 ON 
+                                            f2.id = f1.id_alocado
+                                 WHERE f2.id_alocacao IN ('{$alocacao->id}', '{$alocacao->id_anterior}') AND 
+                                       f1.data BETWEEN '{$alocacao->data_abertura}' AND '{$alocacao->data_fechamento}') f ON 
+                                f.id_alocado = a.id AND
+                                f.id = e.id    
+                      WHERE b.id = '{$alocacao->id}' AND 
+                            (a.cargo = '{$busca['cargo']}' OR CHAR_LENGTH('{$busca['cargo']}') = 0 ) AND
+                            (a.funcao = '{$busca['funcao']}' OR CHAR_LENGTH('{$busca['funcao']}') = 0 ) AND 
+                            a.nivel = 'P'
+                      GROUP BY a.id
+                      ORDER BY a.nome ASC) s
+                GROUP BY s.id_usuario";
+
+//        $alocados = $this->db->query($sql);
+
+
+        $this->load->library('dataTables');
+        $output = $this->datatables->query($sql);
+
+
+        $this->load->library('Calendar');
+        $dias_semana = $this->calendar->get_day_names('long');
+        $semana = array();
+
+        $arrDataAnterior = explode('-', $alocacao->data_abertura);
+        $arrDataAtual = explode('-', $alocacao->data_fechamento);
+        for ($i = 0; $i <= 6; $i++) {
+            $semana[$i + 1] = $dias_semana[date('w', mktime(0, 0, 0, $arrDataAnterior[1], $arrDataAnterior[2] + $i, $arrDataAnterior[0]))];
+        }
+
+
+        $arrayDias = array_pad([], 32, null);
+        unset($arrayDias[0]);
+
+        $begin = new DateTime($alocacao->data_abertura);
+        $end = new DateTime($alocacao->data_fechamento);
+        $end = $end->modify('+1 day');
+
+        $interval = new DateInterval('P1D');
+        $daterange = new DatePeriod($begin, $interval, $end);
+        $qtdeDias = 0;
+        foreach ($daterange as $k => $date) {
+            $qtdeDias++;
+            if (strtotime($date->format('Y-m-d')) <= strtotime(date('Y-m-d'))) {
+                $arrayDias[$k + 1] = $date->format('d');
+            }
+        }
+
+
+        $output->calendar = array(
+            'dias' => $arrayDias,
+            'mes_anterior' => $arrDataAnterior[1],
+            'ano_anterior' => $arrDataAnterior[0],
+            'mes_ano_anterior' => $this->calendar->get_month_name($arrDataAnterior[1]) . ' ' . $arrDataAnterior[0],
+            'mes' => $arrDataAtual[1],
+            'ano' => $arrDataAtual[0],
+            'mes_ano' => $this->calendar->get_month_name($arrDataAtual[1]) . ' ' . $arrDataAtual[0],
+            'qtde_dias' => $qtdeDias,
+            'semana' => $semana,
+            'mes_bloqueado' => boolval($alocacao->mes_bloqueado ?? 0)
+        );
+
+
+        $this->db->select(["e.id, a.id_usuario, DATE_FORMAT(e.data, '%d') AS dia"], false);
+        $this->db->select('e.qtde_dias, f.nome AS detalhe, e.observacoes, e.status');
+        $this->db->select('e.id_alocado_bck, e.detalhes AS id_detalhe, g.nome, g.nome');
+        $this->db->select(["DATE_FORMAT(e.hora_atraso, '%H:%i') AS hora_atraso"], false);
+        $this->db->select(["DATE_FORMAT(e.hora_entrada, '%H:%i') AS hora_entrada"], false);
+        $this->db->select(["DATE_FORMAT(e.hora_intervalo, '%H:%i') AS hora_intervalo"], false);
+        $this->db->select(["DATE_FORMAT(e.hora_retorno, '%H:%i') AS hora_retorno"], false);
+        $this->db->select(["DATE_FORMAT(e.hora_saida, '%H:%i') AS hora_saida"], false);
+        $this->db->select(["DATE_FORMAT(e.hora_glosa, '%H:%i') AS hora_glosa"], false);
+        $this->db->select(["DATE_FORMAT(e.apontamento_extra, '%H:%i') AS apontamento_extra"], false);
+        $this->db->select(["DATE_FORMAT(e.apontamento_desc, '%H:%i') AS apontamento_desc"], false);
+        $this->db->select(["TIME_TO_SEC(e.apontamento_saldo) AS apontamento_saldo"], false);
+
+        $this->db->join('st_alocados a', 'a.id = e.id_alocado');
+        $this->db->join('st_detalhes_eventos f', 'f.id = e.detalhes', 'left');
+        $this->db->join('usuarios g', 'g.id = e.id_alocado_bck', 'left');
+        if ($alocacao->id_anterior) {
+            $this->db->where_in('a.id_alocacao', [$alocacao->id_anterior, $alocacao->id]);
+        } else {
+            $this->db->where('a.id_alocacao', $alocacao->id);
+        }
+        $this->db->where_in('a.id_usuario', array_column($output->data, 'id_usuario') + [0]);
+        $this->db->where("e.data BETWEEN '{$alocacao->data_abertura}' AND '{$alocacao->data_fechamento}'");
+        $eventos = $this->db->get('st_apontamento e')->result();
+
+        $apontamentos = array();
+
+        foreach ($eventos as $evento) {
+            $apontamentos[$evento->id_usuario][$evento->dia] = array(
+                $evento->id . '',
+                $evento->qtde_dias . '',
+                $evento->hora_atraso . '',
+                $evento->hora_entrada . '',
+                $evento->hora_intervalo . '',
+                $evento->hora_retorno . '',
+                $evento->hora_saida . '',
+                $evento->detalhe . '',
+                $evento->observacoes . '',
+                $evento->status . '',
+                $evento->id_alocado_bck . '',
+                $evento->id_alocado_bck . '',
+                $evento->hora_glosa . '',
+                $evento->id_detalhe . '',
+                $evento->nome . '',
+                $evento->nome . '',
+                $evento->apontamento_extra . '',
+                $evento->apontamento_desc . '',
+                $evento->apontamento_saldo . ''
+            );
+        }
+
+
+        $data = array();
+
+        $diaSolicitado = strtotime($busca['ano'] . '-' . $busca['mes'] . '-' . date('t'));
+        $diaLimite = date(($diaSolicitado < strtotime(date('Y-m-t')) ? 't' : 'd'));
+
+        foreach ($output->data as $k => $row) {
+            $rowData = array(
+                [
+                    $row->id,
+                    $row->nome,
+                    $row->data_recesso,
+                    $row->data_retorno,
+                    $row->id_usuario_bck,
+                    $row->tipo_bck,
+                    $row->nome_bck,
+                    $row->id_bck
+                ], [
+                    $row->id,
+                    $row->nome_sub,
+                    $row->data_desligamento,
+                    $row->id_usuario_sub,
+                    $row->id_sub
+                ]
+            );
+
+            $rowData[] = $row->total_saldo;
+
+            for ($i = 1; $i <= 31; $i++) {
+                if (empty($arrayDias[$i])) {
+                    $rowData[] = [];
+                    continue;
+                }
+                $rowData[] = $apontamentos[$row->id_usuario][$arrayDias[$i]] ?? [''];
+            }
+//                print_r($apontamentos[$row->id_usuario]);exit;
+
+            $rowData[] = $row->total_faltas;
+            $rowData[] = $row->total_atrasos;
+
+            $data[] = $rowData;
+        }
+
+
+        $output->data = $data;
+
+
+        echo json_encode($output);
+    }
+
+    //==========================================================================
+    public function ajaxTotalizacao()
+    {
+        $post = $this->input->post();
+        parse_str($this->input->post('busca'), $busca);
+
+        $alocacao = $this->getAlocacao($busca, $post['consolidado']);
+
+
+        $sql = "SELECT s.nome,
+                       s.dias_faltas,
+                       TRIM(ROUND(s.dias_faltas * 100 / s.total_dias_mensais + IFNULL(s.dias_acrescidos, 0), 2)) + 0  AS perc_dias_faltas,
+                       s.horas_atraso,
+                       TRIM(ROUND(s.minutos_atraso * 100 / s.total_horas_diarias + IFNULL(s.horas_acrescidas, 0), 2)) + 0 AS perc_horas_atraso,
+                       FORMAT(s.valor_posto, 2, 'de_DE') AS valor_posto,
+                       FORMAT(s.valor_dia, 2, 'de_DE') AS valor_dia,
+                       FORMAT(s.valor_dia * NULLIF(s.dias_faltas, 0), 2, 'de_DE') AS glosa_dia,
+                       FORMAT(s.valor_posto * (s.dias_faltas * 100 / s.total_dias_mensais + IFNULL(s.dias_acrescidos, 0)) / 100, 2, 'de_DE') AS perc_glosa_dia,
+                       FORMAT(s.valor_hora, 2, 'de_DE') AS valor_hora,
+                       FORMAT(s.valor_hora * NULLIF(s.minutos_atraso, 0), 2, 'de_DE') AS glosa_hora,
+                       FORMAT(s.valor_posto * (s.minutos_atraso * 100 / s.total_horas_diarias + IFNULL(s.horas_acrescidas, 0)) / 100, 2, 'de_DE') AS perc_glosa_hora,
+                       CASE {$post['calculo_totalizacao']} WHEN 2 THEN
+                            FORMAT(s.valor_posto * (1 - (IFNULL(s.dias_faltas * 100.0 / s.total_dias_mensais + IFNULL(s.dias_acrescidos, 0), 0) + IFNULL(s.minutos_atraso * 100.0 / s.total_horas_diarias + IFNULL(s.horas_acrescidas, 0), 0)) / 100.0) + IFNULL(s.total_acrescido, 0), 2, 'de_DE')
+                            ELSE 
+                            FORMAT(s.valor_posto - (IFNULL(s.dias_faltas, 0) * s.valor_dia + IFNULL(s.minutos_atraso, 0) * s.valor_hora) + IFNULL(s.total_acrescido, 0), 2, 'de_DE') END AS valor_total,
+                       s.dias_acrescidos,
+                       s.horas_acrescidas,
+                       s.total_acrescido,
+                       s.id
+                FROM (SELECT a.id,
+                             c.nome,
+                             d.dias_faltas,
+                             TIME_FORMAT(SEC_TO_TIME(d.segundos_atraso), '%k:%i') AS horas_atraso,
+                             d.segundos_atraso / 3600 AS minutos_atraso,
+                             e.valor_posto, 
+                             e.valor_dia, 
+                             e.total_dias_mensais,
+                             e.valor_hora,
+                             e.total_horas_diarias,
+                             SUM(a.dias_acrescidos) AS dias_acrescidos,
+                             SUM(a.horas_acrescidas) AS horas_acrescidas,
+                             SUM(a.total_acrescido) AS total_acrescido
+                      FROM st_alocados a
+                      INNER JOIN st_alocacao b ON 
+                                b.id = a.id_alocacao
+                      INNER JOIN usuarios c ON 
+                                c.id = a.id_usuario 
+                      LEFT JOIN (SELECT d2.id_usuario,
+                                        SUM(CASE WHEN d1.status IN ('FJ','FN','PD','PI') 
+                                                 THEN d1.qtde_dias 
+                                                 END) AS dias_faltas,
+                                        SUM(CASE WHEN d1.status IN ('AJ','AN','SJ','SN') 
+                                                 THEN TIME_TO_SEC(d1.hora_atraso) 
+                                                 END) AS segundos_atraso
+                                 FROM st_apontamento d1
+                                 INNER JOIN st_alocados d2 ON d2.id = d1.id_alocado
+                                 INNER JOIN st_alocacao d3 ON d3.id = d2.id_alocacao
+                                 WHERE d3.id IN ('{$alocacao->id}', '{$alocacao->id_anterior}') AND 
+                                       d1.data BETWEEN '{$alocacao->data_abertura}' AND '{$alocacao->data_fechamento}'
+                                 GROUP BY d2.id_usuario) d ON 
+                                d.id_usuario = a.id_usuario
+                      LEFT JOIN st_postos e ON 
+                                e.id_usuario = a.id_usuario AND
+                                e.data = (SELECT MAX(e1.data) 
+                                          FROM st_postos e1
+                                          WHERE e1.id_usuario = e.id_usuario AND 
+                                                DATE_FORMAT(e1.data,'%Y-%m') <= DATE_FORMAT(b.data,'%Y-%m'))
+                      WHERE b.id = '{$alocacao->id}' AND
+                            (c.cargo = '{$busca['cargo']}' OR CHAR_LENGTH('{$busca['cargo']}') = 0) AND
+                            (c.funcao = '{$busca['funcao']}' OR CHAR_LENGTH('{$busca['funcao']}') = 0)
+                            GROUP BY a.id_usuario) s 
+                ORDER BY s.nome ASC";
+
+        $this->load->library('dataTables');
+        $output = $this->datatables->query($sql);
+
+
+        $data = array();
+
+        $diaSolicitado = strtotime($busca['ano'] . '-' . $busca['mes'] . '-' . date('t'));
+        $diaLimite = date(($diaSolicitado < strtotime(date('Y-m-t')) ? 't' : 'd'));
+
+        $posto = 0;
+        $total = 0;
+
+        foreach ($output->data as $k => $row) {
+            $data[] = array(
+                $row->nome,
+                $row->dias_faltas,
+                str_replace('.', ',', $row->perc_dias_faltas),
+                $row->horas_atraso,
+                str_replace('.', ',', $row->perc_horas_atraso),
+                $row->valor_posto,
+                $row->valor_dia,
+                str_replace('.', ',', $post['calculo_totalizacao'] === '2' ? $row->perc_glosa_dia : $row->glosa_dia),
+                $row->valor_hora,
+                str_replace('.', ',', $post['calculo_totalizacao'] === '2' ? $row->perc_glosa_hora : $row->glosa_hora),
+                $row->valor_posto ? $row->valor_total : '',
+                $row->dias_acrescidos,
+                $row->horas_acrescidas,
+                $row->total_acrescido,
+                $row->id
+            );
+
+            if ($row->valor_posto) {
+                $posto += str_replace(array('.', ','), array('', '.'), $row->valor_posto);
+            }
+            if ($row->valor_total) {
+                $total += str_replace(array('.', ','), array('', '.'), $row->valor_total);
+            }
+        }
+
+        $output->total_posto = number_format($posto, 2, ',', '.');
+        $output->total = number_format($total, 2, ',', '.');
+        $output->total_percentual = str_replace('.', ',', round($total * 100 / max($posto, 1), 2));
+
+        $output->data = $data;
+
+
+        $this->load->library('Calendar');
+        $dias_semana = $this->calendar->get_day_names('long');
+        $semana = array();
+        for ($i = 1; $i <= 7; $i++) {
+            $semana[$i] = $dias_semana[date('w', mktime(0, 0, 0, $busca['mes'], $i, $busca['ano']))];
+        }
+        $output->calendar = array(
+            'mes' => $busca['mes'],
+            'ano' => $busca['ano'],
+            'mes_ano' => $this->calendar->get_month_name($busca['mes']) . ' ' . $busca['ano'],
+            'qtde_dias' => date('t', mktime(0, 0, 0, $busca['mes'], 1, $busca['ano'])),
+            'semana' => $semana,
+            'mes_bloqueado' => boolval($alocacao->mes_bloqueado ?? 0)
+        );
+
+
+        echo json_encode($output);
+    }
+
     //==========================================================================
     public function index()
     {
@@ -88,7 +529,7 @@ class Apontamento extends MY_Controller
         $this->db->select('id');
         $this->db->where('id_empresa', $empresa);
         $this->db->where("DATE_FORMAT(data, '%m/%Y') =", date('m/Y'));
-        $alocacao = $this->db->get('alocacao')->row();
+        $alocacao = $this->db->get('st_alocacao')->row();
         $data['id_alocacao'] = $alocacao->id ?? '';
 
         $data['usuarios'] = array('' => 'selecione...');
@@ -96,7 +537,7 @@ class Apontamento extends MY_Controller
         $this->db->select('id, codigo, nome');
         $this->db->where('id_empresa', $empresa);
         $this->db->order_by('codigo', 'asc');
-        $detalhes = $this->db->get('alocacao_eventos')->result();
+        $detalhes = $this->db->get('st_detalhes_eventos')->result();
         $data['detalhes'] = array('' => 'selecione...');
         foreach ($detalhes as $detalhe) {
             $data['detalhes'][$detalhe->id] = $detalhe->codigo . ' - ' . $detalhe->nome;
@@ -106,186 +547,6 @@ class Apontamento extends MY_Controller
     }
 
     //==========================================================================
-    private function getAlocacao()
-    {
-        $post = $this->input->post();
-        parse_str($this->input->post('busca'), $busca);
-
-        $this->db->select('id, mes_bloqueado');
-        $this->db->select("CASE WHEN dia_fechamento > 0 THEN dia_fechamento ELSE data END AS data_abertura", false);
-        $this->db->select("CASE WHEN dia_fechamento > 0 THEN DATE(data, dia_fechamento) ELSE LAST_DAY(data) END AS data_fechamento", false);
-        $this->db->where('id_empresa', $this->session->userdata('empresa'));
-        $this->db->where('depto', $busca['depto']);
-        $this->db->where('area', $busca['area']);
-        $this->db->where('setor', $busca['setor']);
-        $this->db->where('YEAR(b.data)', $busca['ano']);
-        $this->db->where('MONTH(b.data)', $busca['mes']);
-        $alocacao = $this->db->get('alocacao')->row();
-
-        if (isset($post['dia_fechamento']) and empty(intval($post['dia_fechamento']))) {
-            $post['dia_fechamento'] = $alocacao->dia_fechamento ?? '';
-        }
-
-        if (!empty($post['dia_fechamento'])) {
-            $sqlMesAno = "SELECT DATE_ADD(DATE_SUB(STR_TO_DATE('{$post['dia_fechamento']}/{$busca['mes']}/{$busca['ano']}', '%d/%m/%Y'), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS mes_ano";
-            $alocacao->mes_ano = $this->db->query($sqlMesAno)->row()->mes_ano;
-
-            $alocacao->data_abertura = date('Y-m-d', strtotime(str_replace('/', '-', $mes_ano)));
-            $alocacao->data_fechamento = date('Y-m-d', strtotime("{$busca['ano']}-{$busca['mes']}-{$post['dia_fechamento']}"));
-        } else {
-            $alocacao->mes_ano = $busca['ano'] . '-' . $busca['mes'];
-            $alocacao->data_abertura = $alocacao->mes_ano . '-01';
-            $alocacao->data_fechamento = date('Y-m-t', strtotime($alocacao->data_abertura));
-        }
-
-        return $alocacao;
-    }
-
-    //==========================================================================
-    public function ajaxList()
-    {
-        parse_str($this->input->post('busca'), $busca);
-
-
-        $this->db->select('id, dia_fechamento, mes_bloqueado');
-        $this->db->where('id_empresa', $this->session->userdata('empresa'));
-        $this->db->where('depto', $busca['depto']);
-        $this->db->where('area', $busca['area']);
-        $this->db->where('setor', $busca['setor']);
-        $this->db->where("DATE_FORMAT(data, '%Y-%m') =", "{$busca['ano']}-{$busca['mes']}");
-        $alocacao = $this->db->get('alocacao')->row();
-
-
-        $this->db->select('id, nome, nome_sub, horas_saldo_acumulado, total_faltas, total_atrasos', false);
-        $this->db->select(["DATE_FORMAT(data_recesso, '%d/%m/%Y') AS data_recesso"], false);
-        $this->db->select(["DATE_FORMAT(data_retorno, '%d/%m/%Y') AS data_retorno"], false);
-        $this->db->select(["DATE_FORMAT(data_desligamento, '%d/%m/%Y') AS data_desligamento"], false);
-        $this->db->select('id_usuario_bck, tipo_bck, nome_bck, NULL AS id_bck', false);
-        $this->db->select('id_usuario_sub, NULL AS id_sub', false);
-        $this->db->where('id_alocacao', $alocacao->id ?? null);
-        $this->db->where('cargo', $busca['cargo']);
-        $this->db->where('funcao', $busca['funcao']);
-        $query = $this->db->get('alocacao_usuarios');
-
-
-        $this->load->library('dataTables');
-
-        $rows = $this->datatables->generate($query);
-
-
-        $this->db->select('a.id, a.qtde_dias, b.nome, a.observacoes, a.status');
-        $this->db->select('c.id AS id_detalhe, c.nome AS detalhe, a.id_alocado_bck, d.nome AS alocado_bck');
-        $this->db->select(["DATE_FORMAT(a.data, '%d') AS dia"]);
-        $this->db->select(["DATE_FORMAT(a.hora_atraso, '%H:%i') AS hora_atraso"]);
-        $this->db->select(["DATE_FORMAT(a.hora_entrada, '%H:%i') AS hora_entrada"]);
-        $this->db->select(["DATE_FORMAT(a.hora_intervalo, '%H:%i') AS hora_intervalo"]);
-        $this->db->select(["DATE_FORMAT(a.hora_retorno, '%H:%i') AS hora_retorno"]);
-        $this->db->select(["DATE_FORMAT(a.hora_saida, '%H:%i') AS hora_saida"]);
-        $this->db->select(["DATE_FORMAT(a.apontamento_extra, '%H:%i') AS apontamento_asc"]);
-        $this->db->select(["DATE_FORMAT(a.apontamento_desc, '%H:%i') AS apontamento_desc"]);
-        $this->db->select(["IFNULL(TIME_TO_SEC(a.apontamento_extra), '0:00') AS apontamento_extra"]);
-        $this->db->join('alocacao_usuarios b', 'b.id = a.id_alocado');
-        $this->db->join('alocacao_eventos c', 'c.id = a.detalhes', 'left');
-        $this->db->join('usuarios d', 'd.id = a.id_alocado_bck', 'left');
-        $this->db->where_in('b.id_usuario', $rows->data ? array_column($rows->data, 'id_usuario') : [0]);
-        $eventos = $this->db->get('alocacao_apontamento a')->result();
-
-        $apontamento = array();
-
-        foreach ($eventos as $evento) {
-            $apontamento[$evento->id_alocado][intval($evento->dia)] = array(
-                $evento->id . '',
-                $evento->qtde_dias . '',
-                $evento->hora_atraso . '',
-                $evento->hora_entrada . '',
-                $evento->hora_intervalo . '',
-                $evento->hora_retorno . '',
-                $evento->hora_saida . '',
-                $evento->detalhe . '',
-                $evento->observacoes . '',
-                $evento->status . '',
-                $evento->id_alocado_bck . '',
-                $evento->hora_glosa . '',
-                $evento->id_detalhe . '',
-                $evento->nome . '',
-                $evento->apontamento_asc . '',
-                $evento->apontamento_desc . '',
-                $evento->apontamento_extra . ''
-            );
-        }
-
-
-        $this->load->library('Calendar');
-        $dias_semana = $this->calendar->get_day_names('long');
-        $semana = array();
-
-        $arrDataAnterior = explode('-', date('Y-m-d', strtotime($alocacao->data_fechamento . ' - 1 month')));
-        $arrDataAtual = explode('-', $alocacao->data_fechamento);
-        for ($i = 0; $i <= 6; $i++) {
-            $semana[$i + 1] = $dias_semana[date('w', mktime(0, 0, 0, $arrDataAnterior[1], $arrDataAnterior[2] + $i, $arrDataAnterior[0]))];
-        }
-        $rows->calendar = array(
-            'dias' => [1, 2, 3],
-            'mes_anterior' => $arrDataAnterior[1],
-            'ano_anterior' => $arrDataAnterior[0],
-            'mes_ano_anterior' => $this->calendar->get_month_name($arrDataAnterior[1]) . ' ' . $arrDataAnterior[0],
-            'mes' => $arrDataAtual[1],
-            'ano' => $arrDataAtual[0],
-            'mes_ano' => $this->calendar->get_month_name($arrDataAtual[1]) . ' ' . $arrDataAtual[0],
-            'qtde_dias' => count([1, 2, 3]),
-            'semana' => $semana,
-            'mes_bloqueado' => boolval($alocacao->mes_bloqueado ?? 0)
-        );
-
-
-        $data = array();
-
-        $diaSolicitado = strtotime($busca['ano'] . '-' . $busca['mes'] . '-' . date('t'));
-        $diaLimite = date(($diaSolicitado < strtotime(date('Y-m-t')) ? 't' : 'd'));
-
-        foreach ($rows->data as $row) {
-            $rowData = array(
-                [
-                    $row->id,
-                    $row->nome,
-                    $row->data_recesso,
-                    $row->data_retorno,
-                    $row->id_usuario_bck,
-                    $row->tipo_bck,
-                    $row->nome_bck,
-                    $row->id_bck
-                ],
-                [
-                    $row->id,
-                    $row->nome_sub,
-                    $row->data_desligamento,
-                    $row->id_usuario_sub,
-                    $row->id_sub
-                ],
-                $row->total_saldo_acumuldo
-            );
-            for ($i = 1; $i <= 31; $i++) {
-                if ($i > $diaLimite) {
-                    $rowData[] = null;
-                    continue;
-                }
-                $rowData[] = $apontamento[$row->id][$i] ?? [''];
-            }
-
-            $rowData[] = $row->total_faltas;
-            $rowData[] = $row->total_atrasos;
-
-            $data[] = $rowData;
-        }
-
-        $rows->data = $data;
-
-
-        echo json_encode($rows);
-    }
-
-
-
     public function atualizar_filtro()
     {
         $depto = $this->input->post('depto');
@@ -314,6 +575,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function novo()
     {
         $empresa = $this->session->userdata('empresa');
@@ -323,12 +585,12 @@ class Apontamento extends MY_Controller
         $ano = empty($post['ano']) ? date('Y') : $post['ano'];
 
         $subquery = "(SELECT id, id_empresa, data, depto, area, setor
-                      FROM alocacao
+                      FROM st_alocacao
                       WHERE DATE_FORMAT(data, '%Y-%m') = '{$ano}-{$mes}') b";
         $subquery2 = "(SELECT depto, area, setor, contrato, descricao_servico, valor_servico, dia_fechamento, 
                               qtde_alocados_potenciais, turnover_reposicao, turnover_aumento_quadro, 
                               turnover_desligamento_empresa, turnover_desligamento_colaborador, observacoes
-                       FROM alocacao
+                       FROM st_alocacao
                        WHERE DATE_FORMAT(data, '%Y-%m') <= '{$ano}-{$mes}' AND 
                              (depto = '{$post['depto']}' OR CHAR_LENGTH('{$post['depto']}') = 0) AND
                              (area = '{$post['area']}' OR CHAR_LENGTH('{$post['area']}') = 0) AND
@@ -387,7 +649,7 @@ class Apontamento extends MY_Controller
 
         $this->db->trans_start();
 
-        $this->db->insert_batch('alocacao', $data);
+        $this->db->insert_batch('st_alocacao', $data);
 
         $data2 = array();
 
@@ -411,7 +673,7 @@ class Apontamento extends MY_Controller
         }
 
         if ($data2) {
-            $this->db->insert_batch('alocacao_usuarios', $data2);
+            $this->db->insert_batch('st_alocados', $data2);
         }
 
         $this->db->trans_complete();
@@ -420,7 +682,8 @@ class Apontamento extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-    public function ajax_list()
+    //==========================================================================
+    public function ajax_list2()
     {
         $post = $this->input->post();
         parse_str($this->input->post('busca'), $busca);
@@ -430,7 +693,7 @@ class Apontamento extends MY_Controller
         $this->db->where('depto', $busca['depto'] ?? null);
         $this->db->where('area', $busca['area'] ?? null);
         $this->db->where('setor', $busca['setor'] ?? null);
-        $alocacao = $this->db->get('alocacao')->row();
+        $alocacao = $this->db->get('st_alocacao')->row();
         if (isset($post['dia_fechamento']) and empty(intval($post['dia_fechamento']))) {
             $post['dia_fechamento'] = $alocacao->dia_fechamento ?? '';
         }
@@ -473,10 +736,10 @@ class Apontamento extends MY_Controller
                                                         CONCAT(\'\"\', IFNULL(DATE_FORMAT(e.apontamento_desc, \'%H:%i\'), \'\'), \'\",\'),
                                                         CONCAT(\'\"\', IFNULL(TIME_TO_SEC(e.apontamento_extra), \'0:00\') - IFNULL(TIME_TO_SEC(e.apontamento_desc), \'0:00\'), \'\"\')
                                                     ),\']\'),
-                                                \'[\"\"]\'), \'[]\') FROM alocacao_apontamento e
-                                                            INNER JOIN alocacao_usuarios i ON i.id = e.id_alocado
-                                                            INNER JOIN alocacao j ON j.id = i.id_alocacao
-                                                            LEFT JOIN alocacao_eventos f ON
+                                                \'[\"\"]\'), \'[]\') FROM st_apontamento e
+                                                            INNER JOIN st_alocados i ON i.id = e.id_alocado
+                                                            INNER JOIN st_alocacao j ON j.id = i.id_alocacao
+                                                            LEFT JOIN st_detalhes_eventos f ON
                                                                       f.id = e.detalhes
                                                             LEFT JOIN usuarios g ON 
                                                                       g.id = e.id_alocado_bck
@@ -515,7 +778,6 @@ class Apontamento extends MY_Controller
             $arrayDias[$n + 1] = trim(str_replace('dia_', '', $dia));
         }
 
-
         $sql = "SELECT s.id,
                        s.nome,
                        s.nome_sub,
@@ -553,14 +815,14 @@ class Apontamento extends MY_Controller
                              {$dias->atributos},
                              (CASE WHEN h.data >= '{$dataAbertura}' THEN h.dias_faltas END) AS total_faltas,
                              (CASE WHEN h.data >= '{$dataAbertura}' THEN h.segundos_atraso END) AS total_atrasos
-                      FROM alocacao_usuarios a
-                      INNER JOIN alocacao b ON b.id = a.id_alocacao
+                      FROM st_alocados a
+                      INNER JOIN st_alocacao b ON b.id = a.id_alocacao
                       INNER JOIN usuarios c ON c.id = a.id_usuario
                       LEFT JOIN usuarios d ON 
                                       d.id = a.id_usuario_bck
                       LEFT JOIN (SELECT x.id, x.id_usuario, y.depto, y.area, y.setor, y.data 
-                                 FROM alocacao_usuarios x 
-                                 INNER JOIN alocacao y ON 
+                                 FROM st_alocados x 
+                                 INNER JOIN st_alocacao y ON 
                                             y.id = x.id_alocacao) d1 ON 
                                 d1.id_usuario = d.id AND
                                 d1.depto = b.depto AND 
@@ -570,8 +832,8 @@ class Apontamento extends MY_Controller
                       LEFT JOIN usuarios e ON 
                                       e.id = a.id_usuario_sub
                       LEFT JOIN (SELECT x.id, x.id_usuario, y.depto, y.area, y.setor, y.data 
-                                 FROM alocacao_usuarios x 
-                                 INNER JOIN alocacao y ON 
+                                 FROM st_alocados x 
+                                 INNER JOIN st_alocacao y ON 
                                             y.id = x.id_alocacao) e1 ON 
                                 e1.id_usuario = d.id AND
                                 e1.depto = b.depto AND 
@@ -700,201 +962,7 @@ class Apontamento extends MY_Controller
         echo json_encode($output);
     }
 
-    public function ajax_list_new()
-    {
-        parse_str($this->input->post('busca'), $busca);
-
-
-        $this->load->library('Calendar');
-        $dias_semana = $this->calendar->get_day_names('long');
-        $semana = array();
-        for ($i = 1; $i <= 7; $i++) {
-            $semana[$i] = $dias_semana[date('w', mktime(0, 0, 0, $busca['mes'], $i, $busca['ano']))];
-        }
-        $calendario = array(
-            'dias' => array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'),
-            'mes' => $busca['mes'],
-            'ano' => $busca['ano'],
-            'mes_ano' => $this->calendar->get_month_name($busca['mes']) . ' ' . $busca['ano'],
-            'qtde_dias' => date('t', mktime(0, 0, 0, $busca['mes'], 1, $busca['ano'])),
-            'semana' => $semana
-        );
-
-        $output = array(
-            "draw" => $this->input->post('draw'),
-            "recordsTotal" => 0,
-            "recordsFiltered" => 0,
-            "calendar" => $calendario,
-            "data" => [],
-        );
-
-        //----------------------------------------------------------------------
-
-        $this->db->where('depto', $busca['depto']);
-        $this->db->where('area', $busca['area']);
-        $this->db->where('setor', $busca['setor']);
-        $this->db->where("DATE_FORMAT(data, '%Y-%m') =", $busca['ano'] . '-' . $busca['mes']);
-        $alocacao = $this->db->get('alocacao')->row();
-
-        if (empty($alocacao)) {
-            echo json_encode($output);
-            return;
-        }
-
-        $post = $this->input->post();
-
-
-//        $this->db->select('a.id, a.nome AS usuario, e.nome AS usuario_sub');
-//        $this->db->select('a.horas_saldo_acumulado, d.nome AS usuario_bck');
-        $this->db->select('a.id, a.nome, a.tipo_bck');
-        $this->db->select(["DATE_FORMAT(a.data_recesso, '%H:%i') AS data_recesso"], false);
-        $this->db->select(["DATE_FORMAT(a.data_retorno, '%H:%i') AS data_retorno"], false);
-        $this->db->select(["DATE_FORMAT(a.data_desligamento, '%H:%i') AS data_desligamento"], false);
-        $this->db->select('a.id_usuario_bck, d.nome AS nome_bck, d.id AS id_bck');
-        $this->db->select('a.id_usuario_sub, e.nome AS nome_sub, e.id AS id_sub');
-        $this->db->select('NULL AS saldo, NULL AS dias_saldo, NULL AS horas_saldo', false);
-        $this->db->join('alocacao b', 'b.id = a.id_alocacao');
-        $this->db->join('usuarios c', 'c.id = a.id_usuario');
-        $this->db->join('usuarios d', 'd.id = a.id_usuario_bck', 'left');
-        $this->db->join('usuarios e', 'e.id = a.id_usuario_sub', 'left');
-        $this->db->where('b.id', $alocacao->id ?? null);
-        $this->db->where('b.id', $alocacao->id ?? null);
-        if ($busca['cargo']) {
-            $this->db->where('c.cargo', $busca['cargo']);
-        }
-        if ($busca['funcao']) {
-            $this->db->where('c.funcao', $busca['funcao']);
-        }
-        $output['recordsTotal'] = $this->db->get('alocacao_usuarios a')->num_rows();
-
-        $sql = "SELECT s.* FROM ({$this->db->last_query()}) s";
-
-        if ($post['search']['value']) {
-            $sql .= " WHERE s.usuario LIKE '%{$post['search']['value']}%' OR 
-                            s.usuario_bck LIKE '%{$post['search']['value']}%' OR 
-                            s.usuario_sub LIKE '%{$post['search']['value']}%' OR 
-                            s.alocado_bck LIKE '%{$post['search']['value']}%'";
-            $output['recordsFiltered'] = $this->db->query($sql)->num_rows();
-        } else {
-            $output['recordsFiltered'] = $output['recordsTotal'];
-        }
-
-        if ($post['order']) {
-            $orderBy = [];
-            foreach ($post['order'] as $order) {
-                $orderBy[] = intval($order['column'] + 2) . ' ' . $order['dir'];
-            }
-            $sql .= ' ORDER BY ' . implode(', ', $orderBy);
-        }
-
-        if ($post['length'] > 0) {
-            $sql .= " LIMIT {$post['start']}, {$post['length']}";
-        }
-        $alocados = $this->db->query($sql)->result();
-
-
-        $consolidado = $this->input->post('consolidado');
-        if ($consolidado and $alocacao->dia_fechamento) {
-            $dataFechamento = "{$busca['ano']}-{$busca['mes']}-{$alocacao->dia_fechamento}";
-            $sqlDate = "SELECT DATEADD(DATESUB('{$dataFechamento}', INTERVAL 1 MONTH), INTERVAL 1 DAY) AS data_abertura";
-            $dataAbertura = $this->db->query($sqlDate)->row()->data_abertura;
-        } else {
-            $dataAbertura = "{$busca['ano']}-{$busca['mes']}-01";
-            $dataFechamento = date('Y-m-t', strtotime($dataAbertura));
-        }
-        $diaFechamento = date('d', min(strtotime($dataFechamento), time()));
-        $dias = array();
-        for ($i = 1; $i <= 31; $i++) {
-            $dias[] = date('d', strtotime("{$dataAbertura} + {$i} day"));
-            if ($dias[$i - 1] == $diaFechamento) {
-                break;
-            }
-        }
-
-        $this->db->select('a.id, a.qtde_dias, a.status, a.detalhes, a.observacoes');
-        $this->db->select(["DATE_FORMAT(a.hora_glosa, '%H:%i') AS hora_glosa"], false);
-        $this->db->select('a.detalhes AS detalhes_evento, c.id AS id_detalhe_evento');
-        $this->db->select('a.id_alocado_bck, d.nome AS alocado_bck');
-        $this->db->select(["DATE_FORMAT(a.hora_atraso, '%H:%i') AS hora_atraso"], false);
-        $this->db->select(["DATE_FORMAT(a.hora_entrada, '%H:%i') AS hora_entrada"], false);
-        $this->db->select(["DATE_FORMAT(a.hora_intervalo, '%H:%i') AS hora_intervalo"], false);
-        $this->db->select(["DATE_FORMAT(a.hora_retorno, '%H:%i') AS hora_retorno"], false);
-        $this->db->select(["DATE_FORMAT(a.hora_saida, '%H:%i') AS hora_saida"], false);
-        $this->db->select(["DATE_FORMAT(a.apontamento_extra, '%H:%i') AS apontamento_extra"], false);
-        $this->db->select(["DATE_FORMAT(a.apontamento_desc, '%H:%i') AS apontamento_desc"], false);
-        $this->db->select(["IF(a.apontamento_extra IS NOT NULL OR a.apontamento_desc IS NOT NULL, TIMEDIFF(IFNULL(a.apontamento_extra, '00:00:00'), IFNULL(a.apontamento_desc, '00:00:00')), NULL) AS apontamento_saldo"], false);
-        $this->db->select(["DATE_FORMAT(a.data, '%d') AS dia"], false);
-        $this->db->join('alocacao_usuarios b', 'b.id = a.id_alocado');
-        $this->db->join('alocacao_eventos c', 'c.id = a.detalhes', 'left');
-        $this->db->join('usuarios d', 'd.id = a.id_alocado_bck', 'left');
-        $this->db->where("(a.status = 'FR' OR a.data <= CURDATE())", null, false);
-        $this->db->where_in('b.id_usuario', array_column($alocados, 'id_usuario') + array(0));
-        $this->db->where("a.data BETWEEN '{$dataAbertura}' AND '{$dataFechamento}'", null, false);
-        $eventos = $this->db->get('alocacao_apontamento a')->result();
-        $apontamento = array();
-        foreach ($eventos as $evento) {
-            $apontamento[$evento->id_alocado][$evento->dia] = array(
-                $evento->id,
-                $evento->qtde_dias,
-                $evento->hora_atraso,
-                $evento->hora_entrada,
-                $evento->hora_intervalo,
-                $evento->hora_retorno,
-                $evento->hora_saida,
-                $evento->detalhe_evento,
-                $evento->observacoes,
-                $evento->status,
-                $evento->id_alocado_bck,
-                $evento->id_alocado_bck,
-                $evento->hora_glosa,
-                $evento->id_detalhe_evento,
-                $evento->alocado_bck,
-                $evento->alocado_bck,
-                $evento->apontamento_extra,
-                $evento->apontamento_desc,
-                $evento->apontamento_saldo
-            );
-        }
-
-
-        $data = array();
-
-        foreach ($alocados as $alocado) {
-            $row = array();
-            $row[] = array(
-                $alocado->id,
-                $alocado->nome,
-                $alocado->data_recesso,
-                $alocado->data_retorno,
-                $alocado->id_usuario_bck,
-                $alocado->tipo_bck,
-                $alocado->nome_bck,
-                $alocado->id_bck,
-            );
-            $row[] = array(
-                $alocado->id,
-                $alocado->nome_sub,
-                $alocado->data_desligamento,
-                $alocado->id_usuario_sub,
-                $alocado->id_sub
-            );
-            $row[] = $alocado->saldo;
-            $rowSize = count($row);
-            foreach ($dias as $dia) {
-                $row[] = $apontamento[$alocado->id][$dia] ?? array();
-            }
-            array_pad($row, $rowSize + 31, null);
-            $row[] = $alocado->dias_saldo;
-            $row[] = $alocado->horas_saldo;
-
-            $data[] = $row;
-        }
-
-        $output['data'] = $data;
-
-        echo json_encode($output);
-    }
-
+    //==========================================================================
     public function ajax_colaboradores()
     {
         $empresa = $this->session->userdata('empresa');
@@ -914,7 +982,7 @@ class Apontamento extends MY_Controller
             $this->db->where('setor', $busca['setor']);
         }
         $this->db->where("DATE_FORMAT(data, '%m/%Y') =", date('m/Y', mktime(0, 0, 0, $busca['mes'], 1, $busca['ano'])));
-        $alocacao = $this->db->get('alocacao')->row();
+        $alocacao = $this->db->get('st_alocacao')->row();
         $data['id'] = $alocacao->id ?? '';
         $data['ipesp'] = $alocacao->ipesp ?? null;
         $data['dia_fechamento'] = '';
@@ -924,9 +992,9 @@ class Apontamento extends MY_Controller
 
         $sql = "SELECT a.id, a.nome
         FROM usuarios a
-        LEFT JOIN alocacao c ON 
+        LEFT JOIN st_alocacao c ON 
         c.data = '" . date('Y-m-d', mktime(0, 0, 0, $busca['mes'], 1, $busca['ano'])) . "'
-        LEFT JOIN alocacao_usuarios b ON 
+        LEFT JOIN st_alocados b ON 
         b.id_usuario = a.id AND 
         c.id = b.id_alocacao
         WHERE a.empresa = '$empresa' AND 
@@ -957,20 +1025,6 @@ class Apontamento extends MY_Controller
 
         $data['id_usuario'] = form_dropdown('id_usuario', $usuarios_novos, '', 'class="form-control"');
 
-        //        $this->db->select('a.id, a.nome');
-        //        $this->db->where('a.empresa', $empresa);
-        //        $this->db->where('a.tipo', 'funcionario');
-        //        $this->db->where_in('a.status', array('1', '3'));
-        //        if ($busca['depto']) {
-        //            $this->db->where('a.depto', $busca['depto']);
-        //        }
-        //        if ($busca['area']) {
-        //            $this->db->where('a.area', $busca['area']);
-        //        }
-        //        $this->db->where('a.setor', 'backup');
-        //        $this->db->order_by('a.nome', 'asc');
-        //
-        //        $rows_bck = $this->db->get('usuarios a')->result();
 
         $sql2 = "SELECT s.id, s.nome 
                 FROM (SELECT a.id, a.nome 
@@ -981,13 +1035,11 @@ class Apontamento extends MY_Controller
         if ($busca['depto']) {
             $sql2 .= " AND a.depto = '{$busca['depto']}'";
         }
-//        if ($busca['area']) {
-//            $sql2 .= " AND a.area = '{$busca['area']}'";
-//        }
+
         $sql2 .= "AND a.setor =  'backup'
                 UNION
                 SELECT d.id, d.nome
-                FROM alocacao_usuarios b
+                FROM st_alocados b
                 INNER JOIN alocacao c ON c.id = b.id_alocacao
                 INNER JOIN usuarios d ON d.id = b.id_usuario_bck
                 WHERE c.id_empresa =  '$empresa' AND
@@ -1020,7 +1072,7 @@ class Apontamento extends MY_Controller
 
 
         $this->db->select('b.id, c.nome');
-        $this->db->join('alocacao_usuarios b', 'b.id_alocacao = a.id');
+        $this->db->join('st_alocados b', 'b.id_alocacao = a.id');
         $this->db->join('usuarios c', 'c.id = b.id_usuario');
         $this->db->where('a.id_empresa', $this->session->userdata('empresa'));
         $this->db->where('c.tipo', 'funcionario');
@@ -1049,6 +1101,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_avaliado($id)
     {
         if (empty($id)) {
@@ -1140,12 +1193,13 @@ class Apontamento extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajax_edit()
     {
         $this->db->select('id, codigo, nome');
         $this->db->where('id_empresa', $this->session->userdata('empresa'));
         $this->db->order_by('codigo', 'asc');
-        $detalhes = $this->db->get('alocacao_eventos')->result();
+        $detalhes = $this->db->get('st_detalhes_eventos')->result();
         $data = array('' => 'selecione...');
         foreach ($detalhes as $detalhe) {
             $data[$detalhe->id] = $detalhe->codigo . ' - ' . $detalhe->nome;
@@ -1154,6 +1208,7 @@ class Apontamento extends MY_Controller
         echo form_dropdown('detalhes', $data, '', 'class="form-control"');
     }
 
+    //==========================================================================
     public function ajax_config()
     {
         $busca = $this->input->post();
@@ -1180,6 +1235,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_config_ipesp()
     {
         $busca = $this->input->post();
@@ -1196,7 +1252,7 @@ class Apontamento extends MY_Controller
             $this->db->where_in('b.setor', array('presencial', 'teleatendimento'));
         }
         $this->db->where("DATE_FORMAT(b.data, '%Y-%m') =", $busca['ano'] . '-' . $busca['mes']);
-        $data = $this->db->get('alocacao_observacoes a')->row();
+        $data = $this->db->get('st_observacoes a')->row();
         if (empty($data)) {
             $data = $busca;
         } else {
@@ -1209,6 +1265,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_saveConfig()
     {
         $busca = $this->input->post();
@@ -1310,6 +1367,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_saveConfig_ipesp()
     {
         $data = $this->input->post();
@@ -1346,20 +1404,21 @@ class Apontamento extends MY_Controller
         unset($data['depto'], $data['area'], $data['setor'], $data['cargo'], $data['funcao'], $data['mes'], $data['ano']);
 
         if ($id and $id_alocacao) {
-            $status = $this->db->update('alocacao_observacoes', $data, array('id' => $id));
+            $status = $this->db->update('st_observacoes', $data, array('id' => $id));
         } else {
             $this->db->select('id');
             $alocacao = $this->db->get_where('alocacao', $where)->row();
 
             $data['id_alocacao'] = $alocacao->id;
 
-            $status = $this->db->insert('alocacao_observacoes', $data);
+            $status = $this->db->insert('st_observacoes', $data);
         }
 
 
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function bloquearMes()
     {
         $post = $this->input->post();
@@ -1375,6 +1434,7 @@ class Apontamento extends MY_Controller
         echo json_encode(['status' => $status !== false]);
     }
 
+    //==========================================================================
     public function ajax_ferias()
     {
         $data = $this->input->post();
@@ -1387,7 +1447,7 @@ class Apontamento extends MY_Controller
 
             //            $this->db->select("DATE_FORMAT(b.data, '%Y%m') as data", false);
             //            $this->db->join('alocacao b', 'b.id = a.id_alocacao');
-            //            $row = $this->db->get_where('alocacao_usuarios a', array('a.id' => $data['id']))->row();
+            //            $row = $this->db->get_where('st_alocados a', array('a.id' => $data['id']))->row();
             //            if ($row->data != date("Ym", strtotime(str_replace('/', '-', $data['data_recesso'])))) {
             //                exit('A data de início de férias deve pertencer ao mês e ano correspondentes');
             //            }
@@ -1419,25 +1479,25 @@ class Apontamento extends MY_Controller
 
         $this->db->select('a.*, b.id_empresa, b.data, b.depto, b.area', false);
         $this->db->join('alocacao b', 'b.id = a.id_alocacao');
-        $alocado = $this->db->get_where('alocacao_usuarios a', array('a.id' => $data['id']))->row();
+        $alocado = $this->db->get_where('st_alocados a', array('a.id' => $data['id']))->row();
 
-        $this->db->update('alocacao_usuarios', $data, array('id' => $data['id']));
+        $this->db->update('st_alocados', $data, array('id' => $data['id']));
 
         /* $this->db->select('a.*, b.id_empresa, b.data, b.depto, b.area, b.setor', false);
           $this->db->join('alocacao b', 'b.id = a.id_alocacao');
           $this->db->where('a.id_usuario', $alocado->id_usuario_bck);
           $this->db->where('b.setor', 'backup');
           $this->db->where("DATE_FORMAT(b.data, '%Y-%m') =", date('Y-m', strtotime($alocado->data)));
-          $alocado_bck = $this->db->get('alocacao_usuarios a')->row();
+          $alocado_bck = $this->db->get('st_alocados a')->row();
 
           if ($alocado_bck) {
-          $qtde_alocados = $this->db->get_where('alocacao_usuarios', array('id_alocacao' => $alocado_bck->id_alocacao))->num_rows();
+          $qtde_alocados = $this->db->get_where('st_alocados', array('id_alocacao' => $alocado_bck->id_alocacao))->num_rows();
 
           if ($data['id_usuario_bck'] == null) {
           if ($qtde_alocados === 1) {
           $this->db->delete('alocacao', array('id' => $alocado_bck->id_alocacao));
           } else {
-          $this->db->delete('alocacao_usuarios', array('id' => $alocado_bck->id));
+          $this->db->delete('st_alocados', array('id' => $alocado_bck->id));
           }
 
           } elseif ($alocado_bck->id_usuario != $data['id_usuario_bck']) {
@@ -1465,11 +1525,11 @@ class Apontamento extends MY_Controller
           }
           }
 
-          $this->db->delete('alocacao_apontamento', array('id_alocado' => $alocado_bck->id));
-          $this->db->update('alocacao_usuarios', $data2, array('id' => $alocado_bck->id));
+          $this->db->delete('st_apontamento', array('id_alocado' => $alocado_bck->id));
+          $this->db->update('st_alocados', $data2, array('id' => $alocado_bck->id));
 
           } else {
-          $this->db->update('alocacao_usuarios', array('tipo_bck' => $data['tipo_bck']), array('id' => $alocado_bck->id));
+          $this->db->update('st_alocados', array('tipo_bck' => $data['tipo_bck']), array('id' => $alocado_bck->id));
           }
 
           } else {
@@ -1481,7 +1541,7 @@ class Apontamento extends MY_Controller
           );
 
           $this->db->select('a.id');
-          $this->db->join('alocacao_usuarios b', 'b.id_alocacao = a.id', 'left');
+          $this->db->join('st_alocados b', 'b.id_alocacao = a.id', 'left');
           $this->db->join('usuarios c', 'c.id = b.id_usuario_bck', 'left');
           $this->db->where('a.id_empresa', 'c.empresa');
           $this->db->where('c.id', $data['id_usuario_bck']);
@@ -1509,11 +1569,11 @@ class Apontamento extends MY_Controller
           $data2['id_alocacao'] = $this->db->insert_id();
           }
 
-          $this->db->insert('alocacao_usuarios', $data2);
+          $this->db->insert('st_alocados', $data2);
           }
          */
 
-        $update = "UPDATE alocacao_usuarios 
+        $update = "UPDATE st_alocados 
                    SET data_recesso = '{$data['data_recesso']}', data_retorno = '{$data['data_retorno'] }' 
                    WHERE id_alocacao != {$alocado->id_alocacao} AND 
                          id_usuario = {$alocado->id_usuario} AND
@@ -1524,6 +1584,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => true));
     }
 
+    //==========================================================================
     public function ajax_substituto()
     {
         $data = $this->input->post();
@@ -1533,7 +1594,7 @@ class Apontamento extends MY_Controller
 
             $this->db->select("DATE_FORMAT(b.data, '%Y%m') as data", false);
             $this->db->join('alocacao b', 'b.id = a.id_alocacao');
-            $row = $this->db->get_where('alocacao_usuarios a', array('a.id' => $data['id']))->row();
+            $row = $this->db->get_where('st_alocados a', array('a.id' => $data['id']))->row();
             if ($row->data != date("Ym", strtotime(str_replace('/', '-', $data['data_desligamento'])))) {
                 exit('A data de início deve pertencer ao mês e ano correspondentes');
             }
@@ -1546,25 +1607,25 @@ class Apontamento extends MY_Controller
 
         $this->db->select('a.*, b.id_empresa, b.data, b.depto, b.area, b.setor', false);
         $this->db->join('alocacao b', 'b.id = a.id_alocacao');
-        $alocado = $this->db->get_where('alocacao_usuarios a', array('a.id' => $data['id']))->row();
+        $alocado = $this->db->get_where('st_alocados a', array('a.id' => $data['id']))->row();
 
-        $this->db->update('alocacao_usuarios', $data, array('id' => $data['id']));
+        $this->db->update('st_alocados', $data, array('id' => $data['id']));
 
         /* $this->db->select('a.*, b.id_empresa, b.data, b.depto, b.area, b.setor', false);
           $this->db->join('alocacao b', 'b.id = a.id_alocacao');
           $this->db->where('a.id_usuario', $alocado->id_usuario_sub);
           $this->db->where('b.setor', $alocado->setor);
           $this->db->where("DATE_FORMAT(b.data, '%Y-%m') =", date('Y-m', strtotime($alocado->data)));
-          $alocado_sub = $this->db->get('alocacao_usuarios a')->row();
+          $alocado_sub = $this->db->get('st_alocados a')->row();
 
           if ($alocado_sub) {
-          $qtde_alocados = $this->db->get_where('alocacao_usuarios', array('id_alocacao' => $alocado_bck->id_alocacao))->num_rows();
+          $qtde_alocados = $this->db->get_where('st_alocados', array('id_alocacao' => $alocado_bck->id_alocacao))->num_rows();
 
           if ($data['id_usuario_sub'] == null) {
           if ($qtde_alocados === 1) {
           $this->db->delete('alocacao', array('id' => $alocado_sub->id_alocacao));
           } else {
-          $this->db->delete('alocacao_usuarios', array('id' => $alocado_sub->id));
+          $this->db->delete('st_alocados', array('id' => $alocado_sub->id));
           }
 
           } elseif ($alocado_sub->id_usuario != $data['id_usuario_sub']) {
@@ -1591,8 +1652,8 @@ class Apontamento extends MY_Controller
           }
           }
 
-          $this->db->delete('alocacao_apontamento', array('id_alocado' => $alocado_sub->id));
-          $this->db->update('alocacao_usuarios', $data2, array('id' => $alocado_sub->id));
+          $this->db->delete('st_apontamento', array('id_alocado' => $alocado_sub->id));
+          $this->db->update('st_alocados', $data2, array('id' => $alocado_sub->id));
 
           }
 
@@ -1630,10 +1691,10 @@ class Apontamento extends MY_Controller
           $data2['id_alocacao'] = $this->db->insert_id();
           }
 
-          $this->db->insert('alocacao_usuarios', $data2);
+          $this->db->insert('st_alocados', $data2);
           } */
 
-        $update = "UPDATE alocacao_usuarios 
+        $update = "UPDATE st_alocados 
                    SET data_desligamento = '{$data['data_desligamento']}'
                    WHERE id_alocacao != {$alocado->id_alocacao} AND 
                          id_usuario = {$alocado->id_usuario} AND
@@ -1643,6 +1704,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => true));
     }
 
+    //==========================================================================
     public function ajax_save()
     {
         $data = $this->input->post();
@@ -1686,6 +1748,12 @@ class Apontamento extends MY_Controller
         } else {
             $data['apontamento_desc'] = null;
         }
+        if ($data['apontamento_extra'] === null and $data['apontamento_desc'] === null) {
+            $data['apontamento_saldo'] = null;
+        } else {
+            $sqlSaldo = "SELECT TIMEDIFF(IFNULL('{$data['apontamento_extra']}', 0), IFNULL('{$data['apontamento_desc']}', 0)) AS saldo";
+            $data['apontamento_saldo'] = $this->db->query($sqlSaldo)->row()->saldo ?? null;
+        }
         if (!empty($data['hora_glosa'])) {
             $data['hora_glosa'] = date("H:i", strtotime($data['hora_glosa']));
         } else {
@@ -1711,15 +1779,15 @@ class Apontamento extends MY_Controller
 
         if ($data['id']) {
             $this->db->select('IFNULL(apontamento_saldo, 0) AS apontamento_saldo', false);
-            $row_saldo = $this->db->get_where('alocacao_apontamento', array('id' => $data['id']))->row();
+            $row_saldo = $this->db->get_where('st_apontamento', array('id' => $data['id']))->row();
             $saldo_old = $row_saldo->apontamento_saldo ?? 0;
 
-            $status = $this->db->update('alocacao_apontamento', $data, array('id' => $data['id']));
+            $status = $this->db->update('st_apontamento', $data, array('id' => $data['id']));
             $id = $data['id'];
         } else {
             $saldo_old = 0;
             unset($data['id']);
-            $status = $this->db->insert('alocacao_apontamento', $data);
+            $status = $this->db->insert('st_apontamento', $data);
             $id = $this->db->insert_id();
         }
 
@@ -1730,8 +1798,8 @@ class Apontamento extends MY_Controller
                                      OR '{$saldo_old}' > 0
                                 THEN ADDTIME(SUBTIME(IFNULL(c.saldo_apontamentos, 0), '{$saldo_old}'), IFNULL(a.apontamento_saldo, 0))
                                 ELSE c.saldo_apontamentos END AS saldo
-                FROM alocacao_apontamento a
-                INNER JOIN alocacao_usuarios b
+                FROM st_apontamento a
+                INNER JOIN st_alocados b
                            ON b.id = a.id_alocado
                 INNER JOIN usuarios c
                            ON c.id = b.id_usuario
@@ -1745,6 +1813,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxSaveEventos()
     {
         parse_str($this->input->post('eventos'), $eventos);
@@ -1752,36 +1821,38 @@ class Apontamento extends MY_Controller
 
         $this->db->select("a.id AS id_alocado, '{$eventos['data']}' AS data, '{$eventos['status']}' AS status", false);
         $this->db->join('alocacao b', 'b.id = a.id_alocacao');
-        $this->db->join('alocacao_apontamento c', "c.id_alocado = a.id AND c.data = '{$eventos['data']}'", 'left');
+        $this->db->join('st_apontamento c', "c.id_alocado = a.id AND c.data = '{$eventos['data']}'", 'left');
         $this->db->where($busca);
         $this->db->where('c.data', null);
         $this->db->group_by('a.id');
-        $data = $this->db->get('alocacao_usuarios a')->result_array();
+        $data = $this->db->get('st_alocados a')->result_array();
 
-        $status = $this->db->insert_batch('alocacao_apontamento', $data);
+        $status = $this->db->insert_batch('st_apontamento', $data);
 
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxDeleteEventos()
     {
         parse_str($this->input->post('eventos'), $eventos);
         parse_str($this->input->post('busca'), $busca);
 
         $this->db->select('a.id');
-        $this->db->join('alocacao_usuarios b', 'b.id = a.id_alocado');
+        $this->db->join('st_alocados b', 'b.id = a.id_alocado');
         $this->db->join('alocacao c', 'c.id = b.id_alocacao');
         $this->db->where($busca);
         $this->db->where('a.data', $eventos['data']);
         $this->db->where('a.status', $eventos['status']);
-        $where = $this->db->get('alocacao_apontamento a')->result();
+        $where = $this->db->get('st_apontamento a')->result();
 
         $this->db->where_in('id', array_column($where, 'id'));
-        $status = $this->db->delete('alocacao_apontamento');
+        $status = $this->db->delete('st_apontamento');
 
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_delete()
     {
         $id = $this->input->post('id');
@@ -1790,8 +1861,8 @@ class Apontamento extends MY_Controller
                        CASE WHEN a.apontamento_saldo IS NOT NULL OR c.saldo_apontamentos IS NOT NULL
                             THEN SUBTIME(IFNULL(c.saldo_apontamentos, 0), IFNULL(a.apontamento_saldo, 0))
                             ELSE c.saldo_apontamentos END AS saldo
-                FROM alocacao_apontamento a
-                INNER JOIN alocacao_usuarios b
+                FROM st_apontamento a
+                INNER JOIN st_alocados b
                            ON b.id = a.id_alocado
                 INNER JOIN usuarios c
                            ON c.id = b.id_usuario
@@ -1802,12 +1873,13 @@ class Apontamento extends MY_Controller
         $status = $this->db->update('usuarios', $data, array('id' => $row->id));
 
         if ($status !== false) {
-            $status = $this->db->delete('alocacao_apontamento', array('id' => $id));
+            $status = $this->db->delete('st_apontamento', array('id' => $id));
         }
 
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_limpar()
     {
         $post = $this->input->post();

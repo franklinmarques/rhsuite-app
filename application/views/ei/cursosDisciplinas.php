@@ -108,6 +108,7 @@
                                             <tr>
                                                 <th>Curso</th>
                                                 <th>Disciplina</th>
+                                                <th>Semestre</th>
                                                 <th>Ações</th>
                                             </tr>
                                             </thead>
@@ -194,6 +195,13 @@
                                         <div class="col-md-9">
                                             <input name="nome" class="form-control" type="text" maxlength="255"
                                                    autofocus>
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-4">Semestre da disciplina</label>
+                                        <div class="col-md-2">
+                                            <input name="qtde_semestres" class="form-control semestres" type="text">
                                             <span class="help-block"></span>
                                         </div>
                                     </div>
@@ -422,10 +430,10 @@
                 'dataType': 'json',
                 'data': {'id': id},
                 'success': function (json) {
-                    $('[name="id"]').val(json.id);
-                    $('[name="id_empresa"]').val(json.id_empresa);
-                    $('[name="nome"]').val(json.nome);
-                    $('[name="qtde_semestres"]').val(json.qtde_semestres);
+                    $('#form_curso [name="id"]').val(json.id);
+                    $('#form_curso [name="id_empresa"]').val(json.id_empresa);
+                    $('#form_curso [name="nome"]').val(json.nome);
+                    $('#form_curso [name="qtde_semestres"]').val(json.qtde_semestres);
 
                     $('#id_diretoria').val(json.id_diretoria);
                     $('#id_escola').html($(json.escolas).html());
@@ -453,9 +461,10 @@
                 'dataType': 'json',
                 'data': {'id': id},
                 'success': function (json) {
-                    $('[name="id"]').val(json.id);
-                    $('[name="id_curso"]').val(json.id_curso);
-                    $('[name="nome"]').val(json.nome);
+                    $('#form_disciplina [name="id"]').val(json.id);
+                    $('#form_disciplina [name="id_curso"]').val(json.id_curso);
+                    $('#form_disciplina [name="nome"]').val(json.nome);
+                    $('#form_disciplina [name="qtde_semestres"]').val(json.qtde_semestres);
 
                     $('#modal_disciplina').modal('show');
                     $('.modal-title').text('Editar disciplina - ' + json.nome); // Set title to Bootstrap modal title

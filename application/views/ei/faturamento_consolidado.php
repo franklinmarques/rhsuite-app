@@ -84,7 +84,7 @@
             <td nowrap>
                 <?php if ($is_pdf == false): ?>
                     <a id="pdf" class="btn btn-sm btn-info"
-                       href="<?= site_url('ei/relatorios/pdfPagamentoPrestadores/?' . $query_string); ?>"
+                       href="<?= site_url('ei/relatorios/pdfFaturamentoConsolidado/?' . $query_string); ?>"
                        title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar PDF</a>
                 <?php endif; ?>
             </td>
@@ -107,7 +107,7 @@
     </table>
 
     <div>
-        <table id="faturmaneto_consolidado" class="table table-condensed table-bordered">
+        <table id="faturamento_consolidado" class="table table-condensed table-bordered">
             <thead>
             <tr class="active">
                 <th width="25%" class="text-nowrap">Unidade Ensino</th>

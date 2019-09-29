@@ -209,6 +209,7 @@ class Produtos extends MY_Controller
         $this->produtos->setValidationLabel('id_area', 'Área');
         $this->produtos->setValidationLabel('id_setor', 'Setor');
         $this->produtos->setValidationLabel('centro_custo', 'Centro de Custo');
+        $this->produtos->setValidationLabel('complementos', 'Complementos do produto');
 
         $this->produtos->validate($data) or exit(json_encode(['erro' => $this->produtos->errors()]));
 

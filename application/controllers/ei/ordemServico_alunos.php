@@ -4,11 +4,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class OrdemServico_alunos extends MY_Controller
 {
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    //==========================================================================
     public function index()
     {
         $this->gerenciar();
     }
 
+    //==========================================================================
     public function gerenciar($id_escola = null)
     {
         $this->db->select('a2.nome AS ordemServico, e.id AS id_depto', false);
@@ -31,6 +39,7 @@ class OrdemServico_alunos extends MY_Controller
         $this->load->view('ei/ordemServico_alunos', $data);
     }
 
+    //==========================================================================
     public function montarEstrutura()
     {
         parse_str($this->input->post('busca'), $busca);
@@ -43,6 +52,7 @@ class OrdemServico_alunos extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajaxList($id_escola = '')
     {
         $post = $this->input->post();
@@ -111,6 +121,7 @@ class OrdemServico_alunos extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajaxEdit()
     {
         $id = $this->input->post('id');
@@ -129,6 +140,7 @@ class OrdemServico_alunos extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajaxAdd()
     {
         $data = $this->input->post();
@@ -177,6 +189,7 @@ class OrdemServico_alunos extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxUpdate()
     {
         $id = $this->input->post('id');
@@ -226,6 +239,7 @@ class OrdemServico_alunos extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxDelete()
     {
         $osAluno = $this->db
@@ -245,6 +259,7 @@ class OrdemServico_alunos extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     private function atualizarNotaGeral($idAlunoCurso = null)
     {
         $osAluno = $this->db
@@ -258,12 +273,7 @@ class OrdemServico_alunos extends MY_Controller
         $this->db->update('ei_alunos_cursos', ['nota_geral' => $notaGeral], ['id' => $idAlunoCurso]);
     }
 
-    /*
-    |---------------------------------------------------------------------------
-    | Funções privadas
-    |---------------------------------------------------------------------------
-    */
-
+    //==========================================================================
     private function getAlunos()
     {
         $this->db->select('a.id, a.nome');
@@ -282,6 +292,7 @@ class OrdemServico_alunos extends MY_Controller
         return ['' => 'selecione...'] + array_column($rows, 'nome', 'id');
     }
 
+    //==========================================================================
     private function getAlunoCursos($id = '')
     {
         $this->db->select('a.id, b.nome');

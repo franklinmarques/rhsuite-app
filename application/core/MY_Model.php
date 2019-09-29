@@ -12,10 +12,6 @@ class MY_Model extends CI_Model
 
     protected static $insertID = 0;
 
-    protected $returnType = 'object';
-
-    protected $tempReturnType;
-
     protected $uploadConfig = [];
 
     protected $validationRules = [];
@@ -52,22 +48,6 @@ class MY_Model extends CI_Model
     }
 
     //==========================================================================
-    public function asObject(string $class = 'object')
-    {
-        $this->tempReturnType = $class;
-
-        return $this;
-    }
-
-    //==========================================================================
-    public function asArray()
-    {
-        $this->tempReturnType = 'array';
-
-        return $this;
-    }
-
-    //==========================================================================
     public function find($id = null)
     {
         if (is_array($id)) {
@@ -87,7 +67,7 @@ class MY_Model extends CI_Model
         }
 
         if (!empty($offset)) {
-            $this->db->offset($offset);
+            $this->db->limit($offset);
         }
 
         return $this->db->get(static::$table)->result();
@@ -328,30 +308,45 @@ class MY_Model extends CI_Model
 
         $data = $this->trigger('beforeInsert', ['data' => $data]);
 
-        $this->db->trans_begin();
-
         if ($result) {
-            $this->db->insert(static::$table, $data['data']);
-            $insertID = $this->db->insert_id();
+            $result = $this->db->insert(static::$table, $data['data']);
         }
 
-        if ($this->db->trans_status() === false) {
+        if ($result) {
+            $insertID = $this->db->insert_id();
+        } else {
             $this->deleteFiles($data);
-            $result = false;
         }
 
         $this->trigger('afterInsert', ['data' => $originalData, 'result' => $result]);
 
         if ($result == false) {
-            $this->db->trans_rollback();
             return false;
         }
-
-        $this->db->trans_commit();
 
         static::$insertID = $insertID;
 
         return $returnID ? static::$insertID : true;
+    }
+
+    //==========================================================================
+    public function insertBatch(array $set = null, bool $escape = null, int $batchSize = 100)
+    {
+        if (empty($set)) {
+            $set = null;
+        } elseif (is_array($set) && $this->skipValidation === false) {
+            if (count($set) > $batchSize and $batchSize > 0) {
+                $set = array_slice($set, 0, $batchSize);
+            }
+
+            foreach ($set as $row) {
+                if ($this->validate($row) === false) {
+                    return false;
+                }
+            }
+        }
+
+        return $this->db->insert_batch(static::$table, $set);
     }
 
     //==========================================================================
@@ -388,27 +383,57 @@ class MY_Model extends CI_Model
 
         $data = $this->trigger('beforeUpdate', ['id' => $id, 'data' => $data]);
 
-        $this->db->trans_begin();
-
         if ($result) {
-            $this->db->where_in(static::$primaryKey, $data['id'])->update(static::$table, $data['data']);
+            $result = $this->db->where_in(static::$primaryKey, $data['id'])->update(static::$table, $data['data']);
         }
 
-        if ($this->db->trans_status()) {
+        if ($result and $oldData) {
             $result = $this->deleteFiles($oldData);
-        } else {
-            $result = $this->deleteFiles($data);
+
+            if ($result == false) {
+                $this->db->update_batch(static::$table, $oldData, static::$primaryKey);
+            }
         }
 
-        if ($result) {
-            $this->db->trans_commit();
-        } else {
-            $this->db->trans_rollback();
+        if ($result == false) {
+            $this->deleteFiles($data);
         }
 
         $this->trigger('afterUpdate', ['id' => $id, 'data' => $originalData, 'result' => $result]);
 
         return $result;
+    }
+
+    //==========================================================================
+    public function updateBatch(array $set = null, string $index = null, int $batchSize = 100)
+    {
+        if (empty($set)) {
+            $set = null;
+        } elseif (is_array($set) && $this->skipValidation === false) {
+            if (count($set) > $batchSize and $batchSize > 0) {
+                $set = array_slice($set, 0, $batchSize);
+            }
+
+            foreach ($set as $row) {
+                if ($this->validate($row) === false) {
+                    return false;
+                }
+            }
+        }
+
+        return $this->db->update_batch(static::$table, $set, $index);
+    }
+
+    //==========================================================================
+    public function replace($data = null)
+    {
+        if (!empty($data) && $this->skipValidation === false) {
+            if ($this->validate($data) === false) {
+                return false;
+            }
+        }
+
+        return $this->db->replace(static::$table, $data);
     }
 
     //==========================================================================
@@ -426,19 +451,14 @@ class MY_Model extends CI_Model
 
         $this->trigger('beforeDelete', ['id' => $id]);
 
-        $this->db->trans_begin();
-        $this->db->where_in(static::$primaryKey, $id)->delete(static::$table);
+        $result = $this->db->where_in(static::$primaryKey, $id)->delete(static::$table);
 
-        $result = true;
-
-        if ($this->db->trans_status()) {
+        if ($result and $data) {
             $result = $this->deleteFiles($data);
-        }
 
-        if ($result) {
-            $this->db->trans_commit();
-        } else {
-            $this->db->trans_rollback();
+            if ($result == false) {
+                $this->db->insert_batch(static::$table, $data);
+            }
         }
 
         $this->trigger('afterDelete', ['id' => $id, 'result' => $result, 'data' => null]);

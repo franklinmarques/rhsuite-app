@@ -5,12 +5,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class OrdemServico_profissionais extends MY_Controller
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    //==========================================================================
     public function index()
     {
         $this->gerenciar();
     }
 
-
+    //==========================================================================
     public function gerenciar($idEscola = null)
     {
         if (empty($idEscola)) {
@@ -67,7 +73,7 @@ class OrdemServico_profissionais extends MY_Controller
         $this->load->view('ei/ordemServico_profissionais', $data);
     }
 
-
+    //==========================================================================
     public function ajaxList()
     {
         $idEscola = $this->input->post('id_escola');
@@ -152,7 +158,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode($output);
     }
 
-
+    //==========================================================================
     public function ajaxEdit()
     {
         $idEscola = $this->input->post('id_escola');
@@ -194,7 +200,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function atualizarFiltros()
     {
         parse_str($this->input->post('busca'), $busca);
@@ -217,7 +223,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function ajaxEditHorario()
     {
         $id = $this->input->post('id');
@@ -272,7 +278,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function ajaxEditDados()
     {
         $id = $this->input->post('id');
@@ -411,7 +417,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode($retorno);
     }
 
-
+    //==========================================================================
     public function ajaxEditSubstituto1()
     {
         $id = $this->input->post('id');
@@ -435,6 +441,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajaxEditSubstituto2()
     {
         $id = $this->input->post('id');
@@ -459,6 +466,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function atualizarSubstituto()
     {
         $municipio = $this->input->post('municipio');
@@ -475,7 +483,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function ajaxSave()
     {
         $idOSEscola = $this->input->post('id_ordem_servico_escola');
@@ -530,7 +538,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-
+    //==========================================================================
     public function ajaxAddHorarios()
     {
         $isOSProfissioanl = $this->input->post('id_os_profissional');
@@ -609,7 +617,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-
+    //==========================================================================
     public function ajaxUpdateHorario()
     {
         $id = $this->input->post('id');
@@ -685,7 +693,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-
+    //==========================================================================
     public function ajaxDelete()
     {
         $id = $this->input->post('id');
@@ -694,7 +702,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-
+    //==========================================================================
     public function ajaxDeleteHorario()
     {
         $id = $this->input->post('id');
@@ -703,7 +711,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-
+    //==========================================================================
     public function ajaxSaveDados()
     {
         $data = $this->input->post();
@@ -719,19 +727,23 @@ class OrdemServico_profissionais extends MY_Controller
             $idSupervisor = $data['id_supervisor'];
             unset($data['id'], $data['id_usuario'], $data['id_ordem_servico_escola'], $data['id_supervisor']);
             $tipo = array_column($this->db->field_data('ei_ordem_servico_horarios'), 'type', 'name');
+            $tipo['pagamento_inicio'] = 'decimal';
+            $tipo['pagamento_reajuste'] = 'decimal';
         } else {
             unset($data['id'], $data['id_os_profissional']);
             $tipo = array_column($this->db->field_data('ei_ordem_servico_profissionais'), 'type', 'name');
         }
 
         foreach ($data as $campo => $valor) {
-            if ($tipo[$campo] == 'decimal') {
-                $data[$campo] = str_replace(array('.', ','), array('', '.'), $valor);
-            } elseif ($tipo[$campo] == 'date') {
-                if (strlen($data[$campo])) {
-                    $data[$campo] = date('Y-m-d', strtotime(str_replace('/', '-', $data[$campo])));
-                } else {
-                    $data[$campo] = null;
+            if (isset($tipo[$campo])) {
+                if ($tipo[$campo] == 'decimal') {
+                    $data[$campo] = str_replace(array('.', ','), array('', '.'), $valor);
+                } elseif ($tipo[$campo] == 'date') {
+                    if (strlen($data[$campo])) {
+                        $data[$campo] = date('Y-m-d', strtotime(str_replace('/', '-', $data[$campo])));
+                    } else {
+                        $data[$campo] = null;
+                    }
                 }
             }
         }
@@ -741,8 +753,10 @@ class OrdemServico_profissionais extends MY_Controller
             $horario = $this->db->get_where('ei_ordem_servico_horarios', ['id' => $id])->row();
             $this->db->where('id_os_profissional', $idOSProfissional);
             $this->db->where('periodo', $horario->periodo);
-            $status = $this->db->update('ei_ordem_servico_horarios', $data);
-            $this->db->update('ei_ordem_servico_profissionais', ['id_supervisor' => $idSupervisor], ['id' => $idOSProfissional]);
+            $data2 = $data;
+            unset($data2['pagamento_inicio'], $data2['pagamento_reajuste']);
+            $status = $this->db->update('ei_ordem_servico_horarios', $data2);
+            $this->db->update('ei_ordem_servico_profissionais', ['id_supervisor' => $idSupervisor, 'pagamento_inicio' => $data['pagamento_inicio'], 'pagamento_reajuste' => $data['pagamento_reajuste']], ['id' => $idOSProfissional]);
         } else {
             if ($idOSProfissional) {
                 if (!$this->db->get_where('ei_ordem_servico_profissionais', ['id' => $idOSProfissional])->num_rows()) {
@@ -758,6 +772,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxSaveSubstituto1()
     {
         $data = $this->input->post();
@@ -778,6 +793,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxSaveSubstituto2()
     {
         $data = $this->input->post();
@@ -798,12 +814,7 @@ class OrdemServico_profissionais extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-    /*
-    |---------------------------------------------------------------------------
-    | Funções privadas
-    |---------------------------------------------------------------------------
-    */
-
+    //==========================================================================
     private function getDepartamentos()
     {
         $this->db->select('id, nome');
@@ -813,6 +824,7 @@ class OrdemServico_profissionais extends MY_Controller
         return array_column($rows, 'nome', 'id');
     }
 
+    //==========================================================================
     private function getAreas($where = array())
     {
         $this->db->select('a.id, a.nome');
@@ -827,6 +839,7 @@ class OrdemServico_profissionais extends MY_Controller
         return ['' => 'Todas'] + array_column($rows, 'nome', 'id');
     }
 
+    //==========================================================================
     private function getSetores($where = array())
     {
         $this->db->select('a.id, a.nome');
@@ -845,6 +858,7 @@ class OrdemServico_profissionais extends MY_Controller
         return ['' => 'Todos'] + array_column($rows, 'nome', 'id');
     }
 
+    //==========================================================================
     private function getCargos($where = array())
     {
         $this->db->select('a.id, a.nome');
@@ -866,6 +880,7 @@ class OrdemServico_profissionais extends MY_Controller
         return ['' => 'Todos'] + array_column($rows, 'nome', 'id');
     }
 
+    //==========================================================================
     private function getFuncoes($where = array())
     {
         $this->db->select('a.id, a.nome');
@@ -891,6 +906,7 @@ class OrdemServico_profissionais extends MY_Controller
         return ['' => 'Todas'] + array_column($rows, 'nome', 'id');
     }
 
+    //==========================================================================
     private function getMunicipios($where = array())
     {
         $this->db->select('a.municipio');
@@ -919,6 +935,7 @@ class OrdemServico_profissionais extends MY_Controller
         return ['' => 'Todos'] + array_column($rows, 'municipio', 'municipio');
     }
 
+    //==========================================================================
     private function getUsuarios($where = array())
     {
         $this->db->select('a.id, a.nome');
@@ -949,7 +966,7 @@ class OrdemServico_profissionais extends MY_Controller
         return array_column($rows, 'nome', 'id');
     }
 
-    //--------------------------------------------------------------------------
+    //==========================================================================
 
     /**
      * Calcula o total de dias de uma semana para cada mês de um semestre

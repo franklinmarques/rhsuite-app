@@ -7,13 +7,13 @@
                 <div class="col-md-12">
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
-                        <li><a href="<?= site_url('cd/apontamento') ?>">Apontamentos diários</a></li>
+                        <li><a href="<?= site_url('cd/apontamento') ?>">Cuidadores - Apontamentos diários</a></li>
                         <li class="active">Gerenciar Unidades de Ensino</li>
                     </ol>
-                    <button class="btn btn-success" onclick="add_escola()"><i class="glyphicon glyphicon-plus"></i>
+                    <button class="btn btn-info" onclick="add_escola()"><i class="glyphicon glyphicon-plus"></i>
                         Adicionar unidade de ensino
                     </button>
-                    <a class="btn btn-success" href="<?= site_url('cd/escolas/importar') ?>"><i
+                    <a class="btn btn-primary" href="<?= site_url('cd/escolas/importacao') ?>"><i
                                 class="glyphicon glyphicon-import"></i>
                         Importar escolas
                     </a>
@@ -29,11 +29,11 @@
                                     <div class="row">
                                         <div class="col-md-5">
                                             <label class="control-label">Diretoria de ensino/Prefeitura</label>
-                                            <?php echo form_dropdown('busca[diretoria]', $diretoria, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('diretoria', $diretoria, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-5">
                                             <label class="control-label">Supervisor(a)</label>
-                                            <?php echo form_dropdown('busca[supervisor]', $supervisor, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('supervisor', $supervisor, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-2">
                                             <label>&nbsp;</label><br>
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                     </div>
-                    <table id="table" class="table table-striped" cellspacing="0" width="100%">
+                    <table id="table" class="table table-striped table-condensed" cellspacing="0" width="100%">
                         <thead>
                         <tr>
                             <th>Diretoria de Ensino</th>
@@ -150,7 +150,7 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Salvar</button>
+                            <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
@@ -166,7 +166,7 @@
 
     <script>
         $(document).ready(function () {
-            document.title = 'CORPORATE RH - LMS - Gerenciar Unidades de Ensino';
+            document.title = 'CORPORATE RH - LMS - Cuidadores - Gerenciar Unidades de Ensino';
         });
     </script>
 
@@ -192,7 +192,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('cd/escolas/ajax_list') ?>',
+                    'url': '<?php echo site_url('cd/escolas/listar') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.busca = $('#busca').serialize();
@@ -234,14 +234,18 @@
 
         function atualizarFiltro() {
             $.ajax({
-                'url': '<?php echo site_url('cd/escolas/atualizar_filtro/') ?>',
+                'url': '<?php echo site_url('cd/escolas/atualizarFiltro/') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
                 'success': function (json) {
-                    $('[name="busca[diretoria]"]').html($(json.diretoria).html());
-                    $('[name="busca[supervisor]"]').html($(json.supervisor).html());
-                    reload_table();
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        $('#busca [name="diretoria"]').html($(json.diretoria).html());
+                        $('#busca [name="supervisor"]').html($(json.supervisor).html());
+                        reload_table();
+                    }
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -271,16 +275,20 @@
             $('.help-block').empty();
 
             $.ajax({
-                'url': '<?php echo site_url('cd/escolas/ajax_edit') ?>',
+                'url': '<?php echo site_url('cd/escolas/editar') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
                 'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
                     $.each(json, function (key, value) {
-                        if ($('[name="' + key + '"]').is(':checkbox') === false) {
-                            $('[name="' + key + '"]').val(value);
+                        if ($('#form [name="' + key + '"]').is(':checkbox') === false) {
+                            $('#form [name="' + key + '"]').val(value);
                         } else {
-                            $('[name="' + key + '"]').prop('checked', value === '1');
+                            $('#form [name="' + key + '"]').prop('checked', value === '1');
                         }
                     });
 
@@ -300,15 +308,8 @@
 
 
         function save() {
-            var url;
-            if (save_method === 'add') {
-                url = '<?php echo site_url('cd/escolas/ajax_add') ?>';
-            } else {
-                url = '<?php echo site_url('cd/escolas/ajax_update') ?>';
-            }
-
             $.ajax({
-                'url': url,
+                'url': '<?php echo site_url('cd/escolas/salvar') ?>',
                 'type': 'POST',
                 'data': $('#form').serialize(),
                 'dataType': 'json',
@@ -336,13 +337,16 @@
         function delete_escola(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    'url': '<?php echo site_url('cd/escolas/ajax_delete') ?>/',
+                    'url': '<?php echo site_url('cd/escolas/excluir') ?>',
                     'type': 'POST',
                     'dataType': 'json',
-                    'data': {id: id},
+                    'data': {'id': id},
                     'success': function (json) {
-                        $('#modal_form').modal('hide');
-                        reload_table();
+                        if (json.erro) {
+                            alert(json.erro);
+                        } else {
+                            reload_table();
+                        }
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');

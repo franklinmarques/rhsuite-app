@@ -65,6 +65,8 @@ class RequisicoesPessoal extends Entity
     protected $competencias_comportamentais;
     protected $atividades_associadas;
     protected $observacoes;
+    protected $observacoes_selecionador;
+    protected $observacoes_gerais;
     protected $estagio;
     protected $status;
     protected $data_nascimento;
@@ -139,6 +141,8 @@ class RequisicoesPessoal extends Entity
         'competencias_comportamentais' => '?string',
         'atividades_associadas' => '?string',
         'observacoes' => '?string',
+        'observacoes_selecionador' => '?string',
+        'observacoes_gerais' => '?string',
         'estagio' => 'int',
         'status' => 'string',
         'data_nascimento' => '?datetime',

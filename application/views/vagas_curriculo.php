@@ -72,11 +72,20 @@
 
         }
 
-        ul.nav-pills li a {
+        ul.nav-pills.visible-xs li a {
             cursor: default;
             border: 1px solid #ccc;
             border-radius: 20px;
-            font-size: 16px;
+            font-size: 9px;
+            font-weight: bold;
+            padding: 6px 9px;
+        }
+
+        ul.nav-pills.hidden-xs li a {
+            cursor: default;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: normal;
         }
 
@@ -128,9 +137,9 @@
     </div>
     <div style="width: 100%; max-width: 70%; margin: 0 auto;">
         <div align="center">
-            <h4>Caro profissional, seja bem-vindo ao nosso cadastro de profissionais.</h4>
-            <h5>Preencha seus dados em nosso banco de profissionais e participe de todos os nossos processos
-                seletivos.</h5>
+            <h4>Bem-vindo ao cadastro de candidatos.</h4>
+            <!--            <h5>Preencha seus dados e participe de nossos processos-->
+            <!--                seletivos.</h5>-->
         </div>
     </div>
     <br>
@@ -140,10 +149,24 @@
         </div>
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-xs-12">
                     <div id="alert"></div>
 
-                    <ul class="nav nav-pills" role="tablist" style="font-size: 15px; font-weight: bolder;">
+                    <ul class="nav nav-pills visible-xs" role="tablist" style="font-weight: bolder;">
+                        <li role="presentation" class="active">
+                            <a href="#dados_cadastrais" aria-controls="dados_cadastrais" role="tab" data-toggle="pill">1.
+                                Dados <br>cadastrais</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#formacao" aria-controls="formacao" role="tab" data-toggle="pill">2. Formação<br>&nbsp;</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#historico_profissional" aria-controls="historico_profissional" role="tab"
+                               data-toggle="pill">3. Histórico <br>profissional</a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav nav-pills hidden-xs" role="tablist" style="font-weight: bolder;">
                         <li role="presentation" class="active">
                             <a href="#dados_cadastrais" aria-controls="dados_cadastrais" role="tab" data-toggle="pill">1.
                                 Dados cadastrais</a>
@@ -166,15 +189,16 @@
                             <input type="hidden" name="id" value="">
                             <div class="row">
                                 <div class="col-sm-12 text-right">
-                                    <button class="btn btn-default" onclick="javascript:history.back()"><i
-                                                class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
-                                    </button>
-                                    <button type="button" class="btn btn-success btnSaveDadosCadastrais"
-                                            onclick="save_dados_cadastrais();">Avançar <i
+                                    <a class="btn btn-success" href="<?= site_url($url_empresa . 'vagas'); ?>">
+                                        <i class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
+                                    </a>
+                                    <button type="button" class="btn btn-success btnValidarDadosCadastrais"
+                                            onclick="validar_dados_cadastrais();">Avançar <i
                                                 class="glyphicon glyphicon-circle-arrow-right"></i>
                                     </button>
                                 </div>
                             </div>
+                            <br>
                             <fieldset>
                                 <legend>Campos obrigatórios</legend>
                                 <div class="form-group last">
@@ -257,7 +281,7 @@
                                                 class="text-danger">*</span></label>
                                     <div class="col-lg-4 controls">
                                         <input type="email" name="email" placeholder="E-mail"
-                                               value="nome@email.com.br"
+                                               value="" autocomplete="off"
                                                class="form-control"/>
                                     </div>
                                 </div>
@@ -265,18 +289,16 @@
                                     <label class="col-sm-2 control-label">Senha <span
                                                 class="text-danger">*</span></label>
                                     <div class="col-lg-4 controls">
-                                        <input type="password" name="senha" placeholder="Senha" value="123"
+                                        <input type="password" name="senha" placeholder="Senha" value=""
                                                max="32"
-                                               class="form-control" autocomplete="off"/>
-                                        <i class="help-block">Senha padrão: 123.</i>
+                                               class="form-control" autocomplete="new-password"/>
                                     </div>
                                     <label class="col-sm-1 control-label">Confirmar senha <span
                                                 class="text-danger">*</span></label>
                                     <div class="col-lg-4 controls">
                                         <input type="password" name="confirmar_senha"
                                                placeholder="Confirmar senha"
-                                               value="123" max="32" class="form-control" autocomplete="off"/>
-                                        <i class="help-block">Confirmação de senha padrão: 123.</i>
+                                               value="" max="32" class="form-control" autocomplete="new-password"/>
                                     </div>
                                 </div>
                             </fieldset>
@@ -383,21 +405,21 @@
                                         <?php echo form_dropdown('deficiencia', $deficiencias, '', 'id="deficiencia" class="form-control"'); ?>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <!--<div class="form-group">
                                     <label class="col-sm-2 control-label">Fonte contratação</label>
                                     <div class="col-sm-5 col-lg-4 controls">
-                                        <?php echo form_dropdown('fonte_contratacao', $fontesContratacao, '', 'class="form-control"'); ?>
+                                        <?php /*echo form_dropdown('fonte_contratacao', $fontesContratacao, '', 'class="form-control"'); */ ?>
                                     </div>
-                                </div>
+                                </div>-->
                             </fieldset>
                             <hr>
                             <div class="row">
                                 <div class="col-sm-12 text-right">
-                                    <a class="btn btn-default" href="<?= site_url($url_empresa . 'vagas'); ?>"><i
+                                    <a class="btn btn-success" href="<?= site_url($url_empresa . 'vagas'); ?>"><i
                                                 class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
                                     </a>
-                                    <button type="button" class="btn btn-success btnSaveDadosCadastrais"
-                                            onclick="save_dados_cadastrais();">Avançar <i
+                                    <button type="button" class="btn btn-success btnValidarDadosCadastrais"
+                                            onclick="validar_dados_cadastrais();">Avançar <i
                                                 class="glyphicon glyphicon-circle-arrow-right"></i>
                                     </button>
                                 </div>
@@ -413,11 +435,11 @@
                                     <?php echo form_dropdown('escolaridade', $escolaridades, '', 'class="form-control"'); ?>
                                 </div>
                                 <div class="col-sm-6 text-right">
-                                    <button type="button" class="btn btn-default" onclick="edit_dados_cadastrais();"><i
+                                    <button type="button" class="btn btn-success" onclick="edit_dados_cadastrais();"><i
                                                 class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
                                     </button>
-                                    <button type="button" class="btn btn-success btnSaveFormacao"
-                                            onclick="save_formacao();">Avançar <i
+                                    <button type="button" class="btn btn-success btnValidarFormacao"
+                                            onclick="validar_formacao();">Avançar <i
                                                 class="glyphicon glyphicon-circle-arrow-right"></i>
                                     </button>
                                 </div>
@@ -478,7 +500,7 @@
                                                class="form-control text-center ano"/>
                                     </div>
                                 </div>
-                                <hr>
+                                <br>
                                 <input type="hidden" name="id_escolaridade[2]" value="">
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Curso 2</label>
@@ -508,10 +530,10 @@
                                                class="form-control text-center ano"/>
                                     </div>
                                 </div>
-                                <hr>
+                                <br>
                                 <input type="hidden" name="id_escolaridade[3]" value="">
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">Curso 1</label>
+                                    <label class="col-sm-2 control-label">Curso 3</label>
                                     <div class="col-sm-4 controls">
                                         <input type="text" name="curso[3]" placeholder="Nome do curso de formação"
                                                value=""
@@ -570,7 +592,7 @@
                                                class="form-control text-center ano"/>
                                     </div>
                                 </div>
-                                <hr>
+                                <br>
                                 <input type="hidden" name="id_escolaridade[5]" value="">
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Curso 2</label>
@@ -600,7 +622,7 @@
                                                class="form-control text-center ano"/>
                                     </div>
                                 </div>
-                                <hr>
+                                <br>
                                 <input type="hidden" name="id_escolaridade[6]" value="">
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Curso 3</label>
@@ -655,7 +677,7 @@
                                                value="" class="form-control"/>
                                     </div>
                                 </div>
-                                <hr>
+                                <br>
                                 <input type="hidden" name="id_escolaridade[8]" value="">
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Curso 2</label>
@@ -678,7 +700,7 @@
                                                value="" class="form-control"/>
                                     </div>
                                 </div>
-                                <hr>
+                                <br>
                                 <input type="hidden" name="id_escolaridade[9]" value="">
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Curso 3</label>
@@ -726,7 +748,7 @@
                                                value="" class="form-control"/>
                                     </div>
                                 </div>
-                                <hr>
+                                <br>
                                 <input type="hidden" name="id_escolaridade[11]" value="">
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Curso 2</label>
@@ -749,7 +771,7 @@
                                                value="" class="form-control"/>
                                     </div>
                                 </div>
-                                <hr>
+                                <br>
                                 <input type="hidden" name="id_escolaridade[12]" value="">
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Curso 3</label>
@@ -776,11 +798,11 @@
                             <hr>
                             <div class="row">
                                 <div class="col-sm-12 text-right">
-                                    <button type="button" class="btn btn-default" onclick="edit_dados_cadastrais();"><i
+                                    <button type="button" class="btn btn-success" onclick="edit_dados_cadastrais();"><i
                                                 class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
                                     </button>
-                                    <button type="button" class="btn btn-success btnSaveFormacao"
-                                            onclick="save_formacao();">Avançar <i
+                                    <button type="button" class="btn btn-success btnValidarFormacao"
+                                            onclick="validar_formacao();">Avançar <i
                                                 class="glyphicon glyphicon-circle-arrow-right"></i>
                                     </button>
                                 </div>
@@ -797,11 +819,11 @@
                                         branco será removido do cadastro.</i>
                                 </div>
                                 <div class="col-sm-6 text-right">
-                                    <button type="button" class="btn btn-default" onclick="edit_formacao();">
+                                    <button type="button" class="btn btn-success" onclick="edit_formacao();">
                                         <i class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
                                     </button>
-                                    <button type="button" class="btn btn-success btnSaveHistoricoProfissional"
-                                            onclick="save_historico_profissional();"><i
+                                    <button type="button" class="btn btn-success btnSave"
+                                            onclick="save();"><i
                                                 class="fa fa-save"></i> Concluir
                                     </button>
                                 </div>
@@ -1315,11 +1337,11 @@
                             <hr>
                             <div class="row">
                                 <div class="col-sm-12 text-right">
-                                    <button type="button" class="btn btn-default" onclick="edit_formacao();">
+                                    <button type="button" class="btn btn-success" onclick="edit_formacao();">
                                         <i class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
                                     </button>
-                                    <button type="button" class="btn btn-success btnSaveHistoricoProfissional"
-                                            onclick="save_historico_profissional();"><i
+                                    <button type="button" class="btn btn-success btnSave"
+                                            onclick="save();"><i
                                                 class="fa fa-save"></i> Concluir
                                     </button>
                                 </div>
@@ -1340,22 +1362,27 @@
 <div id="modal_cpf" class="modal" tabindex="-1" role="dialog" data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" style="float:right;">Fechar
+                </button>
+                <h3 class="modal-title">Caro(a) candidato(a)</h3>
+            </div>
             <div class="modal-body">
                 <form id="form_recuperacao_senha" action="#" class="form-horizontal" autocomplete="off">
                     <input type="hidden" name="email" value="">
-                    <h4>Caro(a) candidato(a)</h4>
-                    <br>
                     <p>Seu CPF já está cadastrado no nosso banco de dados.</p>
                     <p>E-mail do perfil cadastrado: <i id="alert_cpf"></i></p>
                     <br>
-                    <p>Clique no botão abaixo para recuperar sua senha de acesso ao portal de vagas.</p>
+                    <p>Clique no botão abaixo para recuperar sua senha de acesso ao portal de vagas ou acesse o Portal
+                        do Candidadto.</p>
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="btnRecuperarSenha" type="button" class="btn btn-warning" onclick="recuperar_senha();">
+                <button id="btnRecuperarSenha" type="button" class="btn btn-warning btn-sm"
+                        onclick="recuperar_senha();">
                     Recuperar senha
                 </button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar e limpar campo de CPF</button>
+                <a type="button" class="btn btn-primary btn-sm" href="login">Entrar no portal</a>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -1392,6 +1419,8 @@
 
 <script>
     var table;
+    var dados_candidato, dados_formacao_educacional, dados_experiencia_profissional;
+
 
     $('.tags').tagsInput({'width': 'auto', 'defaultText': 'Telefone', 'placeholderColor': '#999', 'delimiter': '/'});
     $('.date').mask('00/00/0000');
@@ -1618,24 +1647,27 @@
 
 
     function edit_dados_cadastrais() {
+        $('#alert').hide().fadeOut('slow').html('');
         $('html, body').animate({scrollTop: 0}, 1500);
         $('.nav-pills a[href="#dados_cadastrais"]').tab('show');
     }
 
     function edit_formacao() {
+        $('#alert').hide().fadeOut('slow').html('');
         $('html, body').animate({scrollTop: 0}, 1500);
         $('.nav-pills a[href="#formacao"]').tab('show');
     }
 
     function edit_historico_profissional() {
+        $('#alert').hide().fadeOut('slow').html('');
         $('html, body').animate({scrollTop: 0}, 1500);
         $('.nav-pills a[href="#historico_profissional"]').tab('show');
     }
 
 
-    function save_dados_cadastrais() {
+    function validar_dados_cadastrais() {
         $.ajax({
-            'url': '<?php echo site_url('vagas/salvarCandidato') ?>',
+            'url': '<?php echo site_url('vagas/validarCandidato') ?>',
             'type': 'POST',
             'data': new FormData($('#form_dados_cadastrais')[0]),
             'enctype': 'multipart/form-data',
@@ -1644,7 +1676,7 @@
             'cache': false,
             'dataType': 'json',
             'beforeSend': function () {
-                $('.btnSaveDadosCadastrais').html('Avançando... <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', true);
+                $('.btnValidarDadosCadastrais').html('Avançando... <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', true);
             },
             'success': function (json) {
                 if (json.status) {
@@ -1659,20 +1691,20 @@
                 alert('Error adding / update data');
             },
             'complete': function () {
-                $('.btnSaveDadosCadastrais').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
+                $('.btnValidarDadosCadastrais').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
             }
         });
     }
 
 
-    function save_formacao() {
+    function validar_formacao() {
         $.ajax({
-            'url': '<?php echo site_url('vagas/salvarFormacaoCandidato') ?>',
+            'url': '<?php echo site_url('vagas/validarFormacaoCandidato') ?>',
             'type': 'POST',
             'data': $('#form_formacao').serialize(),
             'dataType': 'json',
             'beforeSend': function () {
-                $('.btnSaveFormacao').html('Avançando... <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', true);
+                $('.btnValidarFormacao').html('Avançando... <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', true);
             },
             'success': function (json) {
                 if (json.status) {
@@ -1686,20 +1718,37 @@
                 alert('Error adding / update data');
             },
             'complete': function () {
-                $('.btnSaveFormacao').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
+                $('.btnValidarFormacao').html('Avançar <i class="glyphicon glyphicon-circle-arrow-right">').attr('disabled', false);
             }
         });
     }
 
 
-    function save_historico_profissional() {
+    function save() {
+        var formData = new FormData($('#form_dados_cadastrais')[0]);
+        var formacao = new FormData($('#form_formacao')[0]);
+        var experiencia = new FormData($('#form_historico_profissional')[0]);
+
+        for (var pair of formacao.entries()) {
+            formData.append('_formacao_' + pair[0], pair[1]);
+            // formData.append(pair1[0] + '[candidato]', pair1[1]);
+        }
+
+        for (var pair2 of experiencia.entries()) {
+            formData.append('_historico_profissional_' + pair2[0], pair2[1]);
+        }
+
         $.ajax({
-            'url': '<?php echo site_url('vagas/salvarHistoricoProfissional') ?>',
+            'url': '<?php echo site_url('vagas/salvarCandidato') ?>',
             'type': 'POST',
-            'data': $('#form_historico_profissional').serialize(),
+            'data': formData,
+            'enctype': 'multipart/form-data',
+            'processData': false,
+            'contentType': false,
+            'cache': false,
             'dataType': 'json',
             'beforeSend': function () {
-                $('.btnSaveHistoricoProfissional').html('<i class="fa fa-save"> Concluindo...</i>').attr('disabled', true);
+                $('.btnSave').html('<i class="fa fa-save"></i> Concluindo...').attr('disabled', true);
             },
             'success': function (json) {
                 $('html, body').animate({scrollTop: 0}, 1500);
@@ -1715,7 +1764,7 @@
                 alert('Error adding / update data');
             },
             'complete': function () {
-                $('.btnSaveHistoricoProfissional').html('<i class="fa fa-save"> Concluir</i>').attr('disabled', false);
+                $('.btnSave').html('<i class="fa fa-save"></i> Concluir').attr('disabled', false);
             }
         });
     }

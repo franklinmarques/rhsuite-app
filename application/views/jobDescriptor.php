@@ -539,7 +539,7 @@ require_once "end_js.php";
                     $('[name="campo_livre5"]').val(json.campo_livre5);
 
                     $('#modal_form').modal('show');
-                    $('.modal-title').text('Editar  versão de cargo/função'); // Set title to Bootstrap modal title
+                    $('.modal-title').text('Editar versão de cargo/função'); // Set title to Bootstrap modal title
 
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -564,6 +564,7 @@ require_once "end_js.php";
                     $('.filtro').val('');
                     demo2.bootstrapDualListbox('refresh', true);
 
+                    $('.modal-title').text('Gerenciar colaboradores respondentes');
                     $('#modal_respondentes').modal('show');
                 },
                 error: function (jqXHR, textStatus, errorThrown) {

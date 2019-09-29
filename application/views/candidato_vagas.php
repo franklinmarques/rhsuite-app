@@ -22,6 +22,19 @@
         border-color: #2e6da4;
     }
 
+    ul.nav-pills.visible-xs li {
+        margin: 0 2px !important;
+    }
+
+    ul.nav-pills.visible-xs li a {
+        font-size: 11px;
+        padding: 7px 6px;
+    }
+
+    #modal_vaga .modal-content {
+        max-width: 94vw;
+    }
+
     ul.nav-pills li.disable a {
         color: #777;
         text-decoration: none;
@@ -45,22 +58,23 @@
         <div class="row">
             <div class="col-md-12">
                 <div id="alert"></div>
-                <a class="btn btn-primary" href="<?= site_url('home/sair'); ?>" style="float:right;"><i
-                            class="fa fa-power-off"></i>
-                    Desconectar</a>
-
                 <ul class="nav nav-tabs" role="tablist"
                     style="font-size: 15px; font-weight: bolder;">
                     <li role="presentation" class="active">
-                        <a href="#ver_vagas" aria-controls="ver_vagas" role="tab" data-toggle="tab">Vagas</a>
+                        <a href="#ver_vagas" aria-controls="ver_vagas" role="tab" data-toggle="tab"
+                           style="padding:10px;">Vagas</a>
                     </li>
                     <li role="presentation">
-                        <a href="#meu_cadastro" aria-controls="meu_cadastro" role="tab" data-toggle="tab">Meu
-                            cadastro</a>
+                        <a href="#meu_cadastro" aria-controls="meu_cadastro" role="tab" data-toggle="tab"
+                           style="padding:10px;">Cadastro</a>
                     </li>
                     <li role="presentation">
-                        <a href="#meus_testes" aria-controls="meus_testes" role="tab" data-toggle="tab">Meus testes
-                            seletivos</a>
+                        <a href="#meus_testes" aria-controls="meu_testes" role="tab" data-toggle="tab"
+                           style="padding:10px;">Testes</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#desconectar" aria-controls="desconectar" role="tab" data-toggle="tab"
+                           style="padding:10px;">Sair</a>
                     </li>
                 </ul>
 
@@ -68,10 +82,8 @@
                     <div role="tabpanel" class="tab-pane active" id="ver_vagas">
 
                         <div class="page-header text-primary">
-                            <h3><strong>Caro candidato, seja bem-vindo ao nosso painel de vagas!</strong></h3>
+                            <h3><strong>Painel de vagas</strong></h3>
                         </div>
-                        <h5 class="text-primary">Caso algumas das vagas seja de seu interesse, basta acionar o botão
-                            "Candidatar-se!" que você será automaticamente incluído no processo seletivo da mesma.</h5>
 
                         <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
@@ -82,7 +94,6 @@
                                 <th>Função</th>
                                 <th>Qtde.</th>
                                 <th>Cidade</th>
-                                <th>Bairro</th>
                                 <th>Remuneração (R$)</th>
                                 <th>Tipo vínculo</th>
                             </tr>
@@ -94,28 +105,42 @@
                     <div role="tabpanel" class="tab-pane" id="meu_cadastro">
 
                         <div class="page-header text-primary">
-                            <h3><strong>Caro candidato, utilize os botões abaixo para atualizar os seus dados
-                                    cadastrais.</strong></h3>
+                            <h3><strong>Utilize os botões abaixo</strong></h3>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
-                                <ul class="nav nav-pills" role="tablist">
+                                <ul class="nav nav-pills visible-xs" role="tablist">
                                     <li role="presentation" class="active" style="margin: 0 5px;">
                                         <a href="#dados_cadastrais" aria-controls="dados_cadastrais" role="tab"
-                                           data-toggle="pill">1. Dados cadastrais</a>
+                                           data-toggle="pill">Cadastro</a>
                                     </li>
                                     <li role="presentation" style="margin: 0 5px;">
-                                        <a href="#formacao" aria-controls="formacao" role="tab" data-toggle="pill">2.
-                                            Formação</a>
+                                        <a href="#formacao" aria-controls="formacao" role="tab" data-toggle="pill">Formação</a>
                                     </li>
                                     <li role="presentation" style="margin: 0 5px;">
                                         <a href="#historico_profissional" aria-controls="historico_profissional"
                                            role="tab"
-                                           data-toggle="pill">3. Histórico profissional</a>
+                                           data-toggle="pill">Histórico</a>
                                     </li>
                                     <li role="presentation" style="margin: 0 5px;">
-                                        <a href="#curriculo" aria-controls="curriculo" role="tab" data-toggle="pill">4.
-                                            Currículo</a>
+                                        <a href="#curriculo" aria-controls="curriculo" role="tab" data-toggle="pill">Currículo</a>
+                                    </li>
+                                </ul>
+                                <ul class="nav nav-pills hidden-xs" role="tablist">
+                                    <li role="presentation" class="active" style="margin: 0 5px;">
+                                        <a href="#dados_cadastrais" aria-controls="dados_cadastrais" role="tab"
+                                           data-toggle="pill">Cadastro</a>
+                                    </li>
+                                    <li role="presentation" style="margin: 0 5px;">
+                                        <a href="#formacao" aria-controls="formacao" role="tab" data-toggle="pill">Formação</a>
+                                    </li>
+                                    <li role="presentation" style="margin: 0 5px;">
+                                        <a href="#historico_profissional" aria-controls="historico_profissional"
+                                           role="tab"
+                                           data-toggle="pill">Histórico</a>
+                                    </li>
+                                    <li role="presentation" style="margin: 0 5px;">
+                                        <a href="#curriculo" aria-controls="curriculo" role="tab" data-toggle="pill">Currículo</a>
                                     </li>
                                 </ul>
                             </div>
@@ -130,6 +155,14 @@
                                         <?php echo form_open_multipart('candidatoVagas/salvarDadosCadastrais', 'id="form_candidato" data-aviso="alert" class="form-horizontal ajax-upload" autocomplete="off"'); ?>
                                         <fieldset>
                                             <legend>Campos obrigatórios</legend>
+                                            <div class="form-group visible-xs">
+                                                <div class="col-sm-3 text-right">
+                                                    <button type="submit" class="btn btn-success btnSave"
+                                                            id="dados_cadastrais_btn2">
+                                                        <i class="fa fa-save"></i> Salvar dados cadastrais
+                                                    </button>
+                                                </div>
+                                            </div>
                                             <div class="form-group last">
                                                 <label class="col-sm-2 control-label">Foto</label>
                                                 <div class="col-sm-7 controls">
@@ -160,7 +193,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3 text-right">
+                                                <div class="col-sm-3 text-right hidden-xs">
                                                     <button type="submit" class="btn btn-success btnSave"
                                                             id="dados_cadastrais_btn">
                                                         <i class="fa fa-save"></i> Salvar dados cadastrais
@@ -216,7 +249,7 @@
                                                     <input type="password" name="senha" placeholder="Nova senha"
                                                            value=""
                                                            max="32"
-                                                           class="form-control" autocomplete="off"/>
+                                                           class="form-control" autocomplete="new-password"/>
                                                 </div>
                                                 <label class="col-sm-1 control-label">Confirmar
                                                     senha</label>
@@ -224,7 +257,7 @@
                                                     <input type="password" name="confirmar_senha"
                                                            placeholder="Confirmar senha"
                                                            value="" max="32" class="form-control"
-                                                           autocomplete="off"/>
+                                                           autocomplete="new-password"/>
                                                 </div>
                                             </div>
                                         </fieldset>
@@ -356,12 +389,19 @@
 
                             <div role="tabpanel" class="tab-pane" id="formacao">
                                 <?php echo form_open('candidatoVagas/salvarFormacoes', 'id="form_formacao" data-aviso="alert" class="form-horizontal ajax-upload" autocomplete="off"'); ?>
+                                <div class="form-group visible-xs">
+                                    <div class="col-sm-6 text-right">
+                                        <button type="submit" class="btn btn-success btnSave" id="formacao_btn2">
+                                            <i class="fa fa-save"></i> Salvar formação
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="form-group last">
                                     <label class="col-sm-2 control-label">Nível de escolaridade</label>
                                     <div class="col-sm-4 controls">
                                         <?php echo form_dropdown('escolaridade', $escolaridades, $candidato->escolaridade, 'id="escolaridade" class="form-control"'); ?>
                                     </div>
-                                    <div class="col-sm-6 text-right">
+                                    <div class="col-sm-6 text-right hidden-xs">
                                         <button type="submit" class="btn btn-success btnSave" id="formacao_btn">
                                             <i class="fa fa-save"></i> Salvar formação
                                         </button>
@@ -371,8 +411,6 @@
                                 <fieldset>
                                     <legend>Ensino Fundamental</legend>
                                     <input type="hidden" name="id[0]" value="<?= $formacao[0]->id; ?>">
-                                    <input type="hidden" name="id_escolaridade[0]"
-                                           value="<?= $formacao[0]->id_escolaridade; ?>">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Instituição</label>
                                         <div class="col-sm-5">
@@ -400,8 +438,6 @@
                                 <fieldset>
                                     <legend>Ensino Médio</legend>
                                     <input type="hidden" name="id[1]" value="<?= $formacao[1]->id; ?>">
-                                    <input type="hidden" name="id_escolaridade[1]"
-                                           value="<?= $formacao[1]->id_escolaridade; ?>">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Curso 1</label>
                                         <div class="col-sm-5 controls">
@@ -474,10 +510,10 @@
                                                    class="form-control text-center ano">
                                         </div>
                                     </div>
-                                    <hr>
+                                    <br>
                                     <input type="hidden" name="id[3]" value="<?= $formacao[3]->id; ?>">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">Curso 1</label>
+                                        <label class="col-sm-2 control-label">Curso 3</label>
                                         <div class="col-sm-5 controls">
                                             <input type="text" name="curso[3]"
                                                    placeholder="Nome do curso de formação"
@@ -550,7 +586,7 @@
                                                    class="form-control text-center ano">
                                         </div>
                                     </div>
-                                    <hr>
+                                    <br>
                                     <input type="hidden" name="id[5]" value="<?= $formacao[5]->id; ?>">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Curso 2</label>
@@ -587,7 +623,7 @@
                                                    class="form-control text-center ano">
                                         </div>
                                     </div>
-                                    <hr>
+                                    <br>
                                     <input type="hidden" name="id[6]" value="<?= $formacao[6]->id; ?>">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Curso 3</label>
@@ -652,7 +688,7 @@
                                                    class="form-control"/>
                                         </div>
                                     </div>
-                                    <hr>
+                                    <br>
                                     <input type="hidden" name="id[8]" value="<?= $formacao[7]->id; ?>">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Curso 2</label>
@@ -678,7 +714,7 @@
                                                    class="form-control"/>
                                         </div>
                                     </div>
-                                    <hr>
+                                    <br>
                                     <input type="hidden" name="id[9]" value="<?= $formacao[9]->id; ?>">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Curso 3</label>
@@ -732,7 +768,7 @@
                                                    class="form-control"/>
                                         </div>
                                     </div>
-                                    <hr>
+                                    <br>
                                     <input type="hidden" name="id[11]" value="<?= $formacao[11]->id; ?>">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Curso 2</label>
@@ -758,7 +794,7 @@
                                                    class="form-control"/>
                                         </div>
                                     </div>
-                                    <hr>
+                                    <br>
                                     <input type="hidden" name="id[12]" value="<?= $formacao[12]->id; ?>">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Curso 3</label>
@@ -792,13 +828,13 @@
                             <div role="tabpanel" class="tab-pane" id="historico_profissional">
                                 <?php echo form_open('candidatoVagas/salvarHistoricoProfissional', 'id="form_historico_profissional" data-aviso="alert" class="form-horizontal ajax-upload" autocomplete="off"'); ?>
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <i class="text-primary"><strong>*</strong> O grupo cujo nome da
-                                            empresa
-                                            estiver em
-                                            branco será removido do cadastro.</i>
+                                    <div class="col-xs-12 col-sm-6">
+                                        <i class="text-primary"><strong>*</strong> O grupo cujo nome da empresa estiver
+                                            em branco será removido do cadastro.</i>
+                                        <br>
+                                        <br>
                                     </div>
-                                    <div class="col-sm-6 text-right">
+                                    <div class="col-xs-12 col-sm-6 text-right">
                                         <button type="submit" class="btn btn-success btnSave"
                                                 id="historico_profissional_btn">
                                             <i class="fa fa-save"></i> Salvar histórico profissional
@@ -806,7 +842,8 @@
                                     </div>
                                 </div>
                                 <fieldset>
-                                    <legend>Experiência profissional</legend>
+                                    <legend>Experiência profissional <span style="font-size: small;">(Mais recentes primeiro)</span>
+                                    </legend>
                                     <input type="hidden" name="id[0]"
                                            value="<?= $historicoProfissional[0]->id; ?>">
                                     <div class="form-group">
@@ -1397,7 +1434,8 @@
                                     <div class="col col-md-12">
                                         <h5 class="text-primary">Para anexar seu currículo digital (*.pdf), selecione o
                                             mesmo e acione o botão "Importar".</h5>
-                                        <?php echo form_open_multipart('candidatoVagas/salvarCurriculo', 'id="form_curriculo" data-aviso="alert" class="form-horizontal ajax-upload" autocomplete="off"'); ?>
+<!--                                        --><?php //echo form_open_multipart('', 'id="form_curriculo" data-aviso="alert" class="form-horizontal ajax-upload" autocomplete="off"'); ?>
+                                        <form method="POST" enctype="multipart/form-data" id="form_curriculo" data-aviso="alert" class="form-horizontal ajax-upload" autocomplete="off">
                                         <div class="form-group last">
                                             <label class="col-sm-3 col-lg-2 control-label">Arquivo .pdf</label>
                                             <div class="col-sm-7 col-lg-7 controls">
@@ -1419,15 +1457,18 @@
                                                 <span class="help-block"><?= $candidato->arquivo_curriculo; ?></span>
                                             </div>
                                             <div class="col-sm-2 col-lg-3 text-right">
-                                                <button type="submit" name="submit" class="btn btn-success">
+                                                <button type="submit" class="btn btn-success"
+                                                        formaction="<?= site_url('candidatoVagas/salvarCurriculo'); ?>">
                                                     <i class="fa fa-upload"></i> Importar
                                                 </button>
-                                                <button class="btn btn-default" onclick="javascript:history.back()"><i
-                                                            class="glyphicon glyphicon-circle-arrow-left"></i> Voltar
+                                                <button type="submit" class="btn btn-danger" id="buu" name="buuu"
+                                                        formaction="<?= site_url('candidatoVagas/excluirCurriculo'); ?>">
+                                                    <i class="fa fa-trash"></i> Excluir
                                                 </button>
                                             </div>
                                         </div>
-                                        <?php echo form_close(); ?>
+                                    </form>
+<!--                                        --><?php //echo form_close(); ?>
                                         <?php if ($candidato->arquivo_curriculo): ?>
                                             <hr>
                                             <div class="row">
@@ -1447,10 +1488,8 @@
                     <div role="tabpanel" class="tab-pane" id="meus_testes">
 
                         <div class="page-header text-primary">
-                            <h3><strong>Caro candidato, seja bem-vindo ao nosso painel de testes!</strong></h3>
+                            <h3><strong>Testes seletivos</strong></h3>
                         </div>
-                        <!--<h5 class="text-primary">Caso algumas das vagas seja de seu interesse, basta acionar o botão
-                            "Candidatar-se!" que você será automaticamente incluído no processo seletivo da mesma.</h5>-->
 
                         <table id="table_testes" class="table table-striped table-bordered" cellspacing="0"
                                width="100%">
@@ -1468,6 +1507,17 @@
                             <tbody>
                             </tbody>
                         </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="desconectar">
+                        <div class="page-header text-primary">
+                            <h3><strong>Para sair, clique abaixo</strong></h3>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <a class="btn btn-primary" href="<?= site_url('home/sair'); ?>"><i
+                                            class="fa fa-power-off"></i> Desconectar</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1521,7 +1571,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="btn btn-success" data-dismiss="modal" style="float:right;">Fechar
+                        <button type="button" class="btn btn-default" data-dismiss="modal" style="float:right;">Fechar
                         </button>
                         <h3 class="modal-title">Detalhes da vaga</h3>
                     </div>
@@ -1562,10 +1612,6 @@
                                 <div class="col-md-3">
                                     <p id="cidade_vaga" class="form-control-static"></p>
                                 </div>
-                                <label class="control-label col-md-2">Bairro da vaga</label>
-                                <div class="col-md-3">
-                                    <p id="bairro_vaga" class="form-control-static"></p>
-                                </div>
                             </div>
                             <div class="row">
                                 <label class="control-label col-md-3">Remuneração (R$)</label>
@@ -1585,22 +1631,10 @@
                                     <p id="horario_trabalho" class="form-control-static"></p>
                                 </div>
                             </div>
-                            <div class="row">
-                                <label class="control-label col-md-3">Formação mínima</label>
-                                <div class="col-md-8">
-                                    <p id="formacao_minima" class="form-control-static"></p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="control-label col-md-3">Contato do selecionador</label>
-                                <div class="col-md-8">
-                                    <p id="contato_selecionador" class="form-control-static"></p>
-                                </div>
-                            </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -1695,7 +1729,7 @@
             'columnDefs': [
                 {
                     'className': 'text-center',
-                    'targets': [2, 4, 7, 8]
+                    'targets': [2, 4, 7]
                 },
                 {
                     'width': '34%',

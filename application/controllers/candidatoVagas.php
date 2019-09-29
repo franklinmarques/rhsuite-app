@@ -8,7 +8,7 @@ class CandidatoVagas extends MY_Controller
     public function index()
     {
         $fields = $this->db->get('recrutamento_usuarios')->list_fields();
-        $data = array_combine($fields, array_pad(array(), count($fields), ''));
+        $data = array_combine($fields, array_pad([], count($fields), ''));
         $data['empresa'] = $this->session->userdata('empresa');
 
         $data['estado'] = 35; # SP
@@ -16,10 +16,10 @@ class CandidatoVagas extends MY_Controller
         $data['escolaridade'] = 4; # Ensino médio completo
         $data['deficiencia'] = 0; # Nenhuma
 
-        $data['estados'] = array('' => 'selecione ...');
-        $data['cidades'] = array('' => 'selecione ...');
-        $data['escolaridades'] = array('' => 'selecione ...');
-        $data['deficiencias'] = array('' => 'selecione ...');
+        $data['estados'] = ['' => 'selecione ...'];
+        $data['cidades'] = ['' => 'selecione ...'];
+        $data['escolaridades'] = ['' => 'selecione ...'];
+        $data['deficiencias'] = ['' => 'selecione ...'];
 
         $data['sexos'] = array(
             '' => 'selecione...',
@@ -65,10 +65,18 @@ class CandidatoVagas extends MY_Controller
         $this->db->where('a.id', $this->session->userdata('id'));
         $data['candidato'] = $this->db->get('recrutamento_usuarios a')->row();
 
+        if (empty($data['candidato'])) {
+            redirect(site_url('login'));
+        }
+
 
         $this->db->select('a.*, b.nome AS escolaridade', false);
         $this->db->join('escolaridade b', 'b.id = a.id_escolaridade');
-        $this->db->where('a.id_usuario', $this->uri->rsegment(3));
+        if (in_array($this->session->userdata('tipo'), ['candidato', 'candidato_externo'])) {
+            $this->db->where('a.id_usuario', $this->session->userdata('id'));
+        } else {
+            $this->db->where('a.id_usuario', $this->uri->rsegment(3));
+        }
         $this->db->order_by('a.id_escolaridade', 'asc');
         $this->db->order_by('a.ano_conclusao', 'asc');
         $formacoes = $this->db->get('recrutamento_formacao a')->result();
@@ -78,6 +86,8 @@ class CandidatoVagas extends MY_Controller
         for ($i = 0; $i <= 12; $i++) {
             $data['formacao'][$i] = $formacaoCampos;
         }
+
+//        print_r($data);exit;
 
         $ensinoFundamental = array();
         $ensinoMedio = array();
@@ -118,7 +128,11 @@ class CandidatoVagas extends MY_Controller
         $this->db->select("DATE_FORMAT(data_saida, '%d/%m/%Y') AS data_saida", false);
         $this->db->select("FORMAT(salario_entrada, 2, 'de_DE') AS salario_entrada", false);
         $this->db->select("FORMAT(salario_saida, 2, 'de_DE') AS salario_saida", false);
-        $this->db->where('id_usuario', $this->uri->rsegment(3));
+        if (in_array($this->session->userdata('tipo'), ['candidato', 'candidato_externo'])) {
+            $this->db->where('id_usuario', $this->session->userdata('id'));
+        } else {
+            $this->db->where('id_usuario', $this->uri->rsegment(3));
+        }
         $this->db->order_by('data_entrada', 'desc');
         $this->db->order_by('data_saida', 'desc');
         $this->db->limit(7);
@@ -142,6 +156,7 @@ class CandidatoVagas extends MY_Controller
 //        $data['categorias'] = $this->db->query("SELECT distinct(a.categoria) FROM cursos a INNER JOIN cursos_clientes_treinamentos b ON b.id_curso = a.id INNER JOIN cursos_clientes c ON c.id = b.id_usuario WHERE c.email = '{$row->email}' AND CHAR_LENGTH(a.categoria) > 0");
 //        $data['areas_conhecimento'] = $this->db->query("SELECT distinct(a.area_conhecimento) FROM cursos a INNER JOIN cursos_clientes_treinamentos b ON b.id_curso = a.id INNER JOIN cursos_clientes c ON c.id = b.id_usuario WHERE c.email = '{$row->email}' AND CHAR_LENGTH(a.area_conhecimento) > 0");
         $this->load->view('candidato_vagas', $data);
+
     }
 
 
@@ -150,7 +165,7 @@ class CandidatoVagas extends MY_Controller
         $id = $this->session->userdata('id');
 
         $this->db->select(["a.codigo, a.data_abertura, CONCAT(b.nome, '/', c.nome) AS cargo_funcao"], false);
-        $this->db->select('a.quantidade, a.cidade_vaga, a.bairro_vaga, e.status');
+        $this->db->select('a.quantidade, a.cidade_vaga, e.status');
         $this->db->select(["DATE_FORMAT(a.data_abertura, '%d/%m/%Y') AS data_abertura_de, e.id AS id_candidatura"], false);
         $this->db->select(["FORMAT(a.remuneracao, 2, 'de_DE') AS remuneracao"], false);
         $this->db->select(["(CASE a.tipo_vinculo WHEN 1 THEN 'CLT' WHEN 2 THEN 'PJ/MEI' WHEN 3 THEN 'Autônomo' END) AS tipo_vinculo"], false);
@@ -163,7 +178,7 @@ class CandidatoVagas extends MY_Controller
         $query = $this->db->get('gestao_vagas a');
 
         $config = array(
-            'search' => ['codigo', 'cidade_vaga', 'bairro_vaga', 'cargo', 'funcao']
+            'search' => ['codigo', 'cidade_vaga', 'cargo', 'funcao']
         );
 
         $this->load->library('dataTables', $config);
@@ -191,7 +206,6 @@ class CandidatoVagas extends MY_Controller
                 $row->funcao,
                 $row->quantidade,
                 $row->cidade_vaga,
-                $row->bairro_vaga,
                 $row->remuneracao,
                 $row->tipo_vinculo
             );
@@ -437,6 +451,10 @@ class CandidatoVagas extends MY_Controller
     {
         $data = $this->input->post();
 
+        if (in_array($this->session->userdata('tipo'), ['candidato', 'candidato_externo'])) {
+            $data['id'] = $this->session->userdata('id');
+        }
+
 
         if (strlen($data['nome']) == 0) {
             exit(json_encode(['retorno' => 0, 'aviso' => 'O nome é obrigatório.']));
@@ -472,7 +490,7 @@ class CandidatoVagas extends MY_Controller
             unset($data['cpf']);
         }
         if (strlen($data['data_nascimento']) > 0) {
-            $data['data_nascimento'] = date('Y-m-d', strtotime(str_replace('-', '/', $data['data_nascimento'])));
+            $data['data_nascimento'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_nascimento'])));
         }
 
         $this->db->trans_begin();
@@ -539,6 +557,7 @@ class CandidatoVagas extends MY_Controller
     public function salvarFormacoes()
     {
         $rows = $this->input->post();
+
         $idUsuario = $this->session->userdata('id');
         $escolaridade = $this->input->post('escolaridade');
         unset($rows['id_usuario'], $rows['escolaridade']);
@@ -557,7 +576,7 @@ class CandidatoVagas extends MY_Controller
             $this->db->delete('recrutamento_formacao');
         }
 
-        $arrData = array();
+        $arrData = [];
         foreach ($rows as $column => $values) {
             foreach ($values as $row => $value) {
                 $arrData[$row][$column] = $value;
@@ -675,25 +694,26 @@ class CandidatoVagas extends MY_Controller
         $row = $this->db->get('recrutamento_usuarios')->row();
         $arquivoCurriculoAtual = $row->arquivo_curriculo;
 
-
         if (!empty($_FILES['arquivo_curriculo'])) {
             $config['upload_path'] = './arquivos/curriculos/';
             $config['allowed_types'] = 'pdf';
             $config['file_name'] = utf8_decode($_FILES['arquivo_curriculo']['name']);
 
-            $this->db->set('arquivo_curriculo', $config['file_name']);
+            $this->load->library('upload', $config);
+
+            $arquivoCurriculo = $this->upload->data();
+
+            $this->db->set('arquivo_curriculo', $arquivoCurriculo['file_name']);
             $this->db->where('id', $id);
             $this->db->update('recrutamento_usuarios');
 
-            $this->load->library('upload', $config);
-
             if ($this->upload->do_upload('arquivo_curriculo')) {
-                $arquivoCurriculo = $this->upload->data();
                 $data['foto'] = utf8_encode($arquivoCurriculo['file_name']);
                 if (file_exists('./arquivos/curriculos/' . $arquivoCurriculoAtual) && $arquivoCurriculoAtual != $arquivoCurriculo['file_name']) {
                     @unlink('./arquivos/curriculos/' . $arquivoCurriculoAtual);
                 }
             } else {
+                $this->db->trans_rollback();
                 exit(json_encode(array('retorno' => 0, 'aviso' => $this->upload->display_errors(), 'redireciona' => 0, 'pagina' => '')));
             }
         }
@@ -710,4 +730,28 @@ class CandidatoVagas extends MY_Controller
         echo json_encode(array('retorno' => 1, 'aviso' => 'Importação de currículo efetuada com sucesso', 'redireciona' => 1, 'pagina' => site_url(lcfirst(get_class($this)))));
     }
 
+    public function excluirCurriculo()
+    {
+        $id = $this->session->userdata('id');
+
+        $this->db->trans_begin();
+
+        $this->db->select('arquivo_curriculo');
+        $this->db->where('id', $id);
+        $row = $this->db->get('recrutamento_usuarios')->row();
+        $arquivoCurriculo = $row->arquivo_curriculo ?? '';
+
+        $this->db->update('recrutamento_usuarios', ['arquivo_curriculo' => null], ['id' => $id]);
+
+        $status = unlink('./arquivos/curriculos/' . $arquivoCurriculo);
+
+        if ($status == false or $this->db->trans_status() == false) {
+            $this->db->trans_rollback();
+            exit(json_encode(['retorno' => 0, 'aviso' => 'Não foi possível excluir o arquivo.', 'redireciona' => 0, 'pagina' => '']));
+        }
+
+        $this->db->trans_commit();
+
+        echo json_encode(['retorno' => 1, 'aviso' => 'Exclusão de currículo efetuada com sucesso', 'redireciona' => 1, 'pagina' => site_url(lcfirst(get_class($this)))]);
+    }
 }

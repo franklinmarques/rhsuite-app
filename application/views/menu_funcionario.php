@@ -408,6 +408,17 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                                 </ul>
                             <?php endif; ?>
                         </li>
+                        <li class="sub-menu">
+                            <a href="javascript:;"<?php echo(in_array($this->uri->rsegment(1), array('apontamento')) ? ' class="active"' : ''); ?>>
+                                <i class="fa fa-history"></i>
+                                <span>Gestão Operacional ICOM</span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="<?php echo site_url('icom/apontamento'); ?>">Gerenciar apontamentos</a>
+                                </li>
+                                <li><a href="<?php echo site_url('manutencao'); ?>">Requisição de pessoal</a></li>
+                            </ul>
+                        </li>
                     <?php endif; ?>
                 <?php endif; ?>
 

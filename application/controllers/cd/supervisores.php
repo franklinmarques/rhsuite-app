@@ -13,7 +13,7 @@ class Supervisores extends MY_Controller
         }
     }
 
-
+    //==========================================================================
     public function index()
     {
         $empresa = $this->session->userdata('empresa');
@@ -137,7 +137,7 @@ class Supervisores extends MY_Controller
         $this->load->view('cd/supervisores', $data);
     }
 
-
+    //==========================================================================
     public function atualizar_filtro()
     {
         $empresa = $this->session->userdata('empresa');
@@ -183,7 +183,7 @@ class Supervisores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function atualizar_supervisores()
     {
         $empresa = $this->session->userdata('empresa');
@@ -248,7 +248,7 @@ class Supervisores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function atualizar_unidades()
     {
         $id_diretoria = $this->input->post('id_diretoria');
@@ -318,7 +318,7 @@ class Supervisores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function ajax_list()
     {
         $post = $this->input->post();
@@ -416,7 +416,7 @@ class Supervisores extends MY_Controller
         echo json_encode($output);
     }
 
-
+    //==========================================================================
     public function ajax_edit()
 
     {
@@ -506,6 +506,7 @@ class Supervisores extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_save()
     {
         $id_diretoria = $this->input->post('id_diretoria');
@@ -563,7 +564,7 @@ class Supervisores extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
-
+    //==========================================================================
     public function ajax_delete()
     {
         $id_diretoria = $this->input->post('id_diretoria');

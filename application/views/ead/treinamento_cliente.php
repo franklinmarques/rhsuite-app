@@ -205,7 +205,7 @@
                                             class="text-danger">*</span></label>
                                 <div class="col-md-9">
                                     <input name="senha" class="form-control" type="password"
-                                           placeholder="Senha do usuário">
+                                           placeholder="Senha do usuário" autocomplete="new-password">
                                     <span class="help-block senha"></span>
                                 </div>
                             </div>
@@ -213,7 +213,7 @@
                                 <label class="control-label col-md-2">Confirmar senha <span class="text-danger">*</span></label>
                                 <div class="col-md-9">
                                     <input name="confirmar_senha" class="form-control" type="password"
-                                           placeholder="Confirmar a senha do usuário">
+                                           placeholder="Confirmar a senha do usuário" autocomplete="new-password">
                                     <span class="help-block senha"></span>
                                 </div>
                             </div>

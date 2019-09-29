@@ -17,7 +17,6 @@ class Home extends MY_Controller
         date_default_timezone_set('America/Sao_Paulo');
         $this->load->helper(array('date'));
 
-
         $data['depto'] = $this->input->get('depto');
         $data['area'] = $this->input->get('area');
 

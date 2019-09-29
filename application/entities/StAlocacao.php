@@ -1,37 +1,57 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class StAlocacao extends Entity
 {
     protected $id;
-    protected $id_old;
     protected $id_empresa;
     protected $depto;
     protected $area;
     protected $setor;
-    protected $ano;
-    protected $mes;
-    protected $id_contrato;
+    protected $data;
     protected $contrato;
+    protected $descricao_servico;
+    protected $valor_servico;
     protected $dia_fechamento;
+    protected $qtde_alocados_potenciais;
+    protected $qtde_alocados_ativos;
+    protected $turnover_reposicao;
+    protected $turnover_aumento_quadro;
+    protected $turnover_desligamento_empresa;
+    protected $turnover_desligamento_colaborador;
+    protected $observacoes;
+    protected $valor_projetado;
+    protected $valor_realizado;
+    protected $total_faltas;
+    protected $total_dias_cobertos;
+    protected $total_dias_descobertos;
     protected $mes_bloqueado;
 
     protected $casts = [
         'id' => 'int',
-        'id_old' => 'int',
         'id_empresa' => 'int',
         'depto' => 'string',
         'area' => 'string',
         'setor' => 'string',
-        'ano' => 'int',
-        'mes' => 'int',
-        'id_contrato' => '?int',
+        'data' => 'date',
         'contrato' => '?string',
-        'dia_fechamento' => 'int',
-        'mes_bloqueado' => '?int'
+        'descricao_servico' => '?string',
+        'valor_servico' => '?float',
+        'dia_fechamento' => '?int',
+        'qtde_alocados_potenciais' => '?int',
+        'qtde_alocados_ativos' => '?int',
+        'turnover_reposicao' => '?int',
+        'turnover_aumento_quadro' => '?int',
+        'turnover_desligamento_empresa' => '?int',
+        'turnover_desligamento_colaborador' => '?int',
+        'observacoes' => '?string',
+        'valor_projetado' => '?float',
+        'valor_realizado' => '?float',
+        'total_faltas' => 'float',
+        'total_dias_cobertos' => 'float',
+        'total_dias_descobertos' => 'float',
+        'mes_bloqueado' => 'int'
     ];
 
 }

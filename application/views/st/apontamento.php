@@ -1,6 +1,5 @@
-<?php
-require_once APPPATH . 'views/header.php';
-?>
+<?php require_once APPPATH . 'views/header.php'; ?>
+
     <style>
         #table_processing,
         #table_totalizacao_processing,
@@ -147,6 +146,7 @@ require_once APPPATH . 'views/header.php';
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
                         <li class="active">Apontamentos Diários</li>
+                        <?php //$this->load->view('modal_processos', ['url' => 'st/apontamento']); ?>
                     </ol>
                     <div class="row">
                         <div class="col-md-6">
@@ -180,7 +180,7 @@ require_once APPPATH . 'views/header.php';
                         </div>
                         <div class="col-md-6 right">
                             <p class="bg-info text-info" style="padding: 5px;">
-                                <button style="float: right; margin: 12px 8px 0;" title="Pesquisa avançada"
+                                <button id="filtro" style="float: right; margin: 12px 8px 0;" title="Pesquisa avançada"
                                         class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal_filtro">
                                     <i class="glyphicon glyphicon-filter"></i> <span class="hidden-xs">Filtrar</span>
                                 </button>
@@ -200,14 +200,16 @@ require_once APPPATH . 'views/header.php';
                         <div class="panel-heading">
                             <span id="mes_ano"><?= ucfirst($mes) . ' ' . date('Y') ?></span>
                             <div style="float:right; margin-top: -0.5%;">
-                                <button title="Mês anterior" class="btn btn-primary btn-sm" onclick="proximo_mes(-1)">
+                                <button id="mes_anterior" title="Mês anterior" class="btn btn-primary btn-sm"
+                                        onclick="proximo_mes(-1)">
                                     <i class="glyphicon glyphicon-arrow-left"></i> <span class="hidden-xs hidden-sm">Mês anterior</span>
                                 </button>
                                 <?php if ($this->session->userdata('nivel') != 11): ?>
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-info btn-sm dropdown-toggle"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Opções do mês <span class="caret"></span>
+                                        <button id="btnOpcoesMes" type="button"
+                                                class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">Opções do mês <span
+                                                    class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li><a href="javascript:void();" onclick="add_mes()"><i
@@ -221,7 +223,7 @@ require_once APPPATH . 'views/header.php';
                                                     novo colaborador</a></li>
                                             <li><a href="#" data-toggle="modal"
                                                    data-target="#modal_colaborador_alocado"><i
-                                                            class="glyphicon glyphicon-minus text-info"></i> Desalocar
+                                                            class="glyphicon glyphicon-minus text-danger"></i> Desalocar
                                                     colaborador</a></li>
                                             <?php if ($modo_privilegiado or $this->session->userdata('nivel') == 10): ?>
                                                 <li><a href="<?= site_url('apontamento_backups/index'); ?>" id="bck"
@@ -265,8 +267,8 @@ require_once APPPATH . 'views/header.php';
                                         </ul>
                                     </div>
                                 <?php endif; ?>
-                                <button title="Mês seguinte" id="mes_seguinte" class="btn btn-primary btn-sm"
-                                        onclick="proximo_mes(1)">
+                                <button id="mes_seguinte" title="Mês seguinte" id="mes_seguinte"
+                                        class="btn btn-primary btn-sm" onclick="proximo_mes(1)">
                                     <span class="hidden-xs hidden-sm">Mês seguinte</span> <i
                                             class="glyphicon glyphicon-arrow-right"></i>
                                 </button>
@@ -283,6 +285,9 @@ require_once APPPATH . 'views/header.php';
                                                 href="#totalizacao" aria-controls="totalizacao" role="tab"
                                                 data-toggle="tab">Totalização</a></li>
                                 <?php endif; ?>
+                                <li role="presentation" style="font-size: 14px; font-weight: bolder"><a
+                                            href="#colaboradores" aria-controls="colaboradores" role="tab"
+                                            data-toggle="tab">Status dos colaboradores</a></li>
                                 <li role="presentation" style="font-size: 14px; font-weight: bolder; display: none;"><a
                                             href="#apontamento_consolidado" aria-controls="apontamento_consolidado"
                                             role="tab"
@@ -389,7 +394,35 @@ require_once APPPATH . 'views/header.php';
                                     </div>
                                 <?php endif; ?>
 
-                                <div role="tabpanel3" class="tab-pane" id="apontamento_consolidado">
+                                <div role="tabpanel" class="tab-pane" id="colaboradores">
+                                    <table id="table_colaboradores"
+                                           class="table table-hover table-condensed table-bordered" cellspacing="0"
+                                           width="100%" style="border-radius: 0 !important;">
+                                        <thead>
+                                        <tr>
+                                            <th rowspan="2" class="warning" style="vertical-align: middle;">
+                                                Colaborador(a)
+                                            </th>
+                                            <th colspan="3" class="warning text-center">Estrutura</th>
+                                            <th rowspan="2" class="warning text-center" style="vertical-align: middle;">
+                                                Função
+                                            </th>
+                                            <th rowspan="2" class="warning text-center" style="vertical-align: middle;">
+                                                Ações
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="warning text-center">Departamento</th>
+                                            <th class="warning text-center">Área/Cliente</th>
+                                            <th class="warning text-center">Setor/Unidade</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div role="tabpanel" class="tab-pane" id="apontamento_consolidado">
                                     <table id="table_apontamento_consolidado"
                                            class="table table_apontamento table-hover table-condensed table-bordered"
                                            cellspacing="0" width="100%">
@@ -1606,9 +1639,8 @@ require_once APPPATH . 'views/header.php';
     </section>
     <!--main content end-->
 
-<?php
-require_once APPPATH . 'views/end_js.php';
-?>
+<?php require_once APPPATH . 'views/end_js.php'; ?>
+
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo base_url("assets/js/jquery-tags-input/jquery.tagsinput.css"); ?>"/>
@@ -1627,7 +1659,7 @@ require_once APPPATH . 'views/end_js.php';
 
     <script>
 
-        var table, table_totalizacao, table_apontamento_consolidado, table_totalizacao_consolidada;
+        var table, table_totalizacao, table_colaboradores, table_apontamento_consolidado, table_totalizacao_consolidada;
         var busca;
         var edicaoEvento = true;
         var nivel_usuario = '<?= $this->session->userdata('nivel'); ?>';
@@ -1638,12 +1670,18 @@ require_once APPPATH . 'views/end_js.php';
         var drawing_table_apontamento_consolidado = false;
         var drawing_table_totalizacao = false;
         var drawing_table_totalizacao_consolidada = false;
+        var drawing_table_colaboradores = false;
 
-        $('.tags').tagsInput({width: 'auto', defaultText: 'Telefone', placeholderColor: '#999', delimiter: '/'});
+        $('.tags').tagsInput({
+            'width': 'auto',
+            'defaultText': 'Telefone',
+            'placeholderColor': '#999',
+            'delimiter': '/'
+        });
         $('[name="data_recesso"], [name="data_retorno"], [name="data_desligamento"]').mask('00/00/0000');
         $('.hora').mask('00:00');
-        $('.valor').mask('##.###.##0,00', {reverse: true});
-        $('.porcentagem').mask('#00,0', {reverse: true});
+        $('.valor').mask('##.###.##0,00', {'reverse': true});
+        $('.porcentagem').mask('#00,0', {'reverse': true});
         $(function () {
             $('[data-tooltip="tooltip"]').tooltip();
         });
@@ -1652,29 +1690,30 @@ require_once APPPATH . 'views/end_js.php';
 
         $(document).ready(function () {
             busca = $('#busca').serialize();
-            var url = "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>";
+            var url = '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>';
 
             table = $('#table').DataTable({
-                dom: "<'row'<'col-sm-3'l><'#legenda.col-sm-5'><'col-sm-4'f>>" +
+                'dom': "<'row'<'col-sm-3'l><'#legenda.col-sm-5'><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                "processing": true,
-                "serverSide": true,
-                "iDisplayLength": 25,
-                "lengthMenu": [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
-                "order": [[0, 'asc']],
-                "language": {
-                    "url": url
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 25,
+                'lengthMenu': [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
+                'order': [[0, 'asc']],
+                'language': {
+                    'url': url
                 },
-                "ajax": {
-                    "url": "<?php echo site_url('st/apontamento/ajaxList') ?>",
-                    "type": "POST",
-                    timeout: 90000,
-                    data: function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('apontamento/ajax_list') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
                         d.busca = busca;
+                        d.consolidado = null;
                         return d;
                     },
-                    "dataSrc": function (json) {
+                    'dataSrc': function (json) {
                         mesBloqueado = json.calendar.mes_bloqueado;
                         $('[name="mes"]').val(json.calendar.mes);
                         $('[name="ano"]').val(json.calendar.ano);
@@ -1718,7 +1757,7 @@ require_once APPPATH . 'views/end_js.php';
                                 semana++;
                             }
                         }
-                        if (json.draw === '1') {
+                        if (json.draw === 1) {
                             $("#legenda").html('<button title="Mostrar legenda de eventos" data-toggle="modal" data-target="#modal_legenda" style="margin: 15px 10px 0;" class="btn btn-default btn-sm">' +
                                 '<i class="glyphicon glyphicon-exclamation-sign"></i> <span class="hidden-xs"> Mostrar legenda de eventos</span>' +
                                 '</button>');
@@ -1726,9 +1765,9 @@ require_once APPPATH . 'views/end_js.php';
                         return json.data;
                     }
                 },
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             if (!mesBloqueado) {
                                 $(td).css('cursor', 'pointer');
                             } else {
@@ -1767,10 +1806,10 @@ require_once APPPATH . 'views/end_js.php';
                                 $('#form_backup [name="id"]').val($(this).data('id'));
                                 if ($(this).data('tipo') !== undefined) {
                                     $('#form_backup [name="tipo_bck"][value="' + $(this).data('tipo') + '"]').prop('checked', true);
-                                    $('#btnLimparBackup').prop('disabled', false);
+                                    $('#btnLimparBackup').show();
                                 } else {
                                     $('#form_backup [name="tipo_bck"][value="F"]').prop('checked', true);
-                                    $('#btnLimparBackup').prop('disabled', true);
+                                    $('#btnLimparBackup').hide();
                                 }
                                 $('#form_backup [name="data_recesso"]').val($(this).data('recesso'));
                                 $('#form_backup [name="data_retorno"]').val($(this).data('retorno'));
@@ -1780,11 +1819,11 @@ require_once APPPATH . 'views/end_js.php';
                             });
                             $(td).html(rowData[col][1]);
                         },
-                        width: 'auto',
-                        "targets": [0]
+                        'width': 'auto',
+                        'targets': [0]
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             if (!mesBloqueado) {
                                 $(td).css('cursor', 'pointer');
                             } else {
@@ -1820,29 +1859,32 @@ require_once APPPATH . 'views/end_js.php';
                                 $('#form_substituto [name="id_usuario_sub"]').val($(this).data('id_usuario_sub'));
                                 $('#nome_usuario_desalocado').html(rowData[0][1]);
                                 if ($(this).data('desligamento') !== undefined) {
-                                    $('#btnLimparSubstituto').prop('disabled', false);
+                                    $('#btnLimparSubstituto').show();
                                 } else {
-                                    $('#btnLimparSubstituto').prop('disabled', true);
+                                    $('#btnLimparSubstituto').hide();
                                 }
                             });
                         },
-                        "targets": [1]
+                        'targets': [1]
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
-                            $(td).removeClass('text-success text-danger');
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            $(td).removeClass('text-muted text-success text-danger');
                             if (rowData[col] !== null && rowData[col].indexOf('-') === 0) {
                                 $(td).addClass('text-danger');
-                            } else if (rowData[col] !== null && rowData[col] !== '0:00' && rowData[col].indexOf('-') === -1) {
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            } else if (rowData[col] !== null && rowData[col] !== '00:00' && rowData[col].indexOf('-') === -1) {
                                 $(td).addClass('text-success');
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            } else if (rowData[col] !== null) {
+                                $(td).addClass('text-muted');
                             }
-                            $(td).html('<strong>' + rowData[col] + '</strong>')
                         },
-                        className: 'text-center warning',
-                        targets: [2]
+                        'className': 'text-center warning',
+                        'targets': [2]
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             var data_dia = $(table.column(col).header()).attr('data-dia');
                             var data_recesso = moment(rowData[0][2], 'DD/MM/YYYY').subtract(1, 'days');
                             var data_retorno = moment(rowData[0][3], 'DD/MM/YYYY').add(1, 'days');
@@ -1860,7 +1902,6 @@ require_once APPPATH . 'views/end_js.php';
                                 if (mesBloqueado) {
                                     $(td).css('cursor', 'not-allowed');
                                 }
-
 
                                 if (moment(data_dia).isSameOrAfter(data_desligamento)) {
                                     $(td).css('border', '1px solid #B5BBD9');
@@ -1964,6 +2005,7 @@ require_once APPPATH . 'views/end_js.php';
                                     if (mesBloqueado === true) {
                                         return false;
                                     }
+                                    $('#form')[0].reset();
                                     atualizarDetalhes();
                                     $('[name="id_alocado"]').val($(this).data('id_alocado'));
                                     $('[name="data"]').val(data_dia);
@@ -1982,12 +2024,12 @@ require_once APPPATH . 'views/end_js.php';
                                     if ($(this).data('status') !== undefined) {
                                         $('[name="status"][value="' + $(this).data('status') + '"]').prop('checked', 'checked');
                                         $('#modal_form .modal-title').text('Editar evento de apontamento');
-                                        $('#btnApagar').prop('disabled', false);
+                                        $('#btnApagar').show();
                                         selecionar_status($(this).data('status'));
                                     } else {
                                         $('[name="status"][value="FJ"]').prop('checked', 'checked');
                                         $('#modal_form .modal-title').text('Criar evento de apontamento');
-                                        $('#btnApagar').prop('disabled', true);
+                                        $('#btnApagar').hide();
                                         selecionar_status('FJ');
                                     }
                                     $('[name="id_alocado_bck"]').val($(this).data('id_alocado_bck'));
@@ -1998,23 +2040,23 @@ require_once APPPATH . 'views/end_js.php';
                                 $(td).html(rowData[col][9] !== 'AE' ? rowData[col][9] : 'AP');
                             }
                         },
-                        "className": 'text-center',
-                        "targets": 'date-width',
-                        "orderable": false,
-                        "searchable": false
+                        'className': 'text-center',
+                        'targets': 'date-width',
+                        'orderable': false,
+                        'searchable': false
                     },
                     {
-                        "createdCell": function (td, cellData, rowData, row, col) {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             $(td).removeClass('text-success text-danger');
                             if (rowData[col] !== null) {
                                 $(td).addClass('text-danger');
                                 $(td).html('<strong>' + rowData[col] + '</strong>');
                             }
                         },
-                        className: "warning text-right",
-                        "targets": [-1, -2],
-                        "orderable": false,
-                        "searchable": false
+                        'className': 'warning text-center',
+                        'targets': [-1, -2],
+                        'orderable': false,
+                        'searchable': false
                     }
                 ],
                 'preDrawCallback': function () {
@@ -2028,30 +2070,30 @@ require_once APPPATH . 'views/end_js.php';
 
             if ('<?= $modo_privilegiado ?>') {
                 table_totalizacao = $('#table_totalizacao').DataTable({
-                    dom: "<'row'<'col-sm-3'l><'#calculo.col-sm-5'><'col-sm-4'f>>" +
+                    'dom': "<'row'<'col-sm-3'l><'#calculo.col-sm-5'><'col-sm-4'f>>" +
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    "processing": true,
-                    "serverSide": true,
-                    "iDisplayLength": 25,
-                    "lengthMenu": [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
-                    "order": [[0, 'asc']],
-                    "language": {
-                        "url": url
+                    'processing': true,
+                    'serverSide': true,
+                    'iDisplayLength': 25,
+                    'lengthMenu': [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
+                    'language': {
+                        'url': url
                     },
-                    "ajax": {
-                        "url": "<?php echo site_url('st/apontamento_totalizacao/ajax_list') ?>",
-                        "type": "POST",
-                        timeout: 90000,
-                        data: function (d) {
+                    'ajax': {
+                        'url': '<?php echo site_url('apontamento/ajaxTotalizacao') ?>',
+                        'type': 'POST',
+                        'timeout': 90000,
+                        'data': function (d) {
                             d.busca = busca;
+                            d.consolidado = null;
                             d.calculo_totalizacao = $('[name="calculo_totalizacao"]:checked').val();
                             if (d.calculo_totalizacao === undefined) {
                                 d.calculo_totalizacao = '1';
                             }
                             return d;
                         },
-                        "dataSrc": function (json) {
+                        'dataSrc': function (json) {
                             mesBloqueado = json.calendar.mes_bloqueado;
                             if (json.total === '0,00' || json.total === json.total_posto) {
                                 $('#total_devido').removeClass('text-danger');
@@ -2061,7 +2103,7 @@ require_once APPPATH . 'views/end_js.php';
                             $('#total_posto').html(json.total_posto);
                             $('#total_devido').html(json.total);
                             $('#total_percentual').html(json.total_percentual + '%');
-                            if (json.draw === '1') {
+                            if (json.draw === 1) {
                                 $("#calculo").css({'padding': '16px 0 0 32px', 'text-align': 'left'});
                                 $("#calculo").append('<div class="radio"><label><?= form_radio('calculo_totalizacao" onclick="calcular_totalizacao()', '1', true) ?> Cálculo por dia/hora</label></div> &emsp;');
                                 $("#calculo").append('<div class="radio"><label><?= form_radio('calculo_totalizacao" onclick="calcular_totalizacao()', '2', false) ?> Cálculo por percentual</label></div>');
@@ -2069,24 +2111,24 @@ require_once APPPATH . 'views/end_js.php';
                             return json.data;
                         }
                     },
-                    "columnDefs": [
+                    'columnDefs': [
                         {
-                            className: "warning",
-                            "targets": [0]
+                            'className': 'warning',
+                            'targets': [0]
                         },
                         {
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            'createdCell': function (td, cellData, rowData, row, col) {
                                 if (rowData[col] !== null) {
                                     $(td).addClass('text-danger');
                                     $(td).html('<strong>' + rowData[col] + '</strong>');
                                 }
                             },
-                            className: "text-center",
-                            "targets": [1, 2, 3, 4],
-                            "searchable": false
+                            'className': 'text-center',
+                            'targets': [1, 2, 3, 4],
+                            'searchable': false
                         },
                         {
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            'createdCell': function (td, cellData, rowData, row, col) {
                                 if (rowData[col] !== null) {
                                     if (rowData[col] < rowData[3]) {
                                         $(td).addClass('text-danger');
@@ -2094,22 +2136,22 @@ require_once APPPATH . 'views/end_js.php';
                                     $(td).html('<strong>' + rowData[col] + '</strong>');
                                 }
                             },
-                            className: "text-center",
-                            "targets": [10],
-                            "searchable": false
+                            'className': 'text-center',
+                            'targets': [10],
+                            'searchable': false
                         },
                         {
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            'createdCell': function (td, cellData, rowData, row, col) {
                                 if (rowData[col] !== null) {
                                     $(td).html('<strong>' + rowData[col] + '</strong>');
                                 }
                             },
-                            className: "text-center",
-                            "targets": [3, 4, 5, 6, 7, 8, 9],
-                            "searchable": false
+                            'className': 'text-center',
+                            'targets': [3, 4, 5, 6, 7, 8, 9],
+                            'searchable': false
                         },
                         {
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            'createdCell': function (td, cellData, rowData, row, col) {
                                 if (!mesBloqueado) {
                                     $(td).css('cursor', 'pointer');
                                 } else {
@@ -2145,9 +2187,9 @@ require_once APPPATH . 'views/end_js.php';
                                     $(td).html('<strong>' + rowData[col].replace('.', ',') + '</strong>');
                                 }
                             },
-                            className: "text-center",
-                            width: 'auto',
-                            "targets": [11, 12, 13]
+                            'className': "text-center",
+                            'width': 'auto',
+                            'targets': [11, 12, 13]
                         }
                     ],
                     'preDrawCallback': function () {
@@ -2160,427 +2202,464 @@ require_once APPPATH . 'views/end_js.php';
                 });
             } else {
                 $('#pdf').attr('onclick', 'return false').css('color', '#888');
+            }
 
+            table_colaboradores = $('#table_colaboradores').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 25,
+                'lengthMenu': [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
+                'order': [[0, 'asc']],
+                'language': {
+                    'url': url
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('apontamento_colaboradores/ajax_list') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
+                        d.busca = busca;
+                        return d;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'className': 'warning',
+                        'width': '20%',
+                        'targets': [0, 1, 2, 3, 4]
+                    },
+                    {
+                        'className': 'text-nowrap',
+                        'targets': [-1],
+                        'orderable': false,
+                        'searchable': false
+                    }
+                ],
+                'preDrawCallback': function () {
+                    drawing_table_colaboradores = true;
+                },
+                'drawCallback': function () {
+                    drawing_table_colaboradores = false;
+                    set_edicao_evento();
+                }
+            });
 
-                table_apontamento_consolidado = $('#table_apontamento_consolidado').DataTable({
-                    dom: "<'row'<'col-sm-3'l><'#legenda.col-sm-5'><'col-sm-4'f>>" +
+            table_apontamento_consolidado = $('#table_apontamento_consolidado').DataTable({
+                'dom': "<'row'<'col-sm-3'l><'#legenda_consolidada.col-sm-5'><'col-sm-4'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 25,
+                'lengthMenu': [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
+                'order': [[0, 'asc']],
+                'language': {
+                    'url': url
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('apontamento/ajax_list') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
+                        d.busca = busca;
+                        d.consolidado = true;
+                        d.dia_fechamento = $('#dia_fechamento').val();
+                        return d;
+                    },
+                    'dataSrc': function (json) {
+                        $('[name="mes"]').val(json.calendar.mes);
+                        $('[name="ano"]').val(json.calendar.ano);
+                        $('#mes_ano').html(json.calendar.mes_ano[0].toUpperCase() + json.calendar.mes_ano.slice(1));
+                        var dt1 = new Date();
+                        var dt2 = new Date();
+                        dt2.setFullYear(json.calendar.ano, (json.calendar.mes - 1));
+                        if (dt1.getTime() < dt2.getTime()) {
+                            $('#mes_seguinte').addClass('disabled').parent().css('cursor', 'not-allowed');
+                        } else {
+                            $('#mes_seguinte').removeClass('disabled').parent().css('cursor', '');
+                        }
+
+                        var semana = 1;
+                        var colunasUsuario = 2;
+                        for (i = 1; i <= 31; i++) {
+                            if (i > 28) {
+                                if (i > json.calendar.qtde_dias) {
+                                    table_apontamento_consolidado.column(i + colunasUsuario).visible(false, false);
+                                    continue;
+                                } else {
+                                    table_apontamento_consolidado.column(i + colunasUsuario).visible(true, false);
+                                }
+                            }
+                            var coluna = $(table_apontamento_consolidado.columns(i + colunasUsuario).header());
+                            coluna.text(json.calendar.dias[i]);
+                            coluna.removeClass('text-danger').css('background-color', '');
+                            if (json.calendar.semana[semana] === 'Sábado' || json.calendar.semana[semana] === 'Domingo') {
+                                coluna.addClass('text-danger').css('background-color', '#dbdbdb');
+                            }
+
+                            if (json.calendar.dias[i] > json.calendar.dias[json.calendar.qtde_dias]) {
+                                coluna.attr({
+                                    'data-dia': json.calendar.ano_anterior + '-' + json.calendar.mes_anterior + '-' + coluna.text(),
+                                    'data-mes_ano': json.calendar.semana[semana] + ', ' + coluna.text() + '/' + json.calendar.mes_anterior + '/' + json.calendar.ano_anterior,
+                                    'title': json.calendar.semana[semana] + ', ' + coluna.text() + ' de ' + json.calendar.mes_ano_anterior.replace(' ', ' de ')
+                                });
+
+                                if (dt1.getFullYear() === parseInt(json.calendar.ano_anterior) && dt1.getMonth() === parseInt(json.calendar.mes_anterior - 1) && dt1.getDate() === parseInt(json.calendar.dias[i])) {
+                                    coluna.css('background-color', '#0f0');
+                                }
+                            } else {
+                                coluna.attr({
+                                    'data-dia': json.calendar.ano + '-' + json.calendar.mes + '-' + coluna.text(),
+                                    'data-mes_ano': json.calendar.semana[semana] + ', ' + coluna.text() + '/' + json.calendar.mes + '/' + json.calendar.ano,
+                                    'title': json.calendar.semana[semana] + ', ' + coluna.text() + ' de ' + json.calendar.mes_ano.replace(' ', ' de ')
+                                });
+
+                                if (dt1.getFullYear() === parseInt(json.calendar.ano) && dt1.getMonth() === parseInt(json.calendar.mes - 1) && dt1.getDate() === parseInt(json.calendar.dias[i])) {
+                                    coluna.css('background-color', '#0f0');
+                                }
+                            }
+
+                            if (i % 7 === 0) {
+                                semana = 1;
+                            } else {
+                                semana++;
+                            }
+                        }
+                        if (json.draw === 1) {
+                            $("#legenda_consolidada").html('<button title="Mostrar legenda de eventos" data-toggle="modal" data-target="#modal_legenda" style="margin: 15px 10px 0;" class="btn btn-default btn-sm">' +
+                                '<i class="glyphicon glyphicon-exclamation-sign"></i> <span class="hidden-xs"> Mostrar legenda de eventos</span>' +
+                                '</button>');
+                        }
+                        return json.data;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (rowData[col][2] !== null || rowData[col][3] !== null) {
+                                if (rowData[col][5] === 'A') {
+                                    $(td).addClass('colaborador-disabled');
+                                } else if (rowData[col][5] === 'F') {
+                                    $(td).addClass('colaborador-primary');
+                                }
+                                $(td).removeClass('warning');
+                                $(td).attr({
+                                    'title': (rowData[col][2] !== null ? 'Data de saída: ' + rowData[col][2] + '\n' : '') +
+                                        (rowData[col][3] !== null ? 'Data de retorno: ' + rowData[col][3] + '\n' : '') +
+                                        (rowData[col][4] !== '' && rowData[col][4] !== undefined ? 'Colaborador backup: ' + $('[name="id_usuario_bck"] option[value="' + rowData[col][4] + '"]').text() : '')
+                                });
+                            } else {
+                                $(td).addClass('warning');
+                                $(td).removeClass('colaborador-success');
+                            }
+                            $(td).attr({
+                                'data-id': rowData[col][0],
+                                'data-nome': rowData[col][1],
+                                'data-recesso': rowData[col][2],
+                                'data-retorno': rowData[col][3],
+                                'data-id_usuario_bck': rowData[col][4],
+                                'data-tipo': rowData[col][5]
+                            });
+                            $(td).html(rowData[col][1]);
+                        },
+                        'width': 'auto',
+                        'targets': [0]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            if (rowData[col][2] !== null || rowData[col][4]) {
+                                $(td).addClass('colaborador-disabled text-center');
+                                $(td).removeClass('warning');
+                                $(td).attr({
+                                    'title': (rowData[col][2] !== null ? 'Data de início das atividades: ' + rowData[col][2] + '\n' : '') +
+                                        (rowData[col][3] === null || rowData[col][3] === undefined ? '' : 'Colaborador substituto: ' + $('[name="id_usuario_sub"] option[value="' + (rowData[col][3] > 0 ? rowData[col][3] : '') + '"]').text())
+                                });
+                                $(td).html(rowData[col][1] !== null ? rowData[col][1] : 'AL');
+                            } else {
+                                $(td).addClass('warning');
+                                $(td).removeClass('colaborador-success');
+                                $(td).html('');
+                            }
+                            $(td).attr({
+                                'data-id': rowData[col][0],
+                                'data-nome': rowData[col][1],
+                                'data-desligamento': rowData[col][2],
+                                'data-id_usuario_sub': rowData[col][3]
+                            });
+                        },
+                        'targets': [1]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            $(td).removeClass('text-muted text-success text-danger');
+                            if (rowData[col] !== null && rowData[col].indexOf('-') === 0) {
+                                $(td).addClass('text-danger');
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            } else if (rowData[col] !== null && rowData[col] !== '00:00' && rowData[col].indexOf('-') === -1) {
+                                $(td).addClass('text-success');
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            } else if (rowData[col] !== null) {
+                                $(td).addClass('text-muted');
+                            }
+                        },
+                        'className': 'text-center warning',
+                        'targets': [2]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            var data_dia = $(table_apontamento_consolidado.column(col).header()).attr('data-dia');
+                            var data_recesso = moment(rowData[0][2], 'DD/MM/YYYY').subtract(1, 'days');
+                            var data_retorno = moment(rowData[0][3], 'DD/MM/YYYY').add(1, 'days');
+                            var data_desligamento = moment(rowData[1][2], 'DD/MM/YYYY');
+
+                            $(td).css('padding', '8px 1px');
+                            if (rowData[col] === null || rowData[col][0] === undefined) {
+                                $(td).css('background-color', '#dbdbdb').html('');
+                            } else {
+                                if ($(table_apontamento_consolidado.column(col).header()).hasClass('text-danger')) {
+                                    $(td).css('background-color', '#e9e9e9');
+                                }
+
+                                if (moment(data_dia).isSameOrAfter(data_desligamento)) {
+                                    $(td).css('border', '1px solid #B5BBD9');
+                                } else if (moment(data_dia).isBetween(data_recesso, data_retorno)) {
+                                    $(td).css('border', '1px solid #B2CEE6');
+                                }
+
+                                if (moment(data_dia).isSameOrAfter(data_desligamento)) {
+                                    if (rowData[1][3] === null) {
+                                        $(td).css({'background-color': '#dbdbdb', 'font-weight': 'bolder'}).html('');
+                                    } else {
+                                        $(td).css({'background-color': '#C9CDE1', 'font-weight': 'bolder'});
+                                    }
+                                } else if (moment(data_dia).isBetween(data_recesso, data_retorno)) {
+                                    if (rowData[0][4] === null) {
+                                        $(td).css({'background-color': '#dbdbdb', 'font-weight': 'bolder'}).html('');
+                                    } else {
+                                        $(td).css({'background-color': '#CCE2F4', 'font-weight': 'bolder'});
+                                    }
+                                } else if (rowData[col][9] === 'AE') {
+                                    $(td).removeClass('date-width-success, date-width-danger').css('font-weight', 'bolder');
+                                    if (rowData[col][18] < 0) {
+                                        $(td).addClass('date-width-danger');
+                                    } else if (rowData[col][18] > 0) {
+                                        $(td).addClass('date-width-success');
+                                    }
+                                } else if (((rowData[col][9] === 'FJ' && rowData[col][1].length > 0) || ((rowData[col][9] === 'AJ' || rowData[col][9] === 'SJ') && rowData[col][2].length > 0)) && rowData[col][10].length === 0) {
+                                    $(td).addClass('date-width-danger');
+                                } else if (((rowData[col][9] === 'FN' && rowData[col][1].length > 0) || ((rowData[col][9] === 'AN' || rowData[col][9] === 'SN') && rowData[col][2].length > 0)) && rowData[col][10].length === 0) {
+                                    $(td).addClass('date-width-danger');
+                                } else if (rowData[col][9] === 'FR') {
+                                    $(td).addClass('date-width-primary');
+                                } else if (rowData[col][9] === 'PD' || rowData[col][9] === 'PI') {
+                                    $(td).addClass('date-width-danger');
+                                } else if (rowData[col][1] === '' || rowData[col][2] === '') {
+                                    $(td).addClass('date-width-success');
+                                } else if (rowData[col][0].length > 0) {
+                                    $(td).css('background-color', '#ff0');
+                                }
+                                $(td).attr({
+                                    'data-tooltip': 'tooltip',
+                                    'data-placement': 'top',
+                                    'title':
+                                        (moment(data_dia).isSameOrAfter(data_desligamento) && rowData[1][3] ? 'Colaborador(a) substituto(a): ' + rowData[1][1] + '\nColaborador(a) principal: ' :
+                                            (moment(data_dia).isBetween(data_recesso, data_retorno) && rowData[0][4] ? 'Colaborador(a) backup: ' + rowData[0][6] + '\nColaborador(a) principal: ' : '')) +
+                                        rowData[0][1] + '\n' + $(table_apontamento_consolidado.column(col).header()).attr('title') +
+                                        '\nEvento: ' + (rowData[col][9] === 'AJ' ? 'Atraso com atestado próprio' :
+                                        rowData[col][9] === 'AN' ? 'Atraso sem atestado' :
+                                            rowData[col][9] === 'FJ' ? 'Falta com atestado próprio' :
+                                                rowData[col][9] === 'FN' ? 'Falta sem atestado' :
+                                                    rowData[col][9] === 'SJ' ? 'Saída antecipada com atestado próprio' :
+                                                        rowData[col][9] === 'SN' ? 'Saída antecipada sem atestado' :
+                                                            rowData[col][9] === 'PD' ? 'Posto descoberto' :
+                                                                rowData[col][9] === 'PI' ? 'Posto descontinuado' :
+                                                                    rowData[col][9] === 'FR' ? 'Feriado' :
+                                                                        moment(data_dia).isSameOrAfter(data_desligamento) && rowData[1][3] ? 'Desligamento' :
+                                                                            moment(data_dia).isBetween(data_recesso, data_retorno) && rowData[0][4] ? 'Férias' : 'Ok') +
+                                        (rowData[col][2] !== '' && rowData[col][2] !== undefined ? '\nHoras devedoras: ' + rowData[col][2] : '') +
+                                        (rowData[col][16] !== '' && rowData[col][16] !== undefined ? '\nApontamento extra: ' + rowData[col][16] : '') +
+                                        (rowData[col][17] !== '' && rowData[col][17] !== undefined ? '\nDesconto de apontamento: ' + rowData[col][17] : '') +
+                                        (rowData[col][7] !== '' && rowData[col][7] !== undefined ? '\nDetalhes: ' + rowData[col][7] : '') +
+                                        (rowData[col][14] !== '' && rowData[col][14] !== undefined ? '\nBackup nº 1: ' + rowData[col][14] : '') +
+                                        (rowData[col][15] !== '' && rowData[col][15] !== undefined ? '\nBackup nº 2: ' + rowData[col][15] : '') +
+                                        (rowData[col][8] !== '' && rowData[col][8] !== undefined ? '\nObservações: ' + rowData[col][8] : ''),
+                                    'data-id_alocado': rowData[col][1],
+                                    'data-text': rowData[col][5],
+                                    'data-calendar': rowData[col][2],
+                                    'data-id': rowData[col][0],
+                                    'data-qtde_dias': rowData[col][1],
+                                    'data-hora_atraso': rowData[col][2],
+                                    'data-hora_entrada': rowData[col][3],
+                                    'data-hora_intervalo': rowData[col][4],
+                                    'data-hora_retorno': rowData[col][5],
+                                    'data-hora_saida': rowData[col][6],
+                                    'data-detalhes': rowData[col][7],
+                                    'data-observacoes': rowData[col][8],
+                                    'data-status': rowData[col][9],
+                                    'data-id_alocado_bck': rowData[col][10],
+                                    'data-id_alocado_bck2': rowData[col][11],
+                                    'data-hora_glosa': rowData[col][12],
+                                    'data-id_detalhes': rowData[col][13],
+                                    'data-apontamento_extra': rowData[col][16],
+                                    'data-apontamento_desc': rowData[col][17]
+                                });
+                                if (moment(data_dia).isSameOrAfter(data_desligamento) && rowData[1][3]) {
+                                    $(td).attr({
+                                        'data-id_alocado': rowData[0][0]
+                                    });
+                                } else if (moment(data_dia).isBetween(data_recesso, data_retorno) && rowData[0][4]) {
+                                    $(td).attr({
+                                        'data-id_alocado': rowData[0][0]
+                                    });
+                                } else {
+                                    $(td).attr({
+                                        'data-id_alocado': rowData[0][0]
+                                    });
+                                }
+                                $(td).html(rowData[col][9] !== 'AE' ? rowData[col][9] : 'AP');
+                            }
+                        },
+                        'className': 'text-center',
+                        'targets': 'date-width',
+                        'orderable': false,
+                        'searchable': false
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            $(td).removeClass('text-success text-danger');
+                            if (rowData[col] !== null) {
+                                $(td).addClass('text-danger');
+                                $(td).html('<strong>' + rowData[col] + '</strong>');
+                            }
+                        },
+                        'className': 'warning text-center',
+                        'targets': [-1, -2],
+                        'orderable': false,
+                        'searchable': false
+                    }
+                ],
+                'preDrawCallback': function () {
+                    drawing_table_apontamento_consolidado = true;
+                },
+                'drawCallback': function () {
+                    drawing_table_apontamento_consolidado = false;
+                    set_edicao_evento();
+                }
+            });
+
+            if ('<?= $modo_privilegiado ?>') {
+                table_totalizacao_consolidada = $('#table_totalizacao_consolidada').DataTable({
+                    'dom': "<'row'<'col-sm-3'l><'#calculo_consolidado.col-sm-5'><'col-sm-4'f>>" +
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    "processing": true,
-                    "serverSide": true,
-                    "iDisplayLength": 25,
-                    "lengthMenu": [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
-                    "order": [[0, 'asc']],
-                    "language": {
-                        "url": url
+                    'processing': true,
+                    'serverSide': true,
+                    'iDisplayLength': 25,
+                    'lengthMenu': [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
+                    'language': {
+                        'url': url
                     },
-                    "ajax": {
-                        "url": "<?php echo site_url('st/apontamento/ajax_list') ?>",
-                        "type": "POST",
-                        timeout: 90000,
-                        data: function (d) {
+                    'ajax': {
+                        'url': '<?php echo site_url('apontamento/ajaxTotalizacao') ?>',
+                        'type': 'POST',
+                        'timeout': 90000,
+                        'data': function (d) {
                             d.busca = busca;
+                            d.consolidado = true;
                             d.dia_fechamento = $('#dia_fechamento').val();
+                            d.calculo_totalizacao = $('[name="calculo_totalizacao_consolidado"]:checked').val();
+                            if (d.calculo_totalizacao === undefined) {
+                                d.calculo_totalizacao = '1';
+                            }
                             return d;
                         },
-                        "dataSrc": function (json) {
-                            $('[name="mes"]').val(json.calendar.mes);
-                            $('[name="ano"]').val(json.calendar.ano);
-                            $('#mes_ano').html(json.calendar.mes_ano[0].toUpperCase() + json.calendar.mes_ano.slice(1));
-                            var dt1 = new Date();
-                            var dt2 = new Date();
-                            dt2.setFullYear(json.calendar.ano, (json.calendar.mes - 1));
-                            if (dt1.getTime() < dt2.getTime()) {
-                                $('#mes_seguinte').addClass('disabled').parent().css('cursor', 'not-allowed');
+                        'dataSrc': function (json) {
+                            if (json.total === '0,00' || json.total === json.total_posto) {
+                                $('#total_devido_consolidado').removeClass('text-danger');
                             } else {
-                                $('#mes_seguinte').removeClass('disabled').parent().css('cursor', '');
+                                $('#total_devido_consolidado').addClass('text-danger');
                             }
-
-                            var semana = 1;
-                            var colunasUsuario = 2;
-                            for (i = 1; i <= 31; i++) {
-                                if (i > 28) {
-                                    if (i > json.calendar.qtde_dias) {
-                                        table_apontamento_consolidado.column(i + colunasUsuario).visible(false, false);
-                                        continue;
-                                    } else {
-                                        table_apontamento_consolidado.column(i + colunasUsuario).visible(true, false);
-                                    }
-                                }
-                                var coluna = $(table_apontamento_consolidado.columns(i + colunasUsuario).header());
-                                coluna.text(json.calendar.dias[i]);
-                                coluna.removeClass('text-danger').css('background-color', '');
-                                if (json.calendar.semana[semana] === 'Sábado' || json.calendar.semana[semana] === 'Domingo') {
-                                    coluna.addClass('text-danger').css('background-color', '#dbdbdb');
-                                }
-
-                                if (json.calendar.dias[i] > json.calendar.dias[json.calendar.qtde_dias]) {
-                                    coluna.attr({
-                                        'data-dia': json.calendar.ano_anterior + '-' + json.calendar.mes_anterior + '-' + coluna.text(),
-                                        'data-mes_ano': json.calendar.semana[semana] + ', ' + coluna.text() + '/' + json.calendar.mes_anterior + '/' + json.calendar.ano_anterior,
-                                        'title': json.calendar.semana[semana] + ', ' + coluna.text() + ' de ' + json.calendar.mes_ano_anterior.replace(' ', ' de ')
-                                    });
-
-                                    if (dt1.getFullYear() === parseInt(json.calendar.ano_anterior) && dt1.getMonth() === parseInt(json.calendar.mes_anterior - 1) && dt1.getDate() === parseInt(json.calendar.dias[i])) {
-                                        coluna.css('background-color', '#0f0');
-                                    }
-                                } else {
-                                    coluna.attr({
-                                        'data-dia': json.calendar.ano + '-' + json.calendar.mes + '-' + coluna.text(),
-                                        'data-mes_ano': json.calendar.semana[semana] + ', ' + coluna.text() + '/' + json.calendar.mes + '/' + json.calendar.ano,
-                                        'title': json.calendar.semana[semana] + ', ' + coluna.text() + ' de ' + json.calendar.mes_ano.replace(' ', ' de ')
-                                    });
-
-                                    if (dt1.getFullYear() === parseInt(json.calendar.ano) && dt1.getMonth() === parseInt(json.calendar.mes - 1) && dt1.getDate() === parseInt(json.calendar.dias[i])) {
-                                        coluna.css('background-color', '#0f0');
-                                    }
-                                }
-
-                                if (i % 7 === 0) {
-                                    semana = 1;
-                                } else {
-                                    semana++;
-                                }
-                            }
-                            if (json.draw === '1') {
-                                $("#legenda").html('<button title="Mostrar legenda de eventos" data-toggle="modal" data-target="#modal_legenda" style="margin: 15px 10px 0;" class="btn btn-default btn-sm">' +
-                                    '<i class="glyphicon glyphicon-exclamation-sign"></i> <span class="hidden-xs"> Mostrar legenda de eventos</span>' +
-                                    '</button>');
+                            $('#total_posto_consolidado').html(json.total_posto);
+                            $('#total_devido_consolidado').html(json.total);
+                            $('#total_percentual_consolidado').html(json.total_percentual + '%');
+                            if (json.draw === 1) {
+                                $("#calculo_consolidado").css({'padding': '16px 0 0 32px', 'text-align': 'left'});
+                                $("#calculo_consolidado").append('<div class="radio"><label><?= form_radio('calculo_totalizacao_consolidado" onclick="calcular_totalizacao_consolidada()', '1', true) ?> Cálculo por dia/hora</label></div> &emsp;');
+                                $("#calculo_consolidado").append('<div class="radio"><label><?= form_radio('calculo_totalizacao_consolidado" onclick="calcular_totalizacao_consolidada()', '2', false) ?> Cálculo por percentual</label></div>');
                             }
                             return json.data;
                         }
                     },
-                    "columnDefs": [
+                    'columnDefs': [
                         {
-                            "createdCell": function (td, cellData, rowData, row, col) {
-                                if (rowData[col][2] !== null || rowData[col][3] !== null) {
-                                    if (rowData[col][5] === 'A') {
-                                        $(td).addClass('colaborador-disabled');
-                                    } else if (rowData[col][5] === 'F') {
-                                        $(td).addClass('colaborador-primary');
-                                    }
-                                    $(td).removeClass('warning');
-                                    $(td).attr({
-                                        'title': (rowData[col][2] !== null ? 'Data de saída: ' + rowData[col][2] + '\n' : '') +
-                                            (rowData[col][3] !== null ? 'Data de retorno: ' + rowData[col][3] + '\n' : '') +
-                                            (rowData[col][4] !== '' && rowData[col][4] !== undefined ? 'Colaborador backup: ' + $('[name="id_usuario_bck"] option[value="' + rowData[col][4] + '"]').text() : '')
-                                    });
-                                } else {
-                                    $(td).addClass('warning');
-                                    $(td).removeClass('colaborador-success');
-                                }
-                                $(td).attr({
-                                    'data-id': rowData[col][0],
-                                    'data-nome': rowData[col][1],
-                                    'data-recesso': rowData[col][2],
-                                    'data-retorno': rowData[col][3],
-                                    'data-id_usuario_bck': rowData[col][4],
-                                    'data-tipo': rowData[col][5]
-                                });
-                                $(td).html(rowData[col][1]);
-                            },
-                            width: 'auto',
-                            "targets": [0]
+                            'className': 'warning',
+                            'targets': [0]
                         },
                         {
-                            "createdCell": function (td, cellData, rowData, row, col) {
-                                if (rowData[col][2] !== null || rowData[col][4]) {
-                                    $(td).addClass('colaborador-disabled text-center');
-                                    $(td).removeClass('warning');
-                                    $(td).attr({
-                                        'title': (rowData[col][2] !== null ? 'Data de início das atividades: ' + rowData[col][2] + '\n' : '') +
-                                            (rowData[col][3] === null || rowData[col][3] === undefined ? '' : 'Colaborador substituto: ' + $('[name="id_usuario_sub"] option[value="' + (rowData[col][3] > 0 ? rowData[col][3] : '') + '"]').text())
-                                    });
-                                    $(td).html(rowData[col][1] !== null ? rowData[col][1] : 'AL');
-                                } else {
-                                    $(td).addClass('warning');
-                                    $(td).removeClass('colaborador-success');
-                                    $(td).html('');
-                                }
-                                $(td).attr({
-                                    'data-id': rowData[col][0],
-                                    'data-nome': rowData[col][1],
-                                    'data-desligamento': rowData[col][2],
-                                    'data-id_usuario_sub': rowData[col][3]
-                                });
-                            },
-                            "targets": [1]
-                        },
-                        {
-                            "createdCell": function (td, cellData, rowData, row, col) {
-                                $(td).removeClass('text-success text-danger');
-                                if (rowData[col] !== null && rowData[col].indexOf('-') === 0) {
-                                    $(td).addClass('text-danger');
-                                } else if (rowData[col] !== null && rowData[col] !== '0:00' && rowData[col].indexOf('-') === -1) {
-                                    $(td).addClass('text-success');
-                                }
-                                $(td).html('<strong>' + rowData[col] + '</strong>')
-                            },
-                            className: 'text-center warning',
-                            targets: [2]
-                        },
-                        {
-                            "createdCell": function (td, cellData, rowData, row, col) {
-                                var data_dia = $(table_apontamento_consolidado.column(col).header()).attr('data-dia');
-                                var data_recesso = moment(rowData[0][2], 'DD/MM/YYYY').subtract(1, 'days');
-                                var data_retorno = moment(rowData[0][3], 'DD/MM/YYYY').add(1, 'days');
-                                var data_desligamento = moment(rowData[1][2], 'DD/MM/YYYY');
-
-                                $(td).css('padding', '8px 1px');
-                                if (rowData[col] === null || rowData[col][0] === undefined) {
-                                    $(td).css('background-color', '#dbdbdb').html('');
-                                } else {
-                                    if ($(table_apontamento_consolidado.column(col).header()).hasClass('text-danger')) {
-                                        $(td).css('background-color', '#e9e9e9');
-                                    }
-
-                                    if (moment(data_dia).isSameOrAfter(data_desligamento)) {
-                                        $(td).css('border', '1px solid #B5BBD9');
-                                    } else if (moment(data_dia).isBetween(data_recesso, data_retorno)) {
-                                        $(td).css('border', '1px solid #B2CEE6');
-                                    }
-
-                                    if (moment(data_dia).isSameOrAfter(data_desligamento)) {
-                                        if (rowData[1][3] === null) {
-                                            $(td).css({
-                                                'background-color': '#dbdbdb',
-                                                'font-weight': 'bolder'
-                                            }).html('');
-                                        } else {
-                                            $(td).css({'background-color': '#C9CDE1', 'font-weight': 'bolder'});
-                                        }
-                                    } else if (moment(data_dia).isBetween(data_recesso, data_retorno)) {
-                                        if (rowData[0][4] === null) {
-                                            $(td).css({
-                                                'background-color': '#dbdbdb',
-                                                'font-weight': 'bolder'
-                                            }).html('');
-                                        } else {
-                                            $(td).css({'background-color': '#CCE2F4', 'font-weight': 'bolder'});
-                                        }
-                                    } else if (rowData[col][9] === 'AE') {
-                                        $(td).removeClass('date-width-success, date-width-danger').css('font-weight', 'bolder');
-                                        if (rowData[col][18] < 0) {
-                                            $(td).addClass('date-width-danger');
-                                        } else if (rowData[col][18] > 0) {
-                                            $(td).addClass('date-width-success');
-                                        }
-                                    } else if (((rowData[col][9] === 'FJ' && rowData[col][1].length > 0) || ((rowData[col][9] === 'AJ' || rowData[col][9] === 'SJ') && rowData[col][2].length > 0)) && rowData[col][10].length === 0) {
-                                        $(td).addClass('date-width-danger');
-                                    } else if (((rowData[col][9] === 'FN' && rowData[col][1].length > 0) || ((rowData[col][9] === 'AN' || rowData[col][9] === 'SN') && rowData[col][2].length > 0)) && rowData[col][10].length === 0) {
-                                        $(td).addClass('date-width-danger');
-                                    } else if (rowData[col][9] === 'FR') {
-                                        $(td).addClass('date-width-primary');
-                                    } else if (rowData[col][9] === 'PD' || rowData[col][9] === 'PI') {
-                                        $(td).addClass('date-width-danger');
-                                    } else if (rowData[col][1] === '' || rowData[col][2] === '') {
-                                        $(td).addClass('date-width-success');
-                                    } else if (rowData[col][0].length > 0) {
-                                        $(td).css('background-color', '#ff0');
-                                    }
-                                    $(td).attr({
-                                        'data-tooltip': 'tooltip',
-                                        'data-placement': 'top',
-                                        'title':
-                                            (moment(data_dia).isSameOrAfter(data_desligamento) && rowData[1][3] ? 'Colaborador(a) substituto(a): ' + rowData[1][1] + '\nColaborador(a) principal: ' :
-                                                (moment(data_dia).isBetween(data_recesso, data_retorno) && rowData[0][4] ? 'Colaborador(a) backup: ' + rowData[0][6] + '\nColaborador(a) principal: ' : '')) +
-                                            rowData[0][1] + '\n' + $(table_apontamento_consolidado.column(col).header()).attr('title') +
-                                            '\nEvento: ' + (rowData[col][9] === 'AJ' ? 'Atraso com atestado próprio' :
-                                            rowData[col][9] === 'AN' ? 'Atraso sem atestado' :
-                                                rowData[col][9] === 'FJ' ? 'Falta com atestado próprio' :
-                                                    rowData[col][9] === 'FN' ? 'Falta sem atestado' :
-                                                        rowData[col][9] === 'SJ' ? 'Saída antecipada com atestado próprio' :
-                                                            rowData[col][9] === 'SN' ? 'Saída antecipada sem atestado' :
-                                                                rowData[col][9] === 'PD' ? 'Posto descoberto' :
-                                                                    rowData[col][9] === 'PI' ? 'Posto descontinuado' :
-                                                                        rowData[col][9] === 'FR' ? 'Feriado' :
-                                                                            moment(data_dia).isSameOrAfter(data_desligamento) && rowData[1][3] ? 'Desligamento' :
-                                                                                moment(data_dia).isBetween(data_recesso, data_retorno) && rowData[0][4] ? 'Férias' : 'Ok') +
-                                            (rowData[col][2] !== '' && rowData[col][2] !== undefined ? '\nHoras devedoras: ' + rowData[col][2] : '') +
-                                            (rowData[col][16] !== '' && rowData[col][16] !== undefined ? '\nApontamento extra: ' + rowData[col][16] : '') +
-                                            (rowData[col][17] !== '' && rowData[col][17] !== undefined ? '\nDesconto de apontamento: ' + rowData[col][17] : '') +
-                                            (rowData[col][7] !== '' && rowData[col][7] !== undefined ? '\nDetalhes: ' + rowData[col][7] : '') +
-                                            (rowData[col][14] !== '' && rowData[col][14] !== undefined ? '\nBackup nº 1: ' + rowData[col][14] : '') +
-                                            (rowData[col][15] !== '' && rowData[col][15] !== undefined ? '\nBackup nº 2: ' + rowData[col][15] : '') +
-                                            (rowData[col][8] !== '' && rowData[col][8] !== undefined ? '\nObservações: ' + rowData[col][8] : ''),
-                                        'data-id_alocado': rowData[col][1],
-                                        'data-text': rowData[col][5],
-                                        'data-calendar': rowData[col][2],
-                                        'data-id': rowData[col][0],
-                                        'data-qtde_dias': rowData[col][1],
-                                        'data-hora_atraso': rowData[col][2],
-                                        'data-hora_entrada': rowData[col][3],
-                                        'data-hora_intervalo': rowData[col][4],
-                                        'data-hora_retorno': rowData[col][5],
-                                        'data-hora_saida': rowData[col][6],
-                                        'data-detalhes': rowData[col][7],
-                                        'data-observacoes': rowData[col][8],
-                                        'data-status': rowData[col][9],
-                                        'data-id_alocado_bck': rowData[col][10],
-                                        'data-id_alocado_bck2': rowData[col][11],
-                                        'data-hora_glosa': rowData[col][12],
-                                        'data-id_detalhes': rowData[col][13],
-                                        'data-apontamento_extra': rowData[col][16],
-                                        'data-apontamento_desc': rowData[col][17]
-                                    });
-                                    if (moment(data_dia).isSameOrAfter(data_desligamento) && rowData[1][3]) {
-                                        $(td).attr({
-                                            'data-id_alocado': rowData[0][0]
-                                        });
-                                    } else if (moment(data_dia).isBetween(data_recesso, data_retorno) && rowData[0][4]) {
-                                        $(td).attr({
-                                            'data-id_alocado': rowData[0][0]
-                                        });
-                                    } else {
-                                        $(td).attr({
-                                            'data-id_alocado': rowData[0][0]
-                                        });
-                                    }
-                                    $(td).html(rowData[col][9] !== 'AE' ? rowData[col][9] : 'AP');
-                                }
-                            },
-                            "className": 'text-center',
-                            "targets": 'date-width',
-                            "orderable": false,
-                            "searchable": false
-                        },
-                        {
-                            "createdCell": function (td, cellData, rowData, row, col) {
-                                $(td).removeClass('text-success text-danger');
+                            'createdCell': function (td, cellData, rowData, row, col) {
                                 if (rowData[col] !== null) {
                                     $(td).addClass('text-danger');
                                     $(td).html('<strong>' + rowData[col] + '</strong>');
                                 }
                             },
-                            className: "warning text-right",
-                            "targets": [-1, -2],
-                            "orderable": false,
-                            "searchable": false
+                            'className': 'text-center',
+                            'targets': [1, 2, 3, 4],
+                            'searchable': false
+                        },
+                        {
+                            'createdCell': function (td, cellData, rowData, row, col) {
+                                if (rowData[col] !== null) {
+                                    if (rowData[col] < rowData[3]) {
+                                        $(td).addClass('text-danger');
+                                    }
+                                    $(td).html('<strong>' + rowData[col] + '</strong>');
+                                }
+                            },
+                            'className': 'text-center',
+                            'targets': [10],
+                            'searchable': false
+                        },
+                        {
+                            'createdCell': function (td, cellData, rowData, row, col) {
+                                if (rowData[col] !== null) {
+                                    $(td).html('<strong>' + rowData[col] + '</strong>');
+                                }
+                            },
+                            'className': 'text-center',
+                            'targets': [3, 4, 5, 6, 7, 8, 9],
+                            'searchable': false
+                        },
+                        {
+                            'createdCell': function (td, cellData, rowData, row, col) {
+                                $(td).css('cursor', 'pointer');
+                                $(td).attr({
+                                    'data-id': rowData[14],
+                                    'data-dias': rowData[11],
+                                    'data-horas': rowData[12],
+                                    'data-total': rowData[13]
+                                });
+                                if (rowData[13] !== null) {
+                                    if (rowData[6] < rowData[3]) {
+                                        $(td).addClass('text-danger');
+                                    }
+                                }
+                                if (rowData[col] !== null) {
+                                    $(td).html('<strong>' + rowData[col].replace('.', ',') + '</strong>');
+                                }
+                            },
+                            'className': "text-center",
+                            'width': 'auto',
+                            'targets': [11, 12, 13]
                         }
                     ],
                     'preDrawCallback': function () {
-                        drawing_table_apontamento_consolidado = true;
+                        drawing_table_totalizacao_consolidada = true;
                     },
                     'drawCallback': function () {
-                        drawing_table_apontamento_consolidado = false;
+                        drawing_table_totalizacao_consolidada = false;
                         set_edicao_evento();
                     }
                 });
-
-                if ('<?= $modo_privilegiado ?>') {
-                    table_totalizacao_consolidada = $('#table_totalizacao_consolidada').DataTable({
-                        dom: "<'row'<'col-sm-3'l><'#calculo_consolidado.col-sm-5'><'col-sm-4'f>>" +
-                            "<'row'<'col-sm-12'tr>>" +
-                            "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                        "processing": true,
-                        "serverSide": true,
-                        "iDisplayLength": 25,
-                        "lengthMenu": [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
-                        "order": [[0, 'asc']],
-                        "language": {
-                            "url": url
-                        },
-                        "ajax": {
-                            "url": "<?php echo site_url('st/apontamento_totalizacao/ajax_list') ?>",
-                            "type": "POST",
-                            timeout: 90000,
-                            data: function (d) {
-                                d.busca = busca;
-                                d.dia_fechamento = $('#dia_fechamento').val();
-                                d.calculo_totalizacao = $('[name="calculo_totalizacao_consolidado"]:checked').val();
-                                if (d.calculo_totalizacao === undefined) {
-                                    d.calculo_totalizacao = '1';
-                                }
-                                return d;
-                            },
-                            "dataSrc": function (json) {
-                                if (json.total === '0,00' || json.total === json.total_posto) {
-                                    $('#total_devido_consolidado').removeClass('text-danger');
-                                } else {
-                                    $('#total_devido_consolidado').addClass('text-danger');
-                                }
-                                $('#total_posto_consolidado').html(json.total_posto);
-                                $('#total_devido_consolidado').html(json.total);
-                                $('#total_percentual_consolidado').html(json.total_percentual + '%');
-                                if (json.draw === '1') {
-                                    $("#calculo_consolidado").css({'padding': '16px 0 0 32px', 'text-align': 'left'});
-                                    $("#calculo_consolidado").append('<div class="radio"><label><?= form_radio('calculo_totalizacao_consolidado" onclick="calcular_totalizacao_consolidada()', '1', true) ?> Cálculo por dia/hora</label></div> &emsp;');
-                                    $("#calculo_consolidado").append('<div class="radio"><label><?= form_radio('calculo_totalizacao_consolidado" onclick="calcular_totalizacao_consolidada()', '2', false) ?> Cálculo por percentual</label></div>');
-                                }
-                                return json.data;
-                            }
-                        },
-                        "columnDefs": [
-                            {
-                                className: "warning",
-                                "targets": [0]
-                            },
-                            {
-                                "createdCell": function (td, cellData, rowData, row, col) {
-                                    if (rowData[col] !== null) {
-                                        $(td).addClass('text-danger');
-                                        $(td).html('<strong>' + rowData[col] + '</strong>');
-                                    }
-                                },
-                                className: "text-center",
-                                "targets": [1, 2, 3, 4],
-                                "searchable": false
-                            },
-                            {
-                                "createdCell": function (td, cellData, rowData, row, col) {
-                                    if (rowData[col] !== null) {
-                                        if (rowData[col] < rowData[3]) {
-                                            $(td).addClass('text-danger');
-                                        }
-                                        $(td).html('<strong>' + rowData[col] + '</strong>');
-                                    }
-                                },
-                                className: "text-center",
-                                "targets": [10],
-                                "searchable": false
-                            },
-                            {
-                                "createdCell": function (td, cellData, rowData, row, col) {
-                                    if (rowData[col] !== null) {
-                                        $(td).html('<strong>' + rowData[col] + '</strong>');
-                                    }
-                                },
-                                className: "text-center",
-                                "targets": [3, 4, 5, 6, 7, 8, 9],
-                                "searchable": false
-                            },
-                            {
-                                "createdCell": function (td, cellData, rowData, row, col) {
-                                    $(td).css('cursor', 'pointer');
-                                    $(td).attr({
-                                        'data-id': rowData[14],
-                                        'data-dias': rowData[11],
-                                        'data-horas': rowData[12],
-                                        'data-total': rowData[13]
-                                    });
-                                    if (rowData[13] !== null) {
-                                        if (rowData[6] < rowData[3]) {
-                                            $(td).addClass('text-danger');
-                                        }
-                                    }
-                                    if (rowData[col] !== null) {
-                                        $(td).html('<strong>' + rowData[col].replace('.', ',') + '</strong>');
-                                    }
-                                },
-                                className: "text-center",
-                                width: 'auto',
-                                "targets": [11, 12, 13]
-                            }
-                        ],
-                        'preDrawCallback': function () {
-                            drawing_table_totalizacao_consolidada = true;
-                        },
-                        'drawCallback': function () {
-                            drawing_table_totalizacao_consolidada = false;
-                            set_edicao_evento();
-                        }
-                    });
-                }
             }
 
             atualizarColaboradores();
@@ -2588,63 +2667,71 @@ require_once APPPATH . 'views/end_js.php';
 
         });
 
+        // Ajusta a largura das colunas dos tabelas do tipo DataTables em uma aba
+        $(document).on('shown.bs.tab', function () {
+            $.fn.dataTable.tables({visible: true, api: true}).columns.adjust();
+        });
+
         function atualizarFiltro() {
             var data = $('#busca').serialize();
+            $('#btnSaveFiltro, #limpar').prop('disabled', true);
             $('#busca [name="depto"], #busca [name="area"], #busca [name="setor"], #busca [name="cargo"], #busca [name="funcao"]').prop('disabled', true);
 
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/atualizar_filtro/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: $('#busca').serialize(),
-                success: function (data) {
+                'url': '<?php echo site_url('apontamento/atualizar_filtro/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': data,
+                'success': function (json) {
                     $('#busca [name="depto"]').prop('disabled', false);
-                    $('#busca [name="area"]').prop('disabled', false).replaceWith(data.area);
-                    $('#busca [name="setor"]').prop('disabled', false).replaceWith(data.setor);
-                    $('#busca [name="cargo"]').prop('disabled', false).replaceWith(data.cargo);
-                    $('#busca [name="funcao"]').prop('disabled', false).replaceWith(data.funcao);
+                    $('#busca [name="area"]').prop('disabled', false).replaceWith(json.area);
+                    $('#busca [name="setor"]').prop('disabled', false).replaceWith(json.setor);
+                    $('#busca [name="cargo"]').prop('disabled', false).replaceWith(json.cargo);
+                    $('#busca [name="funcao"]').prop('disabled', false).replaceWith(json.funcao);
+                    $('#btnSaveFiltro, #limpar').prop('disabled', false);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                     $('#busca [name="depto"]').prop('disabled', false);
                     $('#busca [name="area"]').prop('disabled', false);
                     $('#busca [name="setor"]').prop('disabled', false);
                     $('#busca [name="cargo"]').prop('disabled', false);
                     $('#busca [name="funcao"]').prop('disabled', false);
+                    $('#btnSaveFiltro, #limpar').prop('disabled', false);
                 }
             });
         }
 
         function atualizarColaboradores() {
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/ajax_colaboradores/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {
-                    busca: busca
+                'url': '<?php echo site_url('apontamento/ajax_colaboradores/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'busca': busca
                 },
-                success: function (data) {
-                    $('#form_colaborador [name="id"]').val(data.id);
-                    $('#form_colaborador [name="id_usuario"]').html($(data.id_usuario).html());
-                    $('#form_colaborador_alocado [name="id"]').html($(data.id_usuario_alocado).html());
-                    $('#form_config [name="dia_fechamento"]').val(data.dia_fechamento);
-                    $('[name="id_usuario_bck"]').html($(data.id_usuario_bck).html());
-                    $('[name="id_usuario_sub"]').html($(data.id_usuario_sub).html());
-                    $('[name="id_alocado_bck"]').html($(data.id_alocado_bck).html());
+                'success': function (json) {
+                    $('#form_colaborador [name="id"]').val(json.id);
+                    $('#form_colaborador [name="id_usuario"]').html($(json.id_usuario).html());
+                    $('#form_colaborador_alocado [name="id"]').html($(json.id_usuario_alocado).html());
+                    $('#form_config [name="dia_fechamento"]').val(json.dia_fechamento);
+                    $('[name="id_usuario_bck"]').html($(json.id_usuario_bck).html());
+                    $('[name="id_usuario_sub"]').html($(json.id_usuario_sub).html());
+                    $('[name="id_alocado_bck"]').html($(json.id_alocado_bck).html());
                     // Usado somente para a área "Ipesp"
-                    if (data.ipesp === null) {
+                    if (json.ipesp === null) {
                         $('#ipesp').hide();
                     } else {
                         $('#ipesp').show();
                     }
 
-                    if (data.dia_fechamento > 0) {
+                    if (json.dia_fechamento > 0) {
                         $('.nav-tabs li:eq(3), .nav-tabs li:eq(4)').show();
                     } else {
                         $('.nav-tabs li:eq(3), .nav-tabs li:eq(4)').hide();
                     }
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -2652,13 +2739,13 @@ require_once APPPATH . 'views/end_js.php';
 
         function atualizarDetalhes() {
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/ajax_edit/') ?>",
-                type: "POST",
-                dataType: "html",
-                success: function (data) {
+                'url': '<?php echo site_url('apontamento/ajax_edit/') ?>',
+                'type': 'POST',
+                'dataType': 'html',
+                'success': function (data) {
                     $('#detalhes').replaceWith(data);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -2666,17 +2753,17 @@ require_once APPPATH . 'views/end_js.php';
 
         function atualizarSetor() {
             $.ajax({
-                url: "<?php echo site_url('st/apontamento_colaboradores/ajax_setores/') ?>",
-                type: "POST",
-                dataType: "html",
-                data: {
-                    area: $('#form_colaborador [name="area"]').val(),
-                    setor: $('#form_colaborador [name="setor"]').val()
+                'url': '<?php echo site_url('apontamento_colaboradores/ajax_setores/') ?>',
+                'type': 'POST',
+                'dataType': 'html',
+                'data': {
+                    'area': $('#form_colaborador [name="area"]').val(),
+                    'setor': $('#form_colaborador [name="setor"]').val()
                 },
-                success: function (data) {
+                'success': function (data) {
                     $('#form_colaborador [name="setor"]').html($(data).html());
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -2714,11 +2801,11 @@ require_once APPPATH . 'views/end_js.php';
         $('#modal_config').on('show.bs.modal', function (event) {
             $('#form_config')[0].reset();
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/ajax_config') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: busca,
-                success: function (json) {
+                'url': '<?php echo site_url('apontamento/ajax_config') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': busca,
+                'success': function (json) {
                     $('#modal_config .modal-title').html('Observações do mês - ' + json.mes + '/' + json.ano);
 
                     $('#form_config [name="mes"]').val(json.mes);
@@ -2748,7 +2835,7 @@ require_once APPPATH . 'views/end_js.php';
                         $('#btnSaveConfig').prop('disabled', false);
                     }
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -2766,11 +2853,11 @@ require_once APPPATH . 'views/end_js.php';
         $('#modal_config_ipesp').on('show.bs.modal', function (event) {
             $('#form_config_ipesp')[0].reset();
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/ajax_config_ipesp') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: busca,
-                success: function (json) {
+                'url': '<?php echo site_url('apontamento/ajax_config_ipesp') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': busca,
+                'success': function (json) {
                     $('#modal_config_ipesp .modal-title').html('Observações do mês para IPESP/Teleatendimento - ' + json.mes + '/' + json.ano);
 
                     $('#form_config_ipesp [name="id"]').val(json.id);
@@ -2820,7 +2907,7 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#form_config_ipesp [name="observacoes"]').val(json.observacoes);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -2903,18 +2990,18 @@ require_once APPPATH . 'views/end_js.php';
 
         function get_posto_anterior() {
             $.ajax({
-                url: "<?php echo site_url('st/apontamento_postos/ajax_posto/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id_usuario: $('[name="id_usuario"]').val()},
-                success: function (data) {
-                    $('[name="total_dias_mensais"]').val(data.total_dias_mensais);
-                    $('[name="total_horas_diarias"]').val(data.total_horas_diarias);
-                    $('[name="valor_posto"]').val(data.valor_posto);
-                    $('[name="valor_dia"]').val(data.valor_dia);
-                    $('[name="valor_hora"]').val(data.valor_hora);
+                'url': '<?php echo site_url('apontamento_postos/ajax_posto/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id_usuario': $('[name="id_usuario"]').val()},
+                'success': function (json) {
+                    $('[name="total_dias_mensais"]').val(json.total_dias_mensais);
+                    $('[name="total_horas_diarias"]').val(json.total_horas_diarias);
+                    $('[name="valor_posto"]').val(json.valor_posto);
+                    $('[name="valor_dia"]').val(json.valor_dia);
+                    $('[name="valor_hora"]').val(json.valor_hora);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -3005,6 +3092,7 @@ require_once APPPATH . 'views/end_js.php';
             dt.setMonth(dt.getMonth() + (value));
             $('[name="mes"]').val(dt.getMonth() < 9 ? '0' + (dt.getMonth() + 1) : dt.getMonth() + 1);
             $('[name="ano"]').val(dt.getFullYear());
+
             busca = $('#busca').serialize();
             atualizarColaboradores();
             reload_table(true);
@@ -3018,10 +3106,9 @@ require_once APPPATH . 'views/end_js.php';
             data_proximo_mes.setMonth(data_proximo_mes.getMonth() + 1);
             data_busca.setFullYear($('[name="ano"]').val(), ($('[name="mes"]').val() - 1), 1);
             if (data_proximo_mes.getTime() < data_busca.getTime()) {
-                $('[name="mes"]').val(data_proximo_mes.getMonth() + 1);
+                $('[name="mes"]').val(('00' + (data_proximo_mes.getMonth() + 1).toString()).slice(-2));
                 $('[name="ano"]').val(data_proximo_mes.getFullYear());
             }
-
             busca = $('#busca').serialize();
             atualizarColaboradores();
             reload_table(true);
@@ -3033,15 +3120,15 @@ require_once APPPATH . 'views/end_js.php';
 
         function add_mes() {
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/novo/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: busca,
-                success: function (data) {
+                'url': '<?php echo site_url('apontamento/novo/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': busca,
+                'success': function (json) {
                     atualizarColaboradores();
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -3049,15 +3136,15 @@ require_once APPPATH . 'views/end_js.php';
 
         function add_colaborador() {
             $.ajax({
-                url: "<?php echo site_url('st/apontamento_colaboradores/novo/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: busca,
-                success: function (data) {
+                'url': '<?php echo site_url('apontamento_colaboradores/novo/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': busca,
+                'success': function (json) {
                     atualizarColaboradores();
                     reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -3067,15 +3154,15 @@ require_once APPPATH . 'views/end_js.php';
             if (confirm('Deseja limpar o mês selecionado?')) {
 
                 $.ajax({
-                    url: "<?php echo site_url('st/apontamento/ajax_limpar/') ?>",
-                    type: "POST",
-                    dataType: "JSON",
-                    data: busca,
-                    success: function (data) {
+                    'url': '<?php echo site_url('apontamento/ajax_limpar/') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': busca,
+                    'success': function (json) {
                         atualizarColaboradores();
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error get data from ajax');
                     }
                 });
@@ -3089,23 +3176,23 @@ require_once APPPATH . 'views/end_js.php';
             $('.help-block').empty(); // clear error string
 
             $.ajax({
-                url: "<?php echo site_url('st/apontamento_colaboradores/ajax_edit/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (data) {
-                    $('#form_colaborador [name="id"]').val(data.id);
-                    $('#form_colaborador [name="area"]').val(data.area);
-                    $('#form_colaborador [name="setor"]').val(data.setor);
+                'url': '<?php echo site_url('apontamento_colaboradores/ajax_edit/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $('#form_colaborador [name="id"]').val(json.id);
+                    $('#form_colaborador [name="area"]').val(json.area);
+                    $('#form_colaborador [name="setor"]').val(json.setor);
                     atualizarSetor();
-                    $('#form_colaborador [name="contrato"]').val(data.contrato);
-                    $('#form_colaborador [name="telefone"]').val(data.telefone);
-                    $('#form_colaborador [name="email"]').val(data.email);
-                    $('#form_colaborador [name="status"]').val(data.status);
-                    $('#colaborador').html(data.nome);
+                    $('#form_colaborador [name="contrato"]').val(json.contrato);
+                    $('#form_colaborador [name="telefone"]').val(json.telefone);
+                    $('#form_colaborador [name="email"]').val(json.email);
+                    $('#form_colaborador [name="status"]').val(json.status);
+                    $('#colaborador').html(json.nome);
                     $('#modal_colaboradores').modal('show');
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -3119,17 +3206,17 @@ require_once APPPATH . 'views/end_js.php';
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('st/avaliacaoexp_avaliados/edit_status/') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: {id: id},
-                success: function (data) {
-                    $('[name="id"]').val(data.id);
-                    $('#nome').text(data.nome);
-                    $('[name="observacoes"]').val(data.observacoes);
+                'url': '<?php echo site_url('avaliacaoexp_avaliados/edit_status/') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $('[name="id"]').val(json.id);
+                    $('#nome').text(json.nome);
+                    $('[name="observacoes"]').val(json.observacoes);
                     $('#modal_form').modal('show');
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
@@ -3137,7 +3224,8 @@ require_once APPPATH . 'views/end_js.php';
 
         function reload_table(reset = false) {
             edicaoEvento = false;
-            $('#mes_ano').append('&ensp;(Processando - Aguarde...)');
+            $('#mes_ano').append('&ensp;(Processando - Aguarde...)').parent().find('button').prop('disabled', true);
+            $('#filtro').prop('disabled', true);
 
             table.ajax.reload(null, reset); //reload datatable ajax
             table_apontamento_consolidado.ajax.reload(null, reset); //reload datatable ajax
@@ -3145,6 +3233,7 @@ require_once APPPATH . 'views/end_js.php';
                 table_totalizacao.ajax.reload(null, reset); //reload datatable ajax
                 table_totalizacao_consolidada.ajax.reload(null, reset); //reload datatable ajax
             }
+            table_colaboradores.ajax.reload(null, reset);
         }
 
         function set_edicao_evento() {
@@ -3152,8 +3241,10 @@ require_once APPPATH . 'views/end_js.php';
             var b = drawing_table_apontamento_consolidado;
             var c = drawing_table_totalizacao;
             var d = drawing_table_totalizacao_consolidada;
+            var e = drawing_table_colaboradores;
 
-            if (a === false && b === false && c === false && d === false) {
+            if (a === false && b === false && c === false && d === false && e === false) {
+                $('#mes_anterior, #btnOpcoesMes, #mes_seguinte, #filtro').prop('disabled', false);
                 $('#mes_ano').html().replace('&ensp;(Processando - Aguarde...)', '');
                 edicaoEvento = true;
             }
@@ -3162,16 +3253,16 @@ require_once APPPATH . 'views/end_js.php';
         function salvar_configuracoes() {
             $('#btnSaveConfig').text('Salvando...').attr('disabled', true);
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/ajax_saveConfig') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: (busca + '&' + $('#form_config').serialize()),
-                success: function (data) {
+                'url': '<?php echo site_url('apontamento/ajax_saveConfig') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': (busca + '&' + $('#form_config').serialize()),
+                'success': function (json) {
                     $('#modal_config').modal('hide');
                     $('#btnSaveConfig').text('Salvar').attr('disabled', false);
                     table_apontamento_consolidado.ajax.reload(null, true)
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                     $('#btnSaveConfig').text('Salvar').attr('disabled', false);
                 }
@@ -3181,16 +3272,16 @@ require_once APPPATH . 'views/end_js.php';
         function salvar_configuracoes_ipesp() {
             $('#btnSaveConfigIpesp').text('Salvando...').attr('disabled', true);
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/ajax_saveConfig_ipesp') ?>",
-                type: "POST",
-                dataType: "JSON",
-                data: (busca + '&' + $('#form_config_ipesp').serialize()),
-                success: function (data) {
+                'url': '<?php echo site_url('apontamento/ajax_saveConfig_ipesp') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': (busca + '&' + $('#form_config_ipesp').serialize()),
+                'success': function (json) {
                     $('#modal_config_ipesp').modal('hide');
                     $('#btnSaveConfigIpesp').text('Salvar').attr('disabled', false);
                     table_apontamento_consolidado.ajax.reload(null, true)
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                     $('#btnSaveConfigIpesp').text('Salvar').attr('disabled', false);
                 }
@@ -3203,12 +3294,12 @@ require_once APPPATH . 'views/end_js.php';
 
             // ajax adding data to database
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/ajax_ferias') ?>",
-                type: "POST",
-                data: $('#form_backup').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
+                'url': '<?php echo site_url('apontamento/ajax_ferias') ?>',
+                'type': 'POST',
+                'data': $('#form_backup').serialize(),
+                'dataType': 'json',
+                'success': function (json) {
+                    if (json.status) //if success close modal and reload ajax table
                     {
                         $('#modal_backup').modal('hide');
                         reload_table();
@@ -3217,7 +3308,7 @@ require_once APPPATH . 'views/end_js.php';
                     $('#btnSaveBackup').text('Salvar'); //change button text
                     $('#btnSaveBackup, #btnLimparBackup').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.statusText === 'OK') {
                         alert(jqXHR.responseText);
                     } else {
@@ -3236,12 +3327,12 @@ require_once APPPATH . 'views/end_js.php';
 
             // ajax adding data to database
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/ajax_substituto') ?>",
-                type: "POST",
-                data: $('#form_substituto').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
+                'url': '<?php echo site_url('apontamento/ajax_substituto') ?>',
+                'type': 'POST',
+                'data': $('#form_substituto').serialize(),
+                'dataType': 'json',
+                'success': function (json) {
+                    if (json.status) //if success close modal and reload ajax table
                     {
                         $('#modal_substituto').modal('hide');
                         reload_table();
@@ -3250,7 +3341,7 @@ require_once APPPATH . 'views/end_js.php';
                     $('#btnSaveSubstituto').text('Salvar'); //change button text
                     $('#btnSaveSubstituto, #btnLimparSubstituto').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.statusText === 'OK') {
                         alert(jqXHR.responseText);
                     } else {
@@ -3269,12 +3360,12 @@ require_once APPPATH . 'views/end_js.php';
 
             // ajax adding data to database
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/ajax_backup2') ?>",
-                type: "POST",
-                data: $('#form_backup2').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
+                'url': '<?php echo site_url('apontamento/ajax_backup2') ?>',
+                'type': 'POST',
+                'data': $('#form_backup2').serialize(),
+                'dataType': 'json',
+                'success': function (json) {
+                    if (json.status) //if success close modal and reload ajax table
                     {
                         $('#modal_backup2').modal('hide');
                         reload_table();
@@ -3283,7 +3374,7 @@ require_once APPPATH . 'views/end_js.php';
                     $('#btnSaveBackup2').text('Salvar'); //change button text
                     $('#btnSaveBackup2, #btnLimparBackup2').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.statusText === 'OK') {
                         alert(jqXHR.responseText);
                     } else {
@@ -3323,12 +3414,12 @@ require_once APPPATH . 'views/end_js.php';
 
             // ajax adding data to database
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/ajax_save') ?>",
-                type: "POST",
-                data: $('#form').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
+                'url': '<?php echo site_url('apontamento/ajax_save') ?>',
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'success': function (json) {
+                    if (json.status) //if success close modal and reload ajax table
                     {
                         $('#modal_form').modal('hide');
                         reload_table();
@@ -3337,7 +3428,7 @@ require_once APPPATH . 'views/end_js.php';
                     $('#btnSave').text('Salvar'); //change button text
                     $('#btnSave, #btnApagar').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
                     $('#btnSave').text('Salvar'); //change button text
                     $('#btnSave, #btnApagar').attr('disabled', false); //set button enable
@@ -3352,12 +3443,12 @@ require_once APPPATH . 'views/end_js.php';
 
                 // ajax adding data to database
                 $.ajax({
-                    url: "<?php echo site_url('st/apontamento_totalizacao/ajax_save') ?>",
-                    type: "POST",
-                    data: $('#form_totalizacao').serialize(),
-                    dataType: "JSON",
-                    success: function (data) {
-                        if (data.status) //if success close modal and reload ajax table
+                    'url': '<?php echo site_url('apontamento_totalizacao/ajax_save') ?>',
+                    'type': 'POST',
+                    'data': $('#form_totalizacao').serialize(),
+                    'dataType': 'json',
+                    'success': function (json) {
+                        if (json.status) //if success close modal and reload ajax table
                         {
                             $('#modal_totalizacao').modal('hide');
                             reload_table();
@@ -3366,7 +3457,7 @@ require_once APPPATH . 'views/end_js.php';
                         $('#btnSaveTotalizacao').text('Salvar'); //change button text
                         $('#btnSaveTotalizacao').attr('disabled', false); //set button enable
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error adding / update data');
                         $('#btnSaveTotalizacao').text('Salvar'); //change button text
                         $('#btnSaveTotalizacao').attr('disabled', false); //set button enable
@@ -3381,12 +3472,12 @@ require_once APPPATH . 'views/end_js.php';
 
             // ajax adding data to database
             $.ajax({
-                url: "<?php echo site_url('st/apontamento_colaboradores/ajax_save') ?>",
-                type: "POST",
-                data: $('#form_colaborador').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
+                'url': '<?php echo site_url('apontamento_colaboradores/ajax_save') ?>',
+                'type': 'POST',
+                'data': $('#form_colaborador').serialize(),
+                'dataType': 'json',
+                'success': function (json) {
+                    if (json.status) //if success close modal and reload ajax table
                     {
                         $('#modal_colaborador').modal('hide');
                         reload_table();
@@ -3396,10 +3487,7 @@ require_once APPPATH . 'views/end_js.php';
                     $('#btnSaveColaborador').text('Alocar'); //change button text
                     $('#btnSaveColaborador').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR);
-                    console.log(textStatus);
-                    console.log(errorThrown);
+                'error': function (jqXHR, textStatus, errorThrown) {
                     if (textStatus !== null) {
                         alert(textStatus);
                     } else {
@@ -3418,12 +3506,12 @@ require_once APPPATH . 'views/end_js.php';
 
                 // ajax adding data to database
                 $.ajax({
-                    url: "<?php echo site_url('st/apontamento_colaboradores/ajax_delete') ?>",
-                    type: "POST",
-                    data: $('#form_colaborador_alocado').serialize(),
-                    dataType: "JSON",
-                    success: function (data) {
-                        if (data.status) //if success close modal and reload ajax table
+                    'url': '<?php echo site_url('apontamento_colaboradores/ajax_delete') ?>',
+                    'type': 'POST',
+                    'data': $('#form_colaborador_alocado').serialize(),
+                    'dataType': 'json',
+                    'success': function (json) {
+                        if (json.status) //if success close modal and reload ajax table
                         {
                             $('#modal_colaborador_alocado').modal('hide');
                             reload_table();
@@ -3433,7 +3521,7 @@ require_once APPPATH . 'views/end_js.php';
                         $('#btnDeleteColaborador').text('Desalocar'); //change button text
                         $('#btnDeleteColaborador').prop('disabled', true); //set button enable
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error adding / update data');
                         $('#btnDeleteColaborador').text('Desalocar'); //change button text
                         $('#btnDeleteColaborador').attr('disabled', false); //set button enable
@@ -3451,14 +3539,14 @@ require_once APPPATH . 'views/end_js.php';
 
                 // ajax adding data to database
                 $.ajax({
-                    url: "<?php echo site_url('st/apontamento/ajax_delete') ?>",
-                    type: "POST",
-                    data: {
+                    'url': '<?php echo site_url('apontamento/ajax_delete') ?>',
+                    'type': 'POST',
+                    'data': {
                         id: $('[name="id"]').val()
                     },
-                    dataType: "JSON",
-                    success: function (data) {
-                        if (data.status) //if success close modal and reload ajax table
+                    'dataType': 'json',
+                    'success': function (json) {
+                        if (json.status) //if success close modal and reload ajax table
                         {
                             $('#modal_form').modal('hide');
                             reload_table();
@@ -3468,8 +3556,7 @@ require_once APPPATH . 'views/end_js.php';
                         $('#btnApagar').attr('disabled', false); //set button enable
                         $('#btnSave').attr('disabled', false); //set button enable
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        alert(textStatus);
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error adding / update data');
                         $('#btnApagar').text('Limpar evento'); //change button text
                         $('#btnApagar').attr('disabled', false); //set button enable
@@ -3480,14 +3567,13 @@ require_once APPPATH . 'views/end_js.php';
         }
 
         $('#bloquear_mes').on('change', function () {
-            console.log(2);
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/bloquearMes') ?>",
-                type: "POST",
-                data: busca + '&mes_bloqueado=' + ($('#bloquear_mes').is(':checked') ? '1' : ''),
-                dataType: "json",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
+                'url': "<?php echo site_url('apontamento/bloquearMes') ?>",
+                'type': 'POST',
+                'data': busca + '&mes_bloqueado=' + ($('#bloquear_mes').is(':checked') ? '1' : ''),
+                'dataType': 'json',
+                'success': function (json) {
+                    if (json.status) //if success close modal and reload ajax table
                     {
                         if ($('#bloquear_mes').is(':checked')) {
                             $('#btnSaveConfig').prop('disabled', true);
@@ -3496,21 +3582,20 @@ require_once APPPATH . 'views/end_js.php';
                         }
                     }
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert(textStatus);
                 }
             });
         });
 
         function bloquear_mes() {
-            console.log(1);
             $.ajax({
-                url: "<?php echo site_url('st/apontamento/bloquearMes') ?>",
-                type: "POST",
-                data: $(busca + ($('#bloquear_mes').is(':checked') ? '&mes_bloqueado=1' : '')).serialize(),
-                dataType: "json",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
+                'url': '<?php echo site_url('apontamento/bloquearMes') ?>',
+                'type': 'POST',
+                'data': $(busca + ($('#bloquear_mes').is(':checked') ? '&mes_bloqueado=1' : '')).serialize(),
+                'dataType': 'json',
+                'success': function (json) {
+                    if (json.status) //if success close modal and reload ajax table
                     {
                         if ($('#bloquear_mes').is(':checked')) {
                             $('#btnSaveConfig').addClass('disabled');
@@ -3519,7 +3604,7 @@ require_once APPPATH . 'views/end_js.php';
                         }
                     }
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert(textStatus);
                 }
             });
@@ -3543,11 +3628,11 @@ require_once APPPATH . 'views/end_js.php';
                 search = '/q?' + q.join('&');
             }
 
-            $('#pdf').prop('href', "<?= site_url('st/apontamento_relatorios/index'); ?>" + search);
-            $('#bck').prop('href', "<?= site_url('st/apontamento_backups/index'); ?>" + search);
-            $('#financas').prop('href', "<?= site_url('st/apontamento_financas/index'); ?>" + search);
-            $('#gestao_consolidada').prop('href', "<?= site_url('st/apontamento_gestao_consolidada/index'); ?>" + search);
-            $('#atividades_mensais').prop('href', "<?= site_url('st/apontamento_relatorios/atividades_mensais'); ?>" + search);
+            $('#pdf').prop('href', "<?= site_url('apontamento_relatorios/index'); ?>" + search);
+            $('#bck').prop('href', "<?= site_url('apontamento_backups/index'); ?>" + search);
+            $('#financas').prop('href', "<?= site_url('apontamento_financas/index'); ?>" + search);
+            $('#gestao_consolidada').prop('href', "<?= site_url('apontamento_gestao_consolidada/index'); ?>" + search);
+            $('#atividades_mensais').prop('href', "<?= site_url('apontamento_relatorios/atividades_mensais'); ?>" + search);
 
             if ($('[name="area"]').val().length) {
                 $('#bck, #gestao_consolidada').removeAttr('onclick').css('color', '#333');
@@ -3573,6 +3658,5 @@ require_once APPPATH . 'views/end_js.php';
 
     </script>
 
-<?php
-require_once APPPATH . 'views/end_html.php';
-?>
+<?php require_once APPPATH . 'views/end_html.php'; ?>
+

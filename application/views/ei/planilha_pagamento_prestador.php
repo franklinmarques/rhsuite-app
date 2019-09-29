@@ -104,17 +104,51 @@
 
     <table width="100%">
         <tr>
-            <td width="60%">
+            <td width="50%">
                 <p>
-                    <strong>Nome prestador de
-                        serviço:</strong> <?= implode(', ', array_filter([$prestador, $prestador_sub1, $prestador_sub2])); ?>
-                    <br>
+                    <strong>Nome prestador de serviço:</strong> <?= $prestador; ?><br>
                     <strong>CNPJ:</strong> <?= $cnpj; ?><br>
                     <strong>Centro de custo:</strong> <?= $centroCusto; ?><br>
                     <strong>Agência:</strong> <?= $agencia; ?>&emsp;
                     <strong>Conta:</strong> <?= $conta; ?><br>
                     <strong>Banco:</strong> <?= $banco; ?><br>
                 </p>
+                <?php if ($is_pdf == false): ?>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="tipo_pagamento"
+                                           value="1"<?= $tipo_pagamento === '1' ? ' checked' : ''; ?>>
+                                    Valor pagto. início semestre
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="tipo_pagamento"
+                                           value="2"<?= $tipo_pagamento === '2' ? ' checked' : ''; ?>>
+                                    Valor pagto. ajustado
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="tipo_pagamento"
+                                           value="3"<?= $tipo_pagamento === '3' ? ' checked' : ''; ?>>
+                                    Valor pagto. da Ordem de Serviço
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <br>
+                            <button type="button" id="btnUsoHorasFaturadas"
+                                    onclick="recuperar_horas_faturadas()"
+                                    class="btn btn-info btn-sm">Usar horas de faturamento
+                            </button>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </td>
             <td style="vertical-align: top; padding-left: 15px;">
                 <p>
@@ -122,6 +156,17 @@
                     <strong>Departamento:</strong> <?= $departamento; ?><br>
                     <strong>Mês de referência:</strong> <?= $mesAno; ?><br>
                 </p>
+                <?php if ($is_pdf == false): ?>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="control-label" style="font-weight: bold;">Observações:</label>
+                            <textarea name="observacoes" id="observacoes_faturamento" class="form-control"
+                                      onchange="setPdfFaturamentoAttributes()" rows="4"><?= $observacoes; ?></textarea>
+                        </div>
+                    </div>
+                <?php elseif (strlen($observacoes)): ?>
+                    <p><strong>Observações:</strong> <?= $observacoes; ?></p>
+                <?php endif; ?>
             </td>
         </tr>
     </table>
@@ -152,16 +197,18 @@
                         <input type="hidden" name="id_totalizacao[]" value="<?= $servico['id'] ?>">
                         <td class="text-center horas" style="width: 100px;">
                             <input name="total_horas_faturadas[]" class="form-control hora text-center" type="text"
-                                   value="<?= $servico['qtdeHoras'] ?>" placeholder="hh:mm" style="width: 100px;">
+                                   value="<?= $servico['qtdeHoras'] ?>" placeholder="hh:mm" style="width: 100px;"
+                                   onchange="calcular_servicos(this);">
                         </td>
                         <td class="text-center" style="width: 100px;">
                             <input name="valor_pagamento[]" class="form-control valor" type="text"
-                                   value="<?= $servico['valorCustoProfissional'] ?>" style="width: 100px;">
+                                   value="<?= $servico['valorCustoProfissional'] ?>" style="width: 100px;"
+                                   onchange="calcular_servicos(this);">
                         </td>
                         <td class="text-center" style="width: 100px;">
                             <input name="valor_total[]" class="form-control valor" type="text"
                                    value="<?= $servico['total'] ?>"
-                                   style="width: 100px;">
+                                   style="width: 100px;" onchange="calcular_servicos(this);">
                         </td>
                     <?php else: ?>
                         <td class="text-center"><?= $servico['qtdeHoras'] ?></td>
@@ -189,7 +236,7 @@
             <tbody>
             <tr>
                 <td colspan="5" class="text-right">Valor total a ser pago aos prestados >>></td>
-                <td class="text-center"><?= $valorTotal ?></td>
+                <td id="valor_total_geral" class="text-center"><?= $valorTotal ?></td>
             </tr>
             </tbody>
         </table>
@@ -226,7 +273,61 @@
 
 </div>
 
-<?php if ($is_pdf): ?>
+<?php if ($is_pdf == false): ?>
+    <script>
+        $('#form_pagamento_prestador [name="tipo_pagamento"]').on('change', function () {
+            var valor_pagamento = '';
+            if (this.value === '1') {
+                valor_pagamento = '<?= $pagamento_inicio_semestre; ?>';
+            } else if (this.value === '2') {
+                valor_pagamento = '<?= $pagamento_ajustado; ?>';
+            } else if (this.value === '3') {
+                valor_pagamento = '<?= $pagamento_ordem_servico; ?>';
+            }
+
+            $('#form_pagamento_prestador [name="valor_pagamento[]"]').val(valor_pagamento);
+
+            calcular_servicos(this);
+        });
+
+        function calcular_servicos(elem) {
+            var valor_total = 0;
+            $('#form_pagamento_prestador [name="id_totalizacao[]"').each(function (i) {
+                var horas_faturadas = moment.duration($('#form_pagamento_prestador [name="total_horas_faturadas[]"]:eq(' + i + ')').val(), 'HHH:mm').asSeconds();
+                var valor_hora = parseFloat($('#form_pagamento_prestador [name="valor_pagamento[]"]:eq(' + i + ')').val().replace('.', '').replace(',', '.'));
+                var valor_faturado_alterado = parseFloat($('#form_pagamento_prestador [name="valor_total[]"]:eq(' + i + ')').val().replace('.', '').replace(',', '.'));
+
+                if (elem.name === 'valor_total[]') {
+                    var valor_faturado = (valor_faturado !== valor_faturado_alterado ? valor_faturado_alterado : valor_faturado);
+                } else {
+                    var valor_faturado = (horas_faturadas / 3600) * valor_hora;
+                }
+
+                if (isNaN(valor_faturado)) {
+                    $('#form_pagamento_prestador [name="valor_total[]"]:eq(' + i + ')').val('');
+                } else {
+                    $('#form_pagamento_prestador [name="valor_total[]"]:eq(' + i + ')').val((Math.trunc(valor_faturado * 100) / 100).toLocaleString('pt-BR', {
+                        'minimumFractionDigits': 2,
+                        'maximumFractionDigits': 2
+                    }));
+                    valor_total += valor_faturado;
+                }
+
+            });
+
+            if (isNaN(valor_total)) {
+                $('#valor_total_geral').html('');
+            } else {
+                $('#valor_total_geral').html((Math.trunc(valor_total * 100) / 100).toLocaleString('pt-BR', {
+                    'minimumFractionDigits': 2,
+                    'maximumFractionDigits': 2
+                }));
+            }
+
+        }
+
+    </script>
+<?php else: ?>
 </body>
 </html>
 <?php endif; ?>

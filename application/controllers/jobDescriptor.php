@@ -227,8 +227,8 @@ class JobDescriptor extends MY_Controller
                 $row[] = '
                           <button class="btn btn-sm btn-info" onclick="edit_versao(' . $apontamento->id . ')" title="Editar versão de cargo/função"><i class="glyphicon glyphicon-pencil"></i></button>
                           <button class="btn btn-sm btn-danger" onclick="delete_versao(' . $apontamento->id . ')" title="Excluir versão de cargo/função"><i class="glyphicon glyphicon-trash"></i></button>
-                          <!--<button class="btn btn-sm btn-primary" onclick="edit_estrutura()" title="Estrutura">Estrutura</button>
-                          <button class="btn btn-sm btn-primary" onclick="edit_evento()" title="Descritivo">Descritivo</button>-->
+                          <!--<button class="btn btn-sm btn-info" onclick="edit_estrutura()" title="Estrutura">Estrutura</button>
+                          <button class="btn btn-sm btn-info" onclick="edit_evento()" title="Descritivo">Descritivo</button>-->
                           <button class="btn btn-sm btn-info" onclick="edit_respondentes(' . $apontamento->id . ')" title="Respondentes">Respondentes</button>
                           <a class="btn btn-sm btn-primary" href="' . site_url('jobDescriptor/relatorio/' . $apontamento->id) . '" title="Visualizar"><i class="glyphicon glyphicon-list-alt"></i> Visualizar</a>
                          ';
@@ -236,8 +236,8 @@ class JobDescriptor extends MY_Controller
                 $row[] = '
                           <button class="btn btn-sm btn-info disabled" title="Editar versão de cargo/função"><i class="glyphicon glyphicon-pencil"></i></button>
                           <button class="btn btn-sm btn-danger disabled" title="Excluir versão de cargo/função"><i class="glyphicon glyphicon-trash"></i></button>
-                          <!--<button class="btn btn-sm btn-primary disabled" title="Estrutura">Estrutura</button>
-                          <button class="btn btn-sm btn-primary disabled" title="Descritivo">Descritivo</button>-->
+                          <!--<button class="btn btn-sm btn-info disabled" title="Estrutura">Estrutura</button>
+                          <button class="btn btn-sm btn-info disabled" title="Descritivo">Descritivo</button>-->
                           <button class="btn btn-sm btn-info disabled" title="Respondentes">Respondentes</button>
                           <button class="btn btn-sm btn-primary disabled" title="Visualizar"><i class="glyphicon glyphicon-list-alt"></i> Visualizar</button>
                          ';
@@ -481,7 +481,7 @@ class JobDescriptor extends MY_Controller
         $consolidados = $this->db->get('job_descriptor a')->row_array();
 
 
-        if ($consolidados['id_versao_anterior']) {
+        if (!empty($consolidados['id_versao_anterior'])) {
             $jobDescriptor = $this->db->get_where('job_descriptor', ['id' => $consolidados['id_versao_anterior']])->row_array();
             unset($consolidados['id_versao_anterior'], $consolidados['id_descritor']);
             $consolidados = array_intersect_key($consolidados, array_filter($jobDescriptor));

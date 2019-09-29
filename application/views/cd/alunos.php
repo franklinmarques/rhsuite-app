@@ -7,13 +7,13 @@
                 <div class="col-md-12">
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
-                        <li><a href="<?= site_url('cd/apontamento') ?>">Apontamentos diários</a></li>
+                        <li><a href="<?= site_url('cd/apontamento') ?>">Cuidadores - Apontamentos diários</a></li>
                         <li class="active">Gerenciar Alunos</li>
                     </ol>
-                    <button class="btn btn-success" onclick="add_aluno()"><i class="glyphicon glyphicon-plus"></i>
+                    <button class="btn btn-info" onclick="add_aluno()"><i class="glyphicon glyphicon-plus"></i>
                         Adicionar aluno
                     </button>
-                    <a class="btn btn-success" href="<?= site_url('cd/alunos/importar') ?>"><i
+                    <a class="btn btn-primary" href="<?= site_url('cd/alunos/importacao') ?>"><i
                                 class="glyphicon glyphicon-import"></i>
                         Importar alunos
                     </a>
@@ -29,34 +29,34 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label class="control-label">Departamento</label>
-                                            <?php echo form_dropdown('busca[depto]', $depto, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('depto', $depto, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-4">
                                             <label class="control-label">Diretoria de ensino/Prefeitura</label>
-                                            <?php echo form_dropdown('busca[diretoria]', $diretoria, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('diretoria', $diretoria, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-4">
                                             <label class="control-label">Unidade de ensino</label>
-                                            <?php echo form_dropdown('busca[escola]', $escola, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('escola', $escola, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label class="control-label">Supervisor</label>
-                                            <?php echo form_dropdown('busca[supervisor]', $supervisor, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('supervisor', $supervisor, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-4">
                                             <label class="control-label">Períodos</label><br>
                                             <label class="checkbox-inline">
-                                                <input type="checkbox" name="busca[periodo_manha]" value="1"
+                                                <input type="checkbox" name="periodo_manha" value="1"
                                                        onchange="atualizarFiltro()"> Manhã
                                             </label>
                                             <label class="checkbox-inline">
-                                                <input type="checkbox" name="busca[periodo_tarde]" value="1"
+                                                <input type="checkbox" name="periodo_tarde" value="1"
                                                        onchange="atualizarFiltro()"> Tarde
                                             </label>
                                             <label class="checkbox-inline">
-                                                <input type="checkbox" name="busca[periodo_noite]" value="1"
+                                                <input type="checkbox" name="periodo_noite" value="1"
                                                        onchange="atualizarFiltro()"> Noite
                                             </label>
                                         </div>
@@ -76,7 +76,7 @@
                             </div>
                         </div>
                     </div>
-                    <table id="table" class="table table-striped" cellspacing="0" width="100%">
+                    <table id="table" class="table table-striped table-condensed" cellspacing="0" width="100%">
                         <thead>
                         <tr>
                             <th>Diretoria de ensino</th>
@@ -188,7 +188,7 @@
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Diretoria de ensino</label>
                                         <div class="col-md-9">
-                                            <?php echo form_dropdown('', $id_diretoria, '', 'id="id_diretoria" class="form-control"'); ?>
+                                            <?php echo form_dropdown('id_diretoria', $id_diretoria, '', 'id="id_diretoria" class="form-control"'); ?>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -249,7 +249,7 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Salvar</button>
+                            <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
@@ -266,7 +266,7 @@
 
     <script>
         $(document).ready(function () {
-            document.title = 'CORPORATE RH - LMS - Gerenciar Alunos';
+            document.title = 'CORPORATE RH - LMS - Cuidadores - Gerenciar Alunos';
         });
     </script>
 
@@ -293,7 +293,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('cd/alunos/ajax_list') ?>',
+                    'url': '<?php echo site_url('cd/alunos/listar') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.busca = $('#busca').serialize();
@@ -326,7 +326,7 @@
             var busca = unescape($('#busca').serialize());
             $.each(busca.split('&'), function (index, elem) {
                 var vals = elem.split('=');
-                $("[name='" + vals[0] + "']").val($("[name='" + vals[0] + "'] option:first").val());
+                $("#busca [name='" + vals[0] + "']").val($("#busca [name='" + vals[0] + "'] option:first").val());
             });
             atualizarFiltro();
         });
@@ -351,14 +351,14 @@
 
         function atualizarFiltro() {
             $.ajax({
-                'url': '<?php echo site_url('cd/alunos/atualizar_filtro') ?>',
+                'url': '<?php echo site_url('cd/alunos/atualizarFiltro') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
                 'success': function (json) {
-                    $('[name="busca[diretoria]"]').html($(json.diretoria).html());
-                    $('[name="busca[escola]').html($(json.escola).html());
-                    $('[name="busca[supervisor]').html($(json.supervisor).html());
+                    $('#busca [name="diretoria"]').html($(json.diretoria).html());
+                    $('#busca[name="escola"]').html($(json.escola).html());
+                    $('#busca [name="supervisor"]').html($(json.supervisor).html());
                     reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -370,7 +370,7 @@
 
         function atualizar_estrutura() {
             $.ajax({
-                'url': '<?php echo site_url('cd/alunos/ajax_estrutura') ?>',
+                'url': '<?php echo site_url('cd/alunos/atualizarEstrutura') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -391,7 +391,7 @@
 
         function atualizar_escolas() {
             $.ajax({
-                'url': '<?php echo site_url('cd/alunos/atualizar_escolas') ?>',
+                'url': '<?php echo site_url('cd/alunos/atualizarEscolas') ?>',
                 'type': 'POST',
                 'dataType': 'html',
                 'data': {
@@ -413,12 +413,10 @@
 
             if (id.length > 0) {
                 $.ajax({
-                    'url': '<?php echo site_url('cd/alunos/atualizar_periodos') ?>',
+                    'url': '<?php echo site_url('cd/alunos/atualizarPeriodos') ?>',
                     'type': 'POST',
                     'dataType': 'json',
-                    'data': {
-                        'id': id
-                    },
+                    'data': {'id': id},
                     'success': function (json) {
                         // $('#periodo_manha').prop('disabled', json.periodo_manha === '0');
                         // $('#periodo_tarde').prop('disabled', json.periodo_tarde === '0');
@@ -455,7 +453,7 @@
             $('.help-block').empty();
 
             $.ajax({
-                'url': '<?php echo site_url('cd/alunos/ajax_edit') ?>',
+                'url': '<?php echo site_url('cd/alunos/editar') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
@@ -465,10 +463,10 @@
                     // $('#periodo_tarde').prop('disabled', json.escola_tarde === '0');
                     // $('#periodo_noite').prop('disabled', json.escola_noite === '0');
                     $.each(json, function (key, value) {
-                        if ($('[name="' + key + '"]').is(':checkbox') === false) {
-                            $('[name="' + key + '"]').val(value);
+                        if ($('#form [name="' + key + '"]').is(':checkbox') === false) {
+                            $('#form [name="' + key + '"]').val(value);
                         } else {
-                            $('[name="' + key + '"][value="' + value + '"]').prop('checked', value === '1');
+                            $('#form [name="' + key + '"][value="' + value + '"]').prop('checked', value === '1');
                         }
                     });
 
@@ -487,15 +485,8 @@
 
 
         function save() {
-            var url;
-            if (save_method === 'add') {
-                url = '<?php echo site_url('cd/alunos/ajax_add') ?>';
-            } else {
-                url = '<?php echo site_url('cd/alunos/ajax_update') ?>';
-            }
-
             $.ajax({
-                'url': url,
+                'url': '<?php echo site_url('cd/alunos/salvar') ?>',
                 'type': 'POST',
                 'data': $('#form').serialize(),
                 'dataType': 'json',
@@ -527,15 +518,16 @@
         function delete_aluno(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    'url': '<?php echo site_url('cd/alunos/ajax_delete') ?>',
+                    'url': '<?php echo site_url('cd/alunos/excluir') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {'id': id},
                     'success': function (json) {
                         if (json.erro) {
                             alert(json.erro);
+                        } else {
+                            reload_table();
                         }
-                        reload_table();
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');

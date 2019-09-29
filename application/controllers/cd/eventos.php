@@ -5,6 +5,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Eventos extends MY_Controller
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    //==========================================================================
     public function index()
     {
         $empresa = $this->session->userdata('empresa');
@@ -149,6 +155,7 @@ class Eventos extends MY_Controller
         $this->load->view('cd/eventos', $data);
     }
 
+    //==========================================================================
     public function atualizar_filtro()
     {
         $empresa = $this->session->userdata('empresa');
@@ -264,6 +271,7 @@ class Eventos extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_list()
     {
         $post = $this->input->post();
@@ -374,6 +382,7 @@ class Eventos extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function pdf()
     {
         $this->load->library('m_pdf');

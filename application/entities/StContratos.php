@@ -1,28 +1,26 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class StContratos extends Entity
 {
     protected $id;
     protected $id_empresa;
+    protected $id_usuario;
     protected $nome;
     protected $depto;
     protected $area;
     protected $contrato;
-    protected $id_usuario_gestor;
     protected $data_assinatura;
 
     protected $casts = [
         'id' => 'int',
         'id_empresa' => 'int',
+        'id_usuario' => '?int',
         'nome' => 'string',
         'depto' => 'string',
         'area' => 'string',
         'contrato' => 'string',
-        'id_usuario_gestor' => '?int',
         'data_assinatura' => '?datetime'
     ];
 

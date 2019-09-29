@@ -88,7 +88,7 @@
 
                 <!-- Bootstrap modal -->
                 <div class="modal fade" id="modal_form" role="dialog">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <div style="float:right;">
@@ -105,29 +105,34 @@
                                     <input type="hidden" value="<?= $empresa; ?>" name="id_empresa"/>
                                     <div class="form-body">
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Código produto</label>
+                                            <label class="control-label col-md-2">Código produto</label>
                                             <div class="col-md-4">
                                                 <input name="codigo" class="form-control" type="text">
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Nome produto</label>
-                                            <div class="col-md-8">
+                                            <label class="control-label col-md-2">Nome produto</label>
+                                            <div class="col-md-9">
                                                 <input name="nome" class="form-control" type="text">
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Tipo produto</label>
-                                            <div class="col-md-4">
+                                            <label class="control-label col-md-2">Tipo produto</label>
+                                            <div class="col-md-2">
                                                 <?php echo form_dropdown('tipo', $tipos, '', 'class="form-control"'); ?>
+                                                <span class="help-block"></span>
+                                            </div>
+                                            <label class="control-label col-md-2">Tipo de cobrança</label>
+                                            <div class="col-md-3">
+                                                <?php echo form_dropdown('tipo_cobranca', $tiposCobranca, '', 'class="form-control"'); ?>
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Preço de venda</label>
-                                            <div class="col-md-4">
+                                            <label class="control-label col-md-2">Preço de venda</label>
+                                            <div class="col-md-3">
                                                 <div class="input-group">
                                                     <span class="input-group-addon" id="basic-addon1">R$</span>
                                                     <input name="preco" type="text" class="form-control valor"
@@ -135,10 +140,8 @@
                                                 </div>
                                                 <span class="help-block"></span>
                                             </div>
-                                        </div>
-                                        <div class="row form-group">
-                                            <label class="control-label col-md-3">Custo produto</label>
-                                            <div class="col-md-4">
+                                            <label class="control-label col-md-2">Custo produto</label>
+                                            <div class="col-md-3">
                                                 <div class="input-group">
                                                     <span class="input-group-addon" id="basic-addon2">R$</span>
                                                     <input name="custo" type="text" class="form-control valor"
@@ -148,37 +151,33 @@
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Tipo de cobrança</label>
-                                            <div class="col-md-5">
-                                                <?php echo form_dropdown('tipo_cobranca', $tiposCobranca, '', 'class="form-control"'); ?>
-                                                <span class="help-block"></span>
-                                            </div>
-                                        </div>
-                                        <div class="row form-group">
-                                            <label class="control-label col-md-3">Departamento</label>
-                                            <div class="col-md-8">
+                                            <label class="control-label col-md-2">Departamento</label>
+                                            <div class="col-md-4">
                                                 <?php echo form_dropdown('id_depto', $deptos, '', 'id="id_depto" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
                                                 <span class="help-block"></span>
                                             </div>
-                                        </div>
-                                        <div class="row form-group">
-                                            <label class="control-label col-md-3">Área</label>
-                                            <div class="col-md-8">
+                                            <label class="control-label col-md-1">Área</label>
+                                            <div class="col-md-4">
                                                 <?php echo form_dropdown('id_area', $areas, '', 'id="id_area" class="form-control estrutura" onchange="montar_estrutura();"'); ?>
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Setor</label>
-                                            <div class="col-md-8">
+                                            <label class="control-label col-md-2">Setor</label>
+                                            <div class="col-md-4">
                                                 <?php echo form_dropdown('id_setor', $setores, '', 'id="id_setor" class="form-control estrutura"'); ?>
+                                                <span class="help-block"></span>
+                                            </div>
+                                            <label class="control-label col-md-2">Centro de custo</label>
+                                            <div class="col-md-3">
+                                                <input name="centro_custo" class="form-control" type="text">
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>
                                         <div class="row form-group">
-                                            <label class="control-label col-md-3">Centro de custo</label>
-                                            <div class="col-md-8">
-                                                <input name="centro_custo" class="form-control" type="text">
+                                            <label class="control-label col-md-2">Complementos do produto</label>
+                                            <div class="col-md-9">
+                                                <textarea name="complementos" class="form-control"></textarea>
                                                 <span class="help-block"></span>
                                             </div>
                                         </div>

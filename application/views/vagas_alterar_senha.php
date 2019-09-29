@@ -102,13 +102,13 @@
                     <div class="row form-group">
                         <label class="control-label col-md-2 col-md-offset-2">Nova senha</label>
                         <div class="col-md-4">
-                            <input name="nova_senha" class="form-control" type="password">
+                            <input name="nova_senha" class="form-control" type="password" autocomplete="new-password">
                         </div>
                     </div>
                     <div class="row form-group">
                         <label class="control-label col-md-2 col-md-offset-2">Confirmar nova senha</label>
                         <div class="col-md-4">
-                            <input name="confirmar_nova_senha" class="form-control" type="password">
+                            <input name="confirmar_nova_senha" class="form-control" type="password" autocomplete="new-password">
                         </div>
                     </div>
                     <br>

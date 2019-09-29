@@ -4,7 +4,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Cuidadores extends MY_Controller
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -13,6 +12,7 @@ class Cuidadores extends MY_Controller
         }
     }
 
+    //==========================================================================
     public function index()
     {
         $empresa = $this->session->userdata('empresa');
@@ -121,6 +121,7 @@ class Cuidadores extends MY_Controller
         $this->load->view('ei/cuidadores', $data);
     }
 
+    //==========================================================================
     public function atualizar_filtro()
     {
         $empresa = $this->session->userdata('empresa');
@@ -181,7 +182,7 @@ class Cuidadores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function atualizar_unidades()
     {
         $empresa = $this->session->userdata('empresa');
@@ -233,7 +234,7 @@ class Cuidadores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function atualizar_cuidadores()
     {
         $empresa = $this->session->userdata('empresa');
@@ -330,7 +331,7 @@ class Cuidadores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function ajax_list()
     {
         $post = $this->input->post();
@@ -435,7 +436,7 @@ class Cuidadores extends MY_Controller
         echo json_encode($output);
     }
 
-
+    //==========================================================================
     private function getSupervisores($depto, $id_escola)
     {
         $empresa = $this->session->userdata('empresa');
@@ -477,6 +478,7 @@ class Cuidadores extends MY_Controller
         return $data;
     }
 
+    //==========================================================================
     public function ajax_edit()
     {
         $empresa = $this->session->userdata('empresa');
@@ -571,6 +573,7 @@ class Cuidadores extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_save()
     {
         $id_escola = $this->input->post('id_escola');
@@ -657,6 +660,7 @@ class Cuidadores extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_delete()
     {
         $empresa = $this->session->userdata('empresa');

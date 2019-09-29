@@ -1,6 +1,5 @@
-<?php
-require_once "header.php";
-?>
+<?php require_once 'header.php'; ?>
+
     <style>
         .btn-success {
             background-color: #5cb85c;
@@ -56,24 +55,43 @@ require_once "header.php";
                             <div class="well well-sm">
                                 <div class="row">
                                     <div class="col-md-2">
-                                        <label class="control-label">Filtrar por estado</label>
-                                        <?php echo form_dropdown('estado', $estado, '', 'id="estado" class="form-control filtro input-sm"'); ?>
+                                        <label class="control-label">Estado</label>
+                                        <?php echo form_dropdown('estado', $estado, '', 'id="estado" class="form-control filtro input-sm" autocomplete="off"'); ?>
                                     </div>
                                     <div class="col-md-5">
-                                        <label class="control-label">Filtrar por cidade</label>
-                                        <?php echo form_dropdown('cidade', $cidade, '', 'id="cidade" class="form-control filtro input-sm"'); ?>
+                                        <label class="control-label">Cidade</label>
+                                        <?php echo form_dropdown('cidade', $cidade, '', 'id="cidade" class="form-control filtro input-sm" autocomplete="off"'); ?>
                                     </div>
                                     <div class="col-md-5">
-                                        <label class="control-label">Filtrar por bairro</label>
-                                        <?php echo form_dropdown('bairro', $bairro, '', 'id="bairro" class="form-control filtro input-sm"'); ?>
+                                        <label class="control-label">Bairro</label>
+                                        <?php echo form_dropdown('bairro', $bairro, '', 'id="bairro" class="form-control filtro input-sm" autocomplete="off"'); ?>
                                     </div>
                                     <div class="col-md-5">
-                                        <label class="control-label">Filtrar por deficiência</label>
-                                        <?php echo form_dropdown('deficiencia', $deficiencia, '', 'id="deficiencia" class="form-control filtro input-sm"'); ?>
+                                        <label class="control-label">Deficiência</label>
+                                        <?php echo form_dropdown('deficiencia', $deficiencia, '', 'id="deficiencia" class="form-control filtro input-sm" autocomplete="off"'); ?>
                                     </div>
                                     <div class="col-md-5">
-                                        <label class="control-label">Filtrar por escolaridade</label>
-                                        <?php echo form_dropdown('escolaridade', $escolaridade, '', 'id="escolaridade" class="form-control filtro input-sm"'); ?>
+                                        <label class="control-label">Escolaridade</label>
+                                        <?php echo form_dropdown('escolaridade', $escolaridade, '', 'id="escolaridade" class="form-control filtro input-sm" autocomplete="off"'); ?>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="control-label">Sexo</label>
+                                        <select name="sexo" id="sexo" class="form-control filtro input-sm"
+                                                autocomplete="off">
+                                            <option value="">Todos</option>
+                                            <option value="M">Masculino</option>
+                                            <option value="F">Feminino</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="control-label">Idade mínima</label>
+                                        <input type="text" name="idade_minima" id="idade_minima"
+                                               class="form-control filtro idade input-sm" autocomplete="off">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="control-label">Idade máxima</label>
+                                        <input type="text" name="idade_maxima" id="idade_maxima"
+                                               class="form-control filtro idade input-sm" autocomplete="off">
                                     </div>
                                     <div class="col-md-2">
                                         <label>&nbsp;</label><br>
@@ -87,12 +105,12 @@ require_once "header.php";
                             </div>
                         </div>
                     </div>
-                    <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <table id="table" class="table table-striped table-condensed" cellspacing="0" width="100%">
                         <thead>
                         <tr>
-                            <th>Candidato</th>
-                            <th>Cidade</th>
-                            <th>Bairro</th>
+                            <th>Candidato(a)</th>
+                            <th>Deficiência</th>
+                            <th>Escolaridade</th>
                             <th>Ações</th>
                         </tr>
                         </thead>
@@ -224,9 +242,8 @@ require_once "header.php";
     </section>
     <!--main content end-->
 
-<?php
-require_once "end_js.php";
-?>
+<?php require_once 'end_js.php'; ?>
+
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') ?>"
@@ -239,6 +256,7 @@ require_once "end_js.php";
         });</script>
     <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
 
     <script>
 
@@ -246,32 +264,36 @@ require_once "end_js.php";
         var table, tabe_historico;
         var id_candidato;
 
+        $('.idade').mask('000');
+
         $(document).ready(function () {
 
             //datatables
             table = $('#table').DataTable({
-                "processing": true, //Feature control the processing indicator.
-                "serverSide": true, //Feature control DataTables' server-side processing mode.s
-                iDisplayLength: -1,
-                lengthMenu: [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>",
+                'processing': true, //Feature control the processing indicator.
+                'serverSide': true, //Feature control DataTables' server-side processing mode.s
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>',
                     'searchPlaceholder': 'Nome, e-mail, cidade, bairro'
                 },
-                // Load data for the table's content from an Ajax source
-                "ajax": {
-                    "url": "<?php echo site_url('recrutamento_candidatos/ajax_list/' . $empresa) ?>",
-                    "type": "POST",
-                    "data": function (d) {
+                'ajax': {
+                    'url': '<?php echo site_url('recrutamento_candidatos/ajax_list/' . $empresa) ?>',
+                    'type': 'POST',
+                    'data': function (d) {
                         d.estado = $('#estado').val();
                         d.cidade = $('#cidade').val();
                         d.bairro = $('#bairro').val();
                         d.deficiencia = $('#deficiencia').val();
                         d.escolaridade = $('#escolaridade').val();
+                        d.sexo = $('#sexo').val();
+                        d.idade_minima = $('#idade_minima').val();
+                        d.idade_maxima = $('#idade_maxima').val();
 
                         return d;
                     },
-                    "dataSrc": function (json) {
+                    'dataSrc': function (json) {
 
                         $('#estado').html($(json.filtros.estado).html());
                         $('#cidade').html($(json.filtros.cidade).html());
@@ -282,21 +304,20 @@ require_once "end_js.php";
                         return json.data;
                     }
                 },
-                //Set column definition initialisation properties.
-                "columnDefs": [
+                'columnDefs': [
                     {
-                        width: '34%',
-                        targets: [0]
+                        'width': '50%',
+                        'targets': [0]
                     },
                     {
-                        width: '33%',
-                        targets: [1, 2]
+                        'width': '25%',
+                        'targets': [1, 2]
                     },
                     {
-                        className: "text-nowrap",
-                        "targets": [-1], //last column
-                        "orderable": false, //set not orderable
-                        "searchable": false //set not orderable
+                        'className': 'text-nowrap',
+                        'targets': [-1], //last column
+                        'orderable': false, //set not orderable
+                        'searchable': false //set not orderable
                     }
                 ]
             });
@@ -344,6 +365,7 @@ require_once "end_js.php";
             reload_table();
         });
 
+
         function add_candidato() {
             save_method = 'add';
             $('#form')[0].reset(); // reset form on modals
@@ -355,6 +377,7 @@ require_once "end_js.php";
             $('.combo_nivel1').hide();
         }
 
+
         function edit_candidato(id) {
             save_method = 'update';
             $('#form')[0].reset(); // reset form on modals
@@ -364,83 +387,84 @@ require_once "end_js.php";
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('recrutamento_candidatos/ajax_edit/') ?>/" + id,
-                type: "POST",
-                dataType: "json",
-                success: function (data) {
-                    $('[name="id"]').val(data.id);
-                    $('[name="nome"]').val(data.nome);
-                    $('[name="requisitante"]').val(data.requisitante);
-                    $('[name="data_inicio"]').val(data.data_inicio);
-                    $('[name="data_termino"]').val(data.data_termino);
-                    $('[name="status"]').val(data.status);
-                    $('[name="tipo_vaga"]').val(data.tipo_vaga);
+                'url': '<?php echo site_url('recrutamento_candidatos/ajax_edit/') ?>/' + id,
+                'type': 'POST',
+                'dataType': 'json',
+                'success': function (json) {
+                    $('[name="id"]').val(json.id);
+                    $('[name="nome"]').val(json.nome);
+                    $('[name="requisitante"]').val(json.requisitante);
+                    $('[name="data_inicio"]').val(json.data_inicio);
+                    $('[name="data_termino"]').val(json.data_termino);
+                    $('[name="status"]').val(json.status);
+                    $('[name="tipo_vaga"]').val(json.tipo_vaga);
 
                     $('#modal_form').modal('show');
                     $('#modal_form .modal-title').text('Editar candidato'); // Set title to Bootstrap modal title
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
                 }
             });
         }
 
+
         function reload_table() {
             table.ajax.reload(null, false); //reload datatable ajax
         }
 
+
         function save() {
-            $('#btnSave').text('Salvando...'); //change button text
-            $('#btnSave').attr('disabled', true); //set button disable
+            $('#btnSave').text('Salvando...').attr('disabled', true); //set button disable
             var url;
             if (save_method === 'add') {
-                url = "<?php echo site_url('recrutamento_candidatos/ajax_add') ?>";
+                url = '<?php echo site_url('recrutamento_candidatos/ajax_add') ?>';
             } else {
-                url = "<?php echo site_url('recrutamento_candidatos/ajax_update') ?>";
+                url = '<?php echo site_url('recrutamento_candidatos/ajax_update') ?>';
             }
 
             // ajax adding data to database
             $.ajax({
-                url: url,
-                type: "POST",
-                data: $('#form').serialize(),
-                dataType: "JSON",
-                success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
+                'url': url,
+                'type': 'POST',
+                'data': $('#form').serialize(),
+                'dataType': 'json',
+                'success': function (json) {
+                    if (json.status) //if success close modal and reload ajax table
                     {
                         $('#modal_form').modal('hide');
                         reload_table();
                     }
 
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
+                    $('#btnSave').text('Salvar').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
+                    $('#btnSave').text('Salvar').attr('disabled', false); //set button enable
                 }
             });
         }
+
 
         function delete_candidato(id) {
             if (confirm('Deseja remover?')) {
                 // ajax delete data to database
                 $.ajax({
-                    url: "<?php echo site_url('recrutamento_candidatos/ajax_delete/') ?>/" + id,
-                    type: "POST",
-                    dataType: "JSON",
-                    success: function (data) {
+                    'url': '<?php echo site_url('recrutamento_candidatos/ajax_delete/') ?>/' + id,
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'success': function (json) {
                         //if success reload ajax table
                         $('#modal_form').modal('hide');
                         reload_table();
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
             }
         }
+
 
         function visualizar_processos(id) {
             id_candidato = id;
@@ -450,6 +474,4 @@ require_once "end_js.php";
 
     </script>
 
-<?php
-require_once "end_html.php";
-?>
+<?php require_once 'end_html.php'; ?>

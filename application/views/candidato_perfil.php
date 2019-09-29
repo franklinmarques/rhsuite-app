@@ -135,7 +135,7 @@
                                                                 <input type="password" name="senha" placeholder="Senha"
                                                                        value=""
                                                                        max="32"
-                                                                       class="form-control" autocomplete="off"/>
+                                                                       class="form-control" autocomplete="new-password"/>
                                                             </div>
                                                             <label class="col-sm-1 control-label">Confirmar
                                                                 senha</label>
@@ -143,7 +143,7 @@
                                                                 <input type="password" name="confirmar_senha"
                                                                        placeholder="Confirmar senha"
                                                                        value="" max="32" class="form-control"
-                                                                       autocomplete="off"/>
+                                                                       autocomplete="new-password"/>
                                                             </div>
                                                         </div>
                                                     </fieldset>

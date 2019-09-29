@@ -415,6 +415,13 @@ require_once "header.php";
                                                               class="form-control"><?= $row->observacoes_demissao; ?></textarea>
                                                 </div>
                                             </div>
+                                            <div class="form-group">
+                                                <label class="col-xs-3 control-label">Banco horas</label>
+                                                <div class="col-xs-3 controls">
+                                                    <input name="banco_horas_icom" class="form-control text-center hora"
+                                                           value="<?= $row->banco_horas_icom; ?>" placeholder="hh:mm">
+                                                </div>
+                                            </div>
 
                                         </div>
                                     </div>
@@ -575,7 +582,7 @@ require_once "header.php";
                                                     <li>
                                                         <input type="checkbox">
                                                         <i class="glyphicon glyphicon-folder-open jstree-warning"></i>&ensp;Gestão
-                                                        Operacional Libras
+                                                        Operacional Libras/ICOM
                                                         <ul>
                                                             <li>
                                                                 <input type="checkbox" name="hash_acesso[ICOM][]"
@@ -752,6 +759,7 @@ require_once "end_js.php";
 
         $('.tags').tagsInput({width: 'auto', defaultText: 'Telefone', placeholderColor: '#999', delimiter: '/'});
         $('.date').mask('00/00/0000');
+        $('.hora').mask('###00:00', {reverse: true});
         // $('#rg').mask('##00.000.000-0', {reverse: true});
         $('#cpf').mask('000.000.000-00', {reverse: true});
         $('#cnpj').mask('00.000.000/0000-00', {reverse: true});

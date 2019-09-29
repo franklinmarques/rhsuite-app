@@ -371,10 +371,8 @@
                                             <th rowspan="2" class="warning" style="vertical-align: middle;">Função
                                             </th>
                                             <th colspan="6" class="text-center">Profissional principal</th>
-                                            <th colspan="6" class="text-center">Profissional substituto(a) 1
-                                            </th>
-                                            <th colspan="6" class="text-center">Profissional substituto(a) 2
-                                            </th>
+                                            <th colspan="6" class="text-center">Profissional substituto(a)</th>
+                                            <th colspan="6" class="text-center">Profissional substituto(a) 2</th>
                                         </tr>
                                         <tr>
                                             <th>Qtde. dias</th>
@@ -846,6 +844,9 @@
                                             <input type="radio" name="status" value="EM"> Emenda feriado
                                         </label>
                                         <label class="radio-inline">
+                                            <input type="radio" name="status" value="RE"> Recesso
+                                        </label>
+                                        <label class="radio-inline">
                                             <input type="radio" name="status" value="AF"> Aluno ausente
                                         </label>
                                         <label class="radio-inline">
@@ -952,6 +953,12 @@
                                                 Emenda de feriado
                                             </label>
                                         </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="status" value="RE">
+                                                Recesso
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -1020,6 +1027,55 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" id="btnSaveCuidador" onclick="save_cuidador()"
+                                    class="btn btn-success">Salvar
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+
+            <!-- Bootstrap modal -->
+            <div class="modal fade" id="modal_disciplina_aluno" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Cadastro de notas</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <form action="#" id="form_disciplina_aluno" class="form-horizontal">
+                                <input type="hidden" value="" name="id"/>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-3">Aluno(a):<br>Módulo:</label>
+                                    <div class="col-md-8">
+                                        <label class="sr-only"></label>
+                                        <p class="form-control-static">
+                                            <span id="dados_disciplina_aluno"></span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-3">Disciplina</label>
+                                    <div class="col-sm-8">
+                                        <select name="id_disciplina" class="form-control">
+                                            <option value="">selecione...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-5">Média final do semestre</label>
+                                    <div class="col-sm-3">
+                                        <input name="media_semestral" type="text" class="form-control nota">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="btnSaveDisciplinaAluno" onclick="save_disciplina_aluno()"
                                     class="btn btn-success">Salvar
                             </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -1150,7 +1206,7 @@
                                 </div>
                                 <fieldset>
                                     <legend>
-                                        <small>Profissional substituto 1</small>
+                                        <small>Profissional substituto</small>
                                     </legend>
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Filtrar município</label>
@@ -1178,14 +1234,14 @@
                                             <input name="data_substituicao1" type="text" value=""
                                                    class="form-control text-center data" placeholder="dd/mm/aaaa">
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1 text-right">
                                             <button type="button" id="btnSaveSubstituto" onclick="limpar_substituto(1)"
-                                                    class="btn btn-danger">Limpar substituto
+                                                    class="btn btn-danger">Excluir
                                             </button>
                                         </div>
                                     </div>
                                 </fieldset>
-                                <fieldset>
+                                <!--<fieldset>
                                     <legend>
                                         <small>Profissional substituto 2</small>
                                     </legend>
@@ -1221,7 +1277,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                </fieldset>
+                                </fieldset>-->
                             </form>
                         </div>
                     </div><!-- /.modal-content -->
@@ -1327,11 +1383,12 @@
                         </div>
                         <div class="modal-body form">
                             <form action="#" id="form_data_real_totalizacao" class="form-horizontal">
+                                <input type="hidden" value="" name="semestre"/>
                                 <input type="hidden" value="" name="id_alocado"/>
                                 <input type="hidden" value="" name="periodo"/>
                                 <input type="hidden" value="" name="fechamento"/>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-7" id="data_real_totalizacao">Data
+                                    <label class="control-label col-md-5" id="data_real_totalizacao">Data
                                         projetada</label>
                                     <div class="col-md-3">
                                         <input name="data_real_totalizacao" type="text"
@@ -1514,7 +1571,7 @@
                                         <input name="data_inicio_contrato" type="text" value=""
                                                class="form-control text-center data">
                                     </div>
-                                    <label class="control-label col-md-1 text-nowrap">Data término</label>
+                                    <label class="control-label col-md-2 text-nowrap">Data término</label>
                                     <div class="col-md-2">
                                         <input name="data_termino_contrato" type="text" value=""
                                                class="form-control text-center data">
@@ -1577,6 +1634,11 @@
                                         style="padding: 4px; color: #fff; background-color: #337ab7;">EM
                                     </td>
                                     <td style="padding-left: 8px;"> Emenda de feriado</td>
+                                </tr>
+                                <td class="text-center"
+                                    style="padding: 4px; color: #fff; background-color: #337ab7;">RE
+                                </td>
+                                <td style="padding-left: 8px;"> Recesso</td>
                                 </tr>
                                 <tr style="border: 2px solid #fff;">
                                     <td class="text-center"
@@ -2013,6 +2075,7 @@
                 }
             }
         });
+        $('.nota').mask('##0,00', {'reverse': true});
         $('.valor').mask('##.###.##0,00', {'reverse': true});
         $('.desconto').mask('00:00', {
             'onChange': function (desconto, e, field, options) {
@@ -2033,7 +2096,7 @@
         });
 
         $('#form [name="status"]').on('change', function () {
-            $('.desconto').prop('disabled', this.value === 'PV' || this.value === 'FE' || this.value === 'EM');
+            $('.desconto').prop('disabled', this.value === 'PV' || this.value === 'FE' || this.value === 'EM' || this.value === 'RE');
             corrigir_desconto(this);
         });
 
@@ -2161,6 +2224,12 @@
                         'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[col] === null) {
                                 $(td).css('background-color', '#ff0');
+                            } else {
+                                $(td).css({
+                                    'cursor': 'pointer'
+                                }).on('click', function () {
+                                    edit_disciplina_aluno(rowData[36]);
+                                });
                             }
                         },
                         'width': '50%',
@@ -2179,6 +2248,7 @@
                                     break;
                                 case 'FE':
                                 case 'EM':
+                                case 'RE':
                                     $(td).css({'color': '#fff', 'background-color': '#337ab7'});
                                     break;
                                 case 'AF':
@@ -2264,7 +2334,7 @@
                 'columnDefs': [
                     {
                         'visible': false,
-                        'targets': [0]
+                        'targets': [0, 18, 19, 20, 21, 22, 23]
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
@@ -3024,7 +3094,7 @@
             $('#form [name="desconto"]').val(desconto);
             $('#form [name="desconto_sub1"]').val(desconto_sub1);
             $('#form [name="desconto_sub2"]').val(desconto_sub2);
-            $('#form [name="replicar_feriado"]').prop('disabled', status !== 'EM' && status !== 'FE');
+            $('#form [name="replicar_feriado"]').prop('disabled', status !== 'FE' && status !== 'EM' && status !== 'RE');
         }
 
 
@@ -3468,6 +3538,35 @@
         }
 
 
+        function edit_disciplina_aluno(id_matriculado) {
+            $('#form_disciplina_aluno')[0].reset();
+
+            $.ajax({
+                'url': '<?= site_url('ei/apontamento/ajaxEditDisciplinaAluno') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_matriculado': id_matriculado
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
+                    $('#form_disciplina_aluno [name="id"]').val(id_matriculado);
+                    $('#dados_disciplina_aluno').html(json.dados);
+                    $('#form_disciplina_aluno [name="id_disciplina"]').html($(json.disciplinas).html());
+                    $('#form_disciplina_aluno [name="media_semestral"]').val(json.media_semestral);
+
+                    $('#modal_disciplina_aluno').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+
         function filtrar_cuidador() {
             $.ajax({
                 'url': '<?= site_url('ei/apontamento/ajaxFiltrarCuidador') ?>',
@@ -3525,7 +3624,7 @@
                     $('#form [name="desconto_sub1"]').val(json.desconto_sub1);
                     $('#form [name="desconto_sub2"]').val(json.desconto_sub2);
                     $('#form [name="status"][value="' + json.status + '"]').prop('checked', true).trigger('change');
-                    $('#form [name="replicar_feriado"]').prop('disabled', json.status !== 'FE' && json.status !== 'EM');
+                    $('#form [name="replicar_feriado"]').prop('disabled', json.status !== 'FE' && json.status !== 'EM' && json.status !== 'RE');
                     $('#form [name="ocorrencia_cuidador"]').val(json.ocorrencia_cuidador);
                     $('#form [name="ocorrencia_aluno"]').val(json.ocorrencia_aluno);
 
@@ -3537,7 +3636,7 @@
             });
         }
 
-        function edit_faturamento(id_faturamento, mes, substituto) {
+        function edit_faturamento(id_horario, mes, substituto) {
             $('#form_faturamento')[0].reset();
             $('#form_faturamento [name="id"], #form [name="id_aloacao"]').val('');
 
@@ -3546,7 +3645,7 @@
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
-                    'id_faturamento': id_faturamento,
+                    'id_horario': id_horario,
                     'mes': mes,
                     'substituto': substituto
                 },
@@ -3580,6 +3679,7 @@
                     if (json.erro) {
                         alert(json.erro);
                     } else {
+                        $('#form_data_real_totalizacao [name="semestre"]').val(json.semestre);
                         $('#form_data_real_totalizacao [name="id_alocado"]').val(id_alocado);
                         $('#form_data_real_totalizacao [name="periodo"]').val(periodo);
                         $('#form_data_real_totalizacao [name="fechamento"]').val(fechamento);
@@ -4285,6 +4385,29 @@
         }
 
 
+        function save_disciplina_aluno() {
+            $.ajax({
+                'url': '<?php echo site_url('ei/apontamento/ajaxSaveDisciplinaAluno') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#form_disciplina_aluno').serialize(),
+                'beforeSend': function () {
+                    $('#btnSaveDisciplinaAluno').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    $('#modal_disciplina_aluno').modal('hide');
+                    reload_table();
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                },
+                'complete': function () {
+                    $('#btnSaveDisciplinaAluno').text('Salvar').attr('disabled', false);
+                }
+            });
+        }
+
+
         function delete_eventos() {
             if (confirm('Deseja limpar os eventos desta data?')) {
                 $.ajax({
@@ -4489,10 +4612,13 @@
             if (elem !== 1 && elem !== 2) {
                 return false;
             }
-            $('#form_substituto [name="id_cuidador_sub' + elem + '"]').val('');
-            $('#form_substituto [name="funcao_sub' + elem + '"]').val('');
-            $('#form_substituto [name="data_substituicao' + elem + '"]').val('');
-            save_substituto();
+
+            if (confirm('Deseja excluir o(a) substituto(a)?')) {
+                $('#form_substituto [name="id_cuidador_sub' + elem + '"]').val('');
+                $('#form_substituto [name="funcao_sub' + elem + '"]').val('');
+                $('#form_substituto [name="data_substituicao' + elem + '"]').val('');
+                save_substituto();
+            }
         }
 
 
@@ -4603,10 +4729,13 @@
                 'data': {
                     'id_horario': $('#form_pagamento_prestador [name="id_horario"]').val(),
                     'mes': $('#form_pagamento_prestador [name="mes"]').val(),
-                    'substituto': $('#form_pagamento_prestador [name="substituto"]').val()
+                    'substituto': $('#form_pagamento_prestador [name="substituto"]').val(),
+                    'uso_horas_faturadas': 0,
+                    'recuperar': 1
                 },
                 'beforeSend': function () {
                     $('#btnRecuperarPagamentoPrestador').text('Recuperando e validando base...').attr('disabled', true);
+                    $('#btnUsoHorasFaturadas').text('Usando horas de faturamento...').attr('disabled', true);
                 },
                 'success': function (json) {
                     $('#planilha_pagamento_prestador').html(json.planilha_pagamento_prestador);
@@ -4616,6 +4745,37 @@
                 },
                 'complete': function () {
                     $('#btnRecuperarPagamentoPrestador').text('Recuperar e validar base').attr('disabled', false);
+                    $('#btnUsoHorasFaturadas').text('Usar horas de faturamento').attr('disabled', false);
+                }
+            });
+        }
+
+
+        function recuperar_horas_faturadas() {
+            $.ajax({
+                'url': '<?php echo site_url('ei/apontamento/ajaxRecuperarPagamentoPrestador') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id_horario': $('#form_pagamento_prestador [name="id_horario"]').val(),
+                    'mes': $('#form_pagamento_prestador [name="mes"]').val(),
+                    'substituto': $('#form_pagamento_prestador [name="substituto"]').val(),
+                    'uso_horas_faturadas': 1,
+                    'recuperar': 0
+                },
+                'beforeSend': function () {
+                    $('#btnRecuperarPagamentoPrestador').text('Recuperando e validando base...').attr('disabled', true);
+                    $('#btnUsoHorasFaturadas').text('Usando horas de faturamento...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    $('#planilha_pagamento_prestador').html(json.planilha_pagamento_prestador);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                },
+                'complete': function () {
+                    $('#btnRecuperarPagamentoPrestador').text('Recuperar e validar base').attr('disabled', false);
+                    $('#btnUsoHorasFaturadas').text('Usar horas de faturamento').attr('disabled', false);
                 }
             });
         }

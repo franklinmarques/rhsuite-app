@@ -5,11 +5,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Escolas extends MY_Controller
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    //==========================================================================
     public function index()
     {
         $this->gerenciar();
     }
 
+    //==========================================================================
     public function gerenciar($id_diretoria = null)
     {
         $has_contrato = $this->db->get_where('ei_contratos', array('id' => $id_diretoria))->num_rows();
@@ -114,6 +121,7 @@ class Escolas extends MY_Controller
         $this->load->view('ei/escolas', $data);
     }
 
+    //==========================================================================
     public function atualizar_filtro()
     {
         $empresa = $this->session->userdata('empresa');
@@ -182,6 +190,7 @@ class Escolas extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_list()
     {
         $post = $this->input->post();
@@ -282,6 +291,7 @@ class Escolas extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajax_edit()
     {
         $id = $this->input->post('id');
@@ -289,6 +299,7 @@ class Escolas extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_add()
     {
         $data = $this->input->post();
@@ -308,6 +319,7 @@ class Escolas extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_update()
     {
         $data = $this->input->post();
@@ -341,6 +353,7 @@ class Escolas extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_delete()
     {
         $id = $this->input->post('id');
@@ -348,7 +361,7 @@ class Escolas extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-
+    //==========================================================================
     public function pdf()
     {
         $empresa = $this->session->userdata('empresa');

@@ -125,7 +125,8 @@
                         </div>
                         <div class="modal-body form" style="padding-top:0px;">
                             <div id="alert"></div>
-                            <form action="#" id="form" class="form-horizontal" autocomplete="off">
+                            <form action="#" id="form" enctype="multipart/form-data" class="form-horizontal"
+                                  autocomplete="off">
                                 <input type="hidden" value="<?= $idUsuario; ?>" name="id_usuario">
                                 <input type="hidden" value="" name="status">
                                 <div class="form-body">
@@ -291,6 +292,26 @@
                                             </div>
                                             <div class="row form-group">
                                                 <div class="col-md-10 col-md-offset-1">
+                                                    <label>Enviar arquivo</label>
+                                                    <div id="arquivo" class="fileinput input-group"
+                                                         data-provides="fileinput">
+                                                        <div class="form-control" data-trigger="fileinput">
+                                                            <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                                                            <span class="fileinput-preview fileinput-filename"></span>
+                                                        </div>
+                                                        <div class="input-group-addon btn btn-default btn-file">
+                                                            <span class="fileinput-new">Selecionar arquivo</span>
+                                                            <span class="fileinput-exists">Alterar</span>
+                                                            <input type="file" accept=".pdf" name="arquivo"/>
+                                                        </div>
+                                                        <a href="#"
+                                                           class="input-group-addon btn btn-default fileinput-exists"
+                                                           data-dismiss="fileinput">Limpar</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col-md-10 col-md-offset-1">
                                                     <label>Solicitação/complemento</label>
                                                     <textarea name="complemento"
                                                               class="form-control" <?= $vistoriador ? 'disabled' : ''; ?> rows="6"></textarea>
@@ -355,6 +376,7 @@ require_once APPPATH . 'views/end_js.php';
 ?>
     <!-- Css -->
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo base_url("assets/js/bootstrap-fileinput/bootstrap-fileinput.css"); ?>">
 
     <!-- Js -->
     <script>
@@ -364,6 +386,7 @@ require_once APPPATH . 'views/end_js.php';
     </script>
     <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js') ?>"></script>
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js') ?>"></script>
+    <script src="<?php echo base_url("assets/js/bootstrap-fileinput/bootstrap-fileinput.js"); ?>"></script>
     <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
     <script src="<?php echo base_url('assets/js/moment.js'); ?>"></script>
 
@@ -385,6 +408,7 @@ require_once APPPATH . 'views/end_js.php';
                 'serverSide': true, //Feature control DataTables' server-side processing mode.
                 'iDisplayLength': -1,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
+                'order': [['0', 'desc']],
                 'language': {
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
@@ -539,7 +563,8 @@ require_once APPPATH . 'views/end_js.php';
                     } else {
                         $('[name="data_resolucao_problema"],[name="data_fechamento"],[name="observacoes"]').prop('disabled', true);
                     }
-
+                    $('#arquivo').removeClass('fileinput-exists').addClass('fileinput-new')
+                        .fileinput({'name': ''}).find('[type="hidden"]').val('');
                     $('[name="data_abertura"]').val(moment().format('DD/MM/YYYY'));
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Nova ordem de serviço'); // Set title to Bootstrap modal title
@@ -643,6 +668,14 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#status li a[data-value="' + json.data.status + '"]').parent('li').addClass('active');
                     $('#status_atual').val(json.data.status);
+//
+                    if (json.data.arquivo) {
+                        $('#arquivo').removeClass('fileinput-new').addClass('fileinput-exists').fileinput({'name': 'arquivo'}).find('[type="hidden"]').val(json.data.arquivo);
+                        $('#arquivo .fileinput-preview').html(json.data.arquivo);
+                    } else {
+                        $('#arquivo').removeClass('fileinput-exists').addClass('fileinput-new').fileinput({'name': 'arquivo'}).find('[type="hidden"]').val('');
+                        $('#arquivo .fileinput-preview').html('');
+                    }
 
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar ordem de serviço'); // Set title to Bootstrap modal title
@@ -691,8 +724,6 @@ require_once APPPATH . 'views/end_js.php';
 
 
         function save() {
-            $('#btnSave').text('Salvando...'); //change button text
-            $('#btnSave').attr('disabled', true); //set button disable
             var url;
 
             if (save_method === 'add') {
@@ -705,24 +736,28 @@ require_once APPPATH . 'views/end_js.php';
             $.ajax({
                 'url': url,
                 'type': 'POST',
-                'data': $('#form').serialize(),
+                'data': new FormData($('#form')[0]),
                 'dataType': 'json',
+                'enctype': 'multipart/form-data',
+                'processData': false,
+                'contentType': false,
+                'cache': false,
+                'beforeSend': function () {
+                    $('#btnSave').text('Salvando...').attr('disabled', true);
+                },
                 'success': function (json) {
-                    if (json.status) //if success close modal and reload ajax table
-                    {
+                    if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error adding / update data');
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
+                },
+                'complete': function () {
+                    $('#btnSave').text('Salvar').attr('disabled', false);
                 }
             });
         }

@@ -122,36 +122,15 @@
                     aria-expanded="false" aria-controls="form_email">
                 <i class="fa fa-envelope"></i> Gerenciar comunicação via com candidatos
             </button>
-            <form action="#" id="form_email" class="collapse form-horizontal">
+            <form action="#" id="form_email" class="collapse form-horizontal" autocomplete="off">
                 <div class="row form-group">
                     <div class="col-md-4">
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="tipo" value="1">
-                                Entrevista seleção (candidatos agendados)
-                            </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="tipo" value="2">
-                                Entrevista requisitante (candidatos agendados)
-                            </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="tipo" value="3">
-                                Aprovação + exame médico admissional (candidatos aprovados)
-                            </label>
-                        </div>
+                        <label class="control-label">Estágio do processo seletivo</label>
+                        <?php echo form_dropdown('tipo', $estagios, '', 'class="form-control" onchange="recuperar_dados_requisicao();"'); ?>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <label class="control-label">Texto email</label>
-                        <textarea name="mensagem" class="form-control"></textarea>
-                    </div>
-                    <div class="col-md-2 text-right">
-                        <button type="button" id="btnEnviarEmail" class="btn btn-warning"
-                                onclick="enviar_email();">Enviar e-mail
-                        </button>
+                        <textarea name="mensagem" class="form-control" rows="7"></textarea>
                     </div>
                 </div>
             </form>
@@ -175,13 +154,13 @@
                     <input type="checkbox" class="toggle-vis" value="6" autocomplete="off"> Status
                 </label>
                 <label class="checkbox-inline">
-                    <input type="checkbox" class="toggle-vis" value="11" autocomplete="off"> Pesquisa
+                    <input type="checkbox" class="toggle-vis" value="13" autocomplete="off"> Pesquisa
                 </label>
                 <label class="checkbox-inline">
-                    <input type="checkbox" class="toggle-vis" value="17" autocomplete="off"> Testes Online
+                    <input type="checkbox" class="toggle-vis" value="22" autocomplete="off"> Testes Online
                 </label>
                 <label class="checkbox-inline">
-                    <input type="checkbox" class="toggle-vis" value="19" autocomplete="off"> Testes Presenciais
+                    <input type="checkbox" class="toggle-vis" value="24" autocomplete="off"> Testes Presenciais
                 </label>
                 <label style="padding-left: 80px;">Filtrar por status: &nbsp;</label>
                 <select id="status" class="form-control input-sm" onchange="reload_table();">
@@ -202,9 +181,9 @@
                 <thead>
                 <tr class="success">
                     <th colspan="7" class="text-center">Triagem</th>
-                    <th colspan="4" class="text-center">Entrevista</th>
-                    <th colspan="4" class="text-center">Pesquisa</th>
-                    <th colspan="2" class="text-center">Contratação</th>
+                    <th colspan="6" class="text-center">Entrevista</th>
+                    <th colspan="6" class="text-center">Pesquisa</th>
+                    <th colspan="3" class="text-center">Contratação</th>
                     <th colspan="4" class="text-center">Seleção</th>
                 </tr>
                 <tr>
@@ -218,13 +197,12 @@
                             <label class="text-center" style="width:calc(100% - 100px);">Candidato</label>
                         </div>
                     </th>
-                    <th colspan="2" class="text-center">Seleção</th>
-                    <th colspan="2" class="text-center">Requisitante</th>
+                    <th colspan="3" class="text-center">Seleção</th>
+                    <th colspan="3" class="text-center">Requisitante</th>
                     <th class="text-center">Antecedentes Criminais</th>
                     <th class="text-center">Restrições Financeiras</th>
-                    <th colspan="2" class="text-center">Exame Médico Admissional</th>
-                    <th rowspan="2" class="text-center" style="vertical-align: middle;">Contratar candidato</th>
-                    <th rowspan="2" class="text-center" style="vertical-align: middle;">Data admissão</th>
+                    <th colspan="4" class="text-center">Exame Médico Admissional</th>
+                    <th colspan="3" class="text-center" style="vertical-align: middle;">Admissão candidato</th>
 
                     <th colspan="2" class="text-center">Testes online</th>
                     <th colspan="2" class="text-center">Testes presenciais</th>
@@ -237,13 +215,46 @@
                     <th>Fonte</th>
                     <th>Status</th>
                     <th>Data</th>
+                    <th>
+                        <button type="button" class="btn btn-info btn-xs email_selecao" onclick="enviar_email();"
+                                disabled>
+                            <i class="fa fa-envelope"></i>
+                        </button>
+                    </th>
                     <th>Resultado</th>
                     <th>Data</th>
+                    <th>
+                        <button type="button" class="btn btn-info btn-xs email_requisitante" onclick="enviar_email();"
+                                disabled>
+                            <i class="fa fa-envelope"></i>
+                        </button>
+                    </th>
                     <th>Resultado</th>
                     <th>Resultado</th>
                     <th>Resultado</th>
+                    <th>
+                        <button type="button" class="btn btn-info btn-xs email_exame_admissional"
+                                onclick="enviar_email();"
+                                disabled>
+                            <i class="fa fa-envelope"></i>
+                        </button>
+                    </th>
                     <th>Data</th>
+                    <th>
+                        <button type="button" class="btn btn-info btn-xs email_resultado" onclick="enviar_email();"
+                                disabled>
+                            <i class="fa fa-envelope"></i>
+                        </button>
+                    </th>
                     <th>Resultado</th>
+                    <th>Contratar</th>
+                    <th>Data</th>
+                    <th>
+                        <button type="button" class="btn btn-info btn-xs email_contratacao" onclick="enviar_email();"
+                                disabled>
+                            <i class="fa fa-envelope"></i>
+                        </button>
+                    </th>
                     <th>Nota</th>
                     <th>Ação</th>
                     <th>Nota</th>
@@ -465,9 +476,13 @@
                                                                             <label class="control-label">Estado</label>
                                                                             <?php echo form_dropdown('estado', array(), '', 'id="estado" class="form-control filtro input-sm"'); ?>
                                                                         </div>
-                                                                        <div class="col-md-6">
+                                                                        <div class="col-md-4">
                                                                             <label class="control-label">Cidade</label>
-                                                                            <?php echo form_dropdown('cidade', array(), '', 'id="cidade" class="form-control filtro input-sm"'); ?>
+                                                                            <?php echo form_multiselect('cidade', array(), [], 'id="cidade" class="form-control filtro input-sm"'); ?>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <label class="control-label">Bairro</label>
+                                                                            <?php echo form_multiselect('bairro', array(), [], 'id="bairro" class="form-control filtro input-sm"'); ?>
                                                                         </div>
                                                                         <div class="col-md-1">
                                                                             <label>&nbsp;</label><br>
@@ -476,27 +491,38 @@
                                                                                 Limpar
                                                                             </button>
                                                                         </div>
-                                                                        <div class="col-md-3 text-right">
+                                                                        <div class="col-md-1 text-right">
                                                                             <label>&nbsp;</label><br>
                                                                             <button type="button" id="btnSaveBancoNovo"
                                                                                     onclick="table_ame.ajax.reload(null, false);"
                                                                                     class="btn btn-info">Pesquisar
                                                                             </button>
                                                                         </div>
-                                                                        <div class="col-md-7">
-                                                                            <label class="control-label">Bairro</label>
-                                                                            <?php echo form_dropdown('bairro', array(), '', 'id="bairro" class="form-control filtro input-sm"'); ?>
-                                                                        </div>
-                                                                        <div class="col-md-5">
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-4">
                                                                             <label class="control-label">Deficiência</label>
-                                                                            <?php echo form_dropdown('deficiencia', array(), '', 'id="deficiencia" class="form-control filtro input-sm"'); ?>
+                                                                            <?php echo form_multiselect('deficiencia', array(), [], 'id="deficiencia" class="form-control filtro input-sm"'); ?>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <label class="control-label">Escolaridade</label>
+                                                                            <?php echo form_multiselect('escolaridade', $escolaridade, [], 'id="escolaridade" class="form-control filtro input-sm"'); ?>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <label class="control-label">Cargo/função
+                                                                                processos passados</label>
+                                                                            <select id="cargo_funcao"
+                                                                                    name="cargo_funcao"
+                                                                                    class="form-control filtro input-sm"
+                                                                                    multiple>
+                                                                                <option value="">Todos</option>
+                                                                                <option value="A">Selecionado</option>
+                                                                                <option value="C">Contratado</option>
+                                                                                <option value="S">Stand by</option>
+                                                                            </select>
                                                                         </div>
                                                                     </div>
                                                                     <div class="row">
-                                                                        <div class="col-md-5">
-                                                                            <label class="control-label">Escolaridade</label>
-                                                                            <?php echo form_dropdown('escolaridade', $escolaridade, '', 'id="escolaridade" class="form-control filtro input-sm"'); ?>
-                                                                        </div>
                                                                         <div class="col-md-2">
                                                                             <label class="control-label">Sexo</label>
                                                                             <select id="sexo" name="sexo"
@@ -506,21 +532,6 @@
                                                                                 <option value="F">Feminino</option>
                                                                             </select>
                                                                         </div>
-                                                                        <div class="col-md-5">
-                                                                            <label class="control-label">Cargo/função
-                                                                                processos
-                                                                                passados</label>
-                                                                            <select id="cargo_funcao"
-                                                                                    name="cargo_funcao"
-                                                                                    class="form-control filtro input-sm">
-                                                                                <option value="">Todos</option>
-                                                                                <option value="A">Selecionado</option>
-                                                                                <option value="C">Contratado</option>
-                                                                                <option value="S">Stand by</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row">
                                                                         <div class="col-md-2">
                                                                             <label class="control-label">Idade
                                                                                 mínima</label>
@@ -537,8 +548,7 @@
                                                                         </div>
                                                                         <div class="col-md-3">
                                                                             <label class="control-label">Resultado
-                                                                                entrevista
-                                                                                seleção</label>
+                                                                                entrevista seleção</label>
                                                                             <select id="resultado_selecao"
                                                                                     name="resultado_selecao"
                                                                                     class="form-control filtro input-sm">
@@ -550,8 +560,7 @@
                                                                         </div>
                                                                         <div class="col-md-3">
                                                                             <label class="control-label">Resultado
-                                                                                entrevista
-                                                                                cliente</label>
+                                                                                entrevista cliente</label>
                                                                             <select id="resultado_representante"
                                                                                     name="reultado_representante"
                                                                                     class="form-control filtro input-sm">
@@ -1486,15 +1495,12 @@
         var table, table_google, table_interessados;
         var demo1;
         var candidato;
-
-
         $(document).ready(function () {
             $('.data').mask('00/00/0000');
             $('.idade').mask('000');
             $('.hora').mask('00:00');
             $('.valor').mask('##0,0', {'reverse': true});
             $('.cpf').mask('000.000.000-00');
-
             //datatables
             table_ame = $('#table_ame').DataTable({
                 'processing': true,
@@ -1524,7 +1530,6 @@
                     }
                 ]
             });
-
             table_google = $('#table_google').DataTable({
                 'processing': true,
                 'serverSide': true,
@@ -1549,7 +1554,6 @@
                     }
                 ]
             });
-
             table_interessados = $('#table_interessados').DataTable({
                 'processing': true,
                 'serverSide': true,
@@ -1600,7 +1604,7 @@
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
-                            if (rowData[23] !== null) {
+                            if (rowData[27] !== null) {
                                 $(td).css('cursor', 'pointer');
                                 $(td).attr('title', 'Ver cadastro de ' + $(td).text());
                                 $(td).on('click', function () {
@@ -1627,9 +1631,9 @@
                             }
                             $(td).css('cursor', 'pointer');
                             $(td).on('click', function () {
-                                $('#form_status .nome_candidato').html(rowData[24]);
-                                $('#form_status [name="id"]').val(rowData[21]);
-                                $('#form_status [name="status"]').val(rowData[22]);
+                                $('#form_status .nome_candidato').html(rowData[29]);
+                                $('#form_status [name="id"]').val(rowData[26]);
+                                $('#form_status [name="status"]').val(rowData[27]);
                                 $('#modal_status').modal('show');
                             });
                         },
@@ -1642,17 +1646,17 @@
                             }
                             $(td).css('cursor', 'pointer');
                             $(td).on('click', function () {
-                                $('#form_selecao .nome_candidato').html(rowData[24]);
-                                $('#form_selecao [name="id"]').val(rowData[21]);
+                                $('#form_selecao .nome_candidato').html(rowData[29]);
+                                $('#form_selecao [name="id"]').val(rowData[26]);
                                 var data_selecao = rowData[7] !== null ? rowData[7].split(' ')[0] : '';
                                 var hora_selecao = rowData[7] !== null ? rowData[7].split(' ')[1] : '';
                                 $('#form_selecao [name="data_selecao"]').val(data_selecao !== undefined ? data_selecao : '');
                                 $('#form_selecao [name="hora_selecao"]').val(hora_selecao !== undefined ? hora_selecao : '');
-                                $('#form_selecao [name="resultado_selecao"]').val($('#form_selecao [name="resultado_selecao"] option:contains(' + rowData[8] + ')').val());
+                                $('#form_selecao [name="resultado_selecao"]').val($('#form_selecao [name="resultado_selecao"] option:contains(' + rowData[9] + ')').val());
                                 $('#modal_selecao').modal('show');
                             });
                         },
-                        'targets': [7, 8]
+                        'targets': [7, 9]
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
@@ -1661,86 +1665,90 @@
                             }
                             $(td).css('cursor', 'pointer');
                             $(td).on('click', function () {
-                                $('#form_requisitante .nome_candidato').html(rowData[24]);
-                                $('#form_requisitante [name="id"]').val(rowData[21]);
-                                var data_requisitante = rowData[9] !== null ? rowData[9].split(' ')[0] : '';
-                                var hora_requisitante = rowData[9] !== null ? rowData[9].split(' ')[1] : '';
+                                $('#form_requisitante .nome_candidato').html(rowData[29]);
+                                $('#form_requisitante [name="id"]').val(rowData[26]);
+                                var data_requisitante = rowData[10] !== null ? rowData[10].split(' ')[0] : '';
+                                var hora_requisitante = rowData[10] !== null ? rowData[10].split(' ')[1] : '';
                                 $('#form_requisitante [name="data_requisitante"]').val(data_requisitante !== undefined ? data_requisitante : '');
                                 $('#form_requisitante [name="hora_requisitante"]').val(hora_requisitante !== undefined ? hora_requisitante : '');
-                                $('#form_requisitante [name="resultado_requisitante"]').val($('#form_requisitante [name="resultado_requisitante"] option:contains(' + rowData[10] + ')').val());
+                                $('#form_requisitante [name="resultado_requisitante"]').val($('#form_requisitante [name="resultado_requisitante"] option:contains(' + rowData[12] + ')').val());
                                 $('#modal_requisitante').modal('show');
                             });
                         },
-                        'targets': [9, 10]
+                        'targets': [10, 12]
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
                             var antecedentes = '';
                             if (rowData[col] === null) {
                                 $(td).css('background-color', '#ff0');
-                            } else if (rowData[11] === 'Nada consta') {
+                            } else if (rowData[13] === 'Nada consta') {
                                 antecedentes = 0;
-                            } else if (rowData[11] === 'Antecedentes') {
+                            } else if (rowData[13] === 'Antecedentes') {
                                 $(td).css({'background-color': '#f00', 'color': '#fff'});
                                 antecedentes = 1;
                             }
                             $(td).css('cursor', 'pointer');
                             $(td).on('click', function () {
-                                $('#form_antecedentes .nome_candidato').html(rowData[24]);
-                                $('#form_antecedentes [name="id"]').val(rowData[21]);
-
+                                $('#form_antecedentes .nome_candidato').html(rowData[29]);
+                                $('#form_antecedentes [name="id"]').val(rowData[26]);
                                 $('#form_antecedentes [name="antecedentes_criminais"]').val(antecedentes);
                                 $('#modal_antecedentes').modal('show');
                             });
                         },
-                        'targets': [11]
+                        'targets': [13]
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
                             var restricoes = '';
                             if (rowData[col] === null) {
                                 $(td).css('background-color', '#ff0');
-                            } else if (rowData[12] === 'Sem restrições') {
+                            } else if (rowData[14] === 'Sem restrições') {
                                 restricoes = 0;
-                            } else if (rowData[12] === 'Com restrições') {
+                            } else if (rowData[14] === 'Com restrições') {
                                 $(td).css({'background-color': '#f00', 'color': '#fff'});
                                 restricoes = 1;
                             }
                             $(td).css('cursor', 'pointer');
                             $(td).on('click', function () {
-                                $('#form_restricoes .nome_candidato').html(rowData[24]);
-                                $('#form_restricoes [name="id"]').val(rowData[21]);
-
+                                $('#form_restricoes .nome_candidato').html(rowData[29]);
+                                $('#form_restricoes [name="id"]').val(rowData[26]);
                                 $('#form_restricoes [name="restricoes_financeiras"]').val(restricoes);
                                 $('#modal_restricoes').modal('show');
                             });
                         },
-                        'targets': [12]
+                        'targets': [14]
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
                             var exameAdmissional = '';
                             if (rowData[col] === null) {
                                 $(td).css('background-color', '#ff0');
-                            } else if (rowData[14] === 'Não apto') {
+                            } else if (rowData[18] === 'Não apto') {
                                 $(td).css('background-color', '#f00');
                                 exameAdmissional = 0;
-                            } else if (rowData[14] === 'Apto') {
+                            } else if (rowData[18] === 'Apto') {
                                 exameAdmissional = 1;
                             }
                             $(td).css('cursor', 'pointer');
                             $(td).on('click', function () {
-                                $('#form_exame_admissional .nome_candidato').html(rowData[24]);
-                                $('#form_exame_admissional [name="id"]').val(rowData[21]);
-                                $('#form_exame_admissional [name="data_exame_admissional"]').val(moment(rowData[13], 'DD/MM/YYYY HH:mm').format('DD/MM/YYYY'));
-                                $('#form_exame_admissional [name="hora_exame_admissional"]').val(moment(rowData[13], 'DD/MM/YYYY HH:mm').format('HH:mm'));
-                                $('#form_exame_admissional [name="endereco_exame_admissional"]').val(rowData[25]);
+                                $('#form_exame_admissional .nome_candidato').html(rowData[29]);
+                                $('#form_exame_admissional [name="id"]').val(rowData[26]);
+                                var dataExame = moment(rowData[16], 'DD/MM/YYYY HH:mm');
+                                if (dataExame.isValid()) {
+                                    $('#form_exame_admissional [name="data_exame_admissional"]').val(dataExame.format('DD/MM/YYYY'));
+                                    $('#form_exame_admissional [name="hora_exame_admissional"]').val(dataExame.format('HH:mm'));
+                                } else {
+                                    $('#form_exame_admissional [name="data_exame_admissional"]').val('');
+                                    $('#form_exame_admissional [name="hora_exame_admissional"]').val('');
+                                }
+                                $('#form_exame_admissional [name="endereco_exame_admissional"]').val(rowData[30]);
                                 $('#form_exame_admissional [name="resultado_exame_admissional"]').val(exameAdmissional);
                                 $('#modal_exame_admissional').modal('show');
                             });
                         },
                         'className': 'text-center',
-                        'targets': [13, 14]
+                        'targets': [16, 18]
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
@@ -1749,13 +1757,13 @@
                             }
                             $(td).css('cursor', 'pointer');
                             $(td).on('click', function () {
-                                $('#form_admissao .nome_candidato').html(rowData[24]);
-                                $('#form_admissao [name="id"]').val(rowData[21]);
-                                $('#form_admissao [name="data_admissao"]').val(rowData[16]);
+                                $('#form_admissao .nome_candidato').html(rowData[29]);
+                                $('#form_admissao [name="id"]').val(rowData[26]);
+                                $('#form_admissao [name="data_admissao"]').val(rowData[20]);
                                 $('#modal_admissao').modal('show');
                             });
                         },
-                        'targets': [16]
+                        'targets': [20]
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
@@ -1763,16 +1771,16 @@
                                 $(td).css('background-color', '#ff0');
                             }
                         },
-                        'targets': [4, 6, 7, 13]
+                        'targets': [4, 6, 7, 16]
                     },
                     {
                         'className': 'text-center',
-                        'targets': [17, 19]
+                        'targets': [21, 23]
                     },
                     {
                         'orderable': false,
                         'className': 'text-center',
-                        'targets': [0, 15, 18, 20]
+                        'targets': [0, 19, 22, 24]
                     },
                     {
                         'width': '100%',
@@ -1780,11 +1788,31 @@
                     },
                     {
                         'className': 'text-nowrap',
-                        'targets': [18, 20],
+                        'targets': [22, 24],
                         'orderable': false,
                         'searchable': false
                     }
-                ]
+                ],
+                'drawCallback': function () {
+                    $('.email_selecao, .email_requisitante, .email_exame_admissional, .email_resultado, .email_contratacao').prop('disabled', true);
+                    switch ($('#form_email [name="tipo"]').val()) {
+                        case '1':
+                            $('.email_selecao').prop('disabled', false);
+                            break;
+                        case '2':
+                            $('.email_requisitante').prop('disabled', false);
+                            break;
+                        case '3':
+                            $('.email_exame_admissional').prop('disabled', false);
+                            break;
+                        case '4':
+                            $('.email_resultado').prop('disabled', false);
+                            break;
+                        case '5':
+                            $('.email_contratacao').prop('disabled', false);
+                            break;
+                    }
+                }
             });
 
             demo1 = $('.demo1').bootstrapDualListbox({
@@ -1802,14 +1830,20 @@
                 var value = parseInt($(this).val());
                 var column = table.column(value);
                 column.visible(!column.visible());
-                if (value === 11) {
+                if (value === 13) {
                     var column = table.column(value + 1);
                     var column2 = table.column(value + 2);
                     var column3 = table.column(value + 3);
+                    var column4 = table.column(value + 4);
+                    var column5 = table.column(value + 5);
+                    var column6 = table.column(value + 6);
                     column.visible(!column.visible());
                     column2.visible(!column2.visible());
                     column3.visible(!column3.visible());
-                } else if (value === 17 || value === 19) {
+                    column4.visible(!column4.visible());
+                    column5.visible(!column5.visible());
+                    column6.visible(!column6.visible());
+                } else if (value === 22 || value === 24) {
                     var column = table.column(value + 1);
                     column.visible(!column.visible());
                 }
@@ -1830,30 +1864,23 @@
                 column.visible(!column.visible());
             });
         });
-
-
         $('#id_usuario').on('change', function () {
             candidato = $(this).val();
         });
-
         $('.filtro').on('change', function () {
             filtra_candidatos_banco();
         });
-
         $('.filtro_google').on('change', function () {
             filtra_candidatos_google();
         });
-
         $('#limpa_filtro').on('click', function () {
             $('.filtro').val('');
             filtra_candidatos_banco();
         });
-
         $('#limpa_filtro_google').on('click', function () {
             $('.filtro_google').val('');
             filtra_candidatos_google();
         });
-
         $('#estado1').on('change', function () {
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/filtrarCidades') ?>',
@@ -1875,7 +1902,6 @@
                 }
             });
         });
-
 
         function filtra_candidatos_banco() {
             $.ajax({
@@ -1942,7 +1968,6 @@
             });
         }
 
-
         function add_cargo() {
             save_method = 'add';
             $('#form')[0].reset(); // reset form on modals
@@ -1987,7 +2012,6 @@
             $('#form input[type="hidden"]:not([name="id_recrutamento"])').val(''); // reset hidden input form on modals
             $('.form-group').removeClass('has-error'); // clear error class
             $('.help-block').empty(); // clear error string
-
             //Ajax Load data from ajax
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_edit') ?>' + id,
@@ -1997,7 +2021,6 @@
                     $('[name="id"]').val(data.id);
                     $('[name="id_recrutamento"]').val(data.id_recrutamento);
                     $('[name="cargo"]').val(data.cargo);
-
                     $('#modal_form').modal('show');
                     $('#modal_form .modal-title').text('Editar cargo/função'); // Set title to Bootstrap modal title
                 },
@@ -2023,7 +2046,6 @@
             } else {
                 url = "<?php echo site_url('recrutamentoPresencial_cargos/ajax_update') ?>";
             }
-
             // ajax adding data to database
             $.ajax({
                 'url': url,
@@ -2036,7 +2058,6 @@
                         $('#modal_form').modal('hide');
                         reload_table();
                     }
-
                     $('#btnSave').text('Salvar'); //change button text
                     $('#btnSave').attr('disabled', false); //set button enable
                 },
@@ -2050,7 +2071,6 @@
 
         function salvar_novo_candidato() {
             $('#btnSaveNovoCandidato').text('Salvando...').attr('disabled', true);
-
             // ajax adding data to database
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_addCandidatoNovo') ?>',
@@ -2065,7 +2085,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveNovoCandidato').text('Salvar e incluir').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -2092,7 +2111,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     // $('#btnSaveBancoNovo').text('Salvar').attr('disabled', false);
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -2107,7 +2125,6 @@
                 alert('Nenhum candidato selecionado.');
                 return false;
             }
-
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_addGrupoCandidatos') ?>',
                 'type': 'POST',
@@ -2153,7 +2170,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveStatus').text('Salvar'); //change button text
                     $('#btnSaveStatus').attr('disabled', false); //set button enable
                 },
@@ -2181,7 +2197,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveBancoInteressados').text('Salvar'); //change button text
                     $('#btnSaveBancoInteressados').attr('disabled', false); //set button enable
                 },
@@ -2196,7 +2211,6 @@
         function salvar_observacoes() {
             $('#btnSaveObservacoes').text('Salvando...'); //change button text
             $('#btnSaveObservacoes').attr('disabled', true); //set button disable
-
             // ajax adding data to database
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_updateCandidato') ?>',
@@ -2211,7 +2225,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveObservacoes').text('Salvar'); //change button text
                     $('#btnSaveObservacoes').attr('disabled', false); //set button enable
                 },
@@ -2226,7 +2239,6 @@
         function salvar_status() {
             $('#btnSaveStatus').text('Salvando...'); //change button text
             $('#btnSaveStatus').attr('disabled', true); //set button disable
-
             // ajax adding data to database
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_updateCandidato') ?>',
@@ -2241,7 +2253,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveStatus').text('Salvar'); //change button text
                     $('#btnSaveStatus').attr('disabled', false); //set button enable
                 },
@@ -2256,7 +2267,6 @@
         function salvar_selecao() {
             $('#btnSaveSelecao').text('Salvando...'); //change button text
             $('#btnSaveSelecao').attr('disabled', true); //set button disable
-
             // ajax adding data to database
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_updateCandidato') ?>',
@@ -2271,7 +2281,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveSelecao').text('Salvar'); //change button text
                     $('#btnSaveSelecao').attr('disabled', false); //set button enable
                 },
@@ -2286,7 +2295,6 @@
         function salvar_requisitante() {
             $('#btnSaveRequisitante').text('Salvando...'); //change button text
             $('#btnSaveRequisitante').attr('disabled', true); //set button disable
-
             // ajax adding data to database
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_updateCandidato') ?>',
@@ -2301,7 +2309,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveRequisitante').text('Salvar'); //change button text
                     $('#btnSaveRequisitante').attr('disabled', false); //set button enable
                 },
@@ -2316,7 +2323,6 @@
         function salvar_antecedentes() {
             $('#btnSaveAntecedentes').text('Salvando...'); //change button text
             $('#btnSaveAntecedentes').attr('disabled', true); //set button disable
-
             // ajax adding data to database
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_updateCandidato') ?>',
@@ -2331,7 +2337,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveAntecedentes').text('Salvar'); //change button text
                     $('#btnSaveAntecedentes').attr('disabled', false); //set button enable
                 },
@@ -2346,7 +2351,6 @@
         function salvar_restricoes() {
             $('#btnSaveRestricoes').text('Salvando...'); //change button text
             $('#btnSaveRestricoes').attr('disabled', true); //set button disable
-
             // ajax adding data to database
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_updateCandidato') ?>',
@@ -2361,7 +2365,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveRestricoes').text('Salvar'); //change button text
                     $('#btnSaveRestricoes').attr('disabled', false); //set button enable
                 },
@@ -2376,7 +2379,6 @@
         function salvar_exame_admissional() {
             $('#btnSaveExameAdmissional').text('Salvando...'); //change button text
             $('#btnSaveExameAdmissional').attr('disabled', true); //set button disable
-
             // ajax adding data to database
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_updateCandidato') ?>',
@@ -2391,7 +2393,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveExameAdmissional').text('Salvar'); //change button text
                     $('#btnSaveExameAdmissional').attr('disabled', false); //set button enable
                 },
@@ -2406,7 +2407,6 @@
         function salvar_admissao() {
             $('#btnSaveAdmissao').text('Salvando...'); //change button text
             $('#btnSaveAdmissao').attr('disabled', true); //set button disable
-
             // ajax adding data to database
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/ajax_updateCandidato') ?>',
@@ -2421,7 +2421,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
                     $('#btnSaveAdmissao').text('Salvar'); //change button text
                     $('#btnSaveAdmissao').attr('disabled', false); //set button enable
                 },
@@ -2534,15 +2533,62 @@
             }
         }
 
-        function enviar_email() {
+        function recuperar_dados_requisicao() {
+            var tipo = $('#form_email [name="tipo"]').val();
+            $.ajax({
+                'url': '<?php echo site_url('recrutamentoPresencial_cargos/recuperarDadosRequisicao') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {
+                    'id': $('#form_email [name="tipo"]').val()
+                },
+                'beforeSend': function () {
+                    $('#form_email [name="tipo"]').prop('disabled', true);
+                    $('.email_selecao, .email_requisitante, .email_exame_admissional, .email_resultado, .email_contratacao').prop('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        $('#form_email [name="mensagem"]').val(json.mensagem);
+                        switch (tipo) {
+                            case '1':
+                                $('.email_selecao').prop('disabled', false);
+                                break;
+                            case '2':
+                                $('.email_requisitante').prop('disabled', false);
+                                break;
+                            case '3':
+                                $('.email_exame_admissional').prop('disabled', false);
+                                break;
+                            case '4':
+                                $('.email_resultado').prop('disabled', false);
+                                break;
+                            case '5':
+                                $('.email_contratacao').prop('disabled', false);
+                                break;
+                        }
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error sending e-mail');
+                },
+                'complete': function () {
+                    $('#form_email [name="tipo"]').prop('disabled', false);
+                }
+            });
+        }
+
+        function enviar_email(id_candidato = null) {
             $.ajax({
                 'url': '<?php echo site_url('recrutamentoPresencial_cargos/enviarEmail') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
                     'id_requisicao': '<?= $requisicao; ?>',
-                    'tipo': $('#form_email [name="tipo"]:checked').val(),
-                    'mensagem': $('#form_email [name="mensagem"]').val()
+                    'tipo': $('#form_email [name="tipo"]').val(),
+                    'mensagem': $('#form_email [name="mensagem"]').val(),
+                    'id_candidato': id_candidato
                 },
                 'beforeSend': function () {
                     $('#btnEnviarEmail').prop('disabled', true);

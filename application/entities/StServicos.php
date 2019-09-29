@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class StServicos extends Entity
 {
@@ -10,6 +8,7 @@ class StServicos extends Entity
     protected $id_contrato;
     protected $tipo;
     protected $descricao;
+    protected $data_reajuste;
     protected $valor;
 
     protected $casts = [
@@ -17,6 +16,7 @@ class StServicos extends Entity
         'id_contrato' => 'int',
         'tipo' => 'int',
         'descricao' => 'string',
+        'data_reajuste' => '?datetime',
         'valor' => 'float'
     ];
 

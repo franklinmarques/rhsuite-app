@@ -55,7 +55,7 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                     <li>
                         <a href="<?php echo site_url('jobDescriptor'); ?>"<?php echo($this->uri->rsegment(2) == 'jobDescriptor' ? 'class="active"' : ''); ?>>
                             <i class="glyphicon glyphicon-briefcase"> </i>
-                            <span>jobDescriptor</span>
+                            <span>Job Descriptor</span>
                         </a>
                     </li>
                 <?php endif; ?>
@@ -143,10 +143,20 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                                 <li><a href="<?php echo site_url('requisicaoPessoal_candidatos'); ?>">Relatório de
                                         Gestão</a>
                                 </li>
+                                <li><a href="<?php echo site_url('requisicaoPessoal_estagios'); ?>">Texto e-mails
+                                        apoio</a>
+                                </li>
                             </ul>
                         </li>
                     <?php endif; ?>
                 <?php endif; ?>
+
+                <li>
+                    <a href="<?php echo site_url('faltasAtrasos'); ?>">
+                        <i class="fa fa-sticky-note-o"></i>
+                        <span>Gestão de Faltas/Atrasos</span>
+                    </a>
+                </li>
 
                 <?php if (isset($hash_acesso['PC'])): ?>
                     <li class="sub-menu">
@@ -459,6 +469,17 @@ $hash_acesso = $this->session->userdata('hash_acesso');
                             <li><a href="<?php echo site_url('manutencao'); ?>">Requisição de pessoal</a></li>
                         </ul>
                     </li>
+
+                    <!--<li class="sub-menu">
+                        <a href="javascript:;"<?php /*echo(in_array($this->uri->rsegment(1), ['apontamento']) ? ' class="active"' : ''); */?>>
+                            <i class="fa fa-history"></i>
+                            <span>Gestão Operacional EMTU</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="<?php /*echo site_url('emtu/apontamento'); */?>">Gerenciar apontamentos</a></li>
+                            <li><a href="<?php /*echo site_url('manutencao'); */?>">Requisição de pessoal</a></li>
+                        </ul>
+                    </li>-->
 
                     <li class="sub-menu">
                         <a href="javascript:;"<?php echo(in_array($this->uri->rsegment(1), array('apontamento')) ? ' class="active"' : ''); ?>>

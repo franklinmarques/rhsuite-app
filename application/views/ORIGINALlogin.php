@@ -96,7 +96,7 @@ HTML;
                         <div class="form-group">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                <input type="password" name="senha" placeholder="Senha" class="form-control"/>
+                                <input type="password" name="senha" placeholder="Senha" class="form-control" autocomplete="new-password"/>
                             </div>
                         </div>
                         <div class="form-group">

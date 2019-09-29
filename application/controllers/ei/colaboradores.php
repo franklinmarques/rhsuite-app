@@ -4,12 +4,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Colaboradores extends MY_Controller
 {
-
     public function __construct()
     {
         parent::__construct();
     }
 
+    //==========================================================================
     public function index()
     {
         if ($this->session->userdata('tipo') == 'funcionario' and in_array($this->session->userdata('nivel'), array(9, 10, 11))) {
@@ -62,6 +62,7 @@ class Colaboradores extends MY_Controller
         $this->load->view('ei/colaboradores', $data);
     }
 
+    //==========================================================================
     public function atualizar_filtro()
     {
         $depto = $this->input->post('depto');
@@ -87,6 +88,7 @@ class Colaboradores extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function atualizar_filtro2()
     {
         $depto = $this->input->post('depto');
@@ -111,6 +113,7 @@ class Colaboradores extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function novo()
     {
         $empresa = $this->session->userdata('empresa');
@@ -155,6 +158,7 @@ class Colaboradores extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function getcolaboradores()
     {
         $this->load->library('pagination');
@@ -255,6 +259,7 @@ class Colaboradores extends MY_Controller
         $this->load->view('ei/getcolaboradores', $data);
     }
 
+    //==========================================================================
     public function ajax_list3()
     {
         $post = $this->input->post();
@@ -338,6 +343,7 @@ class Colaboradores extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajax_list()
     {
         $post = $this->input->post();
@@ -442,6 +448,7 @@ class Colaboradores extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajax_colaboradores()
     {
         parse_str($this->input->post('busca'), $busca);
@@ -474,6 +481,7 @@ class Colaboradores extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_setores()
     {
         $area = $this->input->post('area');
@@ -493,6 +501,7 @@ class Colaboradores extends MY_Controller
         echo form_dropdown('setor', $options, $setor, 'id="setor" class="combobox form-control"');
     }
 
+    //==========================================================================
     public function editar_perfil()
     {
         $this->db->where('id', $this->uri->rsegment(3, 0));
@@ -562,6 +571,7 @@ class Colaboradores extends MY_Controller
         $this->load->view('ei/coladorador', $data);
     }
 
+    //==========================================================================
     public function ajax_save()
     {
         $post = $this->input->post();
@@ -614,6 +624,7 @@ class Colaboradores extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function save_perfil()
     {
         header('Content-type: text/json');
@@ -648,6 +659,7 @@ class Colaboradores extends MY_Controller
         }
     }
 
+    //==========================================================================
     public function ajax_edit()
     {
         $id = $this->input->post('id');
@@ -659,6 +671,7 @@ class Colaboradores extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_delete()
     {
         $id = $this->input->post('id');
@@ -667,6 +680,7 @@ class Colaboradores extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function pdf()
     {
         $this->db->select('foto, foto_descricao');
@@ -721,7 +735,7 @@ class Colaboradores extends MY_Controller
         $this->m_pdf->pdf->Output('Colaboradores.pdf', 'D');
     }
 
-
+    //==========================================================================
     public function gerenciarContratos()
     {
         $idUsuario = $this->input->post('id_usuario');
@@ -762,7 +776,7 @@ class Colaboradores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function salvarContrato()
     {
         if ($this->session->userdata('tipo') != 'empresa') {
@@ -811,7 +825,7 @@ class Colaboradores extends MY_Controller
         echo json_encode(['status' => true]);
     }
 
-
+    //==========================================================================
     public function excluirContrato()
     {
         $urlArquivo = './arquivos/documentos/colaborador/' . $this->input->post('arquivo');
@@ -826,6 +840,5 @@ class Colaboradores extends MY_Controller
 
         echo json_encode(['status' => true]);
     }
-
 
 }

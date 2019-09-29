@@ -172,10 +172,12 @@ class CursosDisciplinas extends MY_Controller
 
         $sql = "SELECT s.id, 
                        s.nome_curso,
-                       s.nome
+                       s.nome,
+                       s.qtde_semestres
                 FROM (SELECT a.id, 
                              b.nome AS nome_curso,
-                             a.nome
+                             a.nome,
+                             a.qtde_semestres
                       FROM ei_cursos b
                       LEFT JOIN ei_disciplinas a
                                 ON b.id = a.id_curso
@@ -218,12 +220,14 @@ class CursosDisciplinas extends MY_Controller
             $row[] = $disciplina->nome_curso;
             if ($disciplina->id) {
                 $row[] = $disciplina->nome;
+                $row[] = $disciplina->qtde_semestres;
                 $row[] = '
                           <button class="btn btn-sm btn-info" onclick="edit_disciplina(' . $disciplina->id . ')" title="Editar disciplina"><i class="glyphicon glyphicon-pencil"></i></button>
                           <button class="btn btn-sm btn-danger" onclick="delete_disciplina(' . $disciplina->id . ')" title="Excluir disciplina"><i class="glyphicon glyphicon-trash"></i></button>
                          ';
             } else {
                 $row[] = '<span class="text-muted">Nenhuma disciplina encontrada</span>';
+                $row[] = null;
                 $row[] = '
                           <button class="btn btn-sm btn-info disabled" title="Editar disciplina"><i class="glyphicon glyphicon-pencil"></i></button>
                           <button class="btn btn-sm btn-danger disabled" title="Excluir disciplina"><i class="glyphicon glyphicon-trash"></i></button>
@@ -353,6 +357,9 @@ class CursosDisciplinas extends MY_Controller
     public function ajax_addDisciplina()
     {
         $data = $this->input->post();
+        if (strlen($data['qtde_semestres']) == 0) {
+            $data['qtde_semestres'] = null;
+        }
         $status = $this->db->insert('ei_disciplinas', $data);
         echo json_encode(array("status" => $status));
     }
@@ -394,6 +401,7 @@ class CursosDisciplinas extends MY_Controller
         $config = array(
             array('field' => 'id_curso', 'rules' => 'callback_verificaCurso'),
             array('field' => 'nome', 'rules' => 'required|max_length[255]'),
+            array('field' => 'qtde_semestres', 'rules' => 'is_natural_no_zero|max_length[2]')
         );
 
         $this->load->form_validation();
@@ -461,6 +469,9 @@ class CursosDisciplinas extends MY_Controller
     public function ajax_updateDisciplina()
     {
         $data = $this->input->post();
+        if (strlen($data['qtde_semestres']) == 0) {
+            $data['qtde_semestres'] = null;
+        }
         $id = $this->input->post('id');
         unset($data['id']);
         $status = $this->db->update('ei_disciplinas', $data, array('id' => $id));
@@ -506,6 +517,7 @@ class CursosDisciplinas extends MY_Controller
             array('field' => 'id', 'rules' => 'callback_verificaDisciplina'),
             array('field' => 'id_curso', 'rules' => 'callback_verificaCurso'),
             array('field' => 'nome', 'rules' => 'required|max_length[255]'),
+            array('field' => 'qtde_semestres', 'rules' => 'is_natural_no_zero|max_length[2]')
         );
 
         $this->load->form_validation();

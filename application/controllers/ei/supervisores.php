@@ -13,6 +13,7 @@ class Supervisores extends MY_Controller
         }
     }
 
+    //==========================================================================
     public function index()
     {
         $empresa = $this->session->userdata('empresa');
@@ -101,7 +102,7 @@ class Supervisores extends MY_Controller
         $this->load->view('ei/supervisores', $data);
     }
 
-
+    //==========================================================================
     public function atualizar_filtro()
     {
         $empresa = $this->session->userdata('empresa');
@@ -163,7 +164,7 @@ class Supervisores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function atualizar_supervisores($busca = array())
     {
         $empresa = $this->session->userdata('empresa');
@@ -232,7 +233,7 @@ class Supervisores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function atualizar_unidades()
     {
         $empresa = $this->session->userdata('empresa');
@@ -256,7 +257,7 @@ class Supervisores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function ajax_list()
     {
         $post = $this->input->post();
@@ -352,6 +353,7 @@ class Supervisores extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajax_edit()
     {
         $id = $this->input->post('id');
@@ -394,7 +396,7 @@ class Supervisores extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function ajax_editUnidades()
     {
         $empresa = $this->session->userdata('empresa');
@@ -424,6 +426,7 @@ class Supervisores extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_add()
     {
         $data = $this->input->post();
@@ -483,6 +486,7 @@ class Supervisores extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_update()
     {
         $data = $this->input->post();
@@ -554,6 +558,7 @@ class Supervisores extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function salvarEscolas()
     {
         $id_coordenacao = $this->input->post('id_coordenacao');
@@ -596,6 +601,7 @@ class Supervisores extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_delete()
     {
         $id = $this->input->post('id');
@@ -604,7 +610,7 @@ class Supervisores extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-
+    //==========================================================================
     public function ajax_deleteEscola()
     {
         $id = $this->input->post('id');
@@ -613,7 +619,7 @@ class Supervisores extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-
+    //==========================================================================
     public function pdf()
     {
         $empresa = $this->session->userdata('empresa');

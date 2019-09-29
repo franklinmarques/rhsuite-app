@@ -5,11 +5,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Alunos extends MY_Controller
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->model('cd_alunos_model', 'alunos');
+    }
+
+    //==========================================================================
     public function index()
     {
         $this->gerenciar();
     }
 
+    //==========================================================================
     public function gerenciar($id_escola = null)
     {
         $empresa = $this->session->userdata('empresa');
@@ -105,7 +114,8 @@ class Alunos extends MY_Controller
         $this->load->view('cd/alunos', $data);
     }
 
-    public function atualizar_filtro()
+    //==========================================================================
+    public function atualizarFiltro()
     {
         $empresa = $this->session->userdata('empresa');
         $id_usuario = $this->session->userdata('id');
@@ -183,67 +193,41 @@ class Alunos extends MY_Controller
         echo json_encode($data);
     }
 
-    public function ajax_list()
+    //==========================================================================
+    public function listar()
     {
-        $post = $this->input->post();
-        parse_str($this->input->post('busca'), $arrBusca);
-        $busca = $arrBusca['busca'] ?? array();
-        $id_escola = $this->input->post('id_escola');
+        parse_str($this->input->post('busca'), $busca);
 
-        $sql = "SELECT s.id, 
-                       s.diretoria,
-                       s.escola,
-                       s.nome,
-                       CONCAT(ord_manha, ord_tarde, ord_noite) AS periodos,
-                       s.status,
-                       s.hipotese_diagnostica,
-                       s.periodo_manha,
-                       s.periodo_tarde,
-                       s.periodo_noite
-                FROM (SELECT a.id, 
-                             c.nome AS diretoria,
-                             b.nome AS escola,
-                             a.nome,
-                             IF(a.periodo_manha = 1, 'Manhã', '') AS periodo_manha,
-                             IF(a.periodo_tarde = 1, 'Tarde', '') AS periodo_tarde,
-                             IF(a.periodo_noite = 1, 'Noite', '') AS periodo_noite,
-                             IF(a.periodo_manha = 1, '1', '0') AS ord_manha,
-                             IF(a.periodo_tarde = 1, '2', '0') AS ord_tarde,
-                             IF(a.periodo_noite = 1, '3', '0') AS ord_noite,
-                             (CASE a.status 
-                                  WHEN 'A' THEN 'Ativo'
-                                  WHEN 'I' THEN 'Inativo'
-                                  WHEN 'N' THEN 'Não frequentando'
-                                  WHEN 'F' THEN 'Afastado' END) AS status,
-                             a.hipotese_diagnostica
-                      FROM cd_alunos a
-                      INNER JOIN cd_escolas b ON
-                                 b.id = a.id_escola
-                      INNER JOIN cd_diretorias c ON 
-                                 c.id = b.id_diretoria
-                      LEFT JOIN cd_supervisores d ON 
-                                d.id_escola = b.id AND
-                                (d.turno = IF(a.periodo_manha = 1, 'M', NULL) OR
-                                 d.turno = IF(a.periodo_tarde = 1, 'T', NULL) OR
-                                 d.turno = IF(a.periodo_noite = 1, 'N', NULL))
-                      WHERE c.id_empresa = {$this->session->userdata('empresa')}";
-        if ($id_escola) {
-            $sql .= " AND b.id = {$id_escola}";
+        $idEscola = $this->input->post('id_escola');
+
+        $this->db
+            ->select('c.nome AS diretoria, b.nome AS escola, a.nome')
+            ->select(["IFNULL(a.periodo_manha * 1, 0) + IFNULL(a.periodo_tarde * 10, 0) + IFNULL(a.periodo_noite * 100, 0) AS periodos"], false)
+            ->select('a.status, a.hipotese_diagnostica, a.id')
+            ->select(["(CASE a.periodo_manha WHEN 1 THEN 'Manhã' END) AS periodo_manha"], false)
+            ->select(["(CASE a.periodo_tarde WHEN 1 THEN 'Tarde' END) AS periodo_tarde"], false)
+            ->select(["(CASE a.periodo_noite WHEN 1 THEN 'Noite' END) AS periodo_noite"], false)
+            ->join('cd_escolas b', 'b.id = a.id_escola')
+            ->join('cd_diretorias c', 'c.id = b.id_diretoria')
+            ->join('cd_supervisores d', "d.id_escola = b.id AND (d.turno = IF(a.periodo_manha = 1, 'M', NULL) OR d.turno = IF(a.periodo_tarde = 1, 'T', NULL) OR d.turno = IF(a.periodo_noite = 1, 'N', NULL))", 'left')
+            ->where('c.id_empresa', $this->session->userdata('empresa'));
+        if ($idEscola) {
+            $this->db->where('b.id', $idEscola);
         }
         if (!empty($busca['depto'])) {
-            $sql .= " AND c.depto = '{$busca['depto']}'";
+            $this->db->where('c.depto', $busca['depto']);
         }
         if (!empty($busca['diretoria'])) {
-            $sql .= " AND c.id = '{$busca['diretoria']}'";
+            $this->db->where('c.id', $busca['diretoria']);
         }
         if (!empty($busca['escola'])) {
-            $sql .= " AND b.id = '{$busca['escola']}'";
+            $this->db->where('b.id', $busca['escola']);
         }
         if (!empty($busca['supervisor'])) {
-            $sql .= " AND d.id_supervisor = '{$busca['supervisor']}'";
+            $this->db->where('d.id_supervisor', $busca['supervisor']);
         }
         if (array_key_exists('periodo_manha', $busca) or array_key_exists('periodo_tarde', $busca) or array_key_exists('periodo_noite', $busca)) {
-            $periodos = array();
+            $periodos = [];
             if (!empty($busca['periodo_manha'])) {
                 $periodos[] = "a.periodo_manha = '{$busca['periodo_manha']}'";
             }
@@ -253,81 +237,72 @@ class Alunos extends MY_Controller
             if (!empty($busca['periodo_noite'])) {
                 $periodos[] = "a.periodo_noite = '{$busca['periodo_noite']}'";
             }
-            $sql .= ' AND (' . implode(' OR ', $periodos) . ')';
+            $this->db->where('(' . implode(' OR ', $periodos) . ')');
         }
-        $sql .= ' GROUP BY a.id) s';
-        $recordsTotal = $this->db->query($sql)->num_rows();
+        $query = $this->db
+            ->group_by('a.id')
+            ->get('cd_alunos a');
 
-        $columns = array('s.id', 's.diretoria', 's.escola', 's.nome', 's.hipotese_diagnostica');
-        if ($post['search']['value']) {
-            foreach ($columns as $key => $column) {
-                if ($key > 1) {
-                    $sql .= " OR
-                         {$column} LIKE '%{$post['search']['value']}%'";
-                } elseif ($key == 1) {
-                    $sql .= " 
-                        WHERE {$column} LIKE '%{$post['search']['value']}%'";
-                }
-            }
-        }
-        $recordsFiltered = $this->db->query($sql)->num_rows();
+        $this->load->library('dataTables', ['search' => ['diretoria', 'escola', 'nome', 'hipotese_diagnostica']]);
 
-        if (isset($post['order'])) {
-            $orderBy = array();
-            foreach ($post['order'] as $order) {
-                $orderBy[] = ($order['column'] + 2) . ' ' . $order['dir'];
-            }
-            $sql .= ' 
-                    ORDER BY ' . implode(', ', $orderBy);
-        }
-        $sql .= " 
-                LIMIT {$post['start']}, {$post['length']}";
-        $list = $this->db->query($sql)->result();
+        $output = $this->datatables->generate($query);
 
-        $data = array();
-        foreach ($list as $cd) {
-            $row = array();
-            $row[] = $cd->diretoria;
-            $row[] = $cd->escola;
-            $row[] = $cd->nome;
-            $row[] = implode(' / ', array_filter(array($cd->periodo_manha, $cd->periodo_tarde, $cd->periodo_noite)));
-            $row[] = $cd->status;
-            $row[] = $cd->hipotese_diagnostica;
-            $row[] = '
-                      <button type="button" class="btn btn-sm btn-info" onclick="edit_aluno(' . $cd->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
-                      <button type="button" class="btn btn-sm btn-danger" onclick="delete_aluno(' . $cd->id . ')" title="excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-                     ';
-            /* $row[] = '
-              <button type="button" class="btn btn-sm btn-info" onclick="edit_aluno(' . $cd->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
-              <a class="btn btn-sm btn-primary" href="' . site_url('cd/insumos/gerenciar/' . $cd->id) . '" title="Gerenciar insumos"><i class="glyphicon glyphicon-plus"></i> Insumos</a>
-              <button type="button" class="btn btn-sm btn-danger" onclick="delete_aluno(' . $cd->id . ')" title="excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-              '; */
-            $data[] = $row;
+        $data = [];
+        $status = $this->alunos::status();
+
+        foreach ($output->data as $row) {
+            $data[] = [
+                $row->diretoria,
+                $row->escola,
+                $row->nome,
+                implode(' / ', array_filter([$row->periodo_manha, $row->periodo_tarde, $row->periodo_noite])),
+                $status[$row->status],
+                $row->hipotese_diagnostica,
+                '<button type="button" class="btn btn-sm btn-info" onclick="edit_aluno(' . $row->id . ')" title="Editar aluno"><i class="glyphicon glyphicon-pencil"></i> </button>
+                 <button type="button" class="btn btn-sm btn-danger" onclick="delete_aluno(' . $row->id . ')" title="excluir aluno"><i class="glyphicon glyphicon-trash"></i> </button>'
+            ];
         }
 
-        $output = array(
-            "draw" => $this->input->post('draw'),
-            "recordsTotal" => $recordsTotal,
-            "recordsFiltered" => $recordsFiltered,
-            "data" => $data,
-        );
+        $output->data = $data;
 
         echo json_encode($output);
     }
 
-    public function ajax_edit()
+    //==========================================================================
+    public function editar()
     {
-        $id = $this->input->post('id');
-        $this->db->select('a.*, b.id_diretoria');
-        $this->db->select('b.periodo_manha AS escola_manha');
-        $this->db->select('b.periodo_tarde AS escola_tarde');
-        $this->db->select('b.periodo_noite AS escola_noite');
-        $this->db->join('cd_escolas b', 'b.id = a.id_escola');
-        $data = $this->db->get_where('cd_alunos a', array('a.id' => $id))->row();
+        $data = $this->alunos->find($this->input->post('id'));
+
+        if (empty($data)) {
+            exit(json_encode(['erro' => $this->alunos->errors()]));
+        }
+
+        if ($data->data_matricula) {
+            $data->data_matricula = date('d/m/Y', strtotime($data->data_matricula));
+        }
+        if ($data->data_afastamento) {
+            $data->data_afastamento = date('d/m/Y', strtotime($data->data_afastamento));
+        }
+        if ($data->data_desligamento) {
+            $data->data_desligamento = date('d/m/Y', strtotime($data->data_desligamento));
+        }
+
+        $escola = $this->db
+            ->select('id_diretoria, periodo_manha, periodo_tarde, periodo_noite')
+            ->where('id', $data->id_escola)
+            ->get('cd_escolas')
+            ->row();
+
+        $data->id_diretoria = $escola->id_diretoria ?? null;
+        $data->escola_manha = $escola->periodo_manha ?? null;
+        $data->escola_tarde = $escola->periodo_tarde ?? null;
+        $data->escola_noite = $escola->periodo_noite ?? null;
+
         echo json_encode($data);
     }
 
-    public function atualizar_escolas()
+    //==========================================================================
+    public function atualizarEscolas()
     {
         $id_diretoria = $this->input->post('id_diretoria');
         $id_escola = $this->input->post('id_escola');
@@ -345,7 +320,8 @@ class Alunos extends MY_Controller
         echo $data;
     }
 
-    public function atualizar_periodos()
+    //==========================================================================
+    public function atualizarPeriodos()
     {
         $id = $this->input->post('id');
         $this->db->select('periodo_manha, periodo_tarde, periodo_noite');
@@ -353,139 +329,72 @@ class Alunos extends MY_Controller
         echo json_encode($data);
     }
 
-    public function ajax_add()
+    //==========================================================================
+    public function salvar()
     {
-        $data = $this->input->post();
+        $this->load->library('entities');
 
-        if (empty($data['nome'])) {
-            exit('O nome do(a) aluno(a) é obrigatório');
+        $data = $this->entities->create('cdAlunos', $this->input->post());
+
+        $this->alunos->setValidationRule('id_diretoria', 'required|is_natural_no_zero|max_length[11]');
+
+        $this->alunos->setValidationLabel('nome', 'Nome Aluno');
+        $this->alunos->setValidationLabel('endereco', 'Endereço');
+        $this->alunos->setValidationLabel('numero', 'Número');
+        $this->alunos->setValidationLabel('complemento', 'Complemento');
+        $this->alunos->setValidationLabel('municipio', 'Município');
+        $this->alunos->setValidationLabel('cep', 'CEP');
+        $this->alunos->setValidationLabel('telefone', 'Telefone');
+        $this->alunos->setValidationLabel('contato', 'Contato');
+        $this->alunos->setValidationLabel('email', 'E-Mail');
+        $this->alunos->setValidationLabel('hipotese_diagnostica', 'Hipótese Diagnóstica');
+        $this->alunos->setValidationLabel('nome_responsavel', 'Responsável');
+        $this->alunos->setValidationLabel('observacoes', 'Observações');
+        $this->alunos->setValidationLabel('id_diretoria', 'Diretoria de Ensino');
+        $this->alunos->setValidationLabel('id_escola', 'Unidade Escolar');
+        $this->alunos->setValidationLabel('status', 'Status');
+        $this->alunos->setValidationLabel('data_matricula', 'Data Matrícula');
+        $this->alunos->setValidationLabel('data_afastamento', 'Data Afastamento');
+        $this->alunos->setValidationLabel('data_desligamento', 'Data Desligamento');
+        $this->alunos->setValidationLabel('periodo_manha', 'Período (Manhã)');
+        $this->alunos->setValidationLabel('periodo_tarde', 'Período (Tarde)');
+        $this->alunos->setValidationLabel('periodo_noite', 'Período (Noite)');
+
+        $validate = $this->alunos->validate($data);
+        $erro = $this->alunos->errors();
+        if ((!empty($data->periodo_manha) or !empty($data->periodo_tarde) or !empty($data->periodo_noite)) == false) {
+            $erro .= ' O campo Período(s) deve ter uma opção selecionada. ';
+            $validate = false;
         }
-        if (empty($data['id_escola'])) {
-            exit('O campo Unidade de Ensino é obrigatório');
-        }
-        if (empty($data['hipotese_diagnostica'])) {
-            exit('O campo Hipótese Diagnóstica é obrigatório');
-        }
-        if (!isset($data['periodo_manha'])) {
-            $data['periodo_manha'] = 0;
-        }
-        if (!isset($data['periodo_tarde'])) {
-            $data['periodo_tarde'] = 0;
-        }
-        if (!isset($data['periodo_noite'])) {
-            $data['periodo_noite'] = 0;
-        }
-        if (!($data['periodo_manha'] or $data['periodo_tarde'] or $data['periodo_noite'])) {
-            exit('Nenhum período selecionado');
+        if (!$validate) {
+            exit(json_encode(['erro' => $erro]));
         }
 
-        foreach ($data as $key => $value) {
-            if ($value === '') {
-                $data[$key] = null;
-            }
-        }
-        if ($data['data_matricula']) {
-            $data['data_matricula'] = date("d/m/Y", strtotime(str_replace('-', '/', $data['data_matricula'])));
-        }
-        if ($data['data_afastamento']) {
-            $data['data_afastamento'] = date("d/m/Y", strtotime(str_replace('-', '/', $data['data_afastamento'])));
-        }
-        if ($data['data_desligamento']) {
-            $data['data_desligamento'] = date("d/m/Y", strtotime(str_replace('-', '/', $data['data_desligamento'])));
-        }
+        unset($data->id_diretoria);
 
-        $status = $this->db->insert('cd_alunos', $data);
-        echo json_encode(array('status' => $status !== false));
+        $this->alunos->skipValidation();
+
+        $this->alunos->save($data) or exit(json_encode(['erro' => $this->alunos->errors()]));
+
+        echo json_encode(['status' => true]);
     }
 
-    public function ajax_update()
+    //==========================================================================
+    public function excluir()
     {
-        $data = $this->input->post();
+        $this->alunos->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->alunos->errors()]));
 
-        $erro = '';
-        if (empty($data['nome'])) {
-            $erro .= "O nome do(a) aluno(a) é obrigatório\n";
-        }
-        if (empty($data['hipotese_diagnostica'])) {
-            $erro .= "O campo Hipótese Diagnóstica é obrigatório\n";
-        }
-        if (!(isset($data['periodo_manha']) or isset($data['periodo_tarde']) or isset($data['periodo_noite']))) {
-            $erro .= "Nenhum período selecionado\n";
-        }
-        if ($erro) {
-            exit($erro);
-        }
-
-        $periodos = array();
-        if (!empty($data['periodo_manha'])) {
-            $periodos[] = 'M';
-        } else {
-            $data['periodo_manha'] = null;
-        }
-        if (!empty($data['periodo_tarde'])) {
-            $periodos[] = 'T';
-        } else {
-            $data['periodo_tarde'] = null;
-        }
-        if (!empty($data['periodo_noite'])) {
-            $periodos[] = 'N';
-        } else {
-            $data['periodo_noite'] = null;
-        }
-
-        $id = $data['id'];
-        unset($data['id']);
-        foreach ($data as $key => $value) {
-            if (empty($value)) {
-                $data[$key] = null;
-            }
-        }
-        $status = $this->db->update('cd_alunos', $data, array('id' => $id));
-
-        $this->db->select('a.id, a.id_aluno, a.escola, a.id_alocacao, a.turno');
-        $this->db->join('cd_alocacao b', "b.id = a.id_alocacao AND DATE_FORMAT(b.data, '%Y-%m') = '" . date('Y-m') . "'");
-        $this->db->where('a.id_aluno', $id);
-        $this->db->or_where('a.aluno', $data['nome']);
-        $this->db->limit(1);
-        $matriculados = $this->db->get('cd_matriculados a')->result();
-
-
-        foreach ($matriculados as $matriculado) {
-
-            if (in_array($matriculado->turno, $periodos) and $status !== false) {
-                $this->db->select('nome');
-                $escola = $this->db->get_where('cd_escolas', array('id' => $data['id_escola']))->row();
-
-                $data2 = array(
-                    'id_alocacao' => $matriculado->id_alocacao,
-                    'id_aluno' => $id ?? $matriculado->id_aluno,
-                    'aluno' => $data['nome'],
-                    'escola' => $escola->nome ?? $matriculado->escola,
-                    'status' => $data['status']
-                );
-
-                $status = $this->db->update('cd_matriculados a', $data2, array('a.id' => $matriculado->id));
-            }
-
-        }
-
-
-        echo json_encode(array('status' => $status !== false));
+        echo json_encode(['status' => true]);
     }
 
-    public function ajax_delete()
-    {
-        $id = $this->input->post('id');
-        $status = $this->db->delete('cd_alunos', array('id' => $id));
-        echo json_encode(array('status' => $status !== false));
-    }
-
-    public function importar()
+    //==========================================================================
+    public function importacao()
     {
         $this->load->view('cd/importarAlunos');
     }
 
-    public function importarCsv()
+    //==========================================================================
+    public function importar()
     {
         header('Content-type: text/json; charset=UTF-8');
         $this->load->helper(array('date'));
@@ -611,6 +520,7 @@ class Alunos extends MY_Controller
         exit(json_encode(array('retorno' => 0, 'aviso' => 'Erro no envio do arquivo. Por favor, tente mais tarde', 'redireciona' => 0, 'pagina' => '')));
     }
 
+    //==========================================================================
     private function validaCsv($label)
     {
         $this->load->library('form_validation');

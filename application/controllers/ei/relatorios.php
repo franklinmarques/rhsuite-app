@@ -12,11 +12,13 @@ class Relatorios extends MY_Controller
         date_default_timezone_set('America/Sao_Paulo');
     }
 
+    //==========================================================================
     public function index()
     {
         $this->funcionarios();
     }
 
+    //==========================================================================
     public function funcionarios($pdf = false)
     {
         $data = $this->input->get();
@@ -105,6 +107,7 @@ class Relatorios extends MY_Controller
         }
     }
 
+    //==========================================================================
     public function escolas($pdf = false)
     {
         if ($pdf !== true) {
@@ -196,6 +199,7 @@ class Relatorios extends MY_Controller
         }
     }
 
+    //==========================================================================
     public function insumos($pdf = false)
     {
         if ($pdf !== true) {
@@ -289,6 +293,7 @@ class Relatorios extends MY_Controller
         }
     }
 
+    //==========================================================================
     private function ajax_list()
     {
         $busca = $this->input->get();
@@ -441,6 +446,7 @@ class Relatorios extends MY_Controller
         return $data;
     }
 
+    //==========================================================================
     private function ajax_funcionarios()
     {
         $busca = $this->input->get();
@@ -553,6 +559,7 @@ class Relatorios extends MY_Controller
         return $data;
     }
 
+    //==========================================================================
     private function ajax_insumos()
     {
         $busca = $this->input->get();
@@ -656,116 +663,7 @@ class Relatorios extends MY_Controller
         return $data;
     }
 
-    /* private function ajax_insumos()
-      {
-      $busca = $this->input->get();
-
-      $sqlSemana = "SELECT DAY(CASE WEEKDAY(a.data)
-      WHEN 5 THEN DATE_ADD(a.data, INTERVAL 2 DAY)
-      WHEN 6 THEN DATE_ADD(a.data, INTERVAL 1 DAY)
-      ELSE a.data END) AS data_ini,
-      DAY(LAST_DAY(a.data)) AS data_fim
-      FROM (SELECT STR_TO_DATE('{$busca['ano']}-{$busca['mes']}-01','%Y-%m-%d') as data) a";
-      $dias = $this->db->query($sqlSemana)->row();
-
-      $primeiraSemana = 8 - date('N', strtotime($busca['ano'] . '-' . $busca['mes'] . '-01'));
-      $semana = array();
-      for ($i = $dias->data_ini; $i <= $dias->data_fim; $i += $primeiraSemana) {
-      $semana[] = array(
-      'data_ini' => $i,
-      'data_fim' => min($i + ($i > $dias->data_ini ? 4 : $primeiraSemana - 3), $dias->data_fim)
-      );
-      if ($i > $dias->data_ini) {
-      $primeiraSemana = 7;
-      }
-      if ($i > $dias->data_fim) {
-      break;
-      }
-      }
-
-      $data = array('semanas' => $semana);
-
-      $sql = "SELECT b.id AS id_escola,
-      b.nome AS escola,
-      a.id AS id_aluno,
-      a.nome AS aluno,
-      CASE (DAY(d.data) + (CASE WHEN WEEKDAY(DATE_SUB(d.data, INTERVAL (DAY(d.data) - 1) DAY)) < 5
-      THEN WEEKDAY(DATE_SUB(d.data, INTERVAL (DAY(d.data) - 1) DAY))
-      ELSE 0 END) + (6 - WEEKDAY(d.data))) / 7
-      WHEN 1 THEN 'semana1'
-      WHEN 2 THEN 'semana2'
-      WHEN 3 THEN 'semana3'
-      WHEN 4 THEN 'semana4'
-      WHEN 5 THEN 'semana5'
-      END as semana,
-      d.status,
-      g.nome AS insumo,
-      SUM(f.qtde) AS qtde
-      FROM ei_alunos a
-      INNER JOIN ei_escolas b ON
-      b.id = a.id_escola
-      INNER JOIN ei_diretorias c ON
-      c.id = b.id_diretoria
-      LEFT JOIN ei_frequencias d ON
-      d.id_aluno = a.id
-      LEFT JOIN ei_alocacao e ON
-      e.id = d.id_alocacao
-      LEFT JOIN ei_consumos f ON
-      f.id_frequencia = d.id
-      LEFT JOIN ei_insumos g ON
-      g.id = f.id_insumo
-      WHERE DATE_FORMAT(e.data, '%Y-%m') = '{$busca['ano']}-{$busca['mes']}'";
-      if (isset($busca['depto'])) {
-      $sql .= " AND c.depto = '{$busca['depto']}'";
-      }
-      if (isset($busca['diretoria'])) {
-      $sql .= " AND c.id = '{$busca['diretoria']}'";
-      }
-      if (isset($busca['supervisor'])) {
-      $sql .= " AND b.id_supervisor = '{$busca['supervisor']}'";
-      }
-      $sql .= '
-      GROUP BY b.id, a.id, semana, g.id
-      ORDER BY b.nome, a.nome, d.data';
-
-      $rows = $this->db->query($sql)->result();
-
-
-      $arr_insumos = array();
-
-      foreach ($rows as $row) {
-      $data[$row->id_escola]['escola'] = $row->escola;
-      $data[$row->id_escola]['qtde_alunos'] = 0;
-      $data[$row->id_escola]['alunos'][$row->id_aluno] = array(
-      'nome' => $row->aluno,
-      'semana1' => array(),
-      'semana2' => array(),
-      'semana3' => array(),
-      'semana4' => array(),
-      'semana5' => array(),
-      'total' => 0
-      );
-      $arr_insumos[] = $row->insumo;
-      }
-
-      $arr_insumos = array_unique($arr_insumos);
-
-      $id_aluno = 0;
-      foreach ($rows as $row2) {
-      $key_insumos = array_search($row2->insumo, $arr_insumos);
-      if ($row2->id_aluno != $id_aluno) {
-      $data[$row2->id_escola]['qtde_alunos'] += 1;
-      $id_aluno = $row2->id_aluno;
-      }
-      $data[$row2->id_escola]['alunos'][$row2->id_aluno][$row2->semana]['status'] = $row2->status;
-      $data[$row2->id_escola]['alunos'][$row2->id_aluno][$row2->semana]['insumos'][$key_insumos]['nome'] = $row2->insumo;
-      $data[$row2->id_escola]['alunos'][$row2->id_aluno][$row2->semana]['insumos'][$key_insumos]['qtde'] = $row2->qtde;
-      $data[$row2->id_escola]['alunos'][$row2->id_aluno]['total'] += $row2->qtde;
-      }
-
-      return $data;
-      } */
-
+    //==========================================================================
     private function ajax_observacoes()
     {
         $busca = $this->input->get();
@@ -890,7 +788,7 @@ class Relatorios extends MY_Controller
         return $data;
     }
 
-
+    //==========================================================================
     public function medicao($isPdf = false)
     {
         $this->db->select('foto, foto_descricao');
@@ -1004,7 +902,7 @@ class Relatorios extends MY_Controller
         $this->load->view('ei/relatorio_medicao', $data);
     }
 
-
+    //==========================================================================
     public function pdf()
     {
         $this->load->library('m_pdf');
@@ -1037,7 +935,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
 
-
+    //==========================================================================
     public function pdfMedicao()
     {
         $this->load->library('m_pdf');
@@ -1062,6 +960,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
 
+    //==========================================================================
     public function pdfEscolas()
     {
         $this->load->library('m_pdf');
@@ -1095,6 +994,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
 
+    //==========================================================================
     public function pdfInsumos()
     {
         $this->load->library('m_pdf');
@@ -1118,7 +1018,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
 
-
+    //==========================================================================
     public function pdfMapaVisitacao()
     {
         $empresa = $this->session->userdata('empresa');
@@ -1230,7 +1130,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output('Mapa de Visitação.pdf', 'D');
     }
 
-
+    //==========================================================================
     public function pdfBancoHoras()
     {
         $empresa = $this->session->userdata('empresa');
@@ -1316,7 +1216,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output('Banco de Horas - ' . $this->calendar->get_month_name($mes) . '_' . $data['ano'] . '.pdf', 'D');
     }
 
-
+    //==========================================================================
     public function pdfCuidadores()
     {
         $id_empresa = $this->session->userdata('empresa');
@@ -1414,7 +1314,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output('Relação de Escolas.pdf', 'D');
     }
 
-
+    //==========================================================================
     public function resultados($pdf = false)
     {
         if ($pdf !== true) {
@@ -1579,6 +1479,7 @@ class Relatorios extends MY_Controller
 
     }
 
+    //==========================================================================
     public function resultadosDiretorias($pdf = false)
     {
         if ($pdf !== true) {
@@ -1752,6 +1653,7 @@ class Relatorios extends MY_Controller
 
     }
 
+    //==========================================================================
     public function pdfResultados()
     {
         $this->load->library('m_pdf');
@@ -1787,6 +1689,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
 
+    //==========================================================================
     public function pdfResultadosDiretorias()
     {
         $this->load->library('m_pdf');
@@ -1822,6 +1725,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
 
+    //==========================================================================
     public function resultadosConsolidados($pdf = false)
     {
         if ($pdf !== true) {
@@ -1977,6 +1881,7 @@ class Relatorios extends MY_Controller
 
     }
 
+    //==========================================================================
     public function pdfResultadosConsolidados()
     {
         $this->load->library('m_pdf');
@@ -2012,7 +1917,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
 
-
+    //==========================================================================
     public function pdfMapaCarregamento()
     {
         $get = $this->input->get();
@@ -2151,7 +2056,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output("EI - Mapa Carregamento de OS.pdf", 'D');
     }
 
-
+    //==========================================================================
     public function pdfMapaCarregamentoOS()
     {
         $get = $this->input->get('busca');
@@ -2312,47 +2217,51 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output("EI - Mapa Escolas X Alunos{$nomeOS}.pdf", 'D');
     }
 
-
+    //==========================================================================
     public function pagamentoPrestadores()
     {
-        $data = $this->ajaxPagamentoPrestadores(false);
+        $data = $this->ajaxPagamentoPrestadores();
 
         $this->load->view('ei/pagamento_prestadores', $data);
     }
 
-
+    //==========================================================================
     public function ajaxPagamentoPrestadores($isPdf = false)
     {
-        $where = array(
+        $where = [
             'depto' => $this->input->get_post('depto'),
             'diretoria' => $this->input->get_post('diretoria'),
             'supervisor' => $this->input->get_post('supervisor'),
             'ano' => $this->input->get_post('ano'),
             'semestre' => $this->input->get_post('semestre'),
             'mes' => $this->input->get_post('mes')
-        );
+        ];
 
         $this->load->library('Calendar');
 
-        $data = array(
+        $data = [
             'query_string' => http_build_query($where),
             'nomeMes' => $this->calendar->get_month_name($where['mes']),
             'ano' => $where['ano'],
             'is_pdf' => $isPdf
-        );
+        ];
 
-        $idMes = $where['mes'] - ($where['semestre'] > 1 ? 6 : 0);
+        $idMes = intval($where['mes']) - ($where['semestre'] > 1 ? 6 : 0);
+
+        $data['empresa'] = $this->db
+            ->select('foto, foto_descricao')
+            ->where('id', $this->session->userdata('empresa'))
+            ->get('usuarios')
+            ->row();
 
 
-        $this->db->select('foto, foto_descricao');
-        $this->db->where('id', $this->session->userdata('empresa'));
-        $data['empresa'] = $this->db->get('usuarios')->row();
-
-
-        $this->db->select('c.cuidador, d2.funcao, d.cnpj, b.escola');
+        $this->db->select('d.id, c.cuidador, d2.funcao, d.cnpj, b.escola');
         $this->db->select(["DATE_FORMAT(e.data_liberacao_pagto_mes{$idMes}, '%d/%m/%Y') AS data_liberacao_pagto"], false);
-        $this->db->select(["TIME_FORMAT(IFNULL(c2.total_horas_faturadas_mes{$idMes}, SEC_TO_TIME(TIME_TO_SEC(d2.horas_mensais_custo) + IFNULL(TIME_TO_SEC(c2.horas_descontadas_mes{$idMes}), 0))), '%H:%i') AS total_horas"], false);
-        $this->db->select(["FORMAT(IFNULL(c2.valor_total_mes{$idMes}, d2.valor_hora_operacional * ((IFNULL(TIME_TO_SEC(d2.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(c2.horas_descontadas_mes{$idMes}), 0)) / 3600)), 2, 'de_DE') AS valor_total"], false);
+//        $this->db->select(["TIME_FORMAT(IFNULL(c2.total_horas_faturadas_mes{$idMes}, SEC_TO_TIME(TIME_TO_SEC(d2.horas_mensais_custo) + IFNULL(TIME_TO_SEC(c2.horas_descontadas_mes{$idMes}), 0))), '%H:%i') AS total_horas"], false);
+//        $this->db->select(["FORMAT(IFNULL(c2.valor_total_mes{$idMes}, d2.valor_hora_operacional * ((IFNULL(TIME_TO_SEC(d2.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(c2.horas_descontadas_mes{$idMes}), 0)) / 3600)), 2, 'de_DE') AS valor_total"], false);
+        $this->db->select(["IFNULL(TIME_TO_SEC(c2.total_horas_faturadas_mes{$idMes}), TIME_TO_SEC(d2.horas_mensais_custo) + IFNULL(TIME_TO_SEC(c2.horas_descontadas_mes{$idMes}), 0)) AS total_horas"], false);
+        $this->db->select(["IFNULL(c2.valor_total_mes{$idMes}, d2.valor_hora_operacional * ((IFNULL(TIME_TO_SEC(d2.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(c2.horas_descontadas_mes{$idMes}), 0)) / 3600)) AS valor_total"], false);
+
         $this->db->join('ei_alocacao_escolas b', 'b.id_alocacao = a.id');
         $this->db->join('ei_alocados c', 'c.id_alocacao_escola = b.id');
         $this->db->join('usuarios d', 'd.id = c.id_cuidador');
@@ -2365,11 +2274,17 @@ class Relatorios extends MY_Controller
         $this->db->where('a.id_supervisor', $this->input->get_post('supervisor'));
         $this->db->where('a.ano', $this->input->get_post('ano'));
         $this->db->where('a.semestre', $this->input->get_post('semestre'));
-        $this->db->group_by(['c.id_cuidador', 'b.id_escola']);
+        $this->db->group_by(['c.id_cuidador', 'b.id_escola', 'd2.periodo']);
         $this->db->order_by('c.cuidador', 'asc');
         $this->db->order_by('b.escola', 'asc');
-        $data['rows'] = $this->db->get('ei_alocacao a')->result();
-
+        $this->db->get('ei_alocacao a');
+        $sql = "SELECT s.cuidador, s.funcao, s.cnpj, s.escola, s.data_liberacao_pagto,
+                       TIME_FORMAT(SEC_TO_TIME(SUM(s.total_horas)), '%H:%i') AS total_horas,
+                       FORMAT(SUM(s.valor_total), 2, 'de_DE') AS valor_total
+                FROM ({$this->db->last_query()}) s
+                GROUP BY s.id
+                ORDER BY s.cuidador ASC";
+        $data['rows'] = $this->db->query($sql)->result();
 
         $totalHoras = 0;
         $valorTotal = 0;
@@ -2386,11 +2301,10 @@ class Relatorios extends MY_Controller
             'valor' => number_format($valorTotal, 2, ',', '.')
         ];
 
-
         return $data;
     }
 
-
+    //==========================================================================
     public function unidadeVisitada($isPdf = false)
     {
         $empresa = $this->session->userdata('empresa');
@@ -2454,7 +2368,7 @@ class Relatorios extends MY_Controller
         $this->load->view('ei/relatorio_visitas', $data);
     }
 
-
+    //==========================================================================
     public function pdfUnidadeVisitada()
     {
         $this->load->library('m_pdf');
@@ -2481,7 +2395,7 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
 
-
+    //==========================================================================
     public function ajaxSaveMedicao()
     {
         $data = $this->input->post();
@@ -2516,7 +2430,7 @@ class Relatorios extends MY_Controller
         echo json_encode(['status' => $status !== false]);
     }
 
-
+    //==========================================================================
     public function pdfPagamentoPrestadores()
     {
         $this->load->library('m_pdf');
@@ -2526,8 +2440,7 @@ class Relatorios extends MY_Controller
         $stylesheet .= '#pagamento_prestadores thead th { font-size: 12px; padding: 4px; background-color: #f5f5f5; border: 1px solid #444; } ';
         $stylesheet .= '#pagamento_prestadores tbody td { font-size: 10px; padding: 4px; vertical-align: top; border: 1px solid #444; } ';
 
-
-        $data = $this->pagamentoPrestadores(true);
+        $data = $this->ajaxPagamentoPrestadores(true);
 
 
         $this->m_pdf->pdf->setTopMargin(38);
@@ -2547,15 +2460,15 @@ class Relatorios extends MY_Controller
         $this->m_pdf->pdf->Output($nome . '.pdf', 'D');
     }
 
-
+    //==========================================================================
     public function faturamentoConsolidado()
     {
-        $data = $this->ajaxFaturamentoConsolidado(false);
+        $data = $this->ajaxFaturamentoConsolidado();
 
         $this->load->view('ei/faturamento_consolidado', $data);
     }
 
-
+    //==========================================================================
     public function ajaxFaturamentoConsolidado($isPdf = false)
     {
         $where = array(
@@ -2622,18 +2535,18 @@ class Relatorios extends MY_Controller
         return $data;
     }
 
-
+    //==========================================================================
     public function pdfFaturamentoConsolidado()
     {
         $this->load->library('m_pdf');
 
-        $stylesheet = '#faturmaneto_consolidado thead tr th { border-top: 4px solid #ddd; padding-top: 8px; } ';
-        $stylesheet .= '#faturmaneto_consolidado { border: 1px solid #444; margin-bottom: 0px; } ';
-        $stylesheet .= '#faturmaneto_consolidado thead th { font-size: 12px; padding: 4px; background-color: #f5f5f5; border: 1px solid #444; } ';
-        $stylesheet .= '#faturmaneto_consolidado tbody td { font-size: 10px; padding: 4px; vertical-align: top; border: 1px solid #444; } ';
+        $stylesheet = '#faturamento_consolidado thead tr th { border-top: 4px solid #ddd; padding-top: 8px; } ';
+        $stylesheet .= '#faturamento_consolidado { border: 1px solid #444; margin-bottom: 0px; } ';
+        $stylesheet .= '#faturamento_consolidado thead th { font-size: 12px; padding: 4px; background-color: #f5f5f5; border: 1px solid #444; } ';
+        $stylesheet .= '#faturamento_consolidado tbody td { font-size: 10px; padding: 4px; vertical-align: top; border: 1px solid #444; } ';
 
 
-        $data = $this->faturamentoConsolidado(true);
+        $data = $this->ajaxFaturamentoConsolidado(true);
 
 
         $this->m_pdf->pdf->setTopMargin(38);

@@ -295,12 +295,15 @@ class Recrutamento_candidatos extends MY_Controller
         $post = $this->input->post();
 
 
-        $this->db->select('a.nome, a.cidade AS cod_municipal, a.bairro, a.id');
-        $this->db->select('a.estado, d.municipio AS cidade, a.deficiencia, a.escolaridade, a.email');
-        $this->db->join('recrutamento_candidatos b', 'b.id_usuario = a.id', 'left');
-        $this->db->join('recrutamento_testes c', 'c.id_candidato = b.id', 'left');
-        $this->db->join('municipios d', 'd.cod_mun = a.cidade', 'left');
-        $this->db->where('a.empresa', $id);
+        $this->db
+            ->select('a.nome, a.cidade AS cod_municipal, a.bairro, a.id')
+            ->select('a.estado, d.municipio AS cidade, e.tipo AS deficiencia, f.nome AS escolaridade, a.email', false)
+            ->join('recrutamento_candidatos b', 'b.id_usuario = a.id', 'left')
+            ->join('recrutamento_testes c', 'c.id_candidato = b.id', 'left')
+            ->join('municipios d', 'd.cod_mun = a.cidade', 'left')
+            ->join('deficiencias e', 'e.id = a.deficiencia', 'left')
+            ->join('escolaridade f', 'f.id = a.escolaridade', 'left')
+            ->where('a.empresa', $id);
         if ($post['estado']) {
             $this->db->where('a.estado', $post['estado']);
         }
@@ -316,10 +319,16 @@ class Recrutamento_candidatos extends MY_Controller
         if ($post['escolaridade']) {
             $this->db->where('a.escolaridade', $post['escolaridade']);
         }
-        $this->db->group_by('a.id');
-
-
-        $query = $this->db->get('recrutamento_usuarios a');
+        if ($post['sexo']) {
+            $this->db->where('a.sexo', $post['sexo']);
+        }
+        if ($post['idade_minima']) {
+            $this->db->where("a.data_nascimento <= SUBDATE(NOW(), INTERVAL {$post['idade_minima']} YEAR)");
+        }
+        if ($post['idade_maxima']) {
+            $this->db->where("a.data_nascimento >= SUBDATE(NOW(), INTERVAL {$post['idade_maxima']} YEAR)");
+        }
+        $query = $this->db->group_by('a.id')->get('recrutamento_usuarios a');
 
         $config = array(
             'search' => ['nome', 'email', 'cidade', 'bairro']
@@ -344,14 +353,18 @@ class Recrutamento_candidatos extends MY_Controller
         foreach ($output->data as $row) {
             $data[] = array(
                 $row->nome,
-                $row->cidade,
-                $row->bairro,
+                $row->deficiencia,
+                $row->escolaridade,
                 '<a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_candidatos/perfil/' . $row->id) . '" title="Editar cadastro sumário"><i class="glyphicon glyphicon-pencil"></i></a>
                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_candidato(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                 <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento/candidatos/' . $row->id) . '" title="Ver processo">Avaliações</a>
                  <button class="btn btn-sm btn-info" onclick="visualizar_processos(' . $row->id . ')" title="Visualizar histórico de processos"><i class="glyphicon glyphicon-list-alt"></i> Histórico</button>'
             );
         }
+
+        /*'<a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_candidatos/perfil/' . $row->id) . '" title="Editar cadastro sumário"><i class="glyphicon glyphicon-pencil"></i></a>
+                 <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_candidato(' . "'" . $row->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
+                 <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento/candidatos/' . $row->id) . '" title="Ver processo">Avaliações</a>
+                 <button class="btn btn-sm btn-info" onclick="visualizar_processos(' . $row->id . ')" title="Visualizar histórico de processos"><i class="glyphicon glyphicon-list-alt"></i> Histórico</button>'*/
 
         $output->data = $data;
 

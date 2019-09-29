@@ -170,6 +170,10 @@
                                                     class="glyphicon glyphicon-minus text-danger"></i> Limpar
                                             mês</a>
                                     </li>
+                                    <li><a href="javascript:void(0)" onclick="preparar_novo_alocado();"><i
+                                                    class="glyphicon glyphicon-plus text-info"></i> Alocar novo(s)
+                                            colaborador(es)</a>
+                                    </li>
                                     <li><a href="eventos"><i class="glyphicon glyphicon-list-alt text-primary"></i>
                                             Relatório de eventos</a></li>
                                 </ul>
@@ -248,8 +252,8 @@
                                             href="#totalizacao" aria-controls="totalizacao" role="tab"
                                             data-toggle="tab">Totalizacao</a></li>
                                 <li role="presentation" style="font-size: 13px; font-weight: bolder"><a
-                                            href="#colaboradores" aria-controls="colaboradores" role="tab"
-                                            data-toggle="tab">Colaboradores</a></li>
+                                            href="#avaliacao_performance" aria-controls="colaboradores" role="tab"
+                                            data-toggle="tab">Avaliação Performance</a></li>
                             </ul>
 
                             <div class="tab-content" style="border: 1px solid #ddd; border-top-width: 0;">
@@ -260,11 +264,15 @@
                                            cellspacing="0" width="100%">
                                         <thead>
                                         <tr>
-                                            <th rowspan="2" class="warning">Nome colaborador</th>
-                                            <th rowspan="2" class="warning">Banco horas</th>
+                                            <th colspan="2" class="warning text-center">Colaborador(a)</th>
+                                            <th rowspan="2" class="warning">Horario</th>
+                                            <th rowspan="2" class="warning">Regime<br>contratação</th>
+                                            <th rowspan="2" class="warning">Banco<br>horas</th>
                                             <td colspan="31" class="date-width" id="dias"><strong>Dias</strong></td>
                                         </tr>
                                         <tr>
+                                            <th class="warning" style="padding-right: 5px;">Ação</th>
+                                            <th class="warning">Nome</th>
                                             <?php for ($i = 1; $i <= 31; $i++): ?>
                                                 <?php if (date('N', mktime(0, 0, 0, date('m'), $i, date('Y'))) < 6): ?>
                                                     <th class="date-width"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></th>
@@ -279,12 +287,136 @@
                                     </table>
                                     <br>
                                 </div>
-                                <div role="tabpanel" class="tab-pane" id="totalizacao">
 
+                                <div role="tabpanel" class="tab-pane" id="totalizacao">
+                                    <br>
+                                    <div class="row" style="margin: 0 2px;">
+                                        <div class="col-sm-3 col-sm-offset-9 text-right">
+                                            <button type="button" class="btn btn-sm btn-info"
+                                                    id="pdfTotalizacao"
+                                                    onclick="imprimir_totalizacao();"><i
+                                                        class="glyphicon glyphicon-print"></i> Imprimir
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <table id="table_totalizacao"
+                                           class="table table-hover table-striped table-condensed table-bordered"
+                                           cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th rowspan="2" class="warning">Nome colaborador</th>
+                                            <th colspan="3" class="text-center">Horarios</th>
+                                            <th colspan="5" class="text-center">Saldo mensal</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center">Entrada</th>
+                                            <th class="text-center">Saída</th>
+                                            <th class="text-center">Banco horas</th>
+                                            <th class="text-center">Positivo</th>
+                                            <th class="text-center">Negativo</th>
+                                            <th class="text-center">Total</th>
+                                            <th class="text-center">Desconto em folha</th>
+                                            <th class="text-center">Hora extra</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                    <br>
                                 </div>
 
-                                <div role="tabpanel" class="tab-pane" id="colaboradores">
-
+                                <div role="tabpanel" class="tab-pane" id="avaliacao_performance">
+                                    <br>
+                                    <div class="row" style="margin: 0 2px;">
+                                        <div class="col-sm-3 col-sm-offset-9 text-right">
+                                            <button type="button" class="btn btn-sm btn-info"
+                                                    id="pdfAvaliacaoPerformance"
+                                                    onclick="imprimir_avaliacao_performance();"><i
+                                                        class="glyphicon glyphicon-print"></i> Imprimir
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <table id="table_avaliacao_performance"
+                                           class="table table-hover table-striped table_apontamento table-condensed table-bordered"
+                                           cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th class="warning">Intérpretes</th>
+                                            <th colspan="2" class="warning text-center">Profissionalismo</th>
+                                            <th colspan="5" class="warning text-center">Atendimento</th>
+                                            <th colspan="5" class="warning text-center">Aspectos técnicos</th>
+                                            <th rowspan="2" class="warning text-center" style="vertical-align: middle;">
+                                                Média
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="warning">Nome</th>
+                                            <th class="warning">Comprometimeto</th>
+                                            <th class="warning">Pontualidade</th>
+                                            <th class="warning">Script</th>
+                                            <th class="warning">Simpatia</th>
+                                            <th class="warning">Empatia</th>
+                                            <th class="warning">Postura</th>
+                                            <th class="warning">Ferramenta</th>
+                                            <th class="warning">Tradutório</th>
+                                            <th class="warning">Linguístico</th>
+                                            <th class="warning">Neutralidade</th>
+                                            <th class="warning">Discrição</th>
+                                            <th class="warning">Fidelidade</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="warning text-nowrap">Igual ou abaixo da média (%)</th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                        </tr>
+                                        <tr>
+                                            <th class="warning text-nowrap">Acima da média (%)</th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                            <th class="active text-center"></th>
+                                        </tr>
+                                        <tr>
+                                            <th class="warning">Média</th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                            <th class="active"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                    <br>
                                 </div>
                             </div>
                         </div>
@@ -392,14 +524,14 @@
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_evento" value="FR">
-                                                Feriado
+                                                <input type="radio" name="tipo_evento" value="FC">
+                                                Falta combinada
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_evento" value="AE">
-                                                Apontamento extra
+                                                <input type="radio" name="tipo_evento" value="BH">
+                                                Banco de horas
                                             </label>
                                         </div>
                                     </div>
@@ -412,24 +544,10 @@
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="tipo_evento" value="AN">
+                                                <input type="radio" name="tipo_evento" value="AS">
                                                 Atraso sem atestado
                                             </label>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="tipo_evento" value="PD">
-                                                Posto descoberto
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="tipo_evento" value="PI">
-                                                Posto desativado
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col col-md-4">
                                         <div class="radio">
                                             <label>
                                                 <input type="radio" name="tipo_evento" value="SJ">
@@ -443,21 +561,48 @@
                                             </label>
                                         </div>
                                     </div>
+                                    <div class="col col-md-4">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="CO">
+                                                Compensação (Trabalho dia de folga - MEI)
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="EA">
+                                                Entrada antecipada
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="SP">
+                                                Saída pós-horário
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="tipo_evento" value="HE">
+                                                Hora extra (Trabalho dia de feriado - CLT)
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
+                                <br>
                                 <div class="row form-group">
                                     <label class="control-label col-md-2">Horário entrada</label>
                                     <div class="col-md-2">
                                         <input name="horario_entrada" type="text" value=""
                                                class="form-control text-center hora" placeholder="hh:mm">
                                     </div>
-                                    <label class="control-label col-md-2">Horário intervalo</label>
+                                    <label class="control-label col-md-2">Horário saída intervalo</label>
                                     <div class="col-md-2">
                                         <input name="horario_intervalo" type="text" value=""
                                                class="form-control text-center hora" placeholder="hh:mm">
                                     </div>
                                 </div>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-2">Horário retorno</label>
+                                    <label class="control-label col-md-2">Horário retorno intervalo</label>
                                     <div class="col-md-2">
                                         <input name="horario_retorno" type="text" value=""
                                                class="form-control text-center hora" placeholder="hh:mm">
@@ -469,21 +614,9 @@
                                     </div>
                                 </div>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-2">Apontamento +</label>
+                                    <label class="control-label col-md-2">Banco de horas</label>
                                     <div class="col-md-2">
-                                        <input name="acrescimo_horas" type="text" value=""
-                                               class="form-control text-center hora" placeholder="hh:mm">
-                                    </div>
-                                    <label class="control-label col-md-2">Apontamento -</label>
-                                    <div class="col-md-2">
-                                        <input name="decrescimo_horas" type="text" value=""
-                                               class="form-control text-center hora" placeholder="hh:mm">
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <label class="control-label col-md-2">Desconto folha</label>
-                                    <div class="col-md-2">
-                                        <input name="desconto_folha" type="text" value=""
+                                        <input name="banco_horas" type="text" value=""
                                                class="form-control text-center hora" placeholder="hh:mm">
                                     </div>
                                     <label class="control-label col-md-2">Observações</label>
@@ -499,152 +632,255 @@
             </div><!-- /.modal -->
 
             <!-- Bootstrap modal -->
-            <div class="modal fade" id="modal_form_old" role="dialog">
+            <div class="modal fade" id="modal_avaliado" role="dialog">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                         aria-hidden="true">&times;</span></button>
-                            <h3 class="modal-title">Relatório de eventos</h3>
+                            <h3 class="modal-title">Avaliação de performance</h3>
                         </div>
                         <div class="modal-body form">
-                            <form action="#" id="form_old" class="form-horizontal">
-                                <input type="hidden" value="" name="id_alocacao"/>
-                                <input type="hidden" value="" name="data"/>
-                                <input type="hidden" value="" name="periodo"/>
+                            <form action="#" id="form_avaliado" class="form-horizontal" autocomplete="off">
+                                <input type="hidden" value="" name="id"/>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-2">Data e período:</label>
-                                    <div class="col-md-6">
-                                        <p id="data_periodo" class="form-control-static"></p>
+                                    <label class="control-label col-md-2"><strong>Colaborador(a):<br>Mês/ano:</strong></label>
+                                    <div class="col-md-7">
+                                        <p id="form_avaliado_dados" class="form-control-static"></p>
                                     </div>
-                                    <div class="col-sm-4 text-right text-nowrap">
-                                        <button type="button" class="btn btn-success" id="btnSaveEventoOld"
-                                                onclick="save_evento();"> Salvar
-                                        </button>
-                                        <button type="button" class="btn btn-danger" id="btnLimparEventoOld"
-                                                onclick="delete_evento();"> Excluir
+                                    <div class="col-sm-3 text-right text-nowrap">
+                                        <button type="button" class="btn btn-success" id="btnSaveAvaliado"
+                                                onclick="save_avaliacao_performance();"> Salvar
                                         </button>
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar
                                         </button>
                                     </div>
                                 </div>
+                                <hr>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-2">Lista de eventos</label>
-                                    <div class="col-md-6">
-                                        <select name="id" class="form-control" id="id" onchange="edit_evento(this)">
-                                            <option value="">-- Novo evento --</option>
+                                    <label class="control-label col-md-2"><strong>Legenda:</strong></label>
+                                    <div class="col-md-9">
+                                        <p class="form-control-static"><?= $nivel_performance; ?>.</p>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Comprometimento</label>
+                                    <div class="col-md-2">
+                                        <select name="comprometimento" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
                                         </select>
+                                    </div>
+                                    <label class="control-label col-md-1">Simpatia</label>
+                                    <div class="col-md-2">
+                                        <select name="simpatia" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <label class="control-label col-md-1">Script</label>
+                                    <div class="col-md-2">
+                                        <select name="script" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Pontualidade</label>
+                                    <div class="col-md-2">
+                                        <select name="pontualidade" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <label class="control-label col-md-1">Empatia</label>
+                                    <div class="col-md-2">
+                                        <select name="empatia" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <label class="control-label col-md-1">Postura</label>
+                                    <div class="col-md-2">
+                                        <select name="postura" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Ferramenta</label>
+                                    <div class="col-md-2">
+                                        <select name="ferramenta" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <label class="control-label col-md-1">Tradutório</label>
+                                    <div class="col-md-2">
+                                        <select name="tradutorio" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <label class="control-label col-md-1">Linguístico</label>
+                                    <div class="col-md-2">
+                                        <select name="linguistico" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Neutralidade</label>
+                                    <div class="col-md-2">
+                                        <select name="neutralidade" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <label class="control-label col-md-1">Discrição</label>
+                                    <div class="col-md-2">
+                                        <select name="discricao" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <label class="control-label col-md-1">Fidelidade</label>
+                                    <div class="col-md-2">
+                                        <select name="fidelidade" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-2">Extra 1</label>
+                                    <div class="col-md-2">
+                                        <select name="extra_1" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <label class="control-label col-md-1">Extra 2</label>
+                                    <div class="col-md-2">
+                                        <select name="extra_2" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <label class="control-label col-md-1">Extra 3</label>
+                                    <div class="col-md-2">
+                                        <select name="extra_3" class="form-control">
+                                            <option value="">selecione...</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- Bootstrap modal -->
+            <div class="modal fade" id="modal_banco_horas" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Ajuste de Banco de Horas</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <form action="#" id="form_banco_horas" class="form-horizontal" autocomplete="off">
+                                <input type="hidden" value="" name="id_usuario"/>
+                                <div class="row form-group">
+                                    <label class="control-label col-md-5"><strong>Colaborador(a):<br>Banco de horas na
+                                            data atual:</strong></label>
+                                    <div class="col-md-6">
+                                        <p id="form_banco_horas_dados" class="form-control-static"></p>
                                     </div>
                                 </div>
                                 <hr>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-2">Tipo de evento<span
-                                                class="text-danger text-nowrap"> *</span></label>
-                                    <div class="col-md-2">
-                                        <?php echo form_dropdown('tipo_evento', $tipo_evento, '', 'class="form-control"'); ?>
-                                    </div>
-                                    <label class="control-label col-md-1">Cliente<span class="text-danger text-nowrap"> *</span></label>
-                                    <div class="col-md-6">
-                                        <?php echo form_dropdown('id_cliente', ['' => 'selecione...'], '', 'class="form-control"'); ?>
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <label class="control-label col-md-2">Número contrato <span
-                                                class="text-danger">*</span></label>
+                                    <label class="control-label col-md-3">Banco de horas</label>
                                     <div class="col-md-3">
-                                        <?php echo form_dropdown('codigo_contrato', ['' => 'selecione...'], '', 'class="form-control"'); ?>
-                                    </div>
-                                    <label class="control-label col-md-2">Centro de custo<span
-                                                class="text-danger text-nowrap"> *</span></label>
-                                    <div class="col-md-4">
-                                        <input name="centro_custo" type="text" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <label class="control-label col-md-2">Horário início <span
-                                                class="text-danger">*</span></label>
-                                    <div class="col-md-2">
-                                        <input name="horario_inicio" type="text" value=""
-                                               class="form-control text-center hora" placeholder="hh:mm">
-                                    </div>
-                                    <label class="control-label col-md-2">Horário término <span
-                                                class="text-danger">*</span></label>
-                                    <div class="col-md-2">
-                                        <input name="horario_termino" type="text" value=""
-                                               class="form-control text-center hora" placeholder="hh:mm">
-                                    </div>
-                                    <label class="control-label col-md-1 text-nowrap">Total horas</label>
-                                    <div class="col-md-2">
-                                        <input name="total_horas" type="text" value=""
-                                               class="form-control text-center hora" readonly>
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <label class="control-label col-md-3">Colaborador(es) alocado(s)<span
-                                                class="text-danger">*</span></label>
-                                    <div class="col-md-8">
-                                        <textarea name="colaboradores_alocados" class="form-control"
-                                                  rows="3"></textarea>
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <label class="control-label col-md-3">Telefone(s)/Email(s)</label>
-                                    <div class="col-md-8">
-                                        <textarea name="telefones_emails" class="form-control" rows="3"></textarea>
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <label class="control-label col-md-3">Custo colaborador(es)</label>
-                                    <div class="col-md-3">
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic-addon1">R$</span>
-                                            <input name="custo_colaboradores" type="text" class="form-control valor"
-                                                   aria-describedby="basic-addon1">
-                                        </div>
-                                        <span class="help-block"></span>
-                                    </div>
-                                    <label class="control-label col-md-2">Custo operacional</label>
-                                    <div class="col-md-3">
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic-addon2">R$</span>
-                                            <input name="custo_operacional" type="text" class="form-control valor"
-                                                   aria-describedby="basic-addon2">
-                                        </div>
-                                        <span class="help-block"></span>
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <label class="control-label col-md-3">Impostos</label>
-                                    <div class="col-md-3">
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic-addon1">R$</span>
-                                            <input name="impostos" type="text" class="form-control valor"
-                                                   aria-describedby="basic-addon1">
-                                        </div>
-                                        <span class="help-block"></span>
-                                    </div>
-                                    <label class="control-label col-md-2">Valor cobrado</label>
-                                    <div class="col-md-3">
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic-addon2">R$</span>
-                                            <input name="valor_cobrado" type="text" class="form-control valor"
-                                                   aria-describedby="basic-addon2">
-                                        </div>
-                                        <span class="help-block"></span>
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <label class="control-label col-md-3">Receita líquida</label>
-                                    <div class="col-md-3">
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic-addon2">R$</span>
-                                            <input name="receita_liquida" type="text" class="form-control valor"
-                                                   aria-describedby="basic-addon2">
-                                        </div>
-                                        <span class="help-block"></span>
+                                        <input type="text" name="banco_horas" class="form-control text-center horas"
+                                               placeholder="hhh:mm">
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="btnSaveBancoHoras"
+                                    onclick="save_banco_horas();">
+                                Salvar
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar
+                            </button>
                         </div>
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
@@ -692,7 +928,8 @@
                                 <div class="row form-group">
                                     <label class="control-label col-md-2">Colaborador(a)</label>
                                     <div class="col-md-8">
-                                        <select name="id_usuario" class="form-control posto_estrutura">
+                                        <select name="id_usuario" class="form-control posto_estrutura"
+                                                onchange="filtrar_alocado();">
                                             <option value="">selecione...</option>
                                         </select>
                                     </div>
@@ -722,18 +959,26 @@
                                 <hr>
                                 <h5>Colaborador MEI</h5>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-3">Valor hora colaborador</label>
-                                    <div class="col-md-3">
+                                    <label class="control-label col-md-2">Valor hora colaborador</label>
+                                    <div class="col-md-3" style="width: 200px;">
                                         <div class="input-group">
                                             <span class="input-group-addon" id="basic-addon1">R$</span>
-                                            <input name="valor_mes_clt" type="text" class="form-control valor"
+                                            <input name="valor_hora_mei" type="text" class="form-control valor mei"
                                                    aria-describedby="basic-addon1">
                                         </div>
                                         <span class="help-block"></span>
                                     </div>
                                     <label class="control-label col-md-2">Qtde. horas/mês</label>
-                                    <div class="col-md-2">
-                                        <input name="qtde_horas_mei" type="text" class="form-control text-center hora"
+                                    <div class="col-md-2" style="width: 120px;">
+                                        <input name="qtde_horas_mei" type="text"
+                                               class="form-control text-center hora mei"
+                                               placeholder="hh:mm">
+                                        <span class="help-block"></span>
+                                    </div>
+                                    <label class="control-label col-md-2">Qtde. horas/dia</label>
+                                    <div class="col-md-2" style="width: 120px;">
+                                        <input name="qtde_horas_dia_mei" type="text"
+                                               class="form-control text-center hora mei"
                                                placeholder="hh:mm">
                                         <span class="help-block"></span>
                                     </div>
@@ -741,18 +986,26 @@
                                 <hr>
                                 <h5>Colaborador CLT</h5>
                                 <div class="row form-group">
-                                    <label class="control-label col-md-3">Valor remuneração mensal</label>
-                                    <div class="col-md-3">
+                                    <label class="control-label col-md-2">Valor remuneração mensal</label>
+                                    <div class="col-md-3" style="width: 200px;">
                                         <div class="input-group">
                                             <span class="input-group-addon" id="basic-addon1">R$</span>
-                                            <input name="valor_hora_mei" type="text" class="form-control valor"
+                                            <input name="valor_mes_clt" type="text" class="form-control valor clt"
                                                    aria-describedby="basic-addon1">
                                         </div>
                                         <span class="help-block"></span>
                                     </div>
                                     <label class="control-label col-md-2">Qtde. horas/mês</label>
-                                    <div class="col-md-2">
-                                        <input name="qtde_meses_clt" type="text" class="form-control text-center hora"
+                                    <div class="col-md-2" style="width: 120px;">
+                                        <input name="qtde_meses_clt" type="text"
+                                               class="form-control text-center hora clt"
+                                               placeholder="hh:mm">
+                                        <span class="help-block"></span>
+                                    </div>
+                                    <label class="control-label col-md-2">Qtde. horas/dia</label>
+                                    <div class="col-md-2" style="width: 120px;">
+                                        <input name="qtde_horas_dia_clt" type="text"
+                                               class="form-control text-center hora clt"
                                                placeholder="hh:mm">
                                         <span class="help-block"></span>
                                     </div>
@@ -795,6 +1048,36 @@
                 </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
 
+            <!-- Bootstrap modal -->
+            <div class="modal fade" id="modal_alocados" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Alocar novo(s) colaborador(es)</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <form action="#" id="form_alocados" class="form-horizontal" autocomplete="off">
+                                <input type="hidden" value="" name="id_alocacao"/>
+                                <div class="row form-group">
+                                    <div class="col-md-12">
+                                        <?php echo form_multiselect('id_usuario[]', [], [], 'id="alocados" class="demo1" size="8"'); ?>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="btnSaveAlocados"
+                                    onclick="save_novo_alocado();"> Salvar
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar
+                            </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
         </section>
     </section>
     <!--main content end-->
@@ -812,18 +1095,20 @@
     </script>
     <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js') ?>"></script>
     <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
     <script src="<?php echo base_url('assets/js/moment.js'); ?>"></script>
 
     <script>
 
-        var table, table_totalizacao, table_colaboradores;
-        var busca, save_method;
+        var table, table_totalizacao, table_avaliacao_performance;
+        var busca, save_method, demo1;
         var edicaoEvento = true;
 
         $('.data').mask('00/00/0000');
         $('.hora').mask('00:00');
-        $('.valor').mask('##.###.##0,00', {reverse: true});
+        $('.horas').mask('#00:00', {'reverse': true});
+        $('.valor').mask('##.###.##0,00', {'reverse': true});
 
 
         $(document).ready(function () {
@@ -834,7 +1119,9 @@
             table = $('#table').DataTable({
                 'processing': true,
                 'serverSide': true,
-                'order': [0, 'asc'],
+                'order': [1, 'asc'],
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
                 'language': {
                     'url': language
                 },
@@ -854,7 +1141,7 @@
                         dt2.setFullYear(json.calendar.ano, (json.calendar.mes - 1));
 
                         var semana = 1;
-                        var colunasUsuario = 1;
+                        var colunasUsuario = 4;
                         for (i = 1; i <= 31; i++) {
                             if (i > 28) {
                                 if (i > json.calendar.qtde_dias) {
@@ -906,9 +1193,52 @@
                 'columnDefs': [
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
+                            $(td).addClass('evento').css({
+                                'cursor': 'pointer',
+                                'vertical-align': 'middle'
+                            }).on('click', function () {
+                                edit_avaliacao_performance(rowData[36]);
+                            });
+                            $(td).html(rowData[col]);
+                        },
+                        'width': '100%',
+                        'targets': [1]
+                    },
+                    {
+                        'className': 'text-center',
+                        'targets': [2]
+                    },
+                    {
+                        'className': 'text-center',
+                        'orderable': false,
+                        'searchable': false,
+                        'targets': [0]
+                    },
+                    {
+                        'className': 'text-center',
+                        'targets': [3]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
+                            $(td).addClass('evento').css({
+                                'cursor': 'pointer',
+                                'vertical-align': 'middle'
+                            }).on('click', function () {
+                                edit_banco_horas(rowData[36]);
+                            });
+                            $(td).html(rowData[col]);
+                        },
+                        'className': 'text-center text-nowrap',
+                        'targets': [4]
+                    },
+                    {
+                        'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[col]) {
                                 $(td).css({'color': '#fff', 'background-color': '#47a447'});
+                            } else if ($(table.column(col).header()).hasClass('text-danger')) {
+                                $(td).css('background-color', '#e9e9e9');
                             }
+
                             $(td).popover({
                                 'container': 'body',
                                 'placement': 'auto bottom',
@@ -927,20 +1257,118 @@
                                 'vertical-align': 'middle'
                             }).on('click', function () {
                                 $(td).popover('hide');
-                                edit_evento(row + 1, col - 1);
+                                edit_evento(rowData[36], col - 4);
                             });
                             $(td).html(rowData[col]['tipo_evento']);
                         },
                         'className': 'text-center',
                         'orderable': false,
+                        'searchable': false,
                         'targets': 'date-width'
                     }
                 ]
             });
 
-            // table_totalizacao = $('#table_totalizacao').DataTable();
-            // table_colaboradores = $('#table_colaboradores').DataTable();
+            table_totalizacao = $('#table_totalizacao').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'order': [0, 'asc'],
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
+                'language': {
+                    'url': language
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('icom/apontamento/listarTotalizacoes') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
+                        d.busca = busca;
+                        return d;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'width': '100%',
+                        'targets': [0]
+                    },
+                    {
+                        'className': 'text-center',
+                        'searchable': false,
+                        'targets': [1, 2, 3, 4, 5, 6, 7, 8]
+                    }
+                ],
+                'preDrawCallback': function () {
+                    $('#pdfTotalizacao').prop('disabled', ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' || $('#busca [name="id_setor"]').val() === ''));
+                }
+            });
 
+            table_avaliacao_performance = $('#table_avaliacao_performance').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'order': [0, 'asc'],
+                'iDisplayLength': -1,
+                'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
+                'language': {
+                    'url': language
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('icom/apontamento/listarAvaliacoesPerformance') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
+                        d.busca = busca;
+                        return d;
+                    },
+                    'dataSrc': function (json) {
+                        for (i = 0; i <= 12; i++) {
+                            $(table_avaliacao_performance.context[0].aoHeader[2][i + 1].cell).html(json.abaixo_media[i]);
+                            $(table_avaliacao_performance.context[0].aoHeader[3][i + 1].cell).html(json.acima_media[i]);
+                            $(table_avaliacao_performance.column(i + 1).header()).html(json.media[i]);
+                        }
+
+                        return json.data;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'width': '100%',
+                        'targets': [0]
+                    },
+                    {
+                        'className': 'text-center',
+                        'orderable': false,
+                        'targets': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                    }
+                ],
+                'preDrawCallback': function () {
+                    $('#pdfAvaliacaoPerformance').prop('disabled', ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' || $('#busca [name="id_setor"]').val() === ''));
+                }
+            });
+
+            demo1 = $('.demo1').bootstrapDualListbox({
+                'nonSelectedListLabel': 'Colaboradores disponíveis',
+                'selectedListLabel': 'Colaboradores selecionados',
+                'preserveSelectionOnMove': 'moved',
+                'moveOnSelect': false,
+                'filterPlaceHolder': 'Filtrar',
+                'helperSelectNamePostfix': false,
+                'selectorMinimalHeight': 132,
+                'infoText': false
+            });
+
+        });
+
+
+        $('#form_posto [name="categoria"]').on('change', function () {
+            $('#form_posto .clt, #form_posto .mei').prop('disabled', true);
+            if (this.value === 'MEI') {
+                $('#form_posto .mei').prop('disabled', false);
+                $('#form_posto .clt').val('');
+            } else if (this.value === 'CLT') {
+                $('#form_posto .clt').prop('disabled', false);
+                $('#form_posto .mei').val('');
+            }
         });
 
 
@@ -986,6 +1414,40 @@
                     $('#form_posto [name="id_setor"]').html($(json.setores).html());
                     $('#form_posto [name="id_usuario"]').html($(json.usuarios).html());
                     $('#form_posto [name="id_funcao"]').html($(json.funcoes).html());
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                },
+                'complete': function () {
+                    $('.posto_estrutura').prop('disabled', false);
+                }
+            });
+        }
+
+
+        function filtrar_alocado() {
+            $.ajax({
+                'url': '<?php echo site_url('icom/postos/editarColaboradorAlocado') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#form_posto .posto_estrutura, #busca [name="mes"], #busca [name="ano"]').serialize(),
+                'beforeSend': function () {
+                    $('.posto_estrutura').prop('disabled', true);
+                },
+                'success': function (json) {
+                    $('#form_posto [name="valor_hora_mei"]').val('');
+                    $('#form_posto [name="valor_mes_clt"]').val('');
+                    $('#form_posto [name="qtde_horas_mei"]').val('');
+                    $('#form_posto [name="qtde_meses_clt"]').val('');
+                    $('#form_posto [name="horario_entrada"]').val('');
+                    $('#form_posto [name="horario_intervalo"]').val('');
+                    $('#form_posto [name="horario_retorno"]').val('');
+                    $('#form_posto [name="horario_saida"]').val('');
+                    $.each(json, function (key, value) {
+                        $('#form_posto [name="' + key + '"]').val(value);
+                    });
+
+                    $('#form_posto [name="categoria"]').trigger('change');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -1114,18 +1576,88 @@
                 return false;
             }
 
+            if (confirm('Deseja limpar o mês?')) {
+                $.ajax({
+                    'url': '<?php echo site_url('icom/apontamento/desalocarMes') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': busca,
+                    'success': function (json) {
+                        if (json.erro) {
+                            alert(json.erro);
+                        } else {
+                            alert('Mês desalocado com sucesso.');
+                            reload_table();
+                        }
+                    },
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert('Error get data from ajax');
+                    }
+                });
+            }
+        }
+
+
+        function edit_avaliacao_performance(id_alocado) {
             $.ajax({
-                'url': '<?php echo site_url('icom/apontamento/desalocarMes') ?>',
+                'url': '<?php echo site_url('icom/apontamento/editarAvaliacaoPerformance') ?>',
                 'type': 'POST',
                 'dataType': 'json',
-                'data': busca,
+                'data': {'id_alocado': id_alocado},
+                'beforeSend': function () {
+                    $('#form_avaliado')[0].reset();
+                },
                 'success': function (json) {
                     if (json.erro) {
                         alert(json.erro);
-                    } else {
-                        alert('Mês desalocado com sucesso.');
-                        reload_table();
+                        return false;
                     }
+
+                    $.each(json, function (key, value) {
+                        if ($('#form_avaliado [name="' + key + '"]').prop('type') === 'radio') {
+                            $('#form_avaliado [name="' + key + '"][value="' + value + '"]').prop('checked', value !== null);
+                        } else {
+                            $('#form_avaliado [name="' + key + '"]').val(value);
+                        }
+                    });
+
+                    $('#form_avaliado_dados').html(json.dados);
+
+                    $('#modal_avaliado').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function edit_banco_horas(id_alocado) {
+            $.ajax({
+                'url': '<?php echo site_url('icom/apontamento/editarBancoHoras') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id_alocado': id_alocado},
+                'beforeSend': function () {
+                    $('#form_banco_horas')[0].reset();
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
+
+                    $.each(json, function (key, value) {
+                        if ($('#form_banco_horas [name="' + key + '"]').prop('type') === 'radio') {
+                            $('#form_banco_horas [name="' + key + '"][value="' + value + '"]').prop('checked', value !== null);
+                        } else {
+                            $('#form_banco_horas [name="' + key + '"]').val(value);
+                        }
+                    });
+
+                    $('#form_banco_horas_dados').html(json.dados);
+
+                    $('#modal_banco_horas').modal('show');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -1186,6 +1718,8 @@
 
 
         function edit_posto() {
+            $('#form_posto')[0].reset();
+
             $.ajax({
                 'url': '<?php echo site_url('icom/apontamento/editarPosto') ?>',
                 'type': 'POST',
@@ -1205,10 +1739,101 @@
                     $('#form_posto [name="id_area"]').html($(json.areas).html());
                     $('#form_posto [name="id_setor"]').html($(json.setores).html());
 
+
+                    $('#form_posto [name="categoria"]').trigger('change');
+
                     $('#modal_posto').modal('show');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function preparar_novo_alocado() {
+            if ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' ||
+                $('#busca [name="id_setor"]').val() === '' || $('#busca [name="ano"]').val() === '') {
+                alert('Para alocar um novo cloadorador, ajuste os filtros de Departamento, Área, Setor, Mês e Ano.');
+                return false;
+            }
+
+            $('#form_alocados')[0].reset();
+
+            $.ajax({
+                'url': '<?php echo site_url('icom/apontamento/prepararNovoAlocado') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': busca,
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
+
+                    $('#form_alocados [name="id_alocacao"]').val(json.id_alocacao);
+                    $('#alocados').html($(json.id_usuario).html());
+
+                    demo1.bootstrapDualListbox('refresh', true);
+
+                    $('#modal_alocados').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function save_avaliacao_performance() {
+            $.ajax({
+                'url': '<?php echo site_url('icom/apontamento/salvarAvaliacaoPerformance') ?>',
+                'type': 'POST',
+                'data': $('#form_avaliado').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveAvaliado').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
+                        $('#modal_avaliado').modal('hide');
+                        reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                },
+                'complete': function () {
+                    $('#btnSaveAvaliado').text('Salvar').attr('disabled', false);
+                }
+            });
+        }
+
+
+        function save_banco_horas() {
+            $.ajax({
+                'url': '<?php echo site_url('icom/apontamento/salvarBancoHoras') ?>',
+                'type': 'POST',
+                'data': $('#form_banco_horas').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveBancoHoras').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
+                        $('#modal_banco_horas').modal('hide');
+                        reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                },
+                'complete': function () {
+                    $('#btnSaveBancoHoras').text('Salvar').attr('disabled', false);
                 }
             });
         }
@@ -1270,6 +1895,33 @@
         }
 
 
+        function save_novo_alocado() {
+            $.ajax({
+                'url': '<?php echo site_url('icom/apontamento/salvarNovoAlocado') ?>',
+                'type': 'POST',
+                'data': $('#form_alocados').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveAlocados').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
+                        $('#modal_alocados').modal('hide');
+                        reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                },
+                'complete': function () {
+                    $('#btnSaveAlocados').text('Salvar').attr('disabled', false);
+                }
+            });
+        }
+
+
         function delete_evento() {
             if (confirm('Deseja limpar o evento?')) {
                 $.ajax({
@@ -1303,6 +1955,34 @@
         }
 
 
+        function delete_alocado(id) {
+            if (confirm('Deseja desalocado o(a) colaborador(a)?')) {
+                $.ajax({
+                    'url': '<?php echo site_url('icom/apontamento/excluirAlocado') ?>',
+                    'type': 'POST',
+                    'dataType': 'json',
+                    'data': {'id': id},
+                    'beforeSend': function () {
+                        $('#table tr td button.danger').attr('disabled', true);
+                    },
+                    'success': function (json) {
+                        if (json.status) {
+                            reload_table();
+                        } else if (json.erro) {
+                            alert(json.erro);
+                        }
+                    },
+                    'error': function (jqXHR, textStatus, errorThrown) {
+                        alert('Error deleting data');
+                    },
+                    'complete': function () {
+                        $('#table tr td button.danger').attr('disabled', false);
+                    }
+                });
+            }
+        }
+
+
         function reload_table(reset = false) {
             edicaoEvento = false;
             $('#mes_ano').append('&ensp;(Processando - Aguarde...)');
@@ -1314,8 +1994,46 @@
                 }
             };
             table.ajax.reload(stmt, reset);
+            table_totalizacao.ajax.reload(stmt, reset);
+            table_avaliacao_performance.ajax.reload(stmt, reset);
             // table_totalizacao.ajax.reload(stmt, reset);
             // table_colaboradores.ajax.reload(stmt, reset);
+        }
+
+
+        function imprimir_totalizacao() {
+            if ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' ||
+                $('#busca [name="id_setor"]').val() === '' || $('#busca [name="ano"]').val() === '') {
+                alert('Para gerar o relatório, ajuste os filtros de Departamento, Área, Setor, Mês e Ano.');
+                return false;
+            }
+
+            var q = new Array();
+            q.push("id_depto=" + $('#busca [name="id_depto"]').val());
+            q.push("id_area=" + $('#busca [name="id_area"]').val());
+            q.push("id_setor=" + $('#busca [name="id_setor"]').val());
+            q.push("mes=" + $('#busca [name="mes"]').val());
+            q.push("ano=" + $('#busca [name="ano"]').val());
+
+            window.open('<?php echo site_url('icom/apontamento/pdfTotalizacao'); ?>/q?' + q.join('&'), '_blank');
+        }
+
+
+        function imprimir_avaliacao_performance() {
+            if ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' ||
+                $('#busca [name="id_setor"]').val() === '' || $('#busca [name="ano"]').val() === '') {
+                alert('Para gerar o relatório, ajuste os filtros de Departamento, Área, Setor, Mês e Ano.');
+                return false;
+            }
+
+            var q = new Array();
+            q.push("id_depto=" + $('#busca [name="id_depto"]').val());
+            q.push("id_area=" + $('#busca [name="id_area"]').val());
+            q.push("id_setor=" + $('#busca [name="id_setor"]').val());
+            q.push("mes=" + $('#busca [name="mes"]').val());
+            q.push("ano=" + $('#busca [name="ano"]').val());
+
+            window.open('<?php echo site_url('icom/apontamento/pdfAvaliacaoPerformance'); ?>/q?' + q.join('&'), '_blank');
         }
 
     </script>

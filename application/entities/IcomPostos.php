@@ -11,9 +11,11 @@ class IcomPostos extends Entity
     protected $matricula;
     protected $categoria;
     protected $valor_hora_mei;
-    protected $valor_mes_clt;
     protected $qtde_horas_mei;
+    protected $qtde_horas_dia_mei;
+    protected $valor_mes_clt;
     protected $qtde_meses_clt;
+    protected $qtde_horas_dia_clt;
     protected $horario_entrada;
     protected $horario_intervalo;
     protected $horario_retorno;
@@ -27,13 +29,15 @@ class IcomPostos extends Entity
         'matricula' => 'int',
         'categoria' => 'string',
         'valor_hora_mei' => '?float',
+        'qtde_horas_mei' => '?time',
+        'qtde_horas_dia_mei' => '?time',
         'valor_mes_clt' => '?float',
-        'qtde_horas_mei' => '?int',
-        'qtde_meses_clt' => '?int',
-        'horario_entrada' => '?string',
-        'horario_intervalo' => '?string',
-        'horario_retorno' => '?string',
-        'horario_saida' => '?string'
+        'qtde_meses_clt' => '?time',
+        'qtde_horas_dia_clt' => '?time',
+        'horario_entrada' => '?time',
+        'horario_intervalo' => '?time',
+        'horario_retorno' => '?time',
+        'horario_saida' => '?time'
     ];
 
 }

@@ -95,7 +95,7 @@
                                     <div class="form-group">
                                         <label class="col-md-2 control-label">Empresa</label>
                                         <div class="col-md-9 controls">
-                                            <?php echo form_dropdown('id_facility_empresa', $idFacilityEmpresa, '', 'class="combobox form-control"'); ?>
+                                            <?php echo form_dropdown('id_facility_empresa', $idFacilityEmpresa, '', 'class="form-control"'); ?>
                                         </div>
                                     </div>
                                     <div class="row form-group">

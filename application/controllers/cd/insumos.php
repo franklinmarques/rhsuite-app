@@ -8,139 +8,77 @@ class Insumos extends MY_Controller
     public function __construct()
     {
         parent::__construct();
+
+        $this->load->model('cd_insumos_model', 'insumos');
     }
 
-
+    //==========================================================================
     public function index()
     {
-        $data['empresa'] = $this->session->userdata('empresa');
-        $this->load->view('cd/insumos', $data);
+        $this->load->view('cd/insumos', ['empresa' => $this->session->userdata('empresa')]);
     }
 
-
-    public function gerenciar($id_aluno = null)
+    //==========================================================================
+    public function listar()
     {
-        /*$this->db->select('id, nome');
-        if ($id_aluno) {
-            $this->db->where('id', $id_aluno);
-            $data['alunos'] = array();
-        } else {
-            $data['alunos'] = array('' => 'Todos');
-        }
-        $rows = $this->db->get('cd_alunos')->result();
+        $query = $this->db
+            ->select('nome, tipo, id')
+            ->where('id_empresa', $this->session->userdata('empresa'))
+            ->get('cd_insumos');
 
-        if (empty($rows)) {
-            exit;
-        }
+        $this->load->library('dataTables', ['search' => ['nome', 'tipo']]);
 
-        foreach ($rows as $row) {
-            $data['alunos'][$row->id] = $row->nome;
-        }*/
+        $output = $this->datatables->generate($query);
 
-        $data['empresa'] = $this->session->userdata('empresa');
-        $this->load->view('cd/insumos', $data);
-    }
+        $data = [];
 
-
-    public function ajax_list()
-    {
-        $post = $this->input->post();
-
-        $sql = "SELECT s.id,
-                       s.nome,
-                       s.tipo
-                FROM (SELECT a.id,
-                             a.nome,
-                             a.tipo
-                      FROM cd_insumos a 
-                      WHERE a.id_empresa = {$this->session->userdata('empresa')}) s";
-        $recordsTotal = $this->db->query($sql)->num_rows();
-
-        $columns = array('s.id', 's.nome', 's.tipo');
-        if ($post['search']['value']) {
-            foreach ($columns as $key => $column) {
-                if ($key > 1) {
-                    $sql .= " OR
-                         {$column} LIKE '%{$post['search']['value']}%'";
-                } elseif ($key == 1) {
-                    $sql .= " 
-                        WHERE {$column} LIKE '%{$post['search']['value']}%'";
-                }
-            }
-        }
-        $recordsFiltered = $this->db->query($sql)->num_rows();
-
-        if (isset($post['order'])) {
-            $orderBy = array();
-            foreach ($post['order'] as $order) {
-                $orderBy[] = ($order['column'] + 1) . ' ' . $order['dir'];
-            }
-            $sql .= ' 
-                    ORDER BY ' . implode(', ', $orderBy);
-        }
-        $sql .= " 
-                LIMIT {$post['start']}, {$post['length']}";
-        $list = $this->db->query($sql)->result();
-
-        $data = array();
-        foreach ($list as $insumo) {
-            $row = array();
-            $row[] = $insumo->nome;
-            $row[] = $insumo->tipo;
-            $row[] = '
-                      <button class="btn btn-sm btn-info" onclick="edit_insumo(' . $insumo->id . ')" title="Editar insumo"><i class="glyphicon glyphicon-pencil"></i></button>
-                      <button class="btn btn-sm btn-danger" onclick="delete_insumo(' . $insumo->id . ')" title="Excluir insumo"><i class="glyphicon glyphicon-trash"></i></button>
-                     ';
-
-            $data[] = $row;
+        foreach ($output->data as $row) {
+            $data[] = [
+                $row->nome,
+                $row->tipo,
+                '<button class="btn btn-sm btn-info" onclick="edit_insumo(' . $row->id . ')" title="Editar insumo"><i class="glyphicon glyphicon-pencil"></i></button>
+                 <button class="btn btn-sm btn-danger" onclick="edit_insumo(' . $row->id . ')" title="Excluir insumo"><i class="glyphicon glyphicon-trash"></i></button>'
+            ];
         }
 
-        $output = array(
-            "draw" => $this->input->post('draw'),
-            "recordsTotal" => $recordsTotal,
-            "recordsFiltered" => $recordsFiltered,
-            "data" => $data,
-        );
+        $output->data = $data;
 
         echo json_encode($output);
     }
 
-
-    public function ajax_edit()
+    //==========================================================================
+    public function editar()
     {
-        $id = $this->input->post('id');
-        $data = $this->db->get_where('cd_insumos', array('id' => $id))->row();
+        $data = $this->insumos->find($this->input->post('id'));
+
+        if (empty($data)) {
+            exit(json_encode(['erro' => $this->insumos->errors()]));
+        }
 
         echo json_encode($data);
     }
 
-    public function ajax_add()
+    //==========================================================================
+    public function salvar()
     {
-        $data = $this->input->post();
-        unset($data['id']);
-        $status = $this->db->insert('cd_insumos', $data);
+        $this->load->library('entities');
 
-        echo json_encode(array("status" => $status !== false));
+        $data = $this->entities->create('cdInsumos', $this->input->post());
+
+        $this->insumos->setValidationLabel('nome', 'Nome');
+        $this->insumos->setValidationLabel('tipo', 'Tipo');
+
+        $this->insumos->save($data) or exit(json_encode(['erro' => $this->insumos->errors()]));
+
+        echo json_encode(['status' => true]);
     }
 
-
-    public function ajax_update()
+    //==========================================================================
+    public function excluir()
     {
-        $data = $this->input->post();
-        $id = $data['id'];
-        unset($data['id']);
-        $status = $this->db->update('cd_insumos', $data, array('id' => $id));
+        $this->insumos->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->insumos->errors()]));
 
-        echo json_encode(array("status" => $status !== false));
-    }
-
-
-    public function ajax_delete()
-    {
-        $id = $this->input->post('id');
-        $status = $this->db->delete('cd_insumos', array('id' => $id));
-
-        echo json_encode(array("status" => $status !== false));
+        echo json_encode(['status' => true]);
     }
 
 }

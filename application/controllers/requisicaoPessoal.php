@@ -425,6 +425,7 @@ class RequisicaoPessoal extends MY_Controller
                                   WHEN 'G' THEN 'Aguardando aprovação'
                                   WHEN 'F' THEN 'Fechada'
                                   WHEN 'P' THEN 'Fechada parcialmente'
+                                  WHEN 'R' THEN 'Pendências na RP'
                                   END AS status,
                              CASE a.estagio 
                                   WHEN 1 THEN '01/10 - Alinhando perfil' 
@@ -577,56 +578,58 @@ class RequisicaoPessoal extends MY_Controller
             if ($requisicao->justificativa_contratacao == 'A' and $requisicao->status != 'Ativa' and $tipoUsuario != 'selecionador') {
                 if ($requisicao->aprovado_por == $representante or $requisicao->requisitante_interno == $representante or $tipoUsuario == 'empresa') {
                     $row[] = '
-                              <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_status(' . $requisicao->id . ')" title="Editar status">Status </button>
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> Editar RP</button>
                               <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $requisicao->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
                               <button type="button" class="btn btn-sm btn-success" onclick="' . $funcaoPublicarVaga . '(' . $requisicao->id . ')" title="Publicar vaga">Publicar vaga</button>
                               <a class="btn btn-sm btn-primary" href="' . site_url('/recrutamentoPresencial_cargos/gerenciar/' . $requisicao->id) . '" title="Processo Seletivo">Processo</a>
                               <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $requisicao->id . ')" title="Mostrar aprovados">Aprovados</button>
                               <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $requisicao->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
-                              <button type="button" class="btn btn-sm btn-info" onclick="edit_email(' . $requisicao->id . ')" title="Ativar contratação">Ativar contratação</button>
                              ';
                 } else {
                     $row[] = '
-                              <button type="button" class="btn btn-sm btn-info disabled" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                              <button type="button" class="btn btn-sm btn-info disabled" title="Editar status">Status </button>
+                              <button type="button" class="btn btn-sm btn-info disabled" title="Editar"><i class="glyphicon glyphicon-pencil"></i> Editar RP</button>
                               <button type="button" class="btn btn-sm btn-danger disabled" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
                               <button type="button" class="btn btn-sm btn-success disabled" title="Publicar vaga">Publicar vaga</button>
                               <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
                               <button type="button" class="btn btn-sm btn-info disabled" title="Mostrar aprovados">Aprovados</button>
                               <button type="button" class="btn btn-sm btn-primary disabled" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></button>
-                              <button type="button" class="btn btn-sm btn-info disabled" title="Ativar contratação">Ativar contratação.</button>
                              ';
                 }
             } else {
                 if (($usuario['depto'] == 'Gestão de Pessoas' or $tipoUsuario == 'empresa' or ($tipoUsuario == 'selecionador' or $nivelUsuario = 'selecionador requisitante')) and $requisicao->status == 'Aguardando aprovação') {
                     $row[] = '
-                              <button type="button" class="btn btn-sm btn-info disabled" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                              <button type="button" class="btn btn-sm btn-info disabled" title="Editar status">Status </button>
+                              <button type="button" class="btn btn-sm btn-info disabled" title="Editar"><i class="glyphicon glyphicon-pencil"></i> Editar RP</button>
                               <button type="button" class="btn btn-sm btn-danger disabled" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
                               <button type="button" class="btn btn-sm btn-success disabled" title="Publicar vaga">Publicar vaga</button>
                               <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
                               <button type="button" class="btn btn-sm btn-info disabled" title="Mostrar aprovados">Aprovados</button>
                               <button type="button" class="btn btn-sm btn-primary disabled" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></button>
-                              <button type="button" class="btn btn-sm btn-info disabled" title="Ativar contratação">Ativar contratação..</button>
                              ';
                 } elseif (($usuario['depto'] == 'Gestão de Pessoas' or $tipoUsuario == 'empresa' or ($tipoUsuario == 'selecionador' or $nivelUsuario = 'selecionador requisitante')) and $requisicao->status != 'Aguardando aprovação') {
                     $row[] = '
-                              <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_status(' . $requisicao->id . ')" title="Editar status">Status </button>
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> Editar RP</button>
                               <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $requisicao->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
                               <button type="button" class="btn btn-sm btn-success" onclick="' . $funcaoPublicarVaga . '(' . $requisicao->id . ')" title="Publicar vaga">Publicar vaga</button>
                               <a class="btn btn-sm btn-primary" href="' . site_url('/recrutamentoPresencial_cargos/gerenciar/' . $requisicao->id) . '" title="Processo Seletivo">Processo</a>
                               <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $requisicao->id . ')" title="Mostrar aprovados">Aprovados</button>
                               <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $requisicao->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
-                              <button type="button" class="btn btn-sm btn-info" onclick="edit_email(' . $requisicao->id . ')" title="Ativar contratação">Ativar contratação</button>
                              ';
                 } else {
                     $row[] = '
-                              <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_status(' . $requisicao->id . ')" title="Editar status">Status </button>
+                              <button type="button" class="btn btn-sm btn-info" onclick="edit_requisicao(' . $requisicao->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> Editar RP</button>
                               <button type="button" class="btn btn-sm btn-danger" onclick="delete_requisicao(' . $requisicao->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
                               <button type="button" class="btn btn-sm btn-success" onclick="' . $funcaoPublicarVaga . '(' . $requisicao->id . ')" title="Publicar vaga">Publicar vaga</button>
                               <button type="button" class="btn btn-sm btn-primary disabled" title="Processo Seletivo">Processo</button>
                               <button type="button" class="btn btn-sm btn-info" onclick="mostrar_aprovados(' . $requisicao->id . ')" title="Mostrar aprovados">Aprovados</button>
                               <a class="btn btn-sm btn-primary" href="' . site_url('requisicaoPessoal/relatorio/' . $requisicao->id) . '" title="Imprimir requisição de pessoal"><i class="glyphicon glyphicon-print"></i></a>
-                              <button type="button" class="btn btn-sm btn-info" onclick="edit_email(' . $requisicao->id . ')" title="Ativar contratação">Ativar contratação</button>
-                             ';
+                              ';
+
+//                    <button type="button" class="btn btn-sm btn-info" onclick="edit_email(' . $requisicao->id . ')" title="Ativar contratação">Ativar contratação</button>
                 }
             }
             $row[] = $requisicao->justificativa_contratacao;
@@ -765,6 +768,9 @@ PIS (2)';
         if ($data->data_cancelamento) {
             $data->data_cancelamento = date("d/m/Y", strtotime(str_replace('-', '/', $data->data_cancelamento)));
         }
+        if ($data->data_processo_seletivo) {
+            $data->data_processo_seletivo = date("d/m/Y", strtotime(str_replace('-', '/', $data->data_processo_seletivo)));
+        }
         if ($data->previsao_inicio) {
             $data->previsao_inicio = date("d/m/Y", strtotime(str_replace('-', '/', $data->previsao_inicio)));
         }
@@ -826,6 +832,22 @@ PIS (2)';
         $input = array_merge($estrutura, $funcao, $aprovadoPor);
 
         echo json_encode(array('input' => $input, 'data' => $data));
+    }
+
+    //==========================================================================
+    public function ajax_edit_status()
+    {
+        $data = $this->db
+            ->select('id, observacoes_gerais')
+            ->where('id', $this->input->post('id'))
+            ->get('requisicoes_pessoal')
+            ->row();
+
+        if (empty($data)) {
+            exit(json_encode(['erro' => 'Requisição de Pessoal não encontrada ou excluída recentemente.']));
+        }
+
+        echo json_encode($data);
     }
 
     //==========================================================================
@@ -929,6 +951,11 @@ PIS (2)';
             $data['data_cancelamento'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_cancelamento'])));
         } else {
             $data['data_cancelamento'] = null;
+        }
+        if (!empty($data['data_processo_seletivo'])) {
+            $data['data_processo_seletivo'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_processo_seletivo'])));
+        } else {
+            $data['data_processo_seletivo'] = null;
         }
         if (!empty($data['data_aprovacao'])) {
             $data['data_aprovacao'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_aprovacao'])));
@@ -1150,6 +1177,11 @@ PIS (2)';
         } else {
             $data['data_cancelamento'] = null;
         }
+        if (!empty($data['data_processo_seletivo'])) {
+            $data['data_processo_seletivo'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_processo_seletivo'])));
+        } else {
+            $data['data_processo_seletivo'] = null;
+        }
         if (!empty($data['data_aprovacao'])) {
             $data['data_aprovacao'] = date("Y-m-d", strtotime(str_replace('/', '-', $data['data_aprovacao'])));
         } else {
@@ -1277,6 +1309,31 @@ PIS (2)';
     }
 
     //==========================================================================
+    public function salvar_status()
+    {
+        $observacoes_gerais = $this->input->post('observacoes_gerais');
+
+        if (strlen($observacoes_gerais) == 0) {
+            $observacoes_gerais = null;
+        }
+
+        $this->db->trans_start();
+
+        $this->db
+            ->set('observacoes_gerais', $observacoes_gerais)
+            ->where('id', $this->input->post('id'))
+            ->update('requisicoes_pessoal');
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() == false) {
+            exit(json_encode(['erro' => 'Não foi possível salvar o status.']));
+        }
+
+        echo json_encode(['status' => true]);
+    }
+
+    //==========================================================================
     public function ajax_delete()
     {
         $this->rp->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->rp->errors()]));
@@ -1287,15 +1344,18 @@ PIS (2)';
     //==========================================================================
     private function notificarAprovador($data)
     {
-        $this->db->select('id, nome, email');
-        $this->db->where('id', $this->session->userdata('id'));
-        $remetente = $this->db->get('usuarios')->row();
+        $remetente = $this->db
+            ->select('id, nome, email')
+            ->where('id', $this->session->userdata('id'))
+            ->get('usuarios')
+            ->row();
 
-        $this->db->select('id, nome, email');
-        $this->db->where('id', $data['id_usuario']);
-        $this->db->where('status', 1);
-        $destinatario = $this->db->get('usuarios')->row();
-
+        $destinatario = $this->db
+            ->select('id, nome, email')
+            ->where('id', $data['id_usuario'])
+            ->where('status', 1)
+            ->get('usuarios')
+            ->row();
 
         $this->load->library('email');
 
@@ -1312,8 +1372,8 @@ PIS (2)';
 
         if ($this->email->send()) {
             $email['destinatario'] = $destinatario->id;
-            $this->db->query($this->db->insert_string('mensagensrecebidas', $email));
-            $this->db->query($this->db->insert_string('mensagensenviadas', $email));
+            $this->db->insert('mensagensrecebidas', $email);
+            $this->db->insert('mensagensenviadas', $email);
         }
 
         $this->email->clear();
@@ -1322,38 +1382,41 @@ PIS (2)';
     //==========================================================================
     private function notificarApoio($id)
     {
-        $this->db->select('a.id, a.nome, a.email, b.id AS id_depto');
-        $this->db->join('empresa_departamentos b', 'b.id = a.id_depto OR b.nome = a.depto', 'left');
-        $this->db->where('a.id', $this->session->userdata('id'));
-        $remetente = $this->db->get('usuarios a')->row();
+        $remetente = $this->db
+            ->select('a.id, a.nome, a.email, b.id AS id_depto')
+            ->join('empresa_departamentos b', 'b.id = a.id_depto OR b.nome = a.depto', 'left')
+            ->where('a.id', $this->session->userdata('id'))
+            ->get('usuarios a')
+            ->row();
 
-
-        $this->db->select('b.id, a.email');
-        $this->db->join('usuarios b', 'b.email = a.email', 'left');
-        $this->db->join('empresa_departamentos c', 'c.id = b.id_depto OR c.nome = b.depto', 'left');
-        $this->db->where('a.id_empresa', $this->session->userdata('empresa'));
-        $this->db->where('b.status', 1);
-//        $this->db->where("(a.tipo_email IN (1, 3, 4) OR (a.tipo_email = 1 AND a.tipo_usuario = 5 AND c.id = '{$remetente->id_depto}'))");
-        $this->db->where("(a.tipo_email = 1 AND ((a.tipo_usuario = 5 AND c.id = '{$remetente->id_depto}') OR a.tipo_usuario != 5) OR a.tipo_email IN (3, 4))");
-        $destinatarios = $this->db->get('requisicoes_pessoal_emails a')->result();
-
+        $destinatarios = $this->db
+            ->select('b.id, a.email')
+            ->join('usuarios b', 'b.email = a.email', 'left')
+            ->join('empresa_departamentos c', 'c.id = b.id_depto OR c.nome = b.depto', 'left')
+            ->where('a.id_empresa', $this->session->userdata('empresa'))
+            ->where('b.status', 1)
+//            ->where("(a.tipo_email IN (1, 3, 4) OR (a.tipo_email = 1 AND a.tipo_usuario = 5 AND c.id = '{$remetente->id_depto}'))")
+            ->where("(a.tipo_email = 1 AND ((a.tipo_usuario = 5 AND c.id = '{$remetente->id_depto}') OR a.tipo_usuario != 5) OR a.tipo_email IN (3, 4))")
+            ->get('requisicoes_pessoal_emails a')
+            ->result();
 
         $email['titulo'] = 'Requisição de Pessoal - Ativação de contratação';
         $email['mensagem'] = 'Uma nova solicitação foi criada, veja anexo.';
         $filename = 'arquivos/temp/Requisição - ' . $id . '.pdf';
         $this->pdf();
 
-
-        $this->db->select('b.nome AS depto');
-        $this->db->join('empresa_departamentos b', 'b.id = a.id_depto', 'left');
-        $this->db->where('a.id', $id);
-        $requisicaoPessoal = $this->db->get('requisicoes_pessoal a')->row();
-
+        $requisicaoPessoal = $this->db
+            ->select('b.nome AS depto')
+            ->join('empresa_departamentos b', 'b.id = a.id_depto', 'left')
+            ->where('a.id', $id)
+            ->get('requisicoes_pessoal a')
+            ->row();
 
         $this->load->library('email');
 
         $emailCC = $requisicaoPessoal->depto === 'Cuidadores';
-        foreach ($destinatarios as $destinatario_apoio) {
+        $this->email->attach($filename);
+        foreach ($destinatarios as $k => $destinatario_apoio) {
             $this->email->from($remetente->email, $remetente->nome);
             $this->email->to($destinatario_apoio->email);
             if ($emailCC) {
@@ -1362,7 +1425,6 @@ PIS (2)';
             }
             $this->email->subject($email['titulo']);
             $this->email->message($email['mensagem']);
-            $this->email->attach($filename);
 
             if ($this->email->send() and $destinatario_apoio->id) {
                 $email['destinatario'] = $destinatario_apoio->id;
@@ -1370,7 +1432,7 @@ PIS (2)';
                 $this->db->query($this->db->insert_string('mensagensenviadas', $email));
             }
 
-            $this->email->clear();
+            $this->email->clear($k === array_keys($destinatarios)[count($destinatarios) - 1]);
         }
 
         unlink($filename);
@@ -1516,8 +1578,9 @@ PIS (2)';
 
         $mensagem = $this->input->post('mensagem');
         $mensagem .= '<hr>' . nl2br($this->input->post('dados_candidatos'));
+        $this->email->attach($filename);
 
-        foreach ($destinatarios as $destinatario) {
+        foreach ($destinatarios as $k => $destinatario) {
             $data['destinatario'] = $destinatario->id;
 //            if ($destinatario->tipo_email === '1') {
 //                $data['mensagem'] = '<p>Uma nova requisição de pessoal foi criada; uma cópia da mesma encontra-se anexo a esse email</p>';
@@ -1530,14 +1593,13 @@ PIS (2)';
             $this->email->to($destinatario->email);
             $this->email->subject($data['titulo']);
             $this->email->message($data['mensagem']);
-            $this->email->attach($filename);
 
             if (!$this->email->send()) {
                 unlink($filename);
                 exit(json_encode(['erro' => 'Erro ao enviar e-mail.']));
             }
 
-            $this->email->clear();
+            $this->email->clear($k === array_keys($destinatarios)[count($destinatarios) - 1]);
 
             if (empty($destinatario->id)) {
                 continue;

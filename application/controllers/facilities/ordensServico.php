@@ -7,6 +7,11 @@ class OrdensServico extends MY_Controller
     //==========================================================================
     public function index()
     {
+//        $this->db->query("set global date_format = '%d/%m/%Y'");
+//        $buu = $this->db->query('SELECT data from alocacao')->result();
+//        print_r($buu);
+//        exit;
+
         $idUsuario = $this->session->userdata('id');
 
         $data = $this->getEstruturas($idUsuario);
@@ -200,6 +205,10 @@ class OrdensServico extends MY_Controller
         $data = $this->setData();
         $status = $this->db->insert('facilities_ordens_servico', $data);
 
+        if (!($status !== false)) {
+            @unlink('./arquivos/pdf/' . $data['arquivo']);
+        }
+
         $this->enviarEmail($this->db->insert_id());
 
         echo json_encode(array("status" => $status !== false));
@@ -211,7 +220,7 @@ class OrdensServico extends MY_Controller
         $numeroOS = $this->input->post('numero_os');
 
         $osAntiga = $this->db
-            ->select('status')
+            ->select('status, arquivo')
             ->where('numero_os', $numeroOS)
             ->get('facilities_ordens_servico')
             ->row();
@@ -225,6 +234,12 @@ class OrdensServico extends MY_Controller
         $this->db->set($data);
         $this->db->where('numero_os', $numeroOS);
         $status = $this->db->update('facilities_ordens_servico');
+
+        if ($status !== false) {
+            @unlink('./arquivos/pdf/' . $osAntiga->arquivo);
+        } else {
+            @unlink('./arquivos/pdf/' . $data['arquivo']);
+        }
 
         if ($osAntiga->status !== $data['status']) {
             $this->enviarEmail($numeroOS);
@@ -493,6 +508,23 @@ class OrdensServico extends MY_Controller
             if (strlen($data['observacoes_negativas']) == 0) {
                 $data['observacoes_negativas'] = null;
             }
+        }
+
+        if (!empty($_FILES['arquivo']['name'])) {
+            $config['upload_path'] = './arquivos/pdf/';
+            $config['allowed_types'] = 'pdf';
+            $config['file_name'] = utf8_decode($_FILES['arquivo']['name']);
+
+            $this->load->library('upload', $config);
+
+            if ($this->upload->do_upload('arquivo')) {
+                $arquivo = $this->upload->data();
+                $data['arquivo'] = utf8_encode($arquivo['file_name']);
+            } else {
+                exit(json_encode(['erro' => $this->upload->display_errors(' ',  ' ')]));
+            }
+        } else {
+            $data['arquivo'] = null;
         }
 
         unset($data['numero_os']);

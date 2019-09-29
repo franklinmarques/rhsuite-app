@@ -5,6 +5,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class OrdemServico extends MY_Controller
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    //==========================================================================
     public function index()
     {
         $filtro = $this->montarEstrutura();
@@ -25,6 +31,7 @@ class OrdemServico extends MY_Controller
         $this->load->view('ei/ordemServico', $data);
     }
 
+    //==========================================================================
     public function atualizarFiltro($busca = array())
     {
         $retorno = count($busca);
@@ -49,6 +56,7 @@ class OrdemServico extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function atualizarEscolas()
     {
         $idOrdemServico = $this->input->post('id_ordem_servico');
@@ -82,6 +90,7 @@ class OrdemServico extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function filtrarEscolasSelecionadas()
     {
         $post = $this->input->post();
@@ -102,7 +111,7 @@ class OrdemServico extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function atualizarContratos()
     {
         $busca['diretoria'] = $this->input->post('id_diretoria');
@@ -114,6 +123,7 @@ class OrdemServico extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     private function montarEstrutura($busca = array())
     {
         $empresa = $this->session->userdata('empresa');
@@ -219,6 +229,7 @@ class OrdemServico extends MY_Controller
         return $data;
     }
 
+    //==========================================================================
     public function ajaxList()
     {
         $post = $this->input->post();
@@ -328,6 +339,7 @@ class OrdemServico extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajaxList_old()
     {
         $post = $this->input->post();
@@ -449,6 +461,7 @@ class OrdemServico extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajaxEdit()
     {
         $id = $this->input->post('id');
@@ -467,6 +480,7 @@ class OrdemServico extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajaxEditEscola()
     {
         $id = $this->input->post('id');
@@ -504,6 +518,7 @@ class OrdemServico extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajaxEditCurso()
     {
         $id = $this->input->post('id');
@@ -537,6 +552,7 @@ class OrdemServico extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajaxAdd()
     {
         $data = $this->input->post();
@@ -545,6 +561,7 @@ class OrdemServico extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxAddEscola()
     {
         $idOrdemServico = $this->input->post('id_ordem_servico');
@@ -578,6 +595,7 @@ class OrdemServico extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxAddCurso()
     {
         $idOrdemServicoEscola = $this->input->post('id_ordem_servico_escola');
@@ -611,6 +629,7 @@ class OrdemServico extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxUpdate()
     {
         $id = $this->input->post('id');
@@ -622,6 +641,7 @@ class OrdemServico extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxDelete()
     {
         $id = $this->input->post('id');
@@ -642,6 +662,7 @@ class OrdemServico extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxDeleteCurso()
     {
         $id = $this->input->post('id');
@@ -650,6 +671,7 @@ class OrdemServico extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function copiarOS()
     {
         $ano = $this->input->post('ano');
@@ -672,7 +694,7 @@ class OrdemServico extends MY_Controller
         echo json_encode($data);
     }
 
-
+    //==========================================================================
     public function salvarCopiaOS()
     {
         $idOS = $this->input->post('id');
@@ -840,7 +862,7 @@ class OrdemServico extends MY_Controller
         echo json_encode(['status' => $status !== false]);
     }
 
-
+    //==========================================================================
     public function salvarCopiaOS_old()
     {
         $idsAnteriores = $this->input->post('id');
@@ -961,6 +983,7 @@ class OrdemServico extends MY_Controller
         echo json_encode(['status' => $status !== false]);
     }
 
+    //==========================================================================
     private function contarSemanasDoMes($idOSProfissional, $diaDaSemana)
     {
         switch ($diaDaSemana) {

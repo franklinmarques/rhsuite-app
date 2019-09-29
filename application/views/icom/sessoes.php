@@ -34,6 +34,10 @@
         .text-nowrap {
             white-space: nowrap;
         }
+
+        #table_periodo > thead > tr > th {
+            padding-right: 5px;
+        }
     </style>
     <!--main content start-->
     <section id="main-content">
@@ -50,26 +54,12 @@
                         <div class="row">
                             <div class="col-md-2">
                                 <label>Filtrar por mês</label>
-                                <select name="mes" onchange="reload_table();" class="form-control input-sm">
-                                    <option value="">Todos</option>
-                                    <option value="01">Janeiro</option>
-                                    <option value="02">Fevereiro</option>
-                                    <option value="03">Março</option>
-                                    <option value="04">Abril</option>
-                                    <option value="05">Maio</option>
-                                    <option value="06">Junho</option>
-                                    <option value="07">Julho</option>
-                                    <option value="08">Agosto</option>
-                                    <option value="09">Setembro</option>
-                                    <option value="10">Outubro</option>
-                                    <option value="11">Novembro</option>
-                                    <option value="12">Dezembro</option>
-                                </select>
+                                <?php echo form_dropdown('mes', $meses, date('m'), 'onchange="reload_table();" class="form-control input-sm"'); ?>
                             </div>
                             <div class="col-md-2">
                                 <label>Filtrar por ano</label>
                                 <input name="ano" type="text" class="form-control text-center input-sm ano"
-                                       onchange="reload_table();" placeholder="aaaa">
+                                       onchange="reload_table();" value="<?= date('Y'); ?>" placeholder="aaaa">
                             </div>
                             <div class="col-md-4">
                                 <label>Filtrar por cliente</label>
@@ -80,7 +70,30 @@
                                 <?php echo form_dropdown('produto', $produtos, '', 'onchange="reload_table();" class="form-control input-sm"'); ?>
                             </div>
                         </div>
+                        <br>
                     </form>
+                    <table id="table_periodo" class="table table-hover table-condensed table-bordered" cellspacing="0"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th rowspan="2" class="warning">Período</th>
+                            <td colspan="31" class="text-center date-width" id="nome_mes_ano">
+                                <strong>Total de eventos no mês de <?= $mes_ano; ?></strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <?php for ($i = 1; $i <= 31; $i++): ?>
+                                <?php if (date('N', mktime(0, 0, 0, date('m'), $i, date('Y'))) < 6): ?>
+                                    <th class="date-width"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></th>
+                                <?php else: ?>
+                                    <th class="date-width"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></th>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                     <hr>
                     <button id="btnAdd" type="button" class="btn btn-info" onclick="add_sessao()" autocomplete="off"><i
                                 class="glyphicon glyphicon-plus"></i> Nova sessão
@@ -285,7 +298,8 @@
     <script>
 
         var save_method;
-        var table;
+        var table, table_periodo;
+        var url = '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>';
 
         $('.date').mask('00/00/0000');
         $('.ano').mask('0000');
@@ -310,7 +324,7 @@
                 'serverSide': true,
                 'order': [],
                 'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                    'url': url
                 },
                 'ajax': {
                     'url': '<?php echo site_url('icom/sessoes/listar') ?>',
@@ -342,6 +356,79 @@
                 ]
             });
 
+        });
+
+        table_periodo = $('#table_periodo').DataTable({
+            'processing': true,
+            'serverSide': true,
+            'lengthChange': false,
+            'iDisplayLength': -1,
+            'ordering': false,
+            'searching': false,
+            'info': false,
+            'paging': false,
+            'language': {
+                'url': url
+            },
+            'ajax': {
+                'url': '<?php echo site_url('icom/sessoes/listarPeriodos') ?>',
+                'type': 'POST',
+                'data': function (d) {
+                    d.busca = $('#busca').serialize();
+                    return d;
+                },
+                'dataSrc': function (json) {
+                    var dataEvento = moment(json.lastDayOfMonth, 'YYYY-MM-DD', 'pt-br');
+
+                    $('#nome_mes_ano').html('<strong>Total de eventos no mês de ' +
+                        dataEvento.format('MMMM YYYY').replace(' ', ' de ') + '</strong>');
+
+                    var dataAtual = moment().format('YYYY-MM-DD');
+                    var totalDias = dataEvento.date();
+                    dataEvento.date(1);
+
+                    for (i = 1; i <= 31; i++) {
+                        if (totalDias < i) {
+                            table_periodo.column(i).visible(false);
+                        } else {
+                            table_periodo.column(i).visible(true);
+
+                            var coluna = $(table_periodo.columns(i).header());
+                            coluna.removeClass('text-danger').css('background-color', '')
+                                .attr('title', dataEvento.format('dddd, DD # MMMM # YYYY').replace(/#/g, 'de'));
+
+                            if (dataEvento.day() === 6 || dataEvento.day() === 0) {
+                                coluna.addClass('text-danger').css('background-color', '#dbdbdb');
+                            }
+
+                            if (dataEvento.isSame(dataAtual)) {
+                                coluna.css('background-color', '#0f0');
+                            }
+
+                            dataEvento.add(1, 'days');
+                        }
+                    }
+
+                    return json.data;
+                }
+            },
+            'columnDefs': [
+                {
+                    'width': '100%',
+                    'targets': [0]
+                },
+                {
+                    'createdCell': function (td, cellData, rowData, row, col) {
+                        if (rowData[col]) {
+                            $(td).css({'color': '#fff', 'background-color': '#47a447'});
+                        } else if ($(table_periodo.column(col).header()).hasClass('text-danger')) {
+                            $(td).css('background-color', '#e9e9e9');
+                        }
+                    },
+                    'className': 'text-center',
+                    'targets': 'date-width'
+                }
+            ]
         });
 
 
@@ -460,6 +547,7 @@
 
         function reload_table() {
             table.ajax.reload(null, false);
+            table_periodo.ajax.reload(null, false);
         }
 
 

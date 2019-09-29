@@ -18,7 +18,7 @@ require_once APPPATH . 'views/header.php';
                         </button>
                     </header>
                     <div class="panel-body">
-                        <?php echo form_open_multipart('cd/alunos/importarCsv', 'data-aviso="alert" class="form-horizontal ajax-upload"'); ?>
+                        <?php echo form_open_multipart('cd/alunos/importar', 'data-aviso="alert" class="form-horizontal ajax-upload"'); ?>
                         <div class="form-group">
                             <label class="col-sm-3 col-lg-2 control-label">Arquivo (*.csv)</label>
                             <div class="col-sm-7 col-lg-7 controls">

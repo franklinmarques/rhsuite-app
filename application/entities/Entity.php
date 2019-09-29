@@ -75,6 +75,7 @@ abstract class Entity
     public function fill(array $data = null)
     {
         if (!is_array($data)) {
+
             return $this;
         }
 
@@ -492,6 +493,12 @@ abstract class Entity
             case 'datetime':
                 if (strpos($value, '/') !== false) {
                     $value = preg_replace('/^(\d+)\/(\d+)\/(\d+)*/', '$3-$2-$1', $value);
+                }
+                return $value;
+                break;
+            case 'time':
+                if (strlen($value)) {
+                    $value = implode(':', array_pad(explode(':', $value), 3, '00'));
                 }
                 return $value;
                 break;

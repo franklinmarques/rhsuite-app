@@ -37,9 +37,9 @@ class Vagas extends CI_Controller
 
     public function listar()
     {
-        $this->db->select(["a.codigo, a.id_requisicao_pessoal, a.data_abertura, CONCAT(b.nome, '/', c.nome) AS cargo_funcao"], false);
+        $this->db->select(["a.codigo, a.data_abertura, c.nome AS cargo_funcao"], false);
         $this->db->select('a.quantidade, a.cidade_vaga, a.id_empresa, b.nome AS cargo, c.nome AS funcao');
-        $this->db->select(["DATE_FORMAT(a.data_abertura, '%d/%m/%Y') AS data_abertura_de"], false);
+        $this->db->select(["DATE_FORMAT(a.data_abertura, '%d/%m/%y') AS data_abertura_de, d.vagas_deficiente"], false);
         $this->db->join('empresa_cargos b', 'b.id = a.id_cargo');
         $this->db->join('empresa_funcoes c', 'c.id = a.id_funcao AND c.id_cargo = b.id');
         $this->db->join('requisicoes_pessoal d', 'd.id = a.id_requisicao_pessoal');
@@ -47,7 +47,7 @@ class Vagas extends CI_Controller
         $query = $this->db->get('gestao_vagas a');
 
         $config = array(
-            'search' => ['codigo', 'id_requisicao_pessoal', 'cidade_vaga', 'cargo', 'funcao']
+            'search' => ['codigo', 'cidade_vaga', 'cargo', 'funcao']
         );
 
         $this->load->library('dataTables', $config);
@@ -64,15 +64,15 @@ class Vagas extends CI_Controller
                 $acoes = '<button class="btn btn-sm btn-info" title="Detalhes da vaga" onclick="visualizar_vaga(' . $row->codigo . ')">Detalhes da vaga</button>
                           <button class="btn btn-sm btn-primary" title="Candidatar-se!" onclick="candidatar(' . $row->codigo . ')">Candidatar-se!</button>';
             }
-            $data[] = array(
+            $iconeAcessibilidade = $row->vagas_deficiente ? '<i class="fa fa-wheelchair text-primary" style="font-size:18px; font-weight:bold;"></i> ' : '';
+            $data[] = [
                 $row->codigo,
-                $row->id_requisicao_pessoal,
                 $row->data_abertura_de,
-                $row->cargo_funcao,
+                $iconeAcessibilidade . $row->cargo_funcao,
                 $row->quantidade,
                 $row->cidade_vaga,
                 $acoes
-            );
+            ];
         }
 
         $output->data = $data;
@@ -85,7 +85,7 @@ class Vagas extends CI_Controller
     {
         $codigo = $this->input->get('codigo');
 
-        $this->db->select(["a.codigo, CONCAT(b.nome, '/', c.nome) AS cargo_funcao"], false);
+        $this->db->select(["a.codigo, c.nome AS cargo_funcao"], false);
         $this->db->select(["DATE_FORMAT(a.data_abertura, '%d/%m/%Y') AS data_abertura"], false);
         $this->db->select('a.perfil_profissional_desejado, a.quantidade, a.cidade_vaga, a.bairro_vaga');
         $this->db->select("(CASE a.tipo_vinculo WHEN 1 THEN 'CLT' WHEN 2 THEN 'PJ/MEI' WHEN 3 THEN 'Autônomo' END) AS tipo_vinculo", false);
@@ -118,6 +118,54 @@ class Vagas extends CI_Controller
     }
 
 
+    public function solicitarAjuda()
+    {
+        $cpf = $this->input->post('cpf');
+        $emailAntigo = $this->input->post('email');
+        if (strlen($cpf . $emailAntigo) === 0) {
+            exit(json_encode(['erro' => 'O formulário está vazio']));
+        } else {
+            $this->load->library('form_validation');
+
+            $this->form_validation->set_rules('cpf', 'CPF', 'required|max_length[14]');
+            $this->form_validation->set_rules('email', 'E-mail', 'required|valid_email|max_length[255]');
+
+            if ($this->form_validation->run() == false) {
+                exit(json_encode(['erro' => $this->form_validation->error_string(' ', ' ')]));
+            }
+        }
+
+        $candidato = $this->db
+            ->select('nome, email')
+            ->where('cpf', $cpf)
+            ->or_where('email', $emailAntigo)
+            ->get('recrutamento_usuarios')
+            ->row();
+
+        $selecionadores = $this->db
+            ->select('email')
+            ->where('tipo', 'funcionario')
+            ->where('nivel_acesso', 6)
+            ->where('status', 1)
+            ->order_by('nome', 'asc')
+            ->get('usuarios')
+            ->row();
+
+        if ($selecionadores) {
+            $this->load->library('email');
+
+            $this->email
+                ->from($candidato->email, $candidato->nome)
+                ->to(array_column($selecionadores, 'email'))
+                ->subject('Recuperação de senha de candidato')
+                ->message('Necessito de ajuda para recuperar meu acesso ao portal de vagas<br>Meu CPF: ' . $cpf . '<br>Meu e-mail antigo: ' . $emailAntigo)
+                ->send();
+        }
+
+        echo json_encode(['status' => true]);
+    }
+
+
     public function novoCandidato($codigo = '')
     {
         $cabecalho = $this->getCabecalho();
@@ -127,7 +175,7 @@ class Vagas extends CI_Controller
         $data['codigo'] = $codigo;
         $data['titulo'] = 'Cadastro de novo candidato';
         $data['url'] = 'recrutamento_candidatos/ajax_addPerfil';
-        $data['url_empresa'] = $cabecalho['url'];
+        $data['url_empresa'] = $cabecalho['url_empresa'];
         $data['logo'] = $cabecalho['logo'];
         $data['cabecalho'] = $cabecalho['cabecalho'];
         $data['imagem_fundo'] = $cabecalho['imagem_fundo'];
@@ -175,7 +223,7 @@ class Vagas extends CI_Controller
         $codigo = $this->uri->rsegment(3);
 
         if ($codigo) {
-            $this->db->select("CONCAT(b.url, '/') AS url", false);
+            $this->db->select("url, CONCAT(b.url, '/') AS url_empresa", false);
             $this->db->select('b.foto AS logo, b.cabecalho, b.imagem_fundo');
             $this->db->join('usuarios b', 'b.id = a.id_empresa');
             $this->db->where('a.codigo', $codigo);
@@ -193,19 +241,20 @@ class Vagas extends CI_Controller
             $data = [
                 'url' => '',
                 'logo' => '',
-                'logoempresa' => '',
+                'url_empresa' => '',
                 'cabecalho' => '',
                 'imagem_fundo' => ''
             ];
 
             $row = $this->db
-                ->select("CONCAT(url, '/') AS url, foto, cabecalho, imagem_fundo", false)
+                ->select("url, CONCAT(url, '/') AS url_empresa, foto, cabecalho, imagem_fundo", false)
                 ->where('url', $uri)
                 ->get('usuarios')
                 ->row();
 
             if ($row) {
-                $data['logoempresa'] = $row->url;
+                $data['url'] = $row->url;
+                $data['url_empresa'] = $row->url_empresa;
                 $data['logo'] = $row->foto;
                 $data['cabecalho'] = $row->cabecalho;
                 $data['imagem_fundo'] = $row->imagem_fundo;
@@ -262,18 +311,18 @@ class Vagas extends CI_Controller
     }
 
 
-    public function salvarCandidato()
+    public function validarCandidato()
     {
         $data = $this->input->post();
         $id = $data['id'];
 
-        $campos = array(
+        $campos = [
             'nome' => 'Nome candidato',
             'telefone' => 'Telefone',
             'email' => 'E-mail',
             'senha' => 'Senha',
             'confirmar_senha' => 'Confirmar senha',
-        );
+        ];
         if ($id and strlen($data['senha']) == 0 and strlen($data['confirmar_senha']) == 0) {
             unset($campos['senha'], $campos['confirmar_senha']);
         }
@@ -283,12 +332,76 @@ class Vagas extends CI_Controller
             }
         }
 
-        if (strlen($data['codigo']) > 0) {
-            $this->db->select('id_empresa');
-            $this->db->where('codigo', $data['codigo']);
-            $vaga = $this->db->get('gestao_vagas')->row();
+        if (isset($data['cpf']) and strlen($data['cpf']) > 0) {
+            $verifica_cpf = $this->db
+                ->where('id !=', $id)
+                ->where('cpf', $data['cpf'])
+                ->get('recrutamento_usuarios')
+                ->num_rows();
+            if ($verifica_cpf > 0) {
+                exit(json_encode(['erro' => 'Esse CPF já está em uso.']));
+            }
+        }
 
-            $data['empresa'] = $vaga->id_empresa;
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            exit(json_encode(['erro' => 'Endereço de e-mail inválido.']));
+        }
+
+        $verifica_email = $this->db
+            ->where('id !=', $id)
+            ->where('email', $data['email'])
+            ->get('recrutamento_usuarios')
+            ->num_rows();
+        if ($verifica_email > 0) {
+            exit(json_encode(['erro' => 'Esse endereço de e-mail já está em uso.']));
+        }
+
+        if ($data['senha'] != $data['confirmar_senha']) {
+            exit(json_encode(['erro' => 'O campo "Senha" não confere com o "Confirmar Senha"']));
+        }
+
+        if (!empty($_FILES['foto']['tmp_name']) and !empty($_FILES['foto']['error'])) {
+            exit(json_encode(['erro' => 'A foto do candidato é inválida', 'redireciona' => 0, 'pagina' => '']));
+        }
+
+        echo json_encode(['status' => true]);
+    }
+
+
+    public function validarFormacaoCandidato()
+    {
+        echo json_encode(['status' => true]);
+    }
+
+
+    public function salvarCandidato()
+    {
+        $data = $this->input->post();
+
+        $candidato = [];
+        $dataFormacao = [];
+        $dataExperiencia = [];
+
+        foreach ($data as $key => $value) {
+            if (preg_match('/^_formacao_/', $key) === 1) {
+                $dataFormacao[preg_replace('/^_formacao_/', '', $key)] = $value;
+            } elseif (preg_match('/^_historico_profissional_/', $key) === 1) {
+                $dataExperiencia[preg_replace('/^_historico_profissional_/', '', $key)] = $value;
+            } else {
+                $candidato[$key] = $value;
+            }
+        }
+
+        $idCandidato = $candidato['id'];
+
+        if (strlen($candidato['codigo']) > 0) {
+            $vaga = $this->db
+                ->select('id_empresa')
+                ->where('codigo', $candidato['codigo'])
+                ->get('gestao_vagas')
+                ->row();
+
+            $candidato['empresa'] = $vaga->id_empresa;
         } else {
             $url = substr_replace(current_url(), '', strlen(uri_string()) * (-1) - 1);
             $empresa = $this->db
@@ -297,56 +410,144 @@ class Vagas extends CI_Controller
                 ->get('usuarios')
                 ->row();
 
-            $data['empresa'] = $empresa->id ?? null;
+            $candidato['empresa'] = $empresa->id ?? 78;
         }
 
-        $data['token'] = uniqid();
-        $data['data_inscricao'] = date('Y-m-d H:i:s');
-        if (strlen($data['data_nascimento']) > 0) {
-            $data['data_nascimento'] = date('Y-m-d', strtotime(str_replace('-', '/', $data['data_nascimento'])));
+        $candidato['token'] = uniqid();
+        $candidato['data_inscricao'] = date('Y-m-d H:i:s');
+        if (strlen($candidato['data_nascimento']) > 0) {
+            $candidato['data_nascimento'] = date('Y-m-d', strtotime(str_replace('-', '/', $candidato['data_nascimento'])));
         }
 
-        if (isset($data['cpf']) and strlen($data['cpf']) > 0) {
-            $this->db->where('id !=', $id);
-            $this->db->where('cpf', $data['cpf']);
-            $verifica_cpf = $this->db->get('recrutamento_usuarios')->num_rows();
-            if ($verifica_cpf > 0) {
-                exit(json_encode(['erro' => 'Esse CPF já está em uso.']));
-            }
-        } else {
-            unset($data['cpf']);
+        if (strlen($candidato['cpf']) == 0) {
+            $candidato['cpf'] = null;
         }
 
-        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            exit(json_encode(['erro' => 'Endereço de e-mail inválido.']));
-        }
-
-        $this->db->where('id !=', $id);
-        $this->db->where('email', $data['email']);
-        $verifica_email = $this->db->get('recrutamento_usuarios')->num_rows();
-        if ($verifica_email > 0) {
-            exit(json_encode(['erro' => 'Esse endereço de e-mail já está em uso.']));
-        }
-
-        if ($data['senha'] != $data['confirmar_senha']) {
-            exit(json_encode(['erro' => 'O campo "Senha" não confere com o "Confirmar Senha"']));
-        }
-        unset($data['codigo'], $data['id'], $data['confirmar_senha']);
+        unset($candidato['codigo'], $candidato['id'], $candidato['confirmar_senha']);
 
         $this->load->model('usuarios_model', 'usuarios');
-        $data['senha'] = $this->usuarios->setPassword($data['senha']);
-        $data['foto'] = "avatar.jpg";
-
+        $candidato['senha'] = $this->usuarios->setPassword($candidato['senha']);
+        $candidato['foto'] = "avatar.jpg";
 
         $this->db->trans_begin();
 
-        if ($id) {
-            $this->db->update('recrutamento_usuarios', $data, ['id' => $id]);
+        if ($idCandidato) {
+            $this->db->update('recrutamento_usuarios', $candidato, ['id' => $idCandidato]);
         } else {
-            $this->db->insert('recrutamento_usuarios', $data);
-            $id = $this->db->insert_id();
+            $this->db->insert('recrutamento_usuarios', $candidato);
+            $idCandidato = $this->db->insert_id();
         }
 
+        $dataFormacao['id_usuario'] = $idCandidato;
+        $dataExperiencia['id_usuario'] = $idCandidato;
+
+        if ($this->db->trans_status() == false) {
+            $this->db->trans_rollback();
+            exit(json_encode(['erro' => 'Erro ao efetuar cadastro de candidato, tente novamente.']));
+        }
+
+        //==========================================
+        $idUsuario = $dataFormacao['id_usuario'];
+        $escolaridade = $dataFormacao['escolaridade'];
+        unset($dataFormacao['id_usuario'], $dataFormacao['escolaridade']);
+
+        $this->db->set('escolaridade', $escolaridade);
+        $this->db->where('id', $idUsuario);
+        $this->db->update('recrutamento_usuarios');
+
+        $this->db->where('id_usuario', $idUsuario);
+        $this->db->delete('recrutamento_formacao');
+
+        $arrFormacao = [];
+        foreach ($dataFormacao as $column => $values) {
+            foreach ($values as $row => $value) {
+                $arrFormacao[$row][$column] = $value;
+            }
+        }
+
+        foreach ($arrFormacao as $formacao) {
+            if (strlen($formacao['instituicao']) == 0) {
+                continue;
+            }
+
+            $formacao['id_usuario'] = $idUsuario;
+            $formacao['id_escolaridade'] = $escolaridade;
+            if (!(isset($formacao['curso']) and strlen($formacao['curso']) > 0)) {
+                $formacao['curso'] = null;
+            }
+            if (!empty($formacao['tipo']) == false) {
+                $formacao['tipo'] = null;
+            }
+            if (strlen($formacao['ano_conclusao']) == 0) {
+                $formacao['ano_conclusao'] = null;
+            }
+            if (!empty($formacao['id'])) {
+                $this->db->update('recrutamento_formacao', $formacao, ['id' => $formacao['id']]);
+            } else {
+                $this->db->insert('recrutamento_formacao', $formacao);
+            }
+
+            if ($this->db->trans_status() == false) {
+                $this->db->trans_rollback();
+                exit(json_encode(['erro' => 'Erro ao efetuar cadastro de formação de candidato, tente novamente.']));
+            }
+        }
+
+        //=====================================================
+        $idUsuario = $dataExperiencia['id_usuario'];
+        unset($dataExperiencia['id_usuario']);
+
+        $this->db->where('id_usuario', $idUsuario);
+        $this->db->delete('recrutamento_experiencia_profissional');
+
+        $arrExperiencia = [];
+        foreach ($dataExperiencia as $column => $values) {
+            foreach ($values as $row => $value) {
+                $arrExperiencia[$row][$column] = $value;
+            }
+        }
+
+        foreach ($arrExperiencia as $experiencia) {
+            if (strlen($experiencia['instituicao']) == 0) {
+                continue;
+            }
+            if (empty($experiencia['data_entrada'])) {
+                $this->db->trans_rollback();
+                exit(json_encode(['retorno' => 0, 'aviso' => 'A data de entrada é obrigatória', 'redireciona' => 0, 'pagina' => '']));
+            }
+            if (empty($experiencia['cargo_entrada'])) {
+                $this->db->trans_rollback();
+                exit(json_encode(['retorno' => 0, 'aviso' => 'O cargo de entrada é obrigatório', 'redireciona' => 0, 'pagina' => '']));
+            }
+            if (empty($experiencia['salario_entrada'])) {
+                $this->db->trans_rollback();
+                exit(json_encode(['retorno' => 0, 'aviso' => 'O salário de entrada é obrigatório', 'redireciona' => 0, 'pagina' => '']));
+            }
+
+            $experiencia['id_usuario'] = $idUsuario;
+            $experiencia['data_entrada'] = date('Y-m-d', strtotime(str_replace('/', '-', $experiencia['data_entrada'])));
+            if ($experiencia['data_saida']) {
+                $experiencia['data_saida'] = date('Y-m-d', strtotime(str_replace('/', '-', $experiencia['data_saida'])));
+            } else {
+                $experiencia['data_saida'] = null;
+            }
+            $experiencia['salario_entrada'] = str_replace(['.', ','], ['', '.'], $experiencia['salario_entrada']);
+            if ($experiencia['salario_saida']) {
+                $experiencia['salario_saida'] = str_replace(['.', ','], ['', '.'], $experiencia['salario_saida']);
+            } else {
+                $experiencia['salario_saida'] = null;
+            }
+            if ($experiencia['id']) {
+                $this->db->update('recrutamento_experiencia_profissional', $experiencia, ['id' => $experiencia['id']]);
+            } else {
+                $this->db->insert('recrutamento_experiencia_profissional', $experiencia);
+            }
+        }
+
+        if ($this->db->trans_status() == false) {
+            $this->db->trans_rollback();
+            exit(json_encode(['erro' => 'Erro ao cadastrar histórico profissional do candidato, tente novamente.']));
+        }
 
         if (!empty($_FILES['foto']['tmp_name'])) {
             $config['upload_path'] = './imagens/usuarios/';
@@ -357,149 +558,18 @@ class Vagas extends CI_Controller
 
             if ($this->upload->do_upload('foto')) {
                 $foto = $this->upload->data();
-                $data['foto'] = utf8_encode($foto['file_name']);
+                $this->db->update('recrutamento_usuarios', ['foto' => utf8_encode($foto['file_name'])], ['id' => $idCandidato]);
             } else {
                 $this->db->trans_rollback();
                 exit(json_encode(['erro' => $this->upload->display_errors(), 'redireciona' => 0, 'pagina' => '']));
             }
         }
 
-
-        if ($this->db->trans_status() == false) {
-            $this->db->trans_rollback();
-            echo json_encode(['erro' => 'Erro ao efetuar cadastro de candidato, tente novamente.']);
-        }
-
         $this->db->trans_commit();
 
-
-        echo json_encode(['status' => true, 'id_usuario' => $id]);
-    }
-
-
-    public function salvarFormacaoCandidato()
-    {
-        $rows = $this->input->post();
-        $idUsuario = $this->input->post('id_usuario');
-        $escolaridade = $this->input->post('escolaridade');
-        unset($rows['id_usuario'], $rows['escolaridade']);
-
-
-        $this->db->trans_start();
-
-
-        $this->db->set('escolaridade', $escolaridade);
-        $this->db->where('id', $idUsuario);
-        $this->db->update('recrutamento_usuarios');
-
-
-        $this->db->where('id_usuario', $idUsuario);
-        $this->db->delete('recrutamento_formacao');
-
-
-        $arrData = array();
-        foreach ($rows as $column => $values) {
-            foreach ($values as $row => $value) {
-                $arrData[$row][$column] = $value;
-            }
-        }
-
-        foreach ($arrData as $data) {
-            if (strlen($data['instituicao']) == 0) {
-                continue;
-            }
-
-            $data['id_usuario'] = $idUsuario;
-            $data['id_escolaridade'] = $escolaridade;
-            if (!(isset($data['curso']) and strlen($data['curso']) > 0)) {
-                $data['curso'] = null;
-            }
-            if (!empty($data['tipo']) == false) {
-                $data['tipo'] = null;
-            }
-            if (strlen($data['ano_conclusao']) == 0) {
-                $data['ano_conclusao'] = null;
-            }
-            if ($data['id']) {
-                $this->db->update('recrutamento_formacao', $data, array('id' => $data['id']));
-            } else {
-                $this->db->insert('recrutamento_formacao', $data);
-            }
-        }
-
-        $this->db->trans_complete();
-
-        if ($this->db->trans_status() == false) {
-            exit(json_encode(['erro' => 'Erro ao cadastrar formações do candidato, tente novamente.']));
-        }
-
         echo json_encode(['status' => true]);
     }
 
-
-    public function salvarHistoricoProfissional()
-    {
-        $rows = $this->input->post();
-        $idUsuario = $this->input->post('id_usuario');
-        unset($rows['id_usuario']);
-
-
-        $this->db->trans_start();
-
-
-        $this->db->where('id_usuario', $idUsuario);
-        $this->db->delete('recrutamento_experiencia_profissional');
-
-
-        $arrData = array();
-        foreach ($rows as $column => $values) {
-            foreach ($values as $row => $value) {
-                $arrData[$row][$column] = $value;
-            }
-        }
-
-        foreach ($arrData as $data) {
-            if (strlen($data['instituicao']) == 0) {
-                continue;
-            }
-            if (empty($data['data_entrada'])) {
-                exit(json_encode(array('retorno' => 0, 'aviso' => 'A data de entrada é obrigatória', 'redireciona' => 0, 'pagina' => '')));
-            }
-            if (empty($data['cargo_entrada'])) {
-                exit(json_encode(array('retorno' => 0, 'aviso' => 'O cargo de entrada é obrigatório', 'redireciona' => 0, 'pagina' => '')));
-            }
-            if (empty($data['salario_entrada'])) {
-                exit(json_encode(array('retorno' => 0, 'aviso' => 'O salário de entrada é obrigatório', 'redireciona' => 0, 'pagina' => '')));
-            }
-
-            $data['id_usuario'] = $idUsuario;
-            $data['data_entrada'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_entrada'])));
-            if ($data['data_saida']) {
-                $data['data_saida'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['data_saida'])));
-            } else {
-                $data['data_saida'] = null;
-            }
-            $data['salario_entrada'] = str_replace(array('.', ','), array('', '.'), $data['salario_entrada']);
-            if ($data['salario_saida']) {
-                $data['salario_saida'] = str_replace(array('.', ','), array('', '.'), $data['salario_saida']);
-            } else {
-                $data['salario_saida'] = null;
-            }
-            if ($data['id']) {
-                $this->db->update('recrutamento_experiencia_profissional', $data, array('id' => $data['id']));
-            } else {
-                $this->db->insert('recrutamento_experiencia_profissional', $data);
-            }
-        }
-
-        $this->db->trans_complete();
-
-        if ($this->db->trans_status() == false) {
-            exit(json_encode(['erro' => 'Erro ao cadastrar histórico profissional do candidato, tente novamente.']));
-        }
-
-        echo json_encode(['status' => true]);
-    }
 
     public function recuperarSenhaCandidato()
     {

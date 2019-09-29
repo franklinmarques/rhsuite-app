@@ -13,34 +13,6 @@ class Postos extends MY_Controller
     }
 
     //==========================================================================
-    public function index()
-    {
-        $empresa = $this->session->userdata('empresa');
-
-        $arrDeptos = $this->db
-            ->select('id, nome')
-            ->where('id_empresa', $empresa)
-            ->where('nome', 'ICOM')
-            ->order_by('nome', 'asc')
-            ->get('empresa_departamentos')
-            ->result();
-
-        $deptos = array_column($arrDeptos, 'nome', 'id');
-
-        $data = [
-            'status' => $this->propostas::status(),
-            'deptos' => count($deptos) === 1 ? $deptos : ['' => 'Todos'] + $deptos,
-            'areas' => ['' => 'Todas'],
-            'setores' => ['' => 'Todos'],
-            'depto_atual' => '',
-            'area_atual' => '',
-            'setor_atual' => ''
-        ];
-
-        $this->load->view('icom/propostas', $data);
-    }
-
-    //==========================================================================
     public function filtrarEstrutura()
     {
         $depto = $this->input->post('id_depto');
@@ -62,6 +34,69 @@ class Postos extends MY_Controller
         $usuario = $this->input->post('id_usuario');
 
         $data = $this->carregarEstrutura($depto, $area, $setor, $usuario);
+
+        echo json_encode($data);
+    }
+
+    //==========================================================================
+    public function editarColaboradorAlocado()
+    {
+        $data = $this->db
+            ->select('a.*', false)
+            ->join('usuarios b', 'b.id = a.id_usuario')
+            ->where('b.empresa', $this->session->userdata('empresa'))
+            ->where('b.id_setor', $this->input->post('id_setor'))
+            ->where('a.id_usuario', $this->input->post('id_usuario'))
+            ->get('icom_postos a')->row();
+
+        if (empty($data)) {
+            $data = $this->db
+                ->select('id_funcao, matricula', false)
+                ->select("(CASE tipo_vinculo WHEN 1 THEN 'CLT' WHEN 2 THEN 'MEI' END) AS categoria", false)
+                ->where('empresa', $this->session->userdata('empresa'))
+                ->where('id_setor', $this->input->post('id_setor'))
+                ->where('id', $this->input->post('id_usuario'))
+                ->get('usuarios')->row();
+        }
+
+        if (empty($data)) {
+            exit(json_encode(['erro' => 'Colaborador alocado não encontrado']));
+        }
+
+        if (!empty($data->valor_hora_mei)) {
+            $data->valor_hora_mei = number_format($data->valor_hora_mei, 2, ',', '.');
+        }
+        if (!empty($data->valor_mes_clt)) {
+            $data->valor_mes_clt = number_format($data->valor_mes_clt, 2, ',', '.');
+        }
+
+        $this->load->helper('time');
+
+        if (!empty($data->qtde_horas_mei)) {
+            $data->qtde_horas_mei = timeSimpleFormat($data->qtde_horas_mei);
+        }
+        if (!empty($data->qtde_horas_dia_mei)) {
+            $data->qtde_horas_dia_mei = timeSimpleFormat($data->qtde_horas_dia_mei);
+        }
+        if (!empty($data->qtde_meses_clt)) {
+            $data->qtde_meses_clt = timeSimpleFormat($data->qtde_meses_clt);
+        }
+        if (!empty($data->qtde_horas_dia_clt)) {
+            $data->qtde_horas_dia_clt = timeSimpleFormat($data->qtde_horas_dia_clt);
+        }
+
+        if (!empty($data->horario_entrada)) {
+            $data->horario_entrada = timeSimpleFormat($data->horario_entrada);
+        }
+        if (!empty($data->horario_intervalo)) {
+            $data->horario_intervalo = timeSimpleFormat($data->horario_intervalo);
+        }
+        if (!empty($data->horario_retorno)) {
+            $data->horario_retorno = timeSimpleFormat($data->horario_retorno);
+        }
+        if (!empty($data->horario_saida)) {
+            $data->horario_saida = timeSimpleFormat($data->horario_saida);
+        }
 
         echo json_encode($data);
     }
@@ -255,11 +290,12 @@ class Postos extends MY_Controller
         $this->postos->setValidationLabel('id_funcao', 'Função');
         $this->postos->setValidationLabel('matricula', 'Matrícula');
         $this->postos->setValidationLabel('categoria', 'CLT/MEI');
-        $this->postos->setValidationLabel('probabilidade_fechamento', 'Probabilidade Fechamento');
         $this->postos->setValidationLabel('valor_hora_mei', 'Valor Hora Colaborador');
         $this->postos->setValidationLabel('valor_mes_clt', 'Valor Remuneração Mensal');
-        $this->postos->setValidationLabel('qtde_horas_mei', 'Qtde. Horas/Mês');
-        $this->postos->setValidationLabel('qtde_meses_clt', 'Qtde. Horas/Mês');
+        $this->postos->setValidationLabel('qtde_horas_mei', 'Qtde. Horas/Mês MEI');
+        $this->postos->setValidationLabel('qtde_horas_dia_mei', 'Qtde. Horas/Dia MEI');
+        $this->postos->setValidationLabel('qtde_meses_clt', 'Qtde. Horas/Mês CLT');
+        $this->postos->setValidationLabel('qtde_horas_dia_clt', 'Qtde. Horas/Dia CLT');
         $this->postos->setValidationLabel('horario_entrada', 'Horário Entrada');
         $this->postos->setValidationLabel('horario_intervalo', 'Horário Saída Intervalo');
         $this->postos->setValidationLabel('horario_retorno', 'Horário Entrada Intervalo');

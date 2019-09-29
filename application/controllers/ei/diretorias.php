@@ -13,6 +13,7 @@ class Diretorias extends MY_Controller
         }
     }
 
+    //==========================================================================
     public function index()
     {
         $empresa = $this->session->userdata('empresa');
@@ -92,6 +93,7 @@ class Diretorias extends MY_Controller
         $this->load->view('ei/diretorias', $data);
     }
 
+    //==========================================================================
     public function atualizar_filtro()
     {
         $empresa = $this->session->userdata('empresa');
@@ -154,6 +156,7 @@ class Diretorias extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_list()
     {
         $post = $this->input->post();
@@ -289,6 +292,7 @@ class Diretorias extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajax_edit()
     {
         $id = $this->input->post('id');
@@ -297,6 +301,7 @@ class Diretorias extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_editContrato()
     {
         $id = $this->input->post('id');
@@ -330,6 +335,7 @@ class Diretorias extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_valores()
     {
         $id = $this->input->post('id');
@@ -350,6 +356,7 @@ class Diretorias extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_editValores()
     {
         $id = $this->input->post('id');
@@ -385,6 +392,7 @@ class Diretorias extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_estrutura()
     {
         $depto = $this->input->post('depto');
@@ -406,6 +414,7 @@ class Diretorias extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_add()
     {
         $data = $this->input->post();
@@ -422,6 +431,7 @@ class Diretorias extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_addContrato()
     {
         $data = $this->input->post();
@@ -477,6 +487,7 @@ class Diretorias extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_addValores()
     {
         $data = $this->input->post();
@@ -509,6 +520,7 @@ class Diretorias extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_update()
     {
         $data = $this->input->post();
@@ -526,6 +538,7 @@ class Diretorias extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_updateContrato()
     {
         $data = $this->input->post();
@@ -582,6 +595,7 @@ class Diretorias extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_updateValores()
     {
         $data = $this->input->post();
@@ -616,6 +630,7 @@ class Diretorias extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_delete()
     {
         $id = $this->input->post('id');
@@ -624,6 +639,7 @@ class Diretorias extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_deleteContrato()
     {
         $id = $this->input->post('id');
@@ -632,6 +648,7 @@ class Diretorias extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_deleteValores()
     {
         $id = $this->input->post('id');

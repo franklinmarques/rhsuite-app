@@ -22,7 +22,7 @@ class Icom_propostas_model extends MY_Model
         'impostos' => 'numeric|max_length[10]',
         'margem_liquida' => 'numeric|max_length[10]',
         'margem_liquida_percentual' => 'numeric|less_than_equal_to[100]',
-        'arquivo' => 'uploaded[arquivo]|mime_in[pdf]|max_length[255]'
+        'arquivo' => 'uploaded[arquivo]|mime_in[arquivo.pdf]|max_length[255]'
     ];
 
     protected $uploadConfig = ['arquivo' => ['upload_path' => './arquivos/icom/propostas/', 'allowed_types' => 'pdf']];

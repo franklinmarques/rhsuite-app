@@ -227,6 +227,10 @@ class Funcionario extends MY_Controller
         $data['nome_mae'] = $_POST['nome_mae'];
         $data['nome_pai'] = $_POST['nome_pai'];
         $data['sexo'] = $_POST['sexo'];
+        $data['banco_horas_icom'] = $_POST['banco_horas_icom'];
+        if (strlen($data['banco_horas_icom'])) {
+            $data['banco_horas_icom'] .= ':00';
+        }
         $data['foto'] = "avatar.jpg";
         $data['tipo_vinculo'] = $_POST['tipo_vinculo'];
         $data['rg'] = $this->input->post('rg');
@@ -421,6 +425,10 @@ class Funcionario extends MY_Controller
         }
         $funcionario->data_admissao = $dataFormatada;
         $funcionario->datacadastro = $dataFormatada2;
+        if ($funcionario->banco_horas_icom) {
+            $this->load->helper('time');
+            $funcionario->banco_horas_icom = timeSimpleFormat($funcionario->banco_horas_icom);
+        }
 
         $data['row'] = $funcionario;
 
@@ -620,6 +628,10 @@ class Funcionario extends MY_Controller
 
         $data['nome'] = $_POST['funcionario'];
         $data['sexo'] = $_POST['sexo'];
+        $data['banco_horas_icom'] = $_POST['banco_horas_icom'];
+        if (strlen($data['banco_horas_icom'])) {
+            $data['banco_horas_icom'] .= ':00';
+        }
         $data['nome_mae'] = $_POST['nome_mae'];
         $data['nome_pai'] = $_POST['nome_pai'];
         $data['depto'] = $this->db->select('nome')->where('id', $idDepto)->get('empresa_departamentos')->row()->nome ?? null;

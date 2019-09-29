@@ -297,11 +297,7 @@ require_once APPPATH . 'views/end_js.php';
                         'createdCell': function (td, cellData, rowData, row, col) {
                             if (rowData[col] === '') {
                                 $(td).addClass('text-center').css('vertical-align', 'middle');
-                                $(td).html('<span class='
-                                text - muted
-                                '>Nenhuma escola vinculada</span>'
-                            )
-                                ;
+                                $(td).html('<span class="text-muted">Nenhuma escola vinculada</span>');
                             } else {
                                 $(td).html(rowData[col]);
                             }
@@ -397,8 +393,8 @@ require_once APPPATH . 'views/end_js.php';
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
                 'success': function (json) {
-                    $('[name="busca[supervisor]').html($(json.supervisor).html());
-                    $('[name="busca[diretoria]').html($(json.diretoria).html());
+                    $('[name="busca[supervisor]"]').html($(json.supervisor).html());
+                    $('[name="busca[diretoria]"]').html($(json.diretoria).html());
                     $('[name="busca[escola]"]').html($(json.escola).html());
                     reload_table();
                 },

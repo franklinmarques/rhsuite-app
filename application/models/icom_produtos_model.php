@@ -16,7 +16,8 @@ class Icom_produtos_model extends MY_Model
         'preco' => 'required|numeric|greater_than_equal_to[0]|max_length[10]',
         'custo' => 'numeric|greater_than_equal_to[0]|max_length[10]',
         'tipo_cobranca' => 'required|in_list[H,M,C,E]',
-        'centro_custo' => 'max_length[255]'
+        'centro_custo' => 'max_length[255]',
+        'complementos' => 'max_length[4294967295]'
     ];
 
     protected static $tipo = ['P' => 'Produto', 'S' => 'Serviço'];

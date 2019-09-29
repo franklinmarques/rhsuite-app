@@ -5,7 +5,113 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Apontamento extends MY_Controller
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
+    //==========================================================================
+    public function index()
+    {
+
+        $empresa = $this->session->userdata('empresa');
+
+
+        $this->db->select('DISTINCT(depto) AS nome', false);
+        $this->db->where('id_empresa', $empresa);
+        $departamentos = $this->db->get('cd_diretorias')->result();
+
+        //$data['depto'] = array('' => 'Todos');
+        $data['depto'] = array();
+        foreach ($departamentos as $depto) {
+            $data['depto'][$depto->nome] = $depto->nome;
+        }
+
+
+        $this->db->select('a.id, a.nome');
+        $this->db->join('cd_escolas b', 'b.id_diretoria = a.id', 'left');
+        $this->db->join('cd_supervisores c', 'c.id_escola = b.id', 'left');
+        $this->db->where('a.id_empresa', $empresa);
+        if ($this->session->userdata('nivel') == 10) {
+            $this->db->where('c.id_supervisor', $this->session->userdata('id'));
+        }
+        $this->db->group_by('a.id');
+        $this->db->order_by('a.nome', 'asc');
+        $diretorias = $this->db->get('cd_diretorias a')->result();
+        $data['diretoria'] = array('' => 'Todas');
+
+        foreach ($diretorias as $diretoria) {
+            $data['diretoria'][$diretoria->id] = $diretoria->nome;
+        }
+
+
+        $this->db->select('d.id, d.nome');
+        $this->db->join('cd_diretorias b', 'b.id = a.id_diretoria');
+        $this->db->join('cd_supervisores c', 'c.id_escola = a.id');
+        $this->db->join('usuarios d', 'd.id = c.id_supervisor');
+        $this->db->where('b.id_empresa', $empresa);
+        if ($this->session->userdata('nivel') == 10) {
+            $this->db->where('d.id', $this->session->userdata('id'));
+        }
+        $this->db->order_by('d.nome', 'asc');
+        $supervisores = $this->db->get('cd_escolas a')->result();
+        if ($this->session->userdata('nivel') == 10 and count($supervisores) > 0) {
+            $data['supervisor'] = array();
+        } else {
+            $data['supervisor'] = array('' => 'Todos');
+        }
+        foreach ($supervisores as $supervisor) {
+            $data['supervisor'][$supervisor->id] = $supervisor->nome;
+        }
+
+
+        $data['meses'] = array(
+            '01' => 'Janeiro',
+            '02' => 'Fevereiro',
+            '03' => 'Março',
+            '04' => 'Abril',
+            '05' => 'Maio',
+            '06' => 'Junho',
+            '07' => 'Julho',
+            '08' => 'Agosto',
+            '09' => 'Setembro',
+            '10' => 'Outubro',
+            '11' => 'Novembro',
+            '12' => 'Dezembro'
+        );
+        $data['mes'] = $data['meses'][date('m')];
+
+        $this->db->select('a.id, d.nome');
+        $this->db->join('cd_alocacao b', 'b.id = a.id_alocacao');
+        $this->db->join('cd_cuidadores c', 'c.id = a.id_vinculado');
+        $this->db->join('usuarios d', 'd.id = c.id_cuidador');
+        $this->db->where('b.id_empresa', $empresa);
+        $this->db->where("DATE_FORMAT(b.data, '%Y-%m') =", date('Y-m'));
+        $cuidadores = $this->db->get('cd_alocados a')->result();
+        $data['usuarios'] = array('' => 'selecione...');
+        foreach ($cuidadores as $cuidador) {
+            $data['usuarios'][$cuidador->id] = $cuidador->nome;
+        }
+
+
+        $modo_privilegiado = true;
+        $data['modo_privilegiado'] = $modo_privilegiado;
+        $data['depto_atual'] = count($departamentos) > 1 ? '' : 'Cuidadores';
+        $data['diretoria_atual'] = '';
+        if (in_array($this->session->userdata('nivel'), array(9, 10))) {
+            $data['supervisor_atual'] = $supervisores[0]->nome ?? '';
+        } else {
+            $data['supervisor_atual'] = '';
+        }
+
+        $data['id_diretoria'] = array('' => 'selecione...');
+        $data['id_escola'] = array('' => 'selecione...');
+        $data['id_alocado'] = array('' => 'selecione...');
+
+        $this->load->view('cd/apontamento', $data);
+    }
+
+    //==========================================================================
     public function ajax_list()
     {
         parse_str($this->input->post('busca'), $busca);
@@ -109,7 +215,7 @@ class Apontamento extends MY_Controller
         echo json_encode($rows);
     }
 
-
+    //==========================================================================
     public function ajax_funcionarios()
     {
         parse_str($this->input->post('busca'), $busca);
@@ -216,107 +322,7 @@ class Apontamento extends MY_Controller
         echo json_encode($rows);
     }
 
-
-    public function index()
-    {
-
-        $empresa = $this->session->userdata('empresa');
-
-
-        $this->db->select('DISTINCT(depto) AS nome', false);
-        $this->db->where('id_empresa', $empresa);
-        $departamentos = $this->db->get('cd_diretorias')->result();
-
-        //$data['depto'] = array('' => 'Todos');
-        $data['depto'] = array();
-        foreach ($departamentos as $depto) {
-            $data['depto'][$depto->nome] = $depto->nome;
-        }
-
-
-        $this->db->select('a.id, a.nome');
-        $this->db->join('cd_escolas b', 'b.id_diretoria = a.id', 'left');
-        $this->db->join('cd_supervisores c', 'c.id_escola = b.id', 'left');
-        $this->db->where('a.id_empresa', $empresa);
-        if ($this->session->userdata('nivel') == 10) {
-            $this->db->where('c.id_supervisor', $this->session->userdata('id'));
-        }
-        $this->db->group_by('a.id');
-        $this->db->order_by('a.nome', 'asc');
-        $diretorias = $this->db->get('cd_diretorias a')->result();
-        $data['diretoria'] = array('' => 'Todas');
-
-        foreach ($diretorias as $diretoria) {
-            $data['diretoria'][$diretoria->id] = $diretoria->nome;
-        }
-
-
-        $this->db->select('d.id, d.nome');
-        $this->db->join('cd_diretorias b', 'b.id = a.id_diretoria');
-        $this->db->join('cd_supervisores c', 'c.id_escola = a.id');
-        $this->db->join('usuarios d', 'd.id = c.id_supervisor');
-        $this->db->where('b.id_empresa', $empresa);
-        if ($this->session->userdata('nivel') == 10) {
-            $this->db->where('d.id', $this->session->userdata('id'));
-        }
-        $this->db->order_by('d.nome', 'asc');
-        $supervisores = $this->db->get('cd_escolas a')->result();
-        if ($this->session->userdata('nivel') == 10 and count($supervisores) > 0) {
-            $data['supervisor'] = array();
-        } else {
-            $data['supervisor'] = array('' => 'Todos');
-        }
-        foreach ($supervisores as $supervisor) {
-            $data['supervisor'][$supervisor->id] = $supervisor->nome;
-        }
-
-
-        $data['meses'] = array(
-            '01' => 'Janeiro',
-            '02' => 'Fevereiro',
-            '03' => 'Março',
-            '04' => 'Abril',
-            '05' => 'Maio',
-            '06' => 'Junho',
-            '07' => 'Julho',
-            '08' => 'Agosto',
-            '09' => 'Setembro',
-            '10' => 'Outubro',
-            '11' => 'Novembro',
-            '12' => 'Dezembro'
-        );
-        $data['mes'] = $data['meses'][date('m')];
-
-        $this->db->select('a.id, d.nome');
-        $this->db->join('cd_alocacao b', 'b.id = a.id_alocacao');
-        $this->db->join('cd_cuidadores c', 'c.id = a.id_vinculado');
-        $this->db->join('usuarios d', 'd.id = c.id_cuidador');
-        $this->db->where('b.id_empresa', $empresa);
-        $this->db->where("DATE_FORMAT(b.data, '%Y-%m') =", date('Y-m'));
-        $cuidadores = $this->db->get('cd_alocados a')->result();
-        $data['usuarios'] = array('' => 'selecione...');
-        foreach ($cuidadores as $cuidador) {
-            $data['usuarios'][$cuidador->id] = $cuidador->nome;
-        }
-
-
-        $modo_privilegiado = true;
-        $data['modo_privilegiado'] = $modo_privilegiado;
-        $data['depto_atual'] = count($departamentos) > 1 ? '' : 'Cuidadores';
-        $data['diretoria_atual'] = '';
-        if (in_array($this->session->userdata('nivel'), array(9, 10))) {
-            $data['supervisor_atual'] = $supervisores[0]->nome ?? '';
-        } else {
-            $data['supervisor_atual'] = '';
-        }
-
-        $data['id_diretoria'] = array('' => 'selecione...');
-        $data['id_escola'] = array('' => 'selecione...');
-        $data['id_alocado'] = array('' => 'selecione...');
-
-        $this->load->view('cd/apontamento', $data);
-    }
-
+    //==========================================================================
     public function atualizar_filtro()
     {
         $empresa = $this->session->userdata('empresa');
@@ -379,6 +385,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function novo()
     {
         // Prepara as variáveis auxiliares
@@ -565,7 +572,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
-
+    //==========================================================================
     public function ajax_frequencias()
     {
         $empresa = $this->session->userdata('empresa');
@@ -684,7 +691,7 @@ class Apontamento extends MY_Controller
         echo json_encode($rows);
     }
 
-
+    //==========================================================================
     public function ajax_cuidadores()
     {
         $empresa = $this->session->userdata('empresa');
@@ -813,7 +820,7 @@ class Apontamento extends MY_Controller
         echo json_encode($output);
     }
 
-
+    //==========================================================================
     public function ajax_cuidadores_sub()
     {
         $empresa = $this->session->userdata('empresa');
@@ -971,6 +978,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_novo_cuidador()
     {
         $empresa = $this->session->userdata('empresa');
@@ -1014,6 +1022,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_novo_matriculado()
     {
         $empresa = $this->session->userdata('empresa');
@@ -1038,6 +1047,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_avaliado($id)
     {
         if (empty($id)) {
@@ -1129,6 +1139,7 @@ class Apontamento extends MY_Controller
         echo json_encode($output);
     }
 
+    //==========================================================================
     public function ajax_edit()
     {
         $this->db->select('id, codigo, nome');
@@ -1143,6 +1154,7 @@ class Apontamento extends MY_Controller
         echo form_dropdown('detalhes', $data, '', 'class="form-control"');
     }
 
+    //==========================================================================
     public function ajax_config()
     {
         $busca = $this->input->post();
@@ -1204,6 +1216,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_editConfig()
     {
         $busca = $this->input->post();
@@ -1282,6 +1295,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_saveConfig()
     {
         $data = $this->input->post();
@@ -1325,6 +1339,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_edit_frequencia()
     {
         $id_frequencia = $this->input->post('id_frequencia');
@@ -1364,6 +1379,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_ferias()
     {
         $data = $this->input->post();
@@ -1411,6 +1427,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => true));
     }
 
+    //==========================================================================
     public function ajax_substituto()
     {
         $data = $this->input->post();
@@ -1436,6 +1453,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => true));
     }
 
+    //==========================================================================
     public function ajax_save()
     {
         $data = $this->input->post();
@@ -1483,6 +1501,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxSaveEventos()
     {
         parse_str($this->input->post('eventos'), $eventos);
@@ -1510,6 +1529,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajaxDeleteEventos()
     {
         parse_str($this->input->post('eventos'), $eventos);
@@ -1538,6 +1558,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_saveRemanejado()
     {
         $id = $this->input->post('id');
@@ -1560,6 +1581,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_editAlocado()
     {
         $id = $this->input->post('id');
@@ -1601,6 +1623,7 @@ class Apontamento extends MY_Controller
         echo json_encode($data);
     }
 
+    //==========================================================================
     public function ajax_saveAlocado()
     {
         $id = $this->input->post('id');
@@ -1629,6 +1652,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_save_frequencia()
     {
         $data = $this->input->post();
@@ -1681,6 +1705,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_limpar_frequencia()
     {
         $id = $this->input->post('id');
@@ -1689,6 +1714,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_delete()
     {
         $id = $this->input->post('id');
@@ -1697,6 +1723,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array("status" => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_limpar()
     {
         $post = $this->input->post();
@@ -1736,6 +1763,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_save_cuidador()
     {
         $empresa = $this->session->userdata('empresa');
@@ -1797,6 +1825,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_save_matriculados()
     {
         $empresa = $this->session->userdata('empresa');
@@ -1856,6 +1885,7 @@ class Apontamento extends MY_Controller
         echo json_encode(array('status' => $status !== false));
     }
 
+    //==========================================================================
     public function ajax_delete_cuidador()
     {
         $empresa = $this->session->userdata('empresa');

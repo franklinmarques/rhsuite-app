@@ -760,7 +760,7 @@ class MY_Form_validation extends CI_Form_validation
      *
      * @return boolean
      */
-    public function required_with($str = null, string $fields, array $data): bool
+    public function required_with($str = null, string $fields): bool
     {
         $fields = explode(',', $fields);
 
@@ -776,6 +776,7 @@ class MY_Form_validation extends CI_Form_validation
         $CI = &get_instance();
         $CI->form_validation->set_message('required_with', 'O campo %s é obrigatório se %s estiver preenchido.');
 
+        $data = $_POST;
         // Still here? Then we fail this test if
         // any of the fields are present in $data
         // as $fields is the lis
@@ -812,7 +813,7 @@ class MY_Form_validation extends CI_Form_validation
      *
      * @return boolean
      */
-    public function required_without($str = null, string $fields, array $data): bool
+    public function required_without($str = null, string $fields): bool
     {
         $fields = explode(',', $fields);
 
@@ -828,6 +829,7 @@ class MY_Form_validation extends CI_Form_validation
         $CI = &get_instance();
         $CI->form_validation->set_message('required_without', 'O campo %s é obrigatório se %s não estiver preenchido.');
 
+        $data = $_POST;
         // Still here? Then we fail this test if
         // any of the fields are not present in $data
         foreach ($fields as $field) {

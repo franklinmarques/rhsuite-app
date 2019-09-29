@@ -28,7 +28,11 @@ class Avaliacaoexp_avaliador extends MY_Controller
 
     public function desempenho()
     {
-        $data['id_usuario'] = $this->session->userdata('id');
+        if ($this->session->userdata('tipo') == 'empresa') {
+            $data['id_usuario'] = $this->session->userdata('id');
+        } else {
+            $data['id_usuario'] = $this->session->userdata('id');
+        }
         $data['titulo'] = 'Avaliações de Desempenho';
         $data['tipo_modelo'] = '3';
         $this->load->view('avaliacaoexp_avaliador', $data);
@@ -44,7 +48,7 @@ class Avaliacaoexp_avaliador extends MY_Controller
 
     public function ajax_list($id, $tipo = '')
     {
-        if (empty($id)) {
+        if (empty($id) and $this->session->userdata('tipo') == 'empresa') {
             $id = $this->session->userdata('id');
         }
         $post = $this->input->post();
@@ -89,8 +93,12 @@ class Avaliacaoexp_avaliador extends MY_Controller
                       LEFT JOIN avaliacaoexp_desempenho k ON 
                                 k.id_avaliador = d.id
                       LEFT JOIN avaliacaoexp_periodo j ON 
-                                j.id_avaliado = a.id
-                      WHERE d.id_avaliador = {$id}";
+                                j.id_avaliado = a.id";
+        if ($this->session->userdata('tipo') == 'empresa') {
+            $sql .= " WHERE u.empresa = '{$id}'";
+        } else {
+            $sql .= " WHERE(d.id_avaliador = '{$id}' OR CHAR_LENGTH('{$id}') = 0)";
+        }
         if (isset($busca['resultado']) and !empty($busca['resultado'])) {
             $sql .= ' AND h.id_avaliador IS NULL';
         }

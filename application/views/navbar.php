@@ -104,18 +104,14 @@
         <div class="modal-content">
             <div class="modal-header text-center">
                 <div class="modal-title row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <img src="<?= base_url('assets/img/logorhsuite.jpg') ?>" title="logo">
-                    </div>
-                    <div class="col-sm-6">
-                        <img src="<?= base_url('assets/img/logomultirh.jpg') ?>" title="logo">
                     </div>
                 </div>
             </div>
             <div class="modal-body">
                 <p class="text-center">Para contatar o administrador da plataforma, por gentileza enviar e-mail para: <a
-                            href="mailto:contato@rhsuite.com.br">contato@rhsuite.com.br</a> ou <a
-                            href="mailto:contato@multirh.com.br">contato@multirh.com.br</a></p>
+                            href="mailto:contato@rhsuite.com.br">contato@rhsuite.com.br</a></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>

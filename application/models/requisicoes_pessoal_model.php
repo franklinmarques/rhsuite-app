@@ -34,14 +34,14 @@ class Requisicoes_pessoal_model extends MY_Model
         'numero_vagas' => 'required|is_natural_no_zero|max_length[11]',
         'vagas_deficiente' => 'is_natural_no_zero|exact_length[1]',
         'justificativa_contratacao' => 'required|in_list[S,T,A,P]',
-        'colaborador_substituto' => 'max_length[65535]',
+        'colaborador_substituto' => 'max_length[4294967295]',
         'possui_indicacao' => 'is_natural|exact_length[1]',
-        'colaboradores_indicados' => 'max_length[65535]',
+        'colaboradores_indicados' => 'max_length[4294967295]',
         'indicador_responsavel' => 'max_length[255]',
         'aprovado_por' => 'max_length[255]',
         'data_aprovacao' => 'valid_date',
         'remuneracao_mensal' => 'numeric|greater_than_equal_to[0]|max_length[10]',
-        'horario_trabalho' => 'max_length[65535]',
+        'horario_trabalho' => 'max_length[4294967295]',
         'previsao_inicio' => 'valid_date|after_or_equal_date[data_aprovacao]',
         'vale_transporte' => 'is_natural|exact_length[1]',
         'valor_vale_transporte' => 'numeric|greater_than_equal_to[0]|max_length[7]',
@@ -63,11 +63,13 @@ class Requisicoes_pessoal_model extends MY_Model
         'audiometria' => 'is_natural|exact_length[1]',
         'laudo_cotas' => 'is_natural|exact_length[1]',
         'exame_outros' => 'max_length[255]',
-        'perfil_geral' => 'max_length[65535]',
-        'competencias_tecnicas' => 'max_length[65535]',
-        'competencias_comportamentais' => 'max_length[65535]',
-        'atividades_associadas' => 'max_length[65535]',
-        'observacoes' => 'max_length[65535]',
+        'perfil_geral' => 'max_length[4294967295]',
+        'competencias_tecnicas' => 'max_length[4294967295]',
+        'competencias_comportamentais' => 'max_length[4294967295]',
+        'atividades_associadas' => 'max_length[4294967295]',
+        'observacoes' => 'max_length[4294967295]',
+        'observacoes_selecionador' => 'max_length[65535]',
+        'observacoes_gerais' => 'max_length[4294967295]',
         'estagio' => 'is_natural_no_zero|less_than_equal_to[12]',
         'status' => 'required|in_list[A,S,C,G,F,P]',
         'data_nascimento' => 'valid_date',
@@ -78,7 +80,7 @@ class Requisicoes_pessoal_model extends MY_Model
         'rg_orgao_emissor' => 'max_length[100]',
         'cpf' => 'max_length[14]',
         'pis' => 'max_length[14]',
-        'departamento_informacoes' => 'max_length[65535]'
+        'departamento_informacoes' => 'max_length[4294967295]'
     ];
 
     protected static $tipoVaga = ['I' => 'Interna', 'E' => 'Externa'];
@@ -115,7 +117,8 @@ class Requisicoes_pessoal_model extends MY_Model
         'C' => 'Cancelada',
         'G' => 'Aguardando aprovação',
         'F' => 'Fechada',
-        'P' => 'Fechada parcialmente'
+        'P' => 'Fechada parcialmente',
+        'R' => 'Pendências na RP'
     ];
 
 }

@@ -43,6 +43,7 @@
                                             <option value="G">Aguardando aprovação</option>
                                             <option value="F">Fechadas</option>
                                             <option value="P">Fechadas parcialmente</option>
+                                            <option value="R">Pendências na RP</option>
                                         </select>
                                     </div>
                                     <div class="col-md-4">
@@ -190,6 +191,7 @@
                                             <input name="spa" class="form-control" type="number" size="6">
                                         </div>
                                     </div>
+
                                     <!--                                    --><?php //endif; ?>
 
                                     <div class="row form-group">
@@ -201,11 +203,11 @@
                                                 <option value="E">Externa</option>
                                             </select>
                                         </div>
-                                        <label class="control-label col-md-2">Data abertura <span
+                                        <label class="control-label col-md-2">Data abertura RP <span
                                                     class="text-danger">*</span></label>
                                         <div class="col-md-2">
                                             <input name="data_abertura" placeholder="dd/mm/aaaa"
-                                                   class="form-control text-center data" type="text">
+                                                   class="form-control text-center data gestao_pessoas" type="text">
                                         </div>
                                         <div class="col-md-3">
                                             <div class="checkbox">
@@ -214,6 +216,19 @@
                                                     deficientes
                                                 </label>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="control-label col-md-2">Pendências na RP</label>
+                                        <div class="col-md-6">
+                                            <textarea name="descricao_pendencias" rows="5" style="color:#d9534f;"
+                                                      class="form-control gestao_pessoas"></textarea>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="control-label text-nowrap">Data início processo
+                                                seletivo</label>
+                                            <input name="data_processo_seletivo" placeholder="dd/mm/aaaa"
+                                                   class="form-control text-center data gestao_pessoas" type="text">
                                         </div>
                                     </div>
                                     <?php if ($tipo != 'funcionario' or $aprovadores): ?>
@@ -228,6 +243,7 @@
                                                     <option value="G">Aguardando aprovação</option>
                                                     <option value="F">Fechada</option>
                                                     <option value="P">Fechada parcialmente</option>
+                                                    <option value="R">Pendências na RP</option>
                                                 </select>
                                             </div>
                                             <label class="control-label col-md-1" style="padding-right: 6px;">Estágio
@@ -252,27 +268,28 @@
                                     <?php endif; ?>
                                     <?php if ($id_depto === '7' or $depto === 'Gestão de Pessoas' or $tipo === 'empresa'): ?>
                                         <div class="row form-group gestao_pessoas">
-                                            <label class="control-label col-md-2">Data fechamento</label>
+                                            <label class="control-label col-md-2 text-nowrap">Data fechamento RP</label>
                                             <div class="col-md-2">
                                                 <input name="data_fechamento" placeholder="dd/mm/aaaa"
-                                                       class="form-control text-center data" type="text">
+                                                       class="form-control text-center data gestao_pessoas" type="text">
                                             </div>
                                             <label class="control-label col-md-3">Data solicitação exame médico</label>
                                             <div class="col-md-2">
                                                 <input name="data_solicitacao_exame"
-                                                       class="form-control text-center data"
+                                                       class="form-control text-center data gestao_pessoas"
                                                        type="text" placeholder="dd/mm/aaaa">
                                             </div>
                                         </div>
                                         <div class="row form-group gestao_pessoas">
-                                            <label class="control-label col-md-2">Data suspensão</label>
+                                            <label class="control-label col-md-2">Data suspensão RP</label>
                                             <div class="col-md-2">
                                                 <input name="data_suspensao" placeholder="dd/mm/aaaa"
-                                                       class="form-control text-center data" type="text">
+                                                       class="form-control text-center data gestao_pessoas" type="text">
                                             </div>
-                                            <label class="control-label col-md-3">Data cancelamento</label>
+                                            <label class="control-label col-md-3">Data cancelamento RP</label>
                                             <div class="col-md-2">
-                                                <input name="data_cancelamento" class="form-control text-center data"
+                                                <input name="data_cancelamento"
+                                                       class="form-control text-center data gestao_pessoas"
                                                        type="text" placeholder="dd/mm/aaaa">
                                             </div>
                                         </div>
@@ -883,6 +900,42 @@
                 </div>
             </div>
 
+            <div class="modal fade" id="modal_status" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Observações gerais sobre o processo seletivo</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <form action="#" id="form_status" class="form-horizontal" autocomplete="off">
+                                <input type="hidden" name="id" value="">
+                                <div class="row form-group">
+                                    <label class="col-sm-4 control-label">Número da requisição:</label>
+                                    <div class="col-md-7">
+                                        <p id="id_requisicao_status" class="form-control-static"></p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row form-group">
+                                    <div class="col-md-10 col-md-offset-1">
+                                        <label>Observações</label>
+                                        <textarea name="observacoes_gerais" class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="btnSaveStatus" onclick="save_status();" class="btn btn-success">
+                                Salvar
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </section>
     </section>
 
@@ -980,7 +1033,7 @@
                     },
                     {
                         'createdCell': function (td, cellData, rowData, row, col) {
-                            if (rowData[2] === 'Aguardando aprovação' && rowData[15] === 'A' && rowData[16] === null) {
+                            if ((rowData[2] === 'Aguardando aprovação' || rowData[2] === 'Pendências na RP') && rowData[15] === 'A' && rowData[16] === null) {
                                 $(td).css({'background-color': '#f00', 'color': '#fff'});
                             }
                         },
@@ -1052,6 +1105,10 @@
                     }
                 ]
             });
+
+            if (<?= ($id_depto === '7' or $depto === 'Gestão de Pessoas') ? 'false' : 'true'; ?>) {
+                $('#form .gestao_pessoas').prop('readonly', true);
+            }
 
         });
 
@@ -1390,6 +1447,31 @@
         }
 
 
+        function edit_status(id) {
+            $.ajax({
+                'url': '<?php echo site_url('requisicaoPessoal/ajax_edit_status') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                        return false;
+                    }
+
+                    $('#form_status [name="id"]').val(json.id);
+                    $('#id_requisicao_status').text(json.id);
+                    $('#form_status [name="observacoes_gerais"]').val(json.observacoes_gerais);
+
+                    $('#modal_status').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+
         function mostrar_aprovados(id) {
             id_requisicao = id;
             table_aprovados.ajax.reload(function () {
@@ -1481,6 +1563,33 @@
                 },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
+                }
+            });
+        }
+
+
+        function save_status() {
+            $.ajax({
+                'url': '<?php echo site_url('requisicaoPessoal/salvar_status') ?>',
+                'type': 'POST',
+                'data': $('#form_status').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveStatus').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
+                        $('#modal_status').modal('hide');
+                        reload_table();
+                    } else if (json.erro) {
+                        alert(json.erro);
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                },
+                'complete': function () {
+                    $('#btnSaveStatus').text('Salvar').attr('disabled', false);
                 }
             });
         }

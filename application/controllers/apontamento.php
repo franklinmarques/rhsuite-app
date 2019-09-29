@@ -7,8 +7,9 @@ class Apontamento extends MY_Controller
 
     private function getAlocacao($busca, $consolidado = '')
     {
-       $this->db->select('id, data, mes_bloqueado, NULL as id_anterior, NULL AS data_abertura', false);
+        $this->db->select('id, data, mes_bloqueado, NULL as id_anterior, NULL AS data_abertura', false);
         $this->db->select("NULLIF(dia_fechamento, 0) AS dia_fechamento", false);
+        $this->db->where('id_empresa', $this->session->userdata('empresa'));
         $this->db->where('depto', $busca['depto']);
         $this->db->where('area', $busca['area']);
         $this->db->where('setor', $busca['setor']);
@@ -207,7 +208,7 @@ class Apontamento extends MY_Controller
 
 
         $this->db->select(["e.id, a.id_usuario, DATE_FORMAT(e.data, '%d') AS dia"], false);
-        $this->db->select('e.qtde_dias, f.nome AS detalhe, e.observacoes, e.status');
+        $this->db->select('e.qtde_dias, f.nome AS detalhe, e.observacoes, e.status, e.qtde_req, e.qtde_rev');
         $this->db->select('e.id_alocado_bck, e.detalhes AS id_detalhe, g.nome, g.nome');
         $this->db->select(["DATE_FORMAT(e.hora_atraso, '%H:%i') AS hora_atraso"], false);
         $this->db->select(["DATE_FORMAT(e.hora_entrada, '%H:%i') AS hora_entrada"], false);
@@ -253,7 +254,9 @@ class Apontamento extends MY_Controller
                 $evento->nome . '',
                 $evento->apontamento_extra . '',
                 $evento->apontamento_desc . '',
-                $evento->apontamento_saldo . ''
+                $evento->apontamento_saldo . '',
+                $evento->qtde_req . '',
+                $evento->qtde_rev . ''
             );
         }
 
@@ -411,8 +414,12 @@ class Apontamento extends MY_Controller
                 $row->id
             );
 
-            $posto += str_replace(array('.', ','), array('', '.'), $row->valor_posto);
-            $total += str_replace(array('.', ','), array('', '.'), $row->valor_total);
+            if ($row->valor_posto) {
+                $posto += str_replace(array('.', ','), array('', '.'), $row->valor_posto);
+            }
+            if ($row->valor_total) {
+                $total += str_replace(array('.', ','), array('', '.'), $row->valor_total);
+            }
         }
 
         $output->total_posto = number_format($posto, 2, ',', '.');
@@ -674,6 +681,127 @@ class Apontamento extends MY_Controller
 
         echo json_encode(array('status' => $status !== false));
     }
+
+    public function listarEMTU()
+    {
+        parse_str($this->input->post('busca'), $busca);
+
+        $alocacao = $this->getAlocacao($busca, $this->input->post('consolidado'));
+
+        $sql = "SELECT s.*
+                FROM (SELECT a.id, c.nome, 'qtde_req' AS tipo, 'Req.' AS nome_tipo
+                      FROM alocacao_usuarios a 
+                      INNER JOIN alocacao b ON b.id = a.id_alocacao
+                      INNER JOIN usuarios c ON c.id = a.id_usuario
+                      WHERE b.id = '{$alocacao->id}' AND 
+                            b.area = 'EMTU' AND 
+                            b.setor LIKE '%Passe Escolar%' AND
+                            (a.cargo = '{$busca['cargo']}' OR CHAR_LENGTH('{$busca['cargo']}') = 0) AND 
+                            (a.funcao = '{$busca['funcao']}' OR CHAR_LENGTH('{$busca['funcao']}') = 0)
+                      GROUP BY a.id 
+                      UNION
+                      SELECT a2.id, c2.nome, 'qtde_rev' AS tipo, 'Rev.' AS nome_tipo
+                      FROM alocacao_usuarios a2
+                      INNER JOIN alocacao b2 ON b2.id = a2.id_alocacao
+                      INNER JOIN usuarios c2 ON c2.id = a2.id_usuario
+                      WHERE b2.id = '{$alocacao->id}' AND 
+                            b2.area = 'EMTU' AND 
+                            b2.setor LIKE '%Passe Escolar%' AND
+                            (a2.cargo = '{$busca['cargo']}' OR CHAR_LENGTH('{$busca['cargo']}') = 0) AND 
+                            (a2.funcao = '{$busca['funcao']}' OR CHAR_LENGTH('{$busca['funcao']}') = 0)
+                      GROUP BY a2.id) s
+                GROUP BY s.id, s.tipo 
+                ORDER BY s.id ASC, s.tipo ASC";
+
+        $this->load->library('dataTables', ['search' => ['nome']]);
+
+        $output = $this->datatables->query($sql);
+
+        $rowsApontamentos = $this->db
+            ->select('a.id_alocado, DAY(a.data) AS dia, SUM(a.qtde_req) AS qtde_req, SUM(a.qtde_rev) AS qtde_rev', false)
+            ->join('alocacao_usuarios b', 'b.id = a.id_alocado')
+            ->join('alocacao c', 'c.id = b.id_alocacao')
+            ->where_in('c.id', [$alocacao->id, $alocacao->id_anterior])
+            ->where("a.data BETWEEN '{$alocacao->data_abertura}' AND '{$alocacao->data_fechamento}'")
+            ->group_by(['b.id', 'a.data'])
+            ->get('alocacao_apontamento a')
+            ->result();
+
+        $eventos = [];
+
+        foreach ($rowsApontamentos as $rowApontamento) {
+            $eventos[$rowApontamento->id_alocado][$rowApontamento->dia] = [
+                'qtde_req' => $rowApontamento->qtde_req,
+                'qtde_rev' => $rowApontamento->qtde_rev
+            ];
+        }
+
+        $data = [];
+
+        foreach ($output->data as $row) {
+            $rows = [
+                $row->nome,
+                $row->nome_tipo
+            ];
+
+            $total = null;
+            for ($i = 1; $i <= 31; $i++) {
+                $evento = $eventos[$row->id][$i][$row->tipo] ?? null;
+                $rows[] = $evento;
+                $total += $evento;
+            }
+
+            $rows[] = $total;
+            $data[] = $rows;
+        }
+
+        $output->data = $data;
+
+        $this->load->library('Calendar');
+        $dias_semana = $this->calendar->get_day_names('long');
+        $semana = array();
+
+        $arrDataAnterior = explode('-', $alocacao->data_abertura);
+        $arrDataAtual = explode('-', $alocacao->data_fechamento);
+        for ($i = 0; $i <= 6; $i++) {
+            $semana[$i + 1] = $dias_semana[date('w', mktime(0, 0, 0, $arrDataAnterior[1], $arrDataAnterior[2] + $i, $arrDataAnterior[0]))];
+        }
+
+
+        $arrayDias = array_pad([], 32, null);
+        unset($arrayDias[0]);
+
+        $begin = new DateTime($alocacao->data_abertura);
+        $end = new DateTime($alocacao->data_fechamento);
+        $end = $end->modify('+1 day');
+
+        $interval = new DateInterval('P1D');
+        $daterange = new DatePeriod($begin, $interval, $end);
+        $qtdeDias = 0;
+        foreach ($daterange as $k => $date) {
+            $qtdeDias++;
+            if (strtotime($date->format('Y-m-d')) <= strtotime(date('Y-m-d'))) {
+                $arrayDias[$k + 1] = $date->format('d');
+            }
+        }
+
+
+        $output->calendar = array(
+            'dias' => $arrayDias,
+            'mes_anterior' => $arrDataAnterior[1],
+            'ano_anterior' => $arrDataAnterior[0],
+            'mes_ano_anterior' => $this->calendar->get_month_name($arrDataAnterior[1]) . ' ' . $arrDataAnterior[0],
+            'mes' => $arrDataAtual[1],
+            'ano' => $arrDataAtual[0],
+            'mes_ano' => $this->calendar->get_month_name($arrDataAtual[1]) . ' ' . $arrDataAtual[0],
+            'qtde_dias' => $qtdeDias,
+            'semana' => $semana,
+            'mes_bloqueado' => boolval($alocacao->mes_bloqueado ?? 0)
+        );
+
+        echo json_encode($output);
+    }
+
 
     public function ajax_list2()
     {
@@ -961,6 +1089,7 @@ class Apontamento extends MY_Controller
         parse_str($this->input->post('busca'), $busca);
 
         $this->db->select("id, dia_fechamento, CASE area WHEN 'Ipesp' THEN area END AS ipesp", false);
+        $this->db->select("(CASE WHEN area = 'EMTU' AND setor LIKE '%Passe Escolar%' THEN area END) AS emtu", false);
         $this->db->select("CASE setor WHEN 'Presencial' THEN setor END AS presencial", false);
         $this->db->select("CASE setor WHEN 'Teleatendimento' THEN setor END AS teleatendimento", false);
         $this->db->where('id_empresa', $this->session->userdata('empresa'));
@@ -977,6 +1106,7 @@ class Apontamento extends MY_Controller
         $alocacao = $this->db->get('alocacao')->row();
         $data['id'] = $alocacao->id ?? '';
         $data['ipesp'] = $alocacao->ipesp ?? null;
+        $data['emtu'] = $alocacao->emtu ?? null;
         $data['dia_fechamento'] = '';
         if (in_array($this->session->userdata('nivel'), array(0, 1, 3, 7, 8, 9))) {
             $data['dia_fechamento'] = $alocacao->dia_fechamento ?? '';

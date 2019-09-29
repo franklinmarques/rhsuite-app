@@ -18,9 +18,26 @@ class Sessoes extends MY_Controller
         $this->load->model('icom_clientes_model', 'clientes');
         $this->load->model('icom_produtos_model', 'produtos');
 
+        $this->load->library('calendar');
+
         $data = [
             'clientes' => $this->clientes->findColumn('nome', 'id', 'selecione...'),
-            'produtos' => $this->produtos->findColumn('nome', 'id', 'selecione...')
+            'produtos' => $this->produtos->findColumn('nome', 'id', 'selecione...'),
+            'mes_ano' => $this->calendar->get_month_name(date('m')) . ' de ' . date('Y'),
+            'meses' => [
+                '01' => 'Janeiro',
+                '02' => 'Fevereiro',
+                '03' => 'Março',
+                '04' => 'Abril',
+                '05' => 'Maio',
+                '06' => 'Junho',
+                '07' => 'Julho',
+                '08' => 'Agosto',
+                '09' => 'Setembro',
+                '10' => 'Outubro',
+                '11' => 'Novembro',
+                '12' => 'Dezembro'
+            ]
         ];
 
         $this->load->view('icom/sessoes', $data);
@@ -81,6 +98,70 @@ class Sessoes extends MY_Controller
         }
 
         $output->data = $data;
+
+        echo json_encode($output);
+    }
+
+    //==========================================================================
+    public function listarPeriodos()
+    {
+        parse_str($this->input->post('busca'), $busca);
+
+        $mes = strlen($busca['mes']) > 0 ? $busca['mes'] : date('m');
+        $ano = strlen($busca['ano']) > 0 ? $busca['ano'] : date('Y');
+
+
+        $this->db
+            ->select('COUNT(a.id) AS id, DAY(a.data_evento) AS dia', false)
+            ->select('FLOOR(TIME_TO_SEC(a.horario_inicio) / 21600) AS periodo', false)
+            ->join('icom_produtos b', 'b.id = a.id_produto')
+            ->join('icom_contratos c', 'c.codigo = a.codigo_contrato')
+            ->join('icom_propostas d', 'd.codigo = c.codigo_proposta')
+            ->join('icom_clientes e', 'e.id = d.id_cliente')
+            ->where('b.id_empresa', $this->session->userdata('empresa'))
+            ->where('MONTH(a.data_evento)', $mes)
+            ->where('YEAR(a.data_evento)', $ano);
+        if ($busca['cliente']) {
+            $this->db->where('e.id', $busca['cliente']);
+        }
+        if ($busca['produto']) {
+            $this->db->where('b.id', $busca['produto']);
+        }
+        $query = $this->db
+            ->group_by(['a.data_evento', 'FLOOR(TIME_TO_SEC(a.horario_inicio) / 21600)'])
+            ->get($this->sessoes::table() . ' a');
+
+        $this->load->library('dataTables');
+
+        $output = $this->datatables->generate($query);
+
+        $ultimoDiaMes = date('t', mktime(0, 0, 0, (int)$mes, 1, (int)$ano));
+        $diasMes = array_pad([], $ultimoDiaMes, '');
+        $totalDiasMes = array_pad($diasMes, 31, null);
+
+        $data = [
+            array_merge(['Madrugada'], $totalDiasMes),
+            array_merge(['Manhã'], $totalDiasMes),
+            array_merge(['Tarde'], $totalDiasMes),
+            array_merge(['Noite'], $totalDiasMes)
+        ];
+
+        foreach ($output->data as $row) {
+            $data[$row->periodo][$row->dia] = $row->id;
+        }
+
+        $madrugada = $data[0];
+        array_shift($madrugada);
+        if (empty(array_filter($madrugada))) {
+            array_shift($data);
+        }
+
+        $this->load->library('calendar');
+
+        $output->data = $data;
+        $output->recordsTotal = count($data);
+        $output->recordsFiltered = $output->recordsTotal;
+        $output->lastDayOfMonth = $ano . '-' . $mes . '-' . $ultimoDiaMes;
 
         echo json_encode($output);
     }

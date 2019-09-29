@@ -297,6 +297,11 @@ require_once 'header.php';
                                             href="#totalizacao_consolidada" aria-controls="totalizacao_consolidada"
                                             role="tab"
                                             data-toggle="tab">Totalização consolidada</a></li>
+                                <li role="presentation" style="font-size: 14px; font-weight: bolder; display: none;"
+                                    class="emtu"><a
+                                            href="#apontamento_consolidado_emtu"
+                                            aria-controls="apontamento_consolidado_emtu"
+                                            role="tab" data-toggle="tab">Apontamento consolidado EMTU</a></li>
                             </ul>
 
                             <div class="tab-content" style="border: 1px solid #ddd; border-top-width: 0;">
@@ -517,6 +522,38 @@ require_once 'header.php';
                                         </table>
                                     </div>
                                 <?php endif; ?>
+
+                                <div role="tabpanel" class="tab-pane" id="apontamento_consolidado_emtu">
+                                    <table id="table_emtu" class="table table-hover table-condensed table-bordered"
+                                           cellspacing="0" width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th rowspan="2" class="warning" style="vertical-align: middle;">
+                                                Colaborador(a)
+                                            </th>
+                                            <th rowspan="2" class="warning" style="vertical-align: middle;">
+                                                Qtde.
+                                            </th>
+                                            <th colspan="31" class="date-width">Dias</th>
+                                            <th rowspan="2" class="warning text-center"
+                                                style="padding-left: 4px; padding-right: 4px;">Total
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <?php for ($i = 1; $i <= 31; $i++): ?>
+                                                <?php if (date('N', mktime(0, 0, 0, date('m'), $i, date('Y'))) < 6): ?>
+                                                    <th class="date-width"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></th>
+                                                <?php else: ?>
+                                                    <th class="date-width"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></th>
+                                                <?php endif; ?>
+                                            <?php endfor; ?>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -790,6 +827,12 @@ require_once 'header.php';
                                                     Saída antecipada sem atestado
                                                 </label>
                                             </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="status" value="PR">
+                                                    Apontamento de produção
+                                                </label>
+                                            </div>
                                         </div>
                                         <div class="col col-md-3">
                                             <div class="radio">
@@ -824,6 +867,16 @@ require_once 'header.php';
                                             <input name="apontamento_desc" class="hora form-control text-center"
                                                    value="" placeholder="hh:mm" maxlength="5" autocomplete="off"
                                                    type="text">
+                                        </div>
+                                    </div>
+                                    <div class="row form-group emtu">
+                                        <label class="control-label col-md-2">Qtde. Req.</label>
+                                        <div class="col-md-2">
+                                            <input name="qtde_req" class="form-control numero" type="text" value="">
+                                        </div>
+                                        <label class="control-label col-md-2">Qtde. Rev.</label>
+                                        <div class="col-md-2">
+                                            <input name="qtde_rev" class="form-control numero" type="text" value="">
                                         </div>
                                     </div>
                                     <hr style="border-top: 1px solid #b0b0b0;">
@@ -1656,12 +1709,14 @@ require_once 'end_js.php';
     <script src="<?php echo base_url("assets/js/jquery-tags-input/jquery.tagsinput.js"); ?>"></script>
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js'); ?>"></script>
     <script src="<?php echo base_url('assets/datatables/extensions/dataTables.fixedColumns.min.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/datatables/plugins/dataTables.rowsGroup.js'); ?>"></script>
     <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
     <script src="<?php echo base_url('assets/js/moment.js'); ?>"></script>
 
     <script>
 
-        var table, table_totalizacao, table_colaboradores, table_apontamento_consolidado, table_totalizacao_consolidada;
+        var table, table_totalizacao, table_colaboradores, table_apontamento_consolidado, table_totalizacao_consolidada,
+            table_emtu;
         var busca;
         var edicaoEvento = true;
         var nivel_usuario = '<?= $this->session->userdata('nivel'); ?>';
@@ -1683,6 +1738,7 @@ require_once 'end_js.php';
         $('[name="data_recesso"], [name="data_retorno"], [name="data_desligamento"]').mask('00/00/0000');
         $('.hora').mask('00:00');
         $('.valor').mask('##.###.##0,00', {'reverse': true});
+        $('.numero').mask('00000000000');
         $('.porcentagem').mask('#00,0', {'reverse': true});
         $(function () {
             $('[data-tooltip="tooltip"]').tooltip();
@@ -1966,6 +2022,8 @@ require_once 'end_js.php';
                                         (rowData[col][2] !== '' && rowData[col][2] !== undefined ? '\nHoras devedoras: ' + rowData[col][2] : '') +
                                         (rowData[col][16] !== '' && rowData[col][16] !== undefined ? '\nApontamento extra: ' + rowData[col][16] : '') +
                                         (rowData[col][17] !== '' && rowData[col][17] !== undefined ? '\nDesconto de apontamento: ' + rowData[col][17] : '') +
+                                        (rowData[col][19] !== '' && rowData[col][19] !== undefined ? '\nQtde. Req.: ' + rowData[col][19] : '') +
+                                        (rowData[col][20] !== '' && rowData[col][20] !== undefined ? '\nQtde. Rev.: ' + rowData[col][20] : '') +
                                         (rowData[col][7] !== '' && rowData[col][7] !== undefined ? '\nDetalhes: ' + rowData[col][7] : '') +
                                         (rowData[col][14] !== '' && rowData[col][14] !== undefined ? '\nBackup nº 1: ' + rowData[col][14] : '') +
                                         (rowData[col][15] !== '' && rowData[col][15] !== undefined ? '\nBackup nº 2: ' + rowData[col][15] : '') +
@@ -1988,7 +2046,9 @@ require_once 'end_js.php';
                                     'data-hora_glosa': rowData[col][12],
                                     'data-id_detalhes': rowData[col][13],
                                     'data-apontamento_extra': rowData[col][16],
-                                    'data-apontamento_desc': rowData[col][17]
+                                    'data-apontamento_desc': rowData[col][17],
+                                    'data-qtde_req': rowData[col][19],
+                                    'data-qtde_rev': rowData[col][20]
                                 });
                                 if (moment(data_dia).isSameOrAfter(data_desligamento) && rowData[1][3]) {
                                     $(td).attr({
@@ -2016,6 +2076,8 @@ require_once 'end_js.php';
                                     $('[name="hora_atraso"]').val($(this).data('hora_atraso'));
                                     $('[name="apontamento_extra"]').val($(this).data('apontamento_extra'));
                                     $('[name="apontamento_desc"]').val($(this).data('apontamento_desc'));
+                                    $('[name="qtde_req"]').val($(this).data('qtde_req'));
+                                    $('[name="qtde_rev"]').val($(this).data('qtde_rev'));
                                     $('[name="hora_glosa"]').val($(this).data('hora_glosa'));
                                     $('[name="hora_entrada"]').val($(this).data('hora_entrada'));
                                     $('[name="hora_intervalo"]').val($(this).data('hora_intervalo'));
@@ -2664,6 +2726,103 @@ require_once 'end_js.php';
                 });
             }
 
+            table_emtu = $('#table_emtu').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'iDisplayLength': 25,
+                'lengthMenu': [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
+                'language': {
+                    'url': url
+                },
+                'ajax': {
+                    'url': '<?php echo site_url('apontamento/listarEMTU') ?>',
+                    'type': 'POST',
+                    'timeout': 90000,
+                    'data': function (d) {
+                        d.busca = busca;
+                        d.consolidado = true;
+                        d.dia_fechamento = $('#dia_fechamento').val();
+                        return d;
+                    },
+                    'dataSrc': function (json) {
+                        $('[name="mes"]').val(json.calendar.mes);
+                        $('[name="ano"]').val(json.calendar.ano);
+                        $('#mes_ano').html(json.calendar.mes_ano[0].toUpperCase() + json.calendar.mes_ano.slice(1));
+                        var dt1 = new Date();
+                        var dt2 = new Date();
+                        dt2.setFullYear(json.calendar.ano, (json.calendar.mes - 1));
+                        if (dt1.getTime() < dt2.getTime()) {
+                            $('#mes_seguinte').addClass('disabled').parent().css('cursor', 'not-allowed');
+                        } else {
+                            $('#mes_seguinte').removeClass('disabled').parent().css('cursor', '');
+                        }
+
+                        var semana = 1;
+                        var colunasUsuario = 1;
+                        for (i = 1; i <= 31; i++) {
+                            if (i > 28) {
+                                if (i > json.calendar.qtde_dias) {
+                                    table_emtu.column(i + colunasUsuario).visible(false, false);
+                                    continue;
+                                } else {
+                                    table_emtu.column(i + colunasUsuario).visible(true, false);
+                                }
+                            }
+                            var coluna = $(table_emtu.columns(i + colunasUsuario).header());
+                            coluna.text(json.calendar.dias[i]);
+                            coluna.removeClass('text-danger').css('background-color', '');
+                            if (json.calendar.semana[semana] === 'Sábado' || json.calendar.semana[semana] === 'Domingo') {
+                                coluna.addClass('text-danger').css('background-color', '#dbdbdb');
+                            }
+
+                            if (json.calendar.dias[i] > json.calendar.dias[json.calendar.qtde_dias]) {
+                                coluna.attr({
+                                    'data-dia': json.calendar.ano_anterior + '-' + json.calendar.mes_anterior + '-' + coluna.text(),
+                                    'data-mes_ano': json.calendar.semana[semana] + ', ' + coluna.text() + '/' + json.calendar.mes_anterior + '/' + json.calendar.ano_anterior,
+                                    'title': json.calendar.semana[semana] + ', ' + coluna.text() + ' de ' + json.calendar.mes_ano_anterior.replace(' ', ' de ')
+                                });
+
+                                if (dt1.getFullYear() === parseInt(json.calendar.ano_anterior) && dt1.getMonth() === parseInt(json.calendar.mes_anterior - 1) && dt1.getDate() === parseInt(json.calendar.dias[i])) {
+                                    coluna.css('background-color', '#0f0');
+                                }
+                            } else {
+                                coluna.attr({
+                                    'data-dia': json.calendar.ano + '-' + json.calendar.mes + '-' + coluna.text(),
+                                    'data-mes_ano': json.calendar.semana[semana] + ', ' + coluna.text() + '/' + json.calendar.mes + '/' + json.calendar.ano,
+                                    'title': json.calendar.semana[semana] + ', ' + coluna.text() + ' de ' + json.calendar.mes_ano.replace(' ', ' de ')
+                                });
+
+                                if (dt1.getFullYear() === parseInt(json.calendar.ano) && dt1.getMonth() === parseInt(json.calendar.mes - 1) && dt1.getDate() === parseInt(json.calendar.dias[i])) {
+                                    coluna.css('background-color', '#0f0');
+                                }
+                            }
+
+                            if (i % 7 === 0) {
+                                semana = 1;
+                            } else {
+                                semana++;
+                            }
+                        }
+                        return json.data;
+                    }
+                },
+                'columnDefs': [
+                    {
+                        'className': 'text-center',
+                        'targets': [1, -1],
+                        'orderable': false,
+                        'searchable': false
+                    },
+                    {
+                        'className': 'text-center',
+                        'targets': 'date-width',
+                        'orderable': false,
+                        'searchable': false
+                    }
+                ],
+                'rowsGroup': [0, 1]
+            });
+
             atualizarColaboradores();
             setPdf_atributes();
 
@@ -2725,6 +2884,12 @@ require_once 'end_js.php';
                         $('#ipesp').hide();
                     } else {
                         $('#ipesp').show();
+                    }
+                    // Usado somente para a área "EMTU"
+                    if (json.emtu === null) {
+                        $('.emtu').hide();
+                    } else {
+                        $('.emtu').show();
                     }
 
                     if (json.dia_fechamento > 0) {
@@ -3236,6 +3401,7 @@ require_once 'end_js.php';
                 table_totalizacao_consolidada.ajax.reload(null, reset); //reload datatable ajax
             }
             table_colaboradores.ajax.reload(null, reset);
+            table_emtu.ajax.reload(null, reset);
         }
 
         function set_edicao_evento() {

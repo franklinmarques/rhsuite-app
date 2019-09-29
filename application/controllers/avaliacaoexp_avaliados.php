@@ -768,7 +768,7 @@ class Avaliacaoexp_avaliados extends MY_Controller
             if (count($row)) {
                 $data_avaliacao = date("d/m/Y", strtotime(str_replace('-', '/', $row->data_avaliacao)));
                 $data['date_to'] = $row->data_avaliacao;
-                $data['description'] = "Avaliado(a): {$nome_avaliado}<br>Avaliador(a): {$row->nome}";
+                $data['description'] = "Avaliado(a) : {$nome_avaliado}<br>Avaliador(a): {$row->nome}";
 //                $data['link'] = "avaliacaoexp/avaliado/{$row->id_avaliado}";
                 $data['link'] = "avaliacaoexp_avaliador/periodo";
                 $data['usuario_referenciado'] = $row->id_avaliador;
@@ -1307,7 +1307,7 @@ class Avaliacaoexp_avaliados extends MY_Controller
                     'date_from' => $email['datacadastro'],
                     'usuario' => $this->session->userdata('id'),
                     'date_to' => $row2->data_avaliacao,
-                    'description' => "Avaliado(a): {$avaliado->avaliado}<br>Avaliador(a): {$row2->nome}",
+                    'description' => "Avaliado(a): {$avaliado->avaliado}<br>Avaliador(a) : {$row2->nome}",
                     'link' => "avaliacaoexp_avaliador/periodo",
                     'usuario_referenciado' => $row2->id_avaliador
                 );
