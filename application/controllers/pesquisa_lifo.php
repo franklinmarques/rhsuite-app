@@ -257,7 +257,7 @@ class Pesquisa_lifo extends MY_Controller
                     break;
                 case 'esgotado':
                     $row[] = '
-                              <a class="btn btn-sm btn-danger btn-block disabled">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Tempo esgotaddo&nbsp;</a>
+                              <a class="btn btn-sm btn-danger btn-block disabled">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Tempo esgotado&nbsp;</a>
                              ';
                     break;
                 case 'concluido':
@@ -267,7 +267,7 @@ class Pesquisa_lifo extends MY_Controller
                     break;
                 default:
                     $row[] = '
-                              <a class="btn btn-sm btn-primary btn-block disabled">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Iniciar teste</a>
+                              <a class="btn btn-sm btn-success btn-block disabled">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Iniciar teste</a>
                              ';
             }
 
@@ -780,7 +780,7 @@ class Pesquisa_lifo extends MY_Controller
                        DATE_FORMAT(c.data_termino, '%d/%m/%Y') AS data_termino,
                        b.nome AS candidato, 
                        CONCAT_WS('/', b.cargo , b.funcao) AS cargo_funcao,
-                       a.estilo_personalidade_majoritario,
+                       a.estilo_personalidade_majoritario, 
                        a.estilo_personalidade_secundario
                 FROM pesquisa_avaliadores a
                 INNER JOIN usuarios b ON 

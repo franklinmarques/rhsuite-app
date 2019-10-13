@@ -118,44 +118,47 @@
                 </thead>
                 <tbody>
                 <tr class="active">
-                    <th colspan="2" tyle="vertical-align: middle;">Perfil - comportamentos majoritário
+                    <th colspan="2" tyle="vertical-align: middle;">Perfil - comportamentos majoritário - Estilo
+                        "<?= $laudoPerfil->nome; ?>"
                     </th>
                 </tr>
                 <tr>
                     <?php if (strlen($laudoPerfil->estilo_personalidade_majoritario) > 0): ?>
-                        <td colspan="2"><?= $laudoPerfil->estilo_personalidade_majoritario; ?></td>
+                        <td colspan="2"><?= nl2br($laudoPerfil->estilo_personalidade_majoritario); ?></td>
                     <?php else: ?>
                         <td colspan="2"><span class="text-muted">Nenhum comportamento apresentado</span>
                         </td>
                     <?php endif; ?>
                 </tr>
                 <tr class="active">
-                    <th colspan="2" tyle="vertical-align: middle;">Perfil - comportamentos secundário
+                    <th colspan="2" tyle="vertical-align: middle;">Perfil - comportamentos secundário - Estilo
+                        "<?= $laudoPerfil->nome; ?>"
                     </th>
                 </tr>
                 <tr>
                     <?php if (strlen($laudoPerfil->estilo_personalidade_secundario) > 0): ?>
-                        <td colspan="2"><?= $laudoPerfil->estilo_personalidade_secundario; ?></td>
+                        <td colspan="2"><?= nl2br($laudoPerfil->estilo_personalidade_secundario); ?></td>
                     <?php else: ?>
                         <td colspan="2"><span class="text-muted">Nenhum comportamento apresentado</span>
                         </td>
                     <?php endif; ?>
                 </tr>
                 <tr class="active">
-                    <th style="vertical-align: middle;">Posicionamentos possíveis em situações normais
+                    <th style="vertical-align: middle;">Posicionamentos possíveis percebidos/observávies em situações
+                        normais
                     </th>
-                    <th style="vertical-align: middle;">Posicionamentos possíveis em situações de
+                    <th style="vertical-align: middle;">Posicionamentos possíveis percebidos/observávies em situações de
                         pressão/estresse
                     </th>
                 </tr>
                 <tr>
                     <?php if (strlen($laudoPerfil->comportamentos_normais) > 0): ?>
-                        <td><?= $laudoPerfil->comportamentos_normais; ?></td>
+                        <td><?= nl2br($laudoPerfil->comportamentos_normais); ?></td>
                     <?php else: ?>
                         <td><span class="text-muted">Nenhum posicionamento apresentado</span></td>
                     <?php endif; ?>
                     <?php if (strlen($laudoPerfil->comportamentos_estresse) > 0): ?>
-                        <td><?= $laudoPerfil->comportamentos_estresse; ?></td>
+                        <td><?= nl2br($laudoPerfil->comportamentos_estresse); ?></td>
                     <?php else: ?>
                         <td><span class="text-muted">Nenhum posicionamento apresentado</span></td>
                     <?php endif; ?>

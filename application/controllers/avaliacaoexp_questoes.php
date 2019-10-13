@@ -22,7 +22,7 @@ class Avaliacaoexp_questoes extends MY_Controller {
             $id = $this->uri->rsegment(3);
         }
 
-        $avaliacao = $this->avaliacaoexp->get_by_id($id);
+        $avaliacao = $this->avaliacaoexp->find($id);
 
         $data = array(
             'id_usuario' => $this->session->userdata('id'),

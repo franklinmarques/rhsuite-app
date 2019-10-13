@@ -210,13 +210,13 @@ class RecrutamentoPresencial extends MY_Controller
 
             if ($candidato) {
                 $row[] = '
-                          <a class="btn btn-sm btn-success" href="' . site_url('recrutamento/processos/' . $recrutamento->id . '/' . $candidato) . '" title="Ver processo"><i class="glyphicon glyphicon-list"></i> Ver processo</a>
+                          <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento/processos/' . $recrutamento->id . '/' . $candidato) . '" title="Ver processo"><i class="glyphicon glyphicon-list"></i> Ver processo</a>
                          ';
             } else {
                 $row[] = '
-                          <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                          <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                           <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                          <a class="btn btn-sm btn-success" href="' . site_url('recrutamentoPresencial_cargos/gerenciar/' . $recrutamento->id) . '" title="Ver processo"><i class="glyphicon glyphicon-list"></i> Ver processo</a>
+                          <a class="btn btn-sm btn-primary" href="' . site_url('recrutamentoPresencial_cargos/gerenciar/' . $recrutamento->id) . '" title="Ver processo"><i class="glyphicon glyphicon-list"></i> Ver processo</a>
                          ';
             }
 

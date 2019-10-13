@@ -1,23 +1,21 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class AvaliacaoexpAlternativas extends Entity
 {
-    protected $id;
-    protected $id_modelo;
-    protected $id_pergunta;
-    protected $alternativa;
-    protected $peso;
+	protected $id;
+	protected $id_modelo;
+	protected $id_pergunta;
+	protected $alternativa;
+	protected $peso;
 
-    protected $casts = [
-        'id' => 'int',
-        'id_modelo' => 'int',
-        'id_pergunta' => '?int',
-        'alternativa' => 'string',
-        'peso' => 'int'
-    ];
+	protected $casts = [
+		'id' => 'int',
+		'id_modelo' => 'int',
+		'id_pergunta' => '?int',
+		'alternativa' => 'string',
+		'peso' => 'int'
+	];
 
 }

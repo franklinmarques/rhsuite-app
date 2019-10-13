@@ -60,20 +60,22 @@
                                     </div>
                                     <div class="col-md-5">
                                         <label class="control-label">Cidade</label>
-                                        <?php echo form_dropdown('cidade', $cidade, '', 'id="cidade" class="form-control filtro input-sm" autocomplete="off"'); ?>
+                                        <?php echo form_multiselect('cidade', $cidade, [], 'id="cidade" class="form-control filtro input-sm" autocomplete="off"'); ?>
                                     </div>
                                     <div class="col-md-5">
                                         <label class="control-label">Bairro</label>
-                                        <?php echo form_dropdown('bairro', $bairro, '', 'id="bairro" class="form-control filtro input-sm" autocomplete="off"'); ?>
+                                        <?php echo form_multiselect('bairro', $bairro, [], 'id="bairro" class="form-control filtro input-sm" autocomplete="off"'); ?>
                                     </div>
                                     <div class="col-md-5">
                                         <label class="control-label">Deficiência</label>
-                                        <?php echo form_dropdown('deficiencia', $deficiencia, '', 'id="deficiencia" class="form-control filtro input-sm" autocomplete="off"'); ?>
+                                        <?php echo form_multiselect('deficiencia', $deficiencia, [], 'id="deficiencia" class="form-control filtro input-sm" autocomplete="off"'); ?>
                                     </div>
                                     <div class="col-md-5">
                                         <label class="control-label">Escolaridade</label>
-                                        <?php echo form_dropdown('escolaridade', $escolaridade, '', 'id="escolaridade" class="form-control filtro input-sm" autocomplete="off"'); ?>
+                                        <?php echo form_multiselect('escolaridade', $escolaridade, [], 'id="escolaridade" class="form-control filtro input-sm" autocomplete="off"'); ?>
                                     </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-2">
                                         <label class="control-label">Sexo</label>
                                         <select name="sexo" id="sexo" class="form-control filtro input-sm"

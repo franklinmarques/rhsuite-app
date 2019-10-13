@@ -11,17 +11,7 @@ class Apontamento_detalhes extends MY_Controller
     }
 
     public function index()
-    {$sql = "SELECT s.id, 
-                       s.codigo,
-                       s.nome
-                FROM (SELECT a.id, 
-                             a.codigo,
-                             a.nome
-                      FROM alocacao_eventos a
-                      WHERE a.id_empresa = {$this->session->userdata('empresa')}) s";
-
-        $recordsTotal = $this->db->query($sql)->num_rows();
-//        print_r($this->db->conn_id);exit;
+    {
         $data['empresa'] = $this->session->userdata('empresa');
         $this->load->view('apontamento_detalhes', $data);
     }
@@ -73,7 +63,7 @@ class Apontamento_detalhes extends MY_Controller
             $row[] = $apontamento->codigo;
             $row[] = $apontamento->nome;
             $row[] = '
-                      <button class="btn btn-sm btn-primary" onclick="edit_evento(' . $apontamento->id . ')" title="Editar evento"><i class="glyphicon glyphicon-pencil"></i></button>
+                      <button class="btn btn-sm btn-info" onclick="edit_evento(' . $apontamento->id . ')" title="Editar evento"><i class="glyphicon glyphicon-pencil"></i></button>
                       <button class="btn btn-sm btn-danger" onclick="delete_evento(' . $apontamento->id . ')" title="Excluir evento"><i class="glyphicon glyphicon-trash"></i></button>
                      ';
 
@@ -112,7 +102,7 @@ class Apontamento_detalhes extends MY_Controller
 
     public function ajax_update()
     {
-        $data = $this->input->post();
+		$data = $this->input->post();
         if (empty($data['id_empresa'])) {
             $data['id_empresa'] = $this->session->userdata('empresa');
         }

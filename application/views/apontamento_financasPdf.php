@@ -280,7 +280,7 @@
                     <td class="text-center"><?= $row->valor_realizado ?></td>
                     <td class="text-center"><?= $row->valor_glosa ?></td>
                     <td class="text-center"><?= str_replace('.', ',', round($row->perda_receita, 4)) ?></td>
-                    <td class="text-center"><?= str_replace('.', ',', round($frow->receita_liquida, 4)) ?></td>
+                    <td class="text-center"><?= str_replace('.', ',', round($row->receita_liquida, 4)) ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
@@ -311,7 +311,7 @@
                     <td class="text-center"><?= $row->turnover_desligamento_empresa ?></td>
                     <td class="text-center"><?= $row->turnover_desligamento_colaborador ?></td>
                     <td class="text-center"><?= str_replace('.', ',', round($row->turnover_mensal, 2)) ?></td>
-                    <td class="text-center"><?= str_replace('.', ',', round($frow->turnover_evasao, 2)) ?></td>
+                    <td class="text-center"><?= str_replace('.', ',', round($row->turnover_evasao, 2)) ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

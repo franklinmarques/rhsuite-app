@@ -5,237 +5,188 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Clientes extends MY_Controller
 {
 
-    public function index()
-    {
-        $data['empresa'] = $this->session->userdata('empresa');
-        $this->load->view('ead/clientes', $data);
-    }
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->model('ead_clientes_model', 'cliente');
+	}
 
 
-    public function editarPerfil()
-    {
-        $this->db->where('id_empresa', $this->session->userdata('empresa'));
-        $this->db->where('id', $this->session->userdata('id'));
-        $data = $this->db->get('cursos_clientes')->row();
-        unset($data->senha);
+	public function index()
+	{
+		$data['empresa'] = $this->session->userdata('empresa');
+		$this->load->view('ead/clientes', $data);
+	}
 
-        echo json_encode($data);
-    }
+	//==========================================================================
+	public function editarPerfil()
+	{
+		$this->db->where('id_empresa', $this->session->userdata('empresa'));
+		$this->db->where('id', $this->session->userdata('id'));
+		$data = $this->db->get('cursos_clientes')->row();
+		unset($data->senha);
 
+		echo json_encode($data);
+	}
 
-    public function salvarPerfil()
-    {
-        $this->load->model('ead_clientes_model', 'cliente');
-        $this->load->model('usuarios_model', 'usuario');
-
-        if (($msg = $this->cliente->revalidate()) !== true) {
-            exit(json_encode(['msg' => $msg]));
-        }
-
-        $data = $this->input->post();
-        if (strlen($data['senha'])) {
-            $data['senha'] = $this->usuario->setPassword($data['senha']);
-        } else {
-            unset($data['senha']);
-        }
-        $data['data_edicao'] = date('Y-m-d H:i:s');
-        $id = $this->input->post('id');
-        unset($data['id'], $data['token'], $data['confirmar_senha']);
-
-        if ($this->cliente->update($data, ['id' => $id]) == false) {
-            exit(json_encode(['erro' => 'Erro ao alterar dados']));
-        }
+	//==========================================================================
+	public function ajaxList()
+	{
+		$clienteSelecionado = $this->input->post('cliente');
 
 
-        $this->session->set_userdata('nome', $data['nome']);
-        $this->session->set_userdata('email', $data['email']);
-        if (isset($data['foto'])) {
-            $this->session->set_userdata('foto', $data['foto']);
-        }
+		$this->db->select('nome, cliente, id');
+		$this->db->select("(CASE STATUS WHEN 1 THEN 'Ativo' WHEN 0 THEN 'Inativo' END) AS status", false);
+		$this->db->where('id_empresa', $this->session->userdata('empresa'));
+		if ($clienteSelecionado) {
+			$this->db->where('cliente', $clienteSelecionado);
+		}
+		$query = $this->db->get('cursos_clientes');
 
 
-        echo json_encode([
-            'status' => 1,
-            'aviso' => 'Meu perfil foi editado com sucesso!',
-            'pagina' => site_url('ead/treinamento_cliente')
-        ]);
-    }
+		$config = array(
+			'search' => ['nome', 'cliente'],
+			'order' => ['nome', 'cliente', 'status']
+		);
 
+		$this->load->library('dataTables', $config);
+		$output = $this->datatables->generate($query);
 
-    public function ajaxList()
-    {
-        $clienteSelecionado = $this->input->post('cliente');
+		$data = array();
 
-
-        $this->db->select('nome, cliente, id');
-        $this->db->select("(CASE STATUS WHEN 1 THEN 'Ativo' WHEN 0 THEN 'Inativo' END) AS status", false);
-        $this->db->where('id_empresa', $this->session->userdata('empresa'));
-        if ($clienteSelecionado) {
-            $this->db->where('cliente', $clienteSelecionado);
-        }
-        $query = $this->db->get('cursos_clientes');
-
-
-        $config = array(
-            'search' => ['nome', 'cliente'],
-            'order' => ['nome', 'cliente', 'status']
-        );
-
-        $this->load->library('dataTables', $config);
-        $output = $this->datatables->generate($query);
-
-        $data = array();
-
-        foreach ($output->data as $row) {
-            $data[] = array(
-                $row->nome,
-                $row->cliente,
-                $row->status,
-                '<button class="btn btn-sm btn-info" onclick="edit_cliente(' . $row->id . ');" title="Editar cliente"><i class="glyphicon glyphicon-pencil"></i></button>
+		foreach ($output->data as $row) {
+			$data[] = array(
+				$row->nome,
+				$row->cliente,
+				$row->status,
+				'<button class="btn btn-sm btn-info" onclick="edit_cliente(' . $row->id . ');" title="Editar cliente"><i class="glyphicon glyphicon-pencil"></i></button>
                  <button class="btn btn-sm btn-danger" onclick="delete_cliente(' . $row->id . ');" title="Excluir cliente"><i class="glyphicon glyphicon-trash"></i></button>
                  <a class="btn btn-sm btn-primary" href="' . site_url('ead/clientes_treinamentos/gerenciar/' . $row->id) . '" title="Gerenciar treinamentos do cliente ">Treinamentos</a>',
-            );
-        }
+			);
+		}
 
-        $output->data = $data;
-
-
-        $this->db->distinct('cliente');
-        $this->db->where('id_empresa', $this->session->userdata('empresa'));
-        $this->db->order_by('cliente', 'asc');
-        $rowsClientes = $this->db->get('cursos_clientes')->result();
-        $clientes = ['' => 'Todos'] + array_column($rowsClientes, 'cliente', 'cliente');
-
-        $output->clientes = form_dropdown('busca_cliente', $clientes, $clienteSelecionado, 'class="form-control input-sm" aria-controls="table" onchange="reload_table();"');
+		$output->data = $data;
 
 
-        echo json_encode($output);
-    }
+		$this->db->distinct('cliente');
+		$this->db->where('id_empresa', $this->session->userdata('empresa'));
+		$this->db->order_by('cliente', 'asc');
+		$rowsClientes = $this->db->get('cursos_clientes')->result();
+		$clientes = ['' => 'Todos'] + array_column($rowsClientes, 'cliente', 'cliente');
+
+		$output->clientes = form_dropdown('busca_cliente', $clientes, $clienteSelecionado, 'class="form-control input-sm" aria-controls="table" onchange="reload_table();"');
 
 
-    public function ajaxEdit()
-    {
-        $this->db->where('id_empresa', $this->session->userdata('empresa'));
-        $this->db->where('id', $this->input->post('id'));
-        $data = $this->db->get('cursos_clientes')->row();
-        unset($data->senha);
+		echo json_encode($output);
+	}
 
-        echo json_encode($data);
-    }
+	//==========================================================================
+	public function ajaxEdit()
+	{
+		$data = $this->clientes
+			->where('id_empresa', $this->session->userdata('empresa'))
+			->find($this->input->post('id'));
 
+		if (empty($data)) {
+			exit(json_encode(['erro' => $this->clientes->errors()]));
+		};
 
-    public function ajaxAdd()
-    {
-        $this->load->model('ead_clientes_model', 'cliente');
-        $this->load->model('usuarios_model', 'usuario');
+		unset($data->senha);
 
-        if (($msg = $this->cliente->validate()) !== true) {
-            exit(json_encode(['msg' => $msg]));
-        }
+		echo json_encode($data);
+	}
 
-        $data = $this->input->post();
-        $data['senha'] = $this->usuario->setPassword($data['senha']);
-        $data['data_cadastro'] = date('Y-m-d H:i:s');
-        $data['token'] = uniqid();
-        unset($data['id'], $data['confirmar_senha']);
+	//==========================================================================
+	public function ajaxAdd()
+	{
+		$this->salvar();
+	}
 
-        $this->db->trans_start();
+	//==========================================================================
+	public function ajaxUpdate()
+	{
+		$this->salvar();
+	}
 
-        $id = $this->cliente->insertID($data);
+	//==========================================================================
+	public function salvarPerfil()
+	{
+		$this->load->library('entities');
 
-        if ($this->db->trans_status() === false) {
-            $this->db->trans_rollback();
-            exit(json_encode(['erro' => 'Erro ao cadastrar dados']));
-        }
+		$data = $this->entities->create('eadClientes', $this->input->post());
 
-//        if (!empty($_FILES['foto'])) {
-//            $config = array(
-//                'upload_path' => './imagens/usuarios/',
-//                'allowed_types' => 'gif|jpg|png',
-//                'file_name' => utf8_decode($_FILES['foto']['name']),
-//            );
-//
-//            $this->load->library('upload', $config);
-//
-//            if ($this->upload->do_upload('foto') == false) {
-//                $this->db->trans_rollback();
-//                exit(json_encode(['erro' => $this->upload->display_errors()]));
-//            }
-//
-//            $foto = $this->upload->data();
-//
-//            $this->cliente->update(['foto' => utf8_encode($foto['file_name'])], ['id' => $id]);
-//        }
+		if (is_null($data->senha) and is_null($data->confirmar_senha)) {
+			unset($data->senha);
+		} else {
+			$this->clientes->setValidationRule('confirmar_senha', 'required|matches[senha]');
+		}
 
-        $this->db->trans_commit();
+		$this->clientes->setValidationLabel('cliente', 'Cliente');
+		$this->clientes->setValidationLabel('nome', 'Usuário');
+		$this->clientes->setValidationLabel('email', 'E-mail');
+		$this->clientes->setValidationLabel('senha', 'Senha');
+		$this->clientes->setValidationLabel('confirmar_senha', 'Confirmar Senha');
+		$this->clientes->setValidationLabel('foto', 'Foto');
 
-        echo json_encode(['status' => true]);
-    }
+		$this->clientes->validate($data) or exit(json_encode(['erro' => $this->clientes->errors()]));
 
+		unset($data->confirmar_senha);
 
-    public function ajaxUpdate()
-    {
-        $this->load->model('ead_clientes_model', 'cliente');
-        $this->load->model('usuarios_model', 'usuario');
+		$this->clientes->skipValidation();
 
-        if (($msg = $this->cliente->revalidate()) !== true) {
-            exit(json_encode(['msg' => $msg]));
-        }
+		$this->clientes->save($data) or exit(json_encode(['erro' => $this->clientes->errors()]));
 
-        $data = $this->input->post();
-        if (strlen($data['senha'])) {
-            $data['senha'] = $this->usuario->setPassword($data['senha']);
-        } else {
-            unset($data['senha']);
-        }
-        $data['data_edicao'] = date('Y-m-d H:i:s');
-        $id = $this->input->post('id');
-        unset($data['id'], $data['token'], $data['confirmar_senha']);
+		echo json_encode([
+			'status' => 1,
+			'aviso' => 'Meu perfil foi editado com sucesso!',
+			'pagina' => site_url('ead/treinamento_cliente')
+		]);
+	}
 
-        $this->db->trans_begin();
+	//==========================================================================
+	public function salvar()
+	{
+		$this->load->library('entities');
 
-        $this->cliente->update($data, ['id' => $id]);
+		$data = $this->entities->create('eadClientes', $this->input->post());
 
-        if ($this->db->trans_rollback() == false) {
-            exit(json_encode(['erro' => 'Erro ao alterar dados']));
-        }
+		if (is_null($data->senha) and is_null($data->confirmar_senha)) {
+			unset($data->senha);
+		} else {
+			$this->clientes->setValidationRule('confirmar_senha', 'required|matches[senha]');
+		}
 
-//        if (!empty($_FILES['foto'])) {
-//            $config = array(
-//                'upload_path' => './imagens/usuarios/',
-//                'allowed_types' => 'gif|jpg|png',
-//                'file_name' => utf8_decode($_FILES['foto']['name']),
-//            );
-//
-//            $this->load->library('upload', $config);
-//
-//            if ($this->upload->do_upload('foto') == false) {
-//                $this->db->trans_rollback();
-//                exit(json_encode(['erro' => $this->upload->display_errors()]));
-//            }
-//
-//            $foto = $this->upload->data();
-//
-//            $this->cliente->update(['foto' => utf8_encode($foto['file_name'])], ['id' => $id]);
-//        }
+		$this->clientes->setValidationLabel('status', 'Status');
+		$this->clientes->setValidationLabel('cliente', 'Cliente');
+		$this->clientes->setValidationLabel('nome', 'Usuário');
+		$this->clientes->setValidationLabel('email', 'E-mail');
+		$this->clientes->setValidationLabel('senha', 'Senha');
+		$this->clientes->setValidationLabel('confirmar_senha', 'Confirmar Senha');
+		$this->clientes->setValidationLabel('foto', 'Foto');
 
-        $this->db->trans_commit();
+		$this->clientes->validate($data) or exit(json_encode(['erro' => $this->clientes->errors()]));
 
-        echo json_encode(['status' => true]);
-    }
+		unset($data->confirmar_senha);
 
+		$this->clientes->skipValidation();
 
-    public function ajaxDelete()
-    {
-        $id = $this->input->post('id');
+		$this->clientes->save($data) or exit(json_encode(['erro' => $this->clientes->errors()]));
 
-        $this->load->model('ead_clientes_model', 'cliente');
-        if ($this->cliente->delete(['id' => $id]) == false) {
-            exit(json_encode(['erro' => 'Erro ao excluir dados']));
-        }
+		$this->session->set_userdata('nome', $data->nome);
+		$this->session->set_userdata('email', $data->email);
+		if (isset($data->foto)) {
+			$this->session->set_userdata('foto', $data->foto);
+		}
 
-        echo json_encode(['status' => true]);
-    }
+		echo json_encode(['status' => true]);
+	}
 
+	//==========================================================================
+	public function ajaxDelete()
+	{
+		$this->clientes->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->clientes->errors()]));
+
+		echo json_encode(['status' => true]);
+	}
 
 }

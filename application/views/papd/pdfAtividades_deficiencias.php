@@ -54,10 +54,10 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12">
-                    <img src="<?= base_url($foto) ?>" align="left"
+                    <img src="<?= base_url('imagens/usuarios/LOGOAME-TP.png') ?>" align="left"
                          style="height: auto; width: auto; max-height: 92px; max-width: 254px; vertical-align: middle; padding: 0 10px 5px 5px;">
                     <p class="text-left">
-                        <img src="<?= base_url($foto_descricao) ?>" align="left"
+                        <img src="<?= base_url('imagens/usuarios/Descricao_AME.png') ?>" align="left"
                              style="height: auto; width: auto; max-height: 92px; max-width: 508px; vertical-align: middle; padding: 0 10px 5px 5px;">
                     </p>
                 </div>

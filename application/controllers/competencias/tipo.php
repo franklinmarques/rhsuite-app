@@ -116,9 +116,9 @@ class Tipo extends MY_Controller
 
             //add html for action
             $row[] = '
-                      <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_competencias(' . "'" . $cargos->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_competencias(' . "'" . $cargos->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_competencias(' . "'" . $cargos->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                      <a class="btn btn-sm btn-success" href="' . site_url($url) . '" title="Comportamento/dimensão">Comportamentos/dimensão</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url($url) . '" title="Comportamento/dimensão">Comportamentos/dimensão</a>
 ';
 
             $data[] = $row;

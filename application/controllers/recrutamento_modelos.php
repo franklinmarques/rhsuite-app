@@ -104,32 +104,32 @@ class Recrutamento_modelos extends MY_Controller
 
             if ($recrutamento->tipo === 'Digitação' || $recrutamento->tipo === 'Interpretação') {
                 $row[] = '
-			<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
-			<a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-			<a class="btn btn-sm btn-success" href="' . site_url('recrutamento_modelos/instrucoes/' . $recrutamento->id) . '" title="Editar instruções" ><i class="glyphicon glyphicon-pencil"></i> Editar instruções</a>
-                        <a class="btn btn-sm btn-success" href="' . site_url('recrutamento_questoes/texto/' . $recrutamento->id) . '" title="Editar texto" ><i class="glyphicon glyphicon-list"></i> Editar texto&emsp;&emsp;</a>
-                     ';
+			              <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+			              <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
+			              <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_modelos/instrucoes/' . $recrutamento->id) . '" title="Editar instruções" ><i class="glyphicon glyphicon-pencil"></i> Editar instruções</a>
+                          <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_questoes/texto/' . $recrutamento->id) . '" title="Editar texto" ><i class="glyphicon glyphicon-list"></i> Editar texto&emsp;&emsp;</a>
+                         ';
             } elseif ($recrutamento->tipo === 'Personalidade-Eneagrama') {
                 $row[] = '
-			<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
-			<a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-			<a class="btn btn-sm btn-success" href="' . site_url('recrutamento_modelos/instrucoes/' . $recrutamento->id) . '" title="Editar instruções" ><i class="glyphicon glyphicon-pencil"></i> Editar instruções</a>
-                        <a class="btn btn-sm btn-success" href="' . site_url('recrutamento_questoes/personalidade/' . $recrutamento->id) . '" title="Editar questões" ><i class="glyphicon glyphicon-list"></i> Editar questões</a>
-                     ';
+			              <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+			              <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
+			              <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_modelos/instrucoes/' . $recrutamento->id) . '" title="Editar instruções" ><i class="glyphicon glyphicon-pencil"></i> Editar instruções</a>
+                          <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_questoes/personalidade/' . $recrutamento->id) . '" title="Editar questões" ><i class="glyphicon glyphicon-list"></i> Editar questões</a>
+                         ';
             } elseif ($recrutamento->tipo === 'Entrevista por competência') {
                 $row[] = '
-			<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
-			<a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-			<a class="btn btn-sm btn-success" href="' . site_url('recrutamento_modelos/instrucoes/' . $recrutamento->id) . '" title="Editar instruções" ><i class="glyphicon glyphicon-pencil"></i> Editar instruções</a>
-                        <a class="btn btn-sm btn-success" href="' . site_url('recrutamento_questoes/entrevistas/' . $recrutamento->id) . '" title="Editar questões" ><i class="glyphicon glyphicon-list"></i> Editar questões</a>
-                     ';
+			              <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+			              <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
+			              <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_modelos/instrucoes/' . $recrutamento->id) . '" title="Editar instruções" ><i class="glyphicon glyphicon-pencil"></i> Editar instruções</a>
+                          <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_questoes/entrevistas/' . $recrutamento->id) . '" title="Editar questões" ><i class="glyphicon glyphicon-list"></i> Editar questões</a>
+                         ';
             } else {
                 $row[] = '
-			<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
-			<a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-			<a class="btn btn-sm btn-success" href="' . site_url('recrutamento_modelos/instrucoes/' . $recrutamento->id) . '" title="Editar instruções" ><i class="glyphicon glyphicon-pencil"></i> Editar instruções</a>
-                        <a class="btn btn-sm btn-success" href="' . site_url('recrutamento_questoes/gerenciar/' . $recrutamento->id) . '" title="Editar questões" ><i class="glyphicon glyphicon-list"></i> Editar questões</a>
-                     ';
+			              <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+			              <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
+			              <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_modelos/instrucoes/' . $recrutamento->id) . '" title="Editar instruções" ><i class="glyphicon glyphicon-pencil"></i> Editar instruções</a>
+                          <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_questoes/gerenciar/' . $recrutamento->id) . '" title="Editar questões" ><i class="glyphicon glyphicon-list"></i> Editar questões</a>
+                         ';
             }
 
             $data[] = $row;

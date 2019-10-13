@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class CompetenciasSugestao extends Entity
 {
-    protected $id;
-    protected $nome;
-    protected $tipo;
+	protected $id;
+	protected $nome;
+	protected $tipo;
 
-    protected $casts = [
-        'id' => 'int',
-        'nome' => 'string',
-        'tipo' => 'int'
-    ];
+	protected $casts = [
+		'id' => 'int',
+		'nome' => 'string',
+		'tipo' => 'int'
+	];
 
 }

@@ -10,7 +10,7 @@
                         <li><a href="<?= site_url('ei/apontamento') ?>">Apontamentos diários</a></li>
                         <li class="active">Gerenciar insumos</li>
                     </ol>
-                    <button class="btn btn-success" onclick="add_insumo()"><i class="glyphicon glyphicon-plus"></i>
+                    <button class="btn btn-info" onclick="add_insumo()"><i class="glyphicon glyphicon-plus"></i>
                         Adicionar insumo
                     </button>
                     <button class="btn btn-default" onclick="javascript:history.back()"><i
@@ -73,7 +73,7 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Salvar</button>
+                            <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>

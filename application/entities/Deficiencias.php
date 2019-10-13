@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class Deficiencias extends Entity
 {
-    protected $id;
-    protected $tipo;
+	protected $id;
+	protected $tipo;
 
-    protected $casts = [
-        'id' => 'int',
-        'tipo' => 'string'
-    ];
+	protected $casts = [
+		'id' => 'int',
+		'tipo' => 'string'
+	];
 
 }

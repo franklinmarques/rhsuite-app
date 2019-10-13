@@ -144,7 +144,7 @@ class Recrutamento_processos extends MY_Controller
         foreach ($list as $recrutamento) {
             $row = array();
             $row[] = $recrutamento->cargo;
-            $row[] = '<button class="btn btn-success btn-sm" title="Adicionar teste" onclick="add_teste()"><i class="glyphicon glyphicon-plus"></i> Adicionar teste</button>';
+            $row[] = '<button class="btn btn-info btn-sm" title="Adicionar teste" onclick="add_teste()"><i class="glyphicon glyphicon-plus"></i> Adicionar teste</button>';
             $row[] = $recrutamento->nome;
             $row[] = $recrutamento->data_inicio;
             $row[] = $recrutamento->data_termino;
@@ -158,15 +158,15 @@ class Recrutamento_processos extends MY_Controller
             }
             if ($recrutamento->nome) {
                 $row[] = '
-                          <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                          <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                           <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                          <a class="btn btn-sm btn-info" href="' . site_url('recrutamento/relatorio/' . $recrutamento->id) . '" title="Relatório"><i class="glyphicon glyphicon-list-alt"></i> Relatório</a>
+                          <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento/relatorio/' . $recrutamento->id) . '" title="Relatório"><i class="glyphicon glyphicon-list-alt"></i> Relatório</a>
                          ';
             } else {
                 $row[] = '
-                          <button class="btn btn-sm btn-primary disabled"><i class="glyphicon glyphicon-pencil"></i></button>
+                          <button class="btn btn-sm btn-info disabled"><i class="glyphicon glyphicon-pencil"></i></button>
                           <button class="btn btn-sm btn-danger disabled"><i class="glyphicon glyphicon-trash"></i></button>
-                          <button class="btn btn-sm btn-info disabled"><i class="glyphicon glyphicon-list-alt"></i> Relatório</button>
+                          <button class="btn btn-sm btn-primary disabled"><i class="glyphicon glyphicon-list-alt"></i> Relatório</button>
                          ';
             }
 

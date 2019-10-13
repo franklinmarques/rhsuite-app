@@ -128,7 +128,7 @@ require_once "header.php";
                                                         respostas)
                                                     </option>
                                                     <option value="E">Avaliação de Personalidade (Eneagrama)</option>
-                                                    <option value="D">Avaliação de Personalidade (Tipologia Junguiana)
+                                                    <option value="Q">Avaliação de Personalidade (Tipologia Junguiana)
                                                     </option>
                                                     <option value="O">Avaliação de Personalidade (Orientações de Vida)
                                                     </option>

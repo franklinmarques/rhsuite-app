@@ -88,7 +88,7 @@ class Pesquisa_clima extends MY_Controller
             }
 
             $row[] = '
-                     <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Responder pesquisa de Clima Organizacional" onclick="edit_pesquisa(' . "'" . $pesquisa->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i>' . $responderPesquisa . '</a>
+                     <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Responder pesquisa de Clima Organizacional" onclick="edit_pesquisa(' . "'" . $pesquisa->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i>' . $responderPesquisa . '</a>
                      ';
 
             $data[] = $row;

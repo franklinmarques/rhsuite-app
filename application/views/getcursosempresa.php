@@ -12,7 +12,7 @@
             ?>
             <tr>
                 <td><?php echo $row->publico == 1 ? "Sim" : "Não"; ?></td>
-                <td><?php echo $row->curso; ?></td>
+                <td><?php echo $row->nome; ?></td>
                 <td>
                     <?php if ($row->publico == 1) { ?>
                         <p>-</p>

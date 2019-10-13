@@ -18,7 +18,7 @@ require_once APPPATH . 'views/header.php';
                         </button>
                     </header>
                     <div class="panel-body">
-                        <?php echo form_open_multipart('cd/escolas/importar', 'data-aviso="alert" class="form-horizontal ajax-upload"'); ?>
+                        <?php echo form_open_multipart('cd/escolas/importarCsv', 'data-aviso="alert" class="form-horizontal ajax-upload"'); ?>
                         <div class="form-group">
                             <label class="col-sm-3 col-lg-2 control-label">Arquivo (*.csv)</label>
                             <div class="col-sm-7 col-lg-7 controls">
@@ -171,16 +171,16 @@ require_once APPPATH . 'views/header.php';
 <!--main content end-->
 
 <!-- Css -->
-<link rel="stylesheet" href="<?php echo base_url('assets/js/bootstrap-fileinput/bootstrap-fileinput.css'); ?>">
+<link rel="stylesheet" href="<?php echo base_url("assets/js/bootstrap-fileinput/bootstrap-fileinput.css"); ?>">
 
 <!-- Js -->
 <script>
     $(document).ready(function () {
-        document.title = 'CORPORATE RH - LMS - Cuidadores - Importar escolas';
+        document.title = 'CORPORATE RH - LMS - Importar escolas';
     });
 </script>
 
-<script src="<?php echo base_url('assets/js/bootstrap-fileinput/bootstrap-fileinput.js'); ?>"></script>
+<script src="<?php echo base_url("assets/js/bootstrap-fileinput/bootstrap-fileinput.js"); ?>"></script>
 <?php
 require_once APPPATH . 'views/end_js.php';
 require_once APPPATH . 'views/end_html.php';

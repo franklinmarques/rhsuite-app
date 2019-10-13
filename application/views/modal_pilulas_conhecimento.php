@@ -1,5 +1,5 @@
 <?php
-require_once APPPATH . 'controllers/ead/pilulasConhecimento.php';
+require_once APPPATH . 'controllers/ead/PilulasConhecimento.php';
 
 $pilulasConhecimento = PilulasConhecimento::getPilulas($url ?? []);
 ?>

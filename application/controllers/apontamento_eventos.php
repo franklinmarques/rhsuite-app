@@ -237,7 +237,7 @@ class Apontamento_eventos extends MY_Controller
                              c.nome AS nome_bck,
                              TIME_FORMAT(a.apontamento_desc, '%H:%i') AS apontamento_desc,
                              TIME_FORMAT(a.apontamento_extra, '%H:%i') AS apontamento_extra,
-                             a.detalhes,
+                             f.nome AS detalhes,
                              a.observacoes
                       FROM alocacao_apontamento a
                       INNER JOIN alocacao_usuarios d ON 
@@ -248,6 +248,8 @@ class Apontamento_eventos extends MY_Controller
                                  b.id = d.id_usuario 
                       LEFT JOIN usuarios c ON 
                                  c.id = a.id_alocado_bck 
+                      LEFT JOIN alocacao_eventos f ON
+                                f.id = a.detalhes
                       WHERE e.id_empresa = {$this->session->userdata('empresa')}";
         if (!empty($busca['depto'])) {
             $sql .= " AND e.depto = '{$busca['depto']}'";

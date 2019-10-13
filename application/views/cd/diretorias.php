@@ -9,10 +9,10 @@ require_once APPPATH . 'views/header.php';
                 <div class="col-md-12">
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
-                        <li><a href="<?= site_url('cd/apontamento') ?>">Cuidadores - Apontamentos diários</a></li>
+                        <li><a href="<?= site_url('cd/apontamento') ?>">Apontamentos diários</a></li>
                         <li class="active">Gerenciar diretorias</li>
                     </ol>
-                    <button class="btn btn-info" onclick="add_diretoria()"><i class="glyphicon glyphicon-plus"></i>
+                    <button class="btn btn-success" onclick="add_diretoria()"><i class="glyphicon glyphicon-plus"></i>
                         Adicionar diretoria
                     </button>
                     <button class="btn btn-default" onclick="javascript:history.back()"><i
@@ -27,19 +27,19 @@ require_once APPPATH . 'views/header.php';
                                     <div class="row">
                                         <div class="col-md-3">
                                             <label class="control-label">Departamento</label>
-                                            <?php echo form_dropdown('depto', $depto, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('busca[depto]', $depto, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="control-label">Diretoria de ensino/prefeitura</label>
-                                            <?php echo form_dropdown('diretoria', $diretoria, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('busca[diretoria]', $diretoria, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="control-label">coordenador</label>
-                                            <?php echo form_dropdown('coordenador', $coordenador, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('busca[coordenador]', $coordenador, '', 'onchange="atualizarFiltro()" class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="control-label">Contrato</label>
-                                            <?php echo form_dropdown('contrato', $contrato, '', 'class="form-control input-sm filtro"'); ?>
+                                            <?php echo form_dropdown('busca[contrato]', $contrato, '', 'class="form-control input-sm filtro"'); ?>
                                         </div>
                                         <div class="col-md-1">
                                             <label>&nbsp;</label><br>
@@ -54,7 +54,7 @@ require_once APPPATH . 'views/header.php';
                             </div>
                         </div>
                     </div>
-                    <table id="table" class="table table-striped table-condensed" cellspacing="0" width="100%">
+                    <table id="table" class="table table-striped" cellspacing="0" width="100%">
                         <thead>
                         <tr>
                             <th>Diretoria de ensino/Prefeitura</th>
@@ -79,7 +79,6 @@ require_once APPPATH . 'views/header.php';
                         <div class="modal-body form">
                             <form action="#" id="form" class="form-horizontal">
                                 <input type="hidden" value="" name="id"/>
-                                <input type="hidden" value="<?= $empresa; ?>" name="id_empresa"/>
                                 <div class="form-body">
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Diretoria de Ensino</label>
@@ -126,7 +125,365 @@ require_once APPPATH . 'views/header.php';
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
+                            <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Salvar</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal_unidades" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Gerenciar unidades/setores</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <div class="row">
+                                <div class="col-md-2 text-right"><strong>Contrato:</strong></div>
+                                <div class="col-md-9">
+                                    <span id="unidade_contrato"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 text-right"><strong>Cliente:</strong></div>
+                                <div class="col-md-9">
+                                    <span id="unidade_cliente"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 text-right"><strong>Departamento:</strong></div>
+                                <div class="col-md-9">
+                                    <span id="unidade_depto"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 text-right"><strong>Área:</strong></div>
+                                <div class="col-md-9">
+                                    <span id="unidade_area"></span>
+                                </div>
+                            </div>
+                            <hr style="margin-top: 10px; margin-bottom: 0px;">
+                            <form action="#" id="form_unidades" class="form-horizontal">
+                                <input type="hidden" value="" name="id_contrato"/>
+                                <div class="form-body">
+                                    <div class="row form-group">
+                                        <?php echo form_multiselect('setor[]', array(), array(), 'size="10" id="unidades" class="demo2"') ?>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="btnSaveUnidades" onclick="save_unidade_ensino()"
+                                    class="btn btn-primary">Salvar
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal_servicos" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Gerenciar serviços</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <div class="row">
+                                <div class="col-md-3 text-right"><strong>Contrato:</strong></div>
+                                <div class="col-md-8">
+                                    <span id="servicos_contrato"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-right"><strong>Cliente:</strong></div>
+                                <div class="col-md-8">
+                                    <span id="servicos_cliente"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-right"><strong>Departamento:</strong></div>
+                                <div class="col-md-8">
+                                    <span id="servicos_depto"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-right"><strong>Área:</strong></div>
+                                <div class="col-md-8">
+                                    <span id="servicos_area"></span>
+                                </div>
+                            </div>
+                            <hr>
+                            <form action="#" id="form_servicos_compartilhados" class="form_servicos form-horizontal"
+                                  autocomplete="off">
+                                <input type="hidden" name="id_contrato" value="">
+                                <div class="row form-group">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <h5>Serviços compartilhados</h5>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h5>Valor (R$)</h5>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <input type="hidden" name="id[]" value="">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <input name="descricao[]" placeholder="Serviço 1" class="form-control input-sm"
+                                               type="text">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input name="valor[]" placeholder="Valor"
+                                               class="valor form-control input-sm text-right" type="text">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <input type="hidden" name="id[]" value="">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <input name="descricao[]" placeholder="Serviço 2" class="form-control input-sm"
+                                               type="text">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input name="valor[]" placeholder="Valor"
+                                               class="valor form-control input-sm text-right" type="text">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <input type="hidden" name="id[]" value="">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <input name="descricao[]" placeholder="Serviço 3" class="form-control input-sm"
+                                               type="text">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input name="valor[]" placeholder="Valor"
+                                               class="valor form-control input-sm text-right" type="text">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <input type="hidden" name="id[]" value="">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <input name="descricao[]" placeholder="Serviço 4" class="form-control input-sm"
+                                               type="text">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input name="valor[]" placeholder="Valor"
+                                               class="valor form-control input-sm text-right" type="text">
+                                    </div>
+                                </div>
+                            </form>
+                            <hr>
+                            <form action="#" id="form_servicos_nao_compartilhados" class="form_servicos form-horizontal"
+                                  autocomplete="off">
+                                <div class="row form-group">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <h5>Serviços não compartilhados</h5>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h5>Valor (R$)</h5>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <input type="hidden" name="id[]" value="">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <input name="descricao[]" placeholder="Serviço 1" class="form-control input-sm"
+                                               type="text">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input name="valor[]" placeholder="Valor"
+                                               class="valor form-control input-sm text-right" type="text">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <input type="hidden" name="id[]" value="">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <input name="descricao[]" placeholder="Serviço 2" class="form-control input-sm"
+                                               type="text">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input name="valor[]" placeholder="Valor"
+                                               class="valor form-control input-sm text-right" type="text">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <input type="hidden" name="id[]" value="">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <input name="descricao[]" placeholder="Serviço 3" class="form-control input-sm"
+                                               type="text">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input name="valor[]" placeholder="Valor"
+                                               class="valor form-control input-sm text-right" type="text">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <input type="hidden" name="id[]" value="">
+                                    <div class="col-md-8 col-md-offset-1">
+                                        <input name="descricao[]" placeholder="Serviço 4" class="form-control input-sm"
+                                               type="text">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input name="valor[]" placeholder="Valor"
+                                               class="valor form-control input-sm text-right" type="text">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="btnSaveServicos" onclick="save_servicos()"
+                                    class="btn btn-primary">Salvar
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal_reajuste" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">Gerenciar reajuste</h3>
+                        </div>
+                        <div class="modal-body form">
+                            <div class="row">
+                                <div class="col-md-3 text-right"><strong>Contrato:</strong></div>
+                                <div class="col-md-8">
+                                    <span id="reajuste_contrato"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-right"><strong>Cliente:</strong></div>
+                                <div class="col-md-8">
+                                    <span id="reajuste_cliente"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-right"><strong>Departamento:</strong></div>
+                                <div class="col-md-8">
+                                    <span id="reajuste_depto"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-right"><strong>Área:</strong></div>
+                                <div class="col-md-8">
+                                    <span id="reajuste_area"></span>
+                                </div>
+                            </div>
+                            <hr>
+                            <form action="#" id="form_reajuste" class="form-horizontal">
+                                <input type="hidden" id="id_cliente" name="id_cliente" value="">
+                                <div class="form-body">
+                                    <div class="row form-group">
+                                        <input type="hidden" name="id[]" value="">
+                                        <label class="control-label col-md-2"><strong>1º Índice</strong></label>
+                                        <label class="control-label col-md-1">Data</label>
+                                        <div class="col-md-4">
+                                            <input name="data_reajuste[]" placeholder="dd/mm/aaaa"
+                                                   class="data_reajuste form-control text-center" type="text">
+                                        </div>
+                                        <label class="control-label col-md-1">Valor</label>
+                                        <div class="col-md-4">
+                                            <div class="input-group">
+                                                <input name="valor_indice[]" placeholder="Valor"
+                                                       class="form-control text-right" type="number" min="0"
+                                                       max="9999999999.999" step="0.001">
+                                                <span class="input-group-addon" id="basic-addon1">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr style="margin-top: 0px; margin-bottom: 10px;">
+                                    <div class="row form-group">
+                                        <input type="hidden" name="id[]" value="">
+                                        <label class="control-label col-md-2"><strong>2º Índice</strong></label>
+                                        <label class="control-label col-md-1">Data</label>
+                                        <div class="col-md-4">
+                                            <input name="data_reajuste[]" placeholder="dd/mm/aaaa"
+                                                   class="data_reajuste form-control text-center" type="text">
+                                        </div>
+                                        <label class="control-label col-md-1">Valor</label>
+                                        <div class="col-md-4">
+                                            <div class="input-group">
+                                                <input name="valor_indice[]" placeholder="Valor"
+                                                       class="form-control text-right" type="number" min="0"
+                                                       max="9999999999.999" step="0.001">
+                                                <span class="input-group-addon" id="basic-addon1">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr style="margin-top: 0px; margin-bottom: 10px;">
+                                    <div class="row form-group">
+                                        <input type="hidden" name="id[]" value="">
+                                        <label class="control-label col-md-2"><strong>3º Índice</strong></label>
+                                        <label class="control-label col-md-1">Data</label>
+                                        <div class="col-md-4">
+                                            <input name="data_reajuste[]" placeholder="dd/mm/aaaa"
+                                                   class="data_reajuste form-control text-center" type="text">
+                                        </div>
+                                        <label class="control-label col-md-1">Valor</label>
+                                        <div class="col-md-4">
+                                            <div class="input-group">
+                                                <input name="valor_indice[]" placeholder="Valor"
+                                                       class="form-control text-right" type="number" min="0"
+                                                       max="9999999999.999" step="0.001">
+                                                <span class="input-group-addon" id="basic-addon1">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr style="margin-top: 0px; margin-bottom: 10px;">
+                                    <div class="row form-group">
+                                        <input type="hidden" name="id[]" value="">
+                                        <label class="control-label col-md-2"><strong>4º Índice</strong></label>
+                                        <label class="control-label col-md-1">Data</label>
+                                        <div class="col-md-4">
+                                            <input name="data_reajuste[]" placeholder="dd/mm/aaaa"
+                                                   class="data_reajuste form-control text-center" type="text">
+                                        </div>
+                                        <label class="control-label col-md-1">Valor</label>
+                                        <div class="col-md-4">
+                                            <div class="input-group">
+                                                <input name="valor_indice[]" placeholder="Valor"
+                                                       class="form-control text-right" type="number" min="0"
+                                                       max="9999999999.999" step="0.001">
+                                                <span class="input-group-addon" id="basic-addon1">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr style="margin-top: 0px; margin-bottom: 10px;">
+                                    <div class="row form-group">
+                                        <input type="hidden" name="id[]" value="">
+                                        <label class="control-label col-md-2"><strong>5º Índice</strong></label>
+                                        <label class="control-label col-md-1">Data</label>
+                                        <div class="col-md-4">
+                                            <input name="data_reajuste[]" placeholder="dd/mm/aaaa"
+                                                   class="data_reajuste form-control text-center" type="text">
+                                        </div>
+                                        <label class="control-label col-md-1">Valor</label>
+                                        <div class="col-md-4">
+                                            <div class="input-group">
+                                                <input name="valor_indice[]" placeholder="Valor"
+                                                       class="form-control text-right" type="number" min="0"
+                                                       max="9999999999.999" step="0.001">
+                                                <span class="input-group-addon" id="basic-addon1">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="btnSaveReajuste" onclick="save_reajuste()"
+                                    class="btn btn-primary">Salvar
+                            </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
@@ -139,22 +496,30 @@ require_once APPPATH . 'views/header.php';
 <?php require_once APPPATH . 'views/end_js.php'; ?>
 
     <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
+    <link href="<?php echo base_url('assets/bootstrap-duallistbox/bootstrap-duallistbox.css') ?>" rel="stylesheet">
 
     <script>
         $(document).ready(function () {
-            document.title = 'CORPORATE RH - LMS - Cuidadores - Gerenciar diretorias';
+            document.title = 'CORPORATE RH - LMS - Gerenciar diretorias';
         });
     </script>
 
     <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js') ?>"></script>
+    <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
 
     <script>
 
         var save_method;
         var table;
+        var demo2;
+        var avaliadores;
 
         $(document).ready(function () {
+
+            $('.data_reajuste').mask('00/00/0000');
+            $('.valor').mask('##.###.##0,00', {reverse: true});
 
             table = $('#table').DataTable({
                 'processing': true,
@@ -165,7 +530,7 @@ require_once APPPATH . 'views/header.php';
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('cd/diretorias/listar') ?>',
+                    'url': '<?php echo site_url('cd/diretorias/ajax_list') ?>',
                     'type': 'POST',
                     'data': function (d) {
                         d.busca = $('#busca').serialize();
@@ -190,23 +555,30 @@ require_once APPPATH . 'views/header.php';
                 ]
             });
 
+            demo2 = $('#unidades').bootstrapDualListbox({
+                'nonSelectedListLabel': 'Unidades disponíveis',
+                'selectedListLabel': 'Unidades selecionadas',
+                'preserveSelectionOnMove': 'moved',
+                'moveOnSelect': false,
+                'filterPlaceHolder': 'Filtrar',
+                'helperSelectNamePostfix': false,
+                'selectorMinimalHeight': 132,
+                'infoText': false
+            });
+
         });
 
         function atualizarFiltro() {
             $.ajax({
-                'url': '<?php echo site_url('cd/diretorias/atualizarFiltro') ?>',
+                'url': '<?php echo site_url('cd/diretorias/atualizar_filtro') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': $('#busca').serialize(),
                 'success': function (json) {
-                    if (json.erro) {
-                        alert(json.erro);
-                    } else {
-                        $('#busca [name="diretoria"]').html($(json.diretoria).html());
-                        $('#busca [name="coordenador"]').html($(json.coordenador).html());
-                        $('#busca [name="contrato"]').html($(json.contrato).html());
-                        reload_table();
-                    }
+                    $('[name="busca[diretoria]"]').html($(json.diretoria).html());
+                    $('[name="busca[coordenador]"]').html($(json.coordenador).html());
+                    $('[name="busca[contrato]"]').html($(json.contrato).html());
+                    reload_table();
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -218,7 +590,7 @@ require_once APPPATH . 'views/header.php';
             var busca = unescape($('#busca').serialize());
             $.each(busca.split('&'), function (index, elem) {
                 var vals = elem.split('=');
-                $("#busca [name='" + vals[0] + "']").val($("#busca [name='" + vals[0] + "'] option:first").val());
+                $("[name='" + vals[0] + "']").val($("[name='" + vals[0] + "'] option:first").val());
             });
             atualizarFiltro();
         });
@@ -229,7 +601,7 @@ require_once APPPATH . 'views/header.php';
 
         function atualizar_estrutura(id_coordenador = '') {
             $.ajax({
-                'url': '<?php echo site_url('cd/diretorias/atualizarEstrutura') ?>',
+                'url': '<?php echo site_url('cd/diretorias/ajax_estrutura') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {
@@ -237,11 +609,7 @@ require_once APPPATH . 'views/header.php';
                     'id_coordenador': id_coordenador
                 },
                 'success': function (json) {
-                    if (json.erro) {
-                        alert(json.erro);
-                    } else {
-                        $('#form [name="id_coordenador"]').html($(json.id_coordenador).html());
-                    }
+                    $('[name="id_coordenador"]').html($(json.id_coordenador).html());
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -252,7 +620,7 @@ require_once APPPATH . 'views/header.php';
         function add_diretoria() {
             save_method = 'add';
             $('#form')[0].reset();
-            $('#form [name="id"]').val('');
+            $('#form input[type="hidden"]').val('');
             $('[name="tipo"] option').prop('disabled', false);
             $('.form-group').removeClass('has-error');
             $('.help-block').empty();
@@ -263,29 +631,122 @@ require_once APPPATH . 'views/header.php';
 
         function edit_diretoria(id) {
             $('#form')[0].reset();
-            $('#form input[name="id"]').val('');
+            $('#form input[type="hidden"]').val('');
             $('.form-group').removeClass('has-error');
             $('.help-block').empty();
 
             $.ajax({
-                'url': '<?php echo site_url('cd/diretorias/editar') ?>',
+                'url': '<?php echo site_url('cd/diretorias/ajax_edit') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
                 'success': function (json) {
-                    if (json.erro) {
-                        alert(json.erro);
-                        return false;
-                    }
-
                     $.each(json, function (key, value) {
                         if (key !== 'id_coordenador') {
-                            $('#form [name="' + key + '"]').val(value);
+                            $('#modal_form [name="' + key + '"]').val(value);
                         }
                     });
                     atualizar_estrutura(json.id_coordenador);
 
                     $('#modal_form').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+        function edit_unidade_ensino(id) {
+            $('#form_unidades')[0].reset();
+            $('#form_unidades input[type="hidden"]').val('');
+            $('#form_unidades .form-group').removeClass('has-error');
+            $('#form_unidades .help-block').empty();
+
+            $.ajax({
+                'url': '<?php echo site_url('cd/diretorias/ajax_unidades') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $('#unidade_contrato').text(json.cliente.contrato);
+                    $('#unidade_cliente').text(json.cliente.nome);
+                    $('#unidade_depto').text(json.cliente.depto);
+                    $('#unidade_area').text(json.cliente.area);
+
+                    $('#form_unidades [name="id_contrato"]').val(json.id_contrato);
+                    $('#form_unidades #unidades').html(json.setores);
+                    $('#modal_unidades').modal('show');
+
+                    demo2.bootstrapDualListbox('refresh', true);
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function edit_servicos(id) {
+            $('.form_servicos')[0].reset();
+            $('.form_servicos')[1].reset();
+            $('.form_servicos input[type="hidden"]').val('');
+            $('.form_servicos .form-group').removeClass('has-error');
+            $('.form_servicos .help-block').empty();
+
+            $.ajax({
+                'url': '<?php echo site_url('cd/diretorias/ajax_servicos') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $('#servicos_contrato').text(json.contrato.contrato);
+                    $('#servicos_cliente').text(json.contrato.nome);
+                    $('#servicos_depto').text(json.contrato.depto);
+                    $('#servicos_area').text(json.contrato.area);
+
+                    $('.form_servicos [name="id_contrato"]').val(json.contrato.id);
+                    $.each(json.compartilhados, function (i, v) {
+                        $('#form_servicos_compartilhados [name="id[]"]:eq(' + i + ')').val(v.id);
+                        $('#form_servicos_compartilhados [name="descricao[]"]:eq(' + i + ')').val(v.descricao);
+                        $('#form_servicos_compartilhados [name="valor[]"]:eq(' + i + ')').val(v.valor);
+                    });
+                    $.each(json.nao_compartilhados, function (i, v) {
+                        $('#form_servicos_nao_compartilhados [name="id[]"]:eq(' + i + ')').val(v.id);
+                        $('#form_servicos_nao_compartilhados [name="descricao[]"]:eq(' + i + ')').val(v.descricao);
+                        $('#form_servicos_nao_compartilhados [name="valor[]"]:eq(' + i + ')').val(v.valor);
+                    });
+                    $('#modal_servicos').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+
+        function edit_reajuste(id) {
+            $('#form_reajuste')[0].reset();
+            $('#form_reajuste input[type="hidden"]').val('');
+
+            $.ajax({
+                'url': '<?php echo site_url('cd/diretorias/ajax_reajuste') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': {'id': id},
+                'success': function (json) {
+                    $('#reajuste_contrato').text(json.cliente.contrato);
+                    $('#reajuste_cliente').text(json.cliente.nome);
+                    $('#reajuste_depto').text(json.cliente.depto);
+                    $('#reajuste_area').text(json.cliente.area);
+
+                    $('#id_cliente').val(json.cliente.id);
+                    $.each(json.values, function (i, v) {
+                        $('#form_reajuste [name="id[]"]:eq(' + i + ')').val(v.id);
+                        $('#form_reajuste [name="data_reajuste[]"]:eq(' + i + ')').val(v.data_reajuste);
+                        $('#form_reajuste [name="valor_indice[]"]:eq(' + i + ')').val(v.valor_indice);
+                    });
+
+                    $('#modal_reajuste').modal('show');
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
                     alert('Error get data from ajax');
@@ -308,7 +769,7 @@ require_once APPPATH . 'views/header.php';
             }
 
             $.ajax({
-                'url': '<?php echo site_url('cd/diretorias/salvar') ?>',
+                'url': url,
                 'type': 'POST',
                 'data': $('#form').serialize(),
                 'dataType': 'json',
@@ -319,8 +780,6 @@ require_once APPPATH . 'views/header.php';
                     if (json.status) {
                         $('#modal_form').modal('hide');
                         atualizarFiltro();
-                    } else if (json.erro) {
-                        alert(json.erro);
                     }
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -333,19 +792,90 @@ require_once APPPATH . 'views/header.php';
         }
 
 
+        function save_unidade_ensino() {
+            demo2.bootstrapDualListbox('refresh', true);
+
+            $.ajax({
+                'url': '<?php echo site_url('cd/diretorias/save_unidades') ?>',
+                'type': 'POST',
+                'data': $('#form_unidades').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveUnidades').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
+                        $('#modal_unidades').modal('hide');
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                },
+                'complete': function () {
+                    $('#btnSaveUnidades').text('Salvar').attr('disabled', false);
+                }
+            });
+        }
+
+
+        function save_servicos() {
+            $.ajax({
+                'url': '<?php echo site_url('cd/diretorias/save_servicos') ?>',
+                'type': 'POST',
+                'data': $('.form_servicos').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveServicos').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
+                        $('#modal_servicos').modal('hide');
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                },
+                'complete': function () {
+                    $('#btnSaveServicos').text('Salvar').attr('disabled', false);
+                }
+            });
+        }
+
+
+        function save_reajuste() {
+            $.ajax({
+                'url': '<?php echo site_url('cd/diretorias/save_reajuste') ?>',
+                'type': 'POST',
+                'data': $('#form_reajuste').serialize(),
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnSaveReajuste').text('Salvando...').attr('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.status) {
+                        $('#modal_reajuste').modal('hide');
+                    }
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error adding / update data');
+                },
+                'complete': function () {
+                    $('#btnSaveReajuste').text('Salvar').attr('disabled', false);
+                }
+            });
+        }
+
+
         function delete_diretoria(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    'url': '<?php echo site_url('cd/diretorias/excluir') ?>',
+                    'url': '<?php echo site_url('cd/diretorias/ajax_delete') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {'id': id},
                     'success': function (json) {
-                        if (json.erro) {
-                            alert(json.erro);
-                        } else {
-                            atualizarFiltro();
-                        }
+                        $('#modal_form').modal('hide');
+                        atualizarFiltro();
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');

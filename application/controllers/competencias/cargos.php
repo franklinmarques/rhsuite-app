@@ -10,7 +10,6 @@ class Cargos extends MY_Controller
         parent::__construct();
     }
 
-
     public function index()
     {
         $data['id_usuario'] = $this->session->userdata('id');
@@ -21,7 +20,6 @@ class Cargos extends MY_Controller
 
         $this->load->view('competencias/cargos', $data);
     }
-
 
     public function ajax_list($id)
     {
@@ -121,11 +119,11 @@ class Cargos extends MY_Controller
             $row[] = str_replace('.', ',', round($cargos->IDcf, 3));
 
             $row[] = '
-                      <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_cargo(' . "'" . $cargos->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_cargo(' . "'" . $cargos->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_cargo(' . "'" . $cargos->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                      <a class="btn btn-sm btn-warning" href="' . site_url('competencias/tipo/tecnica/' . $cargos->id) . '" title="Competências técnicas" >CT</a>
-                      <a class="btn btn-sm btn-warning" href="' . site_url('competencias/tipo/comportamental/' . $cargos->id) . '" title="Competências comportamentais" >CC</a>
-                      <a class="btn btn-sm btn-info" href="' . site_url('competencias/cargos/mapeamento/' . $cargos->id) . '" title="Visualizar mapeamento de competências"><i class="glyphicon glyphicon-list-alt"></i> Visualizar</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('competencias/tipo/tecnica/' . $cargos->id) . '" title="Competências técnicas" >CT</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('competencias/tipo/comportamental/' . $cargos->id) . '" title="Competências comportamentais" >CC</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('competencias/cargos/mapeamento/' . $cargos->id) . '" title="Visualizar mapeamento de competências"><i class="glyphicon glyphicon-list-alt"></i> Visualizar</a>
                       ';
 
             $data[] = $row;
@@ -140,7 +138,6 @@ class Cargos extends MY_Controller
         echo json_encode($output);
     }
 
-
     public function ajax_funcoes()
     {
         $cargo = $this->input->post('cargo');
@@ -151,14 +148,12 @@ class Cargos extends MY_Controller
         echo json_encode(array('funcao' => $funcao));
     }
 
-
     public function ajax_edit()
     {
         $id = $this->input->post('id');
         $data = $this->db->get_where('cargos', array('id' => $id))->row();
         echo json_encode($data);
     }
-
 
     public function ajax_add()
     {
@@ -171,7 +166,6 @@ class Cargos extends MY_Controller
         echo json_encode(array("status" => TRUE));
     }
 
-
     public function ajax_update()
     {
         $data = $this->input->post();
@@ -183,7 +177,6 @@ class Cargos extends MY_Controller
         echo json_encode(array("status" => TRUE));
     }
 
-
     public function ajax_delete()
     {
         $id = $this->input->post('id');
@@ -191,7 +184,6 @@ class Cargos extends MY_Controller
 
         echo json_encode(array("status" => TRUE));
     }
-
 
     public function mapeamento($id, $pdf = false)
     {
@@ -274,7 +266,6 @@ class Cargos extends MY_Controller
             $this->load->view('competencias/mapeamento', $data);
         }
     }
-
 
     public function pdfMapeamento($id)
     {

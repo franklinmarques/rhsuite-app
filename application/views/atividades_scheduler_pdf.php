@@ -55,31 +55,6 @@
         </tr>
         </tbody>
     </table>
-
-    <div class="row form-group">
-        <label class="control-label col-md-3 text-primary">Atividades recorrentes
-            semanais</label>
-        <div class="col-md-9">
-            <div class="btn-group btn-group-sm" data-toggle="buttons">
-                <label class="btn btn-default">
-                    <input type="checkbox" name="semana[]" value="1"> 1&ordf; Sem.
-                </label>
-                <label class="btn btn-default">
-                    <input type="checkbox" name="semana[]" value="2"> 2&ordf; Sem.
-                </label>
-                <label class="btn btn-default">
-                    <input type="checkbox" name="semana[]" value="3"> 3&ordf; Sem.
-                </label>
-                <label class="btn btn-default">
-                    <input type="checkbox" name="semana[]" value="4"> 4&ordf; Sem.
-                </label>
-                <label class="btn btn-default">
-                    <input type="checkbox" name="semana[]" value="5"> 5&ordf; Sem.
-                </label>
-            </div>
-        </div>
-    </div>
-
     <table id="table" class="table table-bordered table-condensed">
         <thead>
         <tr class='active'>

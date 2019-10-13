@@ -261,14 +261,14 @@ class Funcionarios extends MY_Controller
                 $row[] = '
                           <a class="btn btn-primary btn-sm" target="_blank" href="' . site_url('ead/cursos_funcionario/editar/' . $funcionario->id) . '" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </a>
                           <button class="btn btn-danger btn-sm" onclick="ajax_delete(' . $funcionario->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-                          <a class="btn btn-info btn-sm" target="_blank" href="' . site_url('ead/treinamento/status/' . $funcionario->id) . '" title="Andamento"><i class="glyphicon glyphicon-align-center"></i> </a>
-                          <button class="btn btn-default text-warning btn-sm" title="Certificado"><i class="glyphicon glyphicon-certificate"></i> </button>
+                          <a class="btn btn-primary btn-sm" target="_blank" href="' . site_url('ead/treinamento/status/' . $funcionario->id) . '" title="Andamento"><i class="glyphicon glyphicon-align-center"></i> </a>
+                          <button class="btn btn-warning btn-sm disabled" title="Certificado"><i class="glyphicon glyphicon-certificate"></i> </button>
                          ';
             } else {
                 $row[] = '
                           <a class="btn btn-primary btn-sm" target="_blank" href="' . site_url('ead/cursos_funcionario/editar/' . $funcionario->id) . '" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </a>
                           <button class="btn btn-danger btn-sm" onclick="ajax_delete(' . $funcionario->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-                          <a class="btn btn-info btn-sm" target="_blank" href="' . site_url('ead/treinamento/status/' . $funcionario->id) . '" title="Andamento"><i class="glyphicon glyphicon-align-center"></i> </a>
+                          <a class="btn btn-primary btn-sm" target="_blank" href="' . site_url('ead/treinamento/status/' . $funcionario->id) . '" title="Andamento"><i class="glyphicon glyphicon-align-center"></i> </a>
                           <a class="btn btn-warning btn-sm" target="_blank" href="' . site_url('ead/treinamento/certificado/' . $funcionario->id) . '" title="Certificado"><i class="glyphicon glyphicon-certificate"></i> </a>
                          ';
             }

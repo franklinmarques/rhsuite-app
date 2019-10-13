@@ -1,31 +1,29 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class FacilitiesFornecedoresPrestadores extends Entity
 {
-    protected $id;
-    protected $id_empresa;
-    protected $nome;
-    protected $tipo;
-    protected $vinculo;
-    protected $pessoa_contato;
-    protected $telefone;
-    protected $email;
-    protected $status;
+	protected $id;
+	protected $id_empresa;
+	protected $nome;
+	protected $tipo;
+	protected $vinculo;
+	protected $pessoa_contato;
+	protected $telefone;
+	protected $email;
+	protected $status;
 
-    protected $casts = [
-        'id' => 'int',
-        'id_empresa' => 'int',
-        'nome' => 'string',
-        'tipo' => 'int',
-        'vinculo' => '?string',
-        'pessoa_contato' => '?string',
-        'telefone' => '?string',
-        'email' => '?string',
-        'status' => 'int'
-    ];
+	protected $casts = [
+		'id' => 'int',
+		'id_empresa' => 'int',
+		'nome' => 'string',
+		'tipo' => 'int',
+		'vinculo' => '?string',
+		'pessoa_contato' => '?string',
+		'telefone' => '?string',
+		'email' => '?string',
+		'status' => 'int'
+	];
 
 }

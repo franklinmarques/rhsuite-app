@@ -63,12 +63,12 @@ require_once APPPATH . "views/header.php";
                                 <?php echo form_dropdown('deficiencia', $deficiencia, '', 'id="deficiencia" class="form-control filtro input-sm"'); ?>
                             </div>
                             <div class="col-md-2">
-                                <label class="control-label">Filtrar por status</label>
-                                <?php echo form_dropdown('status', $status, '', 'id="status" class="form-control filtro input-sm"'); ?>
-                            </div>
-                            <div class="col-md-3">
                                 <label class="control-label">Filtrar por contrato</label>
                                 <?php echo form_dropdown('contrato', $contrato, '', 'id="contrato" class="form-control filtro input-sm"'); ?>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label">Filtrar por paciente</label>
+                                <?php echo form_dropdown('paciente', $paciente, '', 'id="paciente" class="form-control filtro input-sm"'); ?>
                             </div>
                         </div>
                         <div class="row">
@@ -214,7 +214,7 @@ require_once APPPATH . "views/end_js.php";
                         // d.bairro = $('#bairro').val();
                         d.profissional = $('#profissional').val();
                         d.deficiencia = $('#deficiencia').val();
-                        d.status = $('#status').val();
+                        d.paciente = $('#paciente').val();
                         d.contrato = $('#contrato').val();
 
                         return d;

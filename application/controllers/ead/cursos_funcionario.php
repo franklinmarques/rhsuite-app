@@ -242,17 +242,17 @@ class Cursos_funcionario extends MY_Controller
 
             if ($treinamento->avaliacao_final < $treinamento->nota_aprovacao or empty($treinamento->id_curso)) {
                 $row[] = '
-                      <button type="button" class="btn btn-sm btn-primary" onclick="edit_treinamento(' . $treinamento->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_treinamento(' . $treinamento->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
                       <button type="button" class="btn btn-sm btn-danger" onclick="delete_treinamento(' . $treinamento->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-                      <a class="btn btn-sm btn-info" href="' . site_url('ead/treinamento/status/' . $treinamento->id) . '" title="Excluir"><i class="glyphicon glyphicon-align-center"></i> Andamento</a>
-                      <button class="btn btn-sm disabled"><i class="fa fa-lock text-danger"></i><span class="hidden-xs hidden-sm"> Certificado</span></button>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('ead/treinamento/status/' . $treinamento->id) . '" title="Excluir"><i class="glyphicon glyphicon-align-center"></i> Andamento</a>
+                      <button class="btn btn-sm btn-primary disabled"><i class="fa fa-lock"></i><span class="hidden-xs hidden-sm"> Certificado</span></button>
                      ';
             } else {
                 $row[] = '
-                      <button type="button" class="btn btn-sm btn-primary" onclick="edit_treinamento(' . $treinamento->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_treinamento(' . $treinamento->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
                       <button type="button" class="btn btn-sm btn-danger" onclick="delete_treinamento(' . $treinamento->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
-                      <a class="btn btn-sm btn-info" href="' . site_url('ead/treinamento/status/' . $treinamento->id) . '" title="Excluir"><i class="glyphicon glyphicon-align-center"></i> Andamento</a>
-                      <a class="btn btn-success btn-sm"  href="' . site_url('ead/treinamento/certificado/' . $treinamento->id) . '"target="_blank"><i class="fa fa-print"></i><span class="hidden-xs hidden-sm"> Certificado</span></a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('ead/treinamento/status/' . $treinamento->id) . '" title="Excluir"><i class="glyphicon glyphicon-align-center"></i> Andamento</a>
+                      <a class="btn btn-sm btn-primary"  href="' . site_url('ead/treinamento/certificado/' . $treinamento->id) . '"target="_blank"><i class="fa fa-print"></i><span class="hidden-xs hidden-sm"> Certificado</span></a>
                      ';
             }
 
@@ -463,7 +463,7 @@ class Cursos_funcionario extends MY_Controller
 
         $this->load->helper(array('date'));
 
-        $email['titulo'] = 'E-mail de convocação para Treinamento';
+        $email['titulo'] = 'E-mail de convocação para Treinamentoo';
         $email['remetente'] = $this->session->userdata('id');
         $email['datacadastro'] = mdate("%Y-%m-%d %H:%i:%s");
 

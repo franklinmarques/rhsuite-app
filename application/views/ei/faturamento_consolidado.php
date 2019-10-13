@@ -110,13 +110,23 @@
         <table id="faturamento_consolidado" class="table table-condensed table-bordered">
             <thead>
             <tr class="active">
-                <th width="25%" class="text-nowrap">Unidade Ensino</th>
-                <th width="25%">Município</th>
-                <th width="25%">Profissionais</th>
-                <th width="25%">Função</th>
-                <th class="text-nowrap">Aprovação faturamento</th>
-                <th class="text-center text-nowrap">Qtde. dias</th>
-                <th class="text-center text-nowrap">Qtde. horas<br>(<?= $total_horas; ?>)</th>
+                <?php if ($is_pdf == false): ?>
+                    <th width="25%" class="text-nowrap">Unidade Ensino</th>
+                    <th width="25%">Município</th>
+                    <th width="25%">Profissionais</th>
+                    <th width="25%">Função</th>
+                    <th class="text-nowrap">Aprovação faturamento</th>
+                    <th class="text-center text-nowrap">Qtde. dias</th>
+                    <th class="text-center text-nowrap">Qtde. horas<br>(<?= $total_horas; ?>)</th>
+                <?php else: ?>
+                    <th>Unidade Ensino</th>
+                    <th>Município</th>
+                    <th>Profissionais</th>
+                    <th>Função</th>
+                    <th>Aprovação faturamento</th>
+                    <th class="text-center">Qtde. dias</th>
+                    <th class="text-center">Qtde. horas<br>(<?= $total_horas; ?>)</th>
+                <?php endif; ?>
             </tr>
             </thead>
             <tbody>

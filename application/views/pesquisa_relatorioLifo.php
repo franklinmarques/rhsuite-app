@@ -110,7 +110,7 @@ require_once "header.php";
                             <h5><strong>Data término teste: </strong><?= $teste->data_termino ?></h5>
                         </td>
                         <td class="text-right">
-                            <a id="pdf" class="btn btn-sm btn-danger"
+                            <a id="pdf" class="btn btn-sm btn-info"
                                href="<?= site_url('pesquisa_lifo/pdf/' . $this->uri->rsegment(3)); ?>"
                                title="Exportar PDF"><i class="glyphicon glyphicon-download-alt"></i> Exportar PDF</a>
                             <button class="btn btn-sm btn-default" onclick="javascript:history.back()"><i
@@ -125,7 +125,32 @@ require_once "header.php";
                     </tbody>
                 </table>
 
-                <h3>Traços de Personalidade Mapeados no Avaliado</h3>
+                <?php echo form_open('pesquisa_lifo/savePerfilComportamento/' . $teste->id, 'id="form" data-aviso="alert" class="form-horizontal ajax-upload" autocomplete="off"'); ?>
+                <input type="hidden" id="estilo_personalidade_majoritario"
+                       value="<?= $laudoPerfil->estilo_personalidade_majoritario; ?>">
+                <input type="hidden" id="estilo_personalidade_secundario"
+                       value="<?= $laudoPerfil->estilo_personalidade_secundario; ?>">
+                <div id="alert"></div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <h3>Traços de Personalidade Mapeados no Avaliado</h3>
+                    </div>
+                    <div class="col-md-5 text-right">
+                        <button type="button" class="btn btn-success avaliador" onclick="recuperar_laudo();">Recuperar
+                            laudo padrão
+                        </button>
+                        <button type="button" class="btn btn-info avaliador" onclick="personalizar_laudo();">
+                            Personalizar laudo
+                        </button>
+                        <button type="submit" id="btnSave" class="btn btn-success editar" style="display: none;">
+                            Salvar
+                        </button>
+                        <button type="button" class="btn btn-default editar" style="display: none;"
+                                onclick="cancelar_edicao()">Cancelar
+                        </button>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-md-12">
                         <table id="table_laudo" class="table table-striped table-bordered" cellspacing="0"
@@ -145,12 +170,18 @@ require_once "header.php";
                                 </th>
                             </tr>
                             <tr>
-                                <?php if (strlen($laudoPerfil->estilo_personalidade_majoritario) > 0): ?>
-                                    <td colspan="2"><?= nl2br($laudoPerfil->estilo_personalidade_majoritario); ?></td>
-                                <?php else: ?>
-                                    <td colspan="2"><span class="text-muted">Nenhum comportamento apresentado</span>
-                                    </td>
-                                <?php endif; ?>
+                                <td colspan="2">
+                                    <p class="avaliador">
+                                        <?php if (strlen($laudoPerfil->estilo_personalidade_majoritario) > 0): ?>
+                                            <?= nl2br($laudoPerfil->estilo_personalidade_majoritario); ?>
+                                        <?php else: ?>
+                                            <span class="text-muted">Nenhum comportamento apresentado</span>
+                                        <?php endif; ?>
+                                    </p>
+                                    <textarea name="estilo_personalidade_majoritario" class="form-control editar"
+                                              style="display: none;"
+                                              rows="5"><?= $laudoPerfil->estilo_personalidade_majoritario; ?></textarea>
+                                </td>
                             </tr>
                             <tr class="active">
                                 <th colspan="2" tyle="vertical-align: middle;">Perfil - comportamentos secundário -
@@ -158,18 +189,25 @@ require_once "header.php";
                                 </th>
                             </tr>
                             <tr>
-                                <?php if (strlen($laudoPerfil->estilo_personalidade_secundario) > 0): ?>
-                                    <td colspan="2"><?= nl2br($laudoPerfil->estilo_personalidade_secundario); ?></td>
-                                <?php else: ?>
-                                    <td colspan="2"><span class="text-muted">Nenhum comportamento apresentado</span>
-                                    </td>
-                                <?php endif; ?>
+                                <td colspan="2">
+                                    <p class="avaliador">
+                                        <?php if (strlen($laudoPerfil->estilo_personalidade_secundario) > 0): ?>
+                                            <?= nl2br($laudoPerfil->estilo_personalidade_secundario); ?>
+                                        <?php else: ?>
+                                            <span class="text-muted">Nenhum comportamento apresentado</span>
+                                        <?php endif; ?>
+                                    </p>
+                                    <textarea name="estilo_personalidade_secundario" class="form-control editar"
+                                              style="display: none;"
+                                              rows="5"><?= $laudoPerfil->estilo_personalidade_secundario; ?></textarea>
+                                </td>
                             </tr>
                             <tr class="active">
-                                <th style="vertical-align: middle;">Posicionamentos possíveis em situações normais
+                                <th style="vertical-align: middle;">Posicionamentos possíveis percebidos/observávies em
+                                    situações normais
                                 </th>
-                                <th style="vertical-align: middle;">Posicionamentos possíveis em situações de
-                                    pressão/estresse
+                                <th style="vertical-align: middle;">Posicionamentos possíveis percebidos/observávies em
+                                    situações de pressão/estresse
                                 </th>
                             </tr>
                             <tr>
@@ -188,13 +226,43 @@ require_once "header.php";
                         </table>
                     </div>
                 </div>
+                <?php echo form_close(); ?>
 
             </div>
         </section>
     </section>
     <!--main content end-->
 
-<?php
-require_once "end_js.php";
-require_once "end_html.php";
-?>
+<?php require_once "end_js.php"; ?>
+
+    <script>
+        $(document).ready(function () {
+            document.title = 'CORPORATE RH - LMS - Laudo de Avaliação';
+        });
+    </script>
+
+    <script>
+
+        function recuperar_laudo() {
+            if (confirm('Deseja recuperar as configurações padrão do laudo?')) {
+                $('#form textarea[name="estilo_personalidade_majoritario"]').val('');
+                $('#form textarea[name="estilo_personalidade_secundario"]').val('');
+                $('#form').submit();
+            }
+        }
+
+        function personalizar_laudo() {
+            $('#form textarea[name="estilo_personalidade_majoritario"]').val($('#estilo_personalidade_majoritario').val());
+            $('#form textarea[name="estilo_personalidade_secundario"]').val($('#estilo_personalidade_secundario').val());
+            $('.avaliador').hide();
+            $('.editar').show();
+        }
+
+        function cancelar_edicao() {
+            $('.editar').hide();
+            $('.avaliador').show();
+        }
+    </script>
+
+
+<?php require_once "end_html.php"; ?>

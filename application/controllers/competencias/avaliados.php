@@ -209,7 +209,7 @@ class Avaliados extends MY_Controller {
             $row[] = $avaliacao->nome;
             $row[] = $avaliacao->cargo_funcao;
             $row[] = '
-                      <a class="btn btn-sm btn-success" href="' . site_url('competencias/avaliados/gerenciar_avaliadores/' . $avaliacao->id) . '" title="Editar Avaliadores" ><i class="glyphicon glyphicon-plus"></i>Gerenciar Avaliadores</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('competencias/avaliados/gerenciar_avaliadores/' . $avaliacao->id) . '" title="Gerenciar Avaliadores" ><i class="glyphicon glyphicon-plus"></i> Gerenciar Avaliadores</a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir Avaliado" onclick="delete_avaliado(' . $avaliacao->id . ')"><i class="glyphicon glyphicon-trash"></i></a>
                      ';
 

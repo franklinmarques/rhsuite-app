@@ -142,12 +142,12 @@ class Pesquisa_eneagrama extends MY_Controller
             switch ($pesquisa->data_valida) {
                 case 'ok':
                     $row[] = '
-                              <a class="btn btn-sm btn-success btn-block" href="pesquisa_eneagrama/teste/' . $pesquisa->id . '" target="_blank" title="Iniciar teste">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Iniciar</a>
+                              <a class="btn btn-sm btn-primary btn-block" href="pesquisa_eneagrama/teste/' . $pesquisa->id . '" target="_blank" title="Iniciar teste">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Iniciar</a>
                              ';
                     break;
                 case 'executando':
                     $row[] = '
-                              <a class="btn btn-sm btn-success btn-block" href="pesquisa_eneagrama/teste/' . $pesquisa->id . '" target="_blank" title="Iniciar teste">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Finalizado</a>
+                              <a class="btn btn-sm btn-primary btn-block" href="pesquisa_eneagrama/teste/' . $pesquisa->id . '" target="_blank" title="Iniciar teste">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Em anddamento</a>
                              ';
                     break;
                 case 'espera':
@@ -172,7 +172,7 @@ class Pesquisa_eneagrama extends MY_Controller
                     break;
                 default:
                     $row[] = '
-                              <a class="btn btn-sm btn-success btn-block disabled">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Iniciar</a>
+                              <a class="btn btn-sm btn-primary btn-block disabled">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Iniciar</a>
                              ';
             }
 

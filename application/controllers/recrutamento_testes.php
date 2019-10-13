@@ -426,22 +426,22 @@ class Recrutamento_testes extends MY_Controller
                 case 'ok':
                     if ($recrutamento->tipo === '2') {
                         $row[] = '
-                                  <a class="btn btn-sm btn-success btn-block" href="javascript:void(0)" title="Iniciar teste" onclick="verificar_teste2(' . "'" . $recrutamento->id . "'" . ')">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Realizar teste</a>
+                                  <a class="btn btn-sm btn-primary btn-block" href="javascript:void(0)" title="Realizar teste" onclick="verificar_teste2(' . "'" . $recrutamento->id . "'" . ')">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Realizar teste</a>
                                  ';
                     } else {
                         $row[] = '
-                                  <a class="btn btn-sm btn-success btn-block" href="javascript:void(0)" title="Iniciar teste" onclick="verificar_teste(' . "'" . $recrutamento->id . "'" . ')">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Realizar teste</a>
+                                  <a class="btn btn-sm btn-primary btn-block" href="javascript:void(0)" title="Realizar teste" onclick="verificar_teste(' . "'" . $recrutamento->id . "'" . ')">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Realizar teste</a>
                                  ';
                     }
                     break;
                 case 'executando':
                     if ($recrutamento->tipo === '2') {
                         $row[] = '
-                                  <a class="btn btn-sm btn-success btn-block" href="javascript:void(0)" title="Iniciar teste" onclick="verificar_teste2(' . "'" . $recrutamento->id . "'" . ')">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Finalizado</a>
+                                  <a class="btn btn-sm btn-primary btn-block" href="javascript:void(0)" title="Teste iniciado" onclick="verificar_teste2(' . "'" . $recrutamento->id . "'" . ')">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Teste iniciado</a>
                                  ';
                     } else {
                         $row[] = '
-                                  <a class="btn btn-sm btn-success btn-block" href="javascript:void(0)" title="Iniciar teste" onclick="verificar_teste(' . "'" . $recrutamento->id . "'" . ')">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Finalizado</a>
+                                  <a class="btn btn-sm btn-primary btn-block" href="javascript:void(0)" title="Teste iniciado" onclick="verificar_teste(' . "'" . $recrutamento->id . "'" . ')">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Teste iniciado</a>
                                  ';
                     }
                     break;
@@ -467,7 +467,7 @@ class Recrutamento_testes extends MY_Controller
                     break;
                 default:
                     $row[] = '
-                              <a class="btn btn-sm btn-success btn-block disabled">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Iniciar</a>
+                              <a class="btn btn-sm btn-primary btn-block disabled">&nbsp;<i class="glyphicon glyphicon-pencil"></i> Realizar teste</a>
                              ';
             }
 

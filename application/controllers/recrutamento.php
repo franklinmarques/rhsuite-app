@@ -10,7 +10,7 @@ class Recrutamento extends MY_Controller
         parent::__construct();
 
         if ($this->uri->rsegment(2) === 'testes') {
-            $this->tipo_usuario = array('candidato');
+            $this->tipo_usuario = array('candidato', 'candidato_externo');
         } else {
             $this->tipo_usuario = array('empresa', 'selecionador');
         }

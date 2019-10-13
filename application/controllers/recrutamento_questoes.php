@@ -227,7 +227,7 @@ class Recrutamento_questoes extends MY_Controller
             $row[] = $recrutamento->peso;
 
             $row[] = '
-                      <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_pergunta(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_pergunta(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_pergunta(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
                      ';
 
@@ -296,7 +296,7 @@ class Recrutamento_questoes extends MY_Controller
             $row[] = $recrutamento->pergunta;
 
             $row[] = '
-                      <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_pergunta(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_pergunta(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_pergunta(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
                      ';
 
@@ -369,7 +369,7 @@ class Recrutamento_questoes extends MY_Controller
             $row[] = $recrutamento->competencia;
 
             $row[] = '
-                      <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_pergunta(' . "'" . $recrutamento->id_modelo . "'" . ', ' . "'" . $recrutamento->competencia . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_pergunta(' . "'" . $recrutamento->id_modelo . "'" . ', ' . "'" . $recrutamento->competencia . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_pergunta(' . "'" . $recrutamento->id_modelo . "'" . ', ' . "'" . $recrutamento->competencia . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
                      ';
 

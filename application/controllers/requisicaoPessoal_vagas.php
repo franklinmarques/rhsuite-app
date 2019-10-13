@@ -10,8 +10,6 @@ class RequisicaoPessoal_vagas extends MY_Controller
         $this->load->view('requisicaoPessoal_vagas');
     }
 
-    // -------------------------------------------------------------------------
-
     public function ajaxList()
     {
         parse_str($this->input->post('busca'), $busca);

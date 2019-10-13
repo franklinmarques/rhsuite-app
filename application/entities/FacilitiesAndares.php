@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class FacilitiesAndares extends Entity
 {
-    protected $id;
-    protected $id_unidade;
-    protected $andar;
+	protected $id;
+	protected $id_unidade;
+	protected $andar;
 
-    protected $casts = [
-        'id' => 'int',
-        'id_unidade' => 'int',
-        'andar' => 'string'
-    ];
+	protected $casts = [
+		'id' => 'int',
+		'id_unidade' => 'int',
+		'andar' => 'string'
+	];
 
 }

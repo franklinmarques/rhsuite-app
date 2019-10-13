@@ -78,9 +78,9 @@ class Relatorios extends MY_Controller
             $row[] = $avaliacao->nome;
             $row[] = $avaliacao->cargo_funcao;
             $row[] = '
-                     <a class="btn btn-sm btn-info" href="' . site_url('competencias/relatorios/analise_gap/' . $avaliacao->id) . '" title="Analise de GAPs"><i class="glyphicon glyphicon-list-alt"> </i> Analise de GAPs</a>
-                     <a class="btn btn-sm btn-success" href="' . site_url('competencias/relatorios/avaliado_avaliadores/' . $avaliacao->id) . '" title="Avaliado x Avaliadores"><i class="glyphicon glyphicon-list-alt"> </i> Avaliado x Avaliadores</a>
-                     <a class="btn btn-sm btn-warning" href="' . site_url('pdi/gerenciar/' . $avaliacao->id_usuario) . '" title="PDIs - Planos de Desenvolvimento Individuais" target="_blank">PDIs</a>
+                     <a class="btn btn-sm btn-primary" href="' . site_url('competencias/relatorios/analise_gap/' . $avaliacao->id) . '" title="Analise de GAPs"><i class="glyphicon glyphicon-list-alt"> </i> Analise de GAPs</a>
+                     <a class="btn btn-sm btn-primary" href="' . site_url('competencias/relatorios/avaliado_avaliadores/' . $avaliacao->id) . '" title="Avaliado x Avaliadores"><i class="glyphicon glyphicon-list-alt"> </i> Avaliado x Avaliadores</a>
+                     <a class="btn btn-sm btn-primary" href="' . site_url('pdi/gerenciar/' . $avaliacao->id_usuario) . '" title="PDIs - Planos de Desenvolvimento Individuais" target="_blank">PDIs</a>
                      ';
 
             $data[] = $row;

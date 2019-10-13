@@ -13,7 +13,7 @@ class PilulasConhecimento extends MY_Controller
         $this->db->where('id_empresa', $empresa);
         $this->db->order_by('nome', 'asc');
         $cursos = $this->db->get('cursos')->result();
-
+        
         $deptos = $this->db->order_by('nome', 'asc')->get('empresa_departamentos')->result();
 
         $this->db->where('empresa', $empresa);
@@ -31,17 +31,6 @@ class PilulasConhecimento extends MY_Controller
         );
 
         $this->load->view('ead/pilulas_conhecimento', $data);
-    }
-
-
-    public static function getPilula($url = null)
-    {
-        $ci = &get_instance();
-
-        $ci->db->where('url_pagina', $url);
-        $data = $ci->db->get('cursos_pilulas')->row();
-
-        return $data;
     }
 
 

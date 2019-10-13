@@ -206,8 +206,8 @@ class Avaliador extends MY_Controller
             $row[] = $avaliacao->nome;
             $row[] = $avaliacao->cargo_funcao;
             $row[] = '
-                      <a class="btn btn-sm btn-warning" href="' . site_url('competencias/avaliador/tipo/' . $avaliacao->id . "/1") . '" title="Competências técnicas" ><i class="glyphicon glyphicon-check"></i> ' . $compTecnicas . '</a>
-                      <a class="btn btn-sm btn-warning" href="' . site_url('competencias/avaliador/tipo/' . $avaliacao->id . "/2") . '" title="Competências comportamentais" ><i class="glyphicon glyphicon-check"></i> ' . $compComportamentais . '</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('competencias/avaliador/tipo/' . $avaliacao->id . "/1") . '" title="Competências técnicas" ><i class="glyphicon glyphicon-check"></i> ' . $compTecnicas . '</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('competencias/avaliador/tipo/' . $avaliacao->id . "/2") . '" title="Competências comportamentais" ><i class="glyphicon glyphicon-check"></i> ' . $compComportamentais . '</a>
                       ';
 
             $data[] = $row;
@@ -291,7 +291,7 @@ class Avaliador extends MY_Controller
             $row[] = $avaliadorCompetencia->nome;
             $row[] = $avaliadorCompetencia->status;
             $row[] = '
-                     <a class="btn btn-sm btn-warning" href="' . site_url('competencias/avaliador/dimensao/' . $id_avaliado . "/" . $avaliadorCompetencia->id) . '" title="Avaliar Dimensao" ><i class="glyphicon glyphicon-check"></i>' . $avaliarDimensão . '</a>
+                     <a class="btn btn-sm btn-primary" href="' . site_url('competencias/avaliador/dimensao/' . $id_avaliado . '/' . $avaliadorCompetencia->id) . '" title="Avaliar Dimensao"><i class="glyphicon glyphicon-check"></i> ' . $avaliarDimensão . '</a>
                      ';
 
             $data[] = $row;

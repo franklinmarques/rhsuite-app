@@ -8,11 +8,9 @@ class Diretorias extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-        if (!in_array($this->session->userdata('nivel'), [0, 7, 8, 9])) {
+        if (!in_array($this->session->userdata('nivel'), array(0, 7, 8, 9))) {
             redirect(site_url('home'));
         }
-
-        $this->load->model('cd_diretorias_model', 'diretorias');
     }
 
     //==========================================================================
@@ -32,7 +30,6 @@ class Diretorias extends MY_Controller
             $data['deptos_disponiveis'][$depto_disponivel->nome] = $depto_disponivel->nome;
         }
 
-        $data['empresa'] = $empresa;
         $data['cuidadores'] = '';
         $data['coordenadores'] = array('' => 'selecione...');
 
@@ -96,7 +93,7 @@ class Diretorias extends MY_Controller
     }
 
     //==========================================================================
-    public function atualizarFiltro()
+    public function atualizar_filtro()
     {
         $empresa = $this->session->userdata('empresa');
         $busca = $this->input->post('busca');
@@ -158,62 +155,99 @@ class Diretorias extends MY_Controller
     }
 
     //==========================================================================
-    public function listar()
+    public function ajax_list()
     {
-        parse_str($this->input->post('busca'), $busca);
+        $post = $this->input->post();
+        parse_str($this->input->post('busca'), $arrBusca);
+        $busca = $arrBusca['busca'] ?? array();
 
-        $this->db
-            ->select('nome, contrato, id')
-            ->where('id_empresa', $this->session->userdata('empresa'));
+        $sql = "SELECT s.id,
+                       s.nome,
+                       s.contrato
+                FROM (SELECT a.id,
+                             a.nome,
+                             a.contrato
+                      FROM cd_diretorias a
+                      INNER JOIN usuarios b ON 
+                                 b.id = a.id_empresa 
+                      LEFT JOIN usuarios c ON
+                                c.id = a.id_coordenador
+                      WHERE a.id_empresa = {$this->session->userdata('empresa')}";
         if (!empty($busca['depto'])) {
-            $this->db->where('depto', $busca['depto']);
+            $sql .= " AND a.depto = '{$busca['depto']}'";
         }
         if (!empty($busca['diretoria'])) {
-            $this->db->where('nome', $busca['diretoria']);
+            $sql .= " AND a.nome = '{$busca['diretoria']}'";
         }
         if (!empty($busca['coordenador'])) {
-            $this->db->where('id_coordenador', $busca['coordenador']);
+            $sql .= " AND a.id_coordenador = '{$busca['coordenador']}'";
         }
         if (!empty($busca['contrato'])) {
-            $this->db->where('contrato', $busca['contrato']);
+            $sql .= " AND a.contrato = '{$busca['contrato']}'";
         }
-        $query = $this->db->get('cd_diretorias');
+        $sql .= ' GROUP BY a.id) s';
+        $recordsTotal = $this->db->query($sql)->num_rows();
 
-        $this->load->library('dataTables', ['search' => ['nome', 'contrato']]);
+        $columns = array('s.id', 's.nome', 's.contrato');
+        if ($post['search']['value']) {
+            foreach ($columns as $key => $column) {
+                if ($key > 1) {
+                    $sql .= " OR
+                         {$column} LIKE '%{$post['search']['value']}%'";
+                } elseif ($key == 1) {
+                    $sql .= " 
+                        WHERE {$column} LIKE '%{$post['search']['value']}%'";
+                }
+            }
+        }
+        $recordsFiltered = $this->db->query($sql)->num_rows();
 
-        $output = $this->datatables->generate($query);
+        if (isset($post['order'])) {
+            $orderBy = array();
+            foreach ($post['order'] as $order) {
+                $orderBy[] = ($order['column'] + 1) . ' ' . $order['dir'];
+            }
+            $sql .= ' 
+                    ORDER BY ' . implode(', ', $orderBy);
+        }
+        $sql .= " 
+                LIMIT {$post['start']}, {$post['length']}";
+        $list = $this->db->query($sql)->result();
 
-        $data = [];
-
-        foreach ($output->data as $row) {
-            $data[] = [
-                $row->nome,
-                $row->contrato,
-                '<button type="button" class="btn btn-sm btn-info" onclick="edit_diretoria(' . $row->id . ')" title="Editar diretoria"><i class="glyphicon glyphicon-pencil"></i> </button>
-                 <a class="btn btn-sm btn-primary" href="' . site_url('cd/escolas/gerenciar/' . $row->id) . '" title="Gerenciar unidades de ensino">Unidade Ensino</a>
-                 <button type="button" class="btn btn-sm btn-danger" onclick="delete_diretoria(' . $row->id . ')" title="Excluir diretoria"><i class="glyphicon glyphicon-trash"></i> </button>'
-            ];
+        $data = array();
+        foreach ($list as $cd) {
+            $row = array();
+            $row[] = $cd->nome;
+            $row[] = $cd->contrato;
+            $row[] = '
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_diretoria(' . $cd->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('cd/escolas/gerenciar/' . $cd->id) . '" title="Gerenciar unidades de ensino"><i class="glyphicon glyphicon-plus"></i> Unidade Ensino</a>
+                      <button type="button" class="btn btn-sm btn-danger" onclick="delete_diretoria(' . $cd->id . ')" title="excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                     ';
+            $data[] = $row;
         }
 
-        $output->data = $data;
-
+        $output = array(
+            "draw" => $this->input->post('draw'),
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $data,
+        );
+        //output to json format
         echo json_encode($output);
     }
 
     //==========================================================================
-    public function editar()
+    public function ajax_edit()
     {
-        $data = $this->diretorias->find($this->input->post('id'));
-
-        if (empty($data)) {
-            exit(json_encode(['erro' => $this->diretorias->errors()]));
-        }
+        $id = $this->input->post('id');
+        $data = $this->db->get_where('cd_diretorias', array('id' => $id))->row();
 
         echo json_encode($data);
     }
 
     //==========================================================================
-    public function atualizarEstrutura()
+    public function ajax_estrutura()
     {
         $depto = $this->input->post('depto');
         $id = $this->input->post('id_coordenador');
@@ -235,30 +269,41 @@ class Diretorias extends MY_Controller
     }
 
     //==========================================================================
-    public function salvar()
+    public function ajax_add()
     {
-        $this->load->library('entities');
+        $data = $this->input->post();
+        $data['id_empresa'] = $this->session->userdata('empresa');
+        unset($data['id']);
+        if (empty($data['alias'])) {
+            $data['alias'] = null;
+        }
 
-        $data = $this->entities->create('cdDiretorias', $this->input->post());
-
-        $this->diretorias->setValidationLabel('nome', 'Diretoria de Ensino');
-        $this->diretorias->setValidationLabel('alias', 'Diretoria de Ensino (Alias)');
-        $this->diretorias->setValidationLabel('depto', 'Departamento');
-        $this->diretorias->setValidationLabel('municipio', 'Município');
-        $this->diretorias->setValidationLabel('contrato', 'Contrato');
-        $this->diretorias->setValidationLabel('id_coordenador', 'Coordenador(a)');
-
-        $this->diretorias->save($data) or exit(json_encode(['erro' => $this->diretorias->errors()]));
-
-        echo json_encode(['status' => true]);
+        $status = $this->db->insert('cd_diretorias', $data);
+        echo json_encode(array("status" => $status !== false));
     }
 
     //==========================================================================
-    public function excluir()
+    public function ajax_update()
     {
-        $this->diretorias->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->diretorias->errors()]));
+        $data = $this->input->post();
+        $data['id_empresa'] = $this->session->userdata('empresa');
+        $id = $data['id'];
+        unset($data['id']);
+        if (empty($data['alias'])) {
+            $data['alias'] = null;
+        }
 
-        echo json_encode(['status' => true]);
+        $status = $this->db->update('cd_diretorias', $data, array('id' => $id));
+        echo json_encode(array("status" => $status !== false));
+    }
+
+    //==========================================================================
+    public function ajax_delete()
+    {
+        $id = $this->input->post('id');
+        $status = $this->db->delete('cd_diretorias', array('id' => $id));
+
+        echo json_encode(array('status' => $status !== false));
     }
 
 }

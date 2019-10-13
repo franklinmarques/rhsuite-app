@@ -4,10 +4,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Requisicoes_pessoal_aprovadores_model extends MY_Model
 {
-    protected static $table = 'requisicoes_pessoal_aprovadores';
+	protected static $table = 'requisicoes_pessoal_aprovadores';
 
-    protected $validationRules = [
-        'id_usuario' => 'required|is_natural_no_zero|max_length[11]'
-    ];
+	protected static $primaryKey = 'id_usuario';
+
+	protected static $autoIncrement = false;
+
+	protected $validationRules = [
+		'id_usuario' => 'required|is_natural_no_zero|max_length[11]'
+	];
 
 }

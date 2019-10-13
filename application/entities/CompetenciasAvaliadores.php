@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class CompetenciasAvaliadores extends Entity
 {
-    protected $id;
-    protected $id_usuario;
-    protected $id_avaliado;
+	protected $id;
+	protected $id_usuario;
+	protected $id_avaliado;
 
-    protected $casts = [
-        'id' => 'int',
-        'id_usuario' => 'int',
-        'id_avaliado' => 'int'
-    ];
+	protected $casts = [
+		'id' => 'int',
+		'id_usuario' => 'int',
+		'id_avaliado' => 'int'
+	];
 
 }

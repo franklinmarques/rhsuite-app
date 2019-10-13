@@ -4,13 +4,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Empresa_funcoes_model extends MY_Model
 {
-    protected static $table = 'empresa_funcoes';
+	protected static $table = 'empresa_funcoes';
 
-    protected $validationRules = [
-        'id' => 'required|is_natural_no_zero|max_length[11]',
-        'id_cargo' => 'required|is_natural_no_zero|max_length[11]',
-        'nome' => 'required|max_length[255]',
-        'ocupacao_CBO' => 'is_natural|max_length[2]'
-    ];
+	protected $validationRules = [
+		'id' => 'required|is_natural_no_zero|max_length[11]',
+		'id_cargo' => 'required|is_natural_no_zero|max_length[11]',
+		'nome' => 'required|max_length[255]',
+		'ocupacao_CBO' => 'integer|max_length[2]'
+	];
 
 }

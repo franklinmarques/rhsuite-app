@@ -1,338 +1,340 @@
 <?php
 require_once "header.php";
 ?>
-    <style>
-        .btn-success {
-            background-color: #5cb85c;
-            border-color: #4cae4c;
-            color: #fff;
-        }
+	<style>
+		.btn-success {
+			background-color: #5cb85c;
+			border-color: #4cae4c;
+			color: #fff;
+		}
 
-        .btn-primary {
-            background-color: #337ab7 !important;
-            border-color: #2e6da4 !important;
-            color: #fff;
-        }
+		.btn-primary {
+			background-color: #337ab7 !important;
+			border-color: #2e6da4 !important;
+			color: #fff;
+		}
 
-        .btn-info {
-            color: #fff;
-            background-color: #5bc0de;
-            border-color: #46b8da;
-        }
+		.btn-info {
+			color: #fff;
+			background-color: #5bc0de;
+			border-color: #46b8da;
+		}
 
-        .btn-warning {
-            color: #fff;
-            background-color: #f0ad4e;
-            border-color: #eea236;
-        }
+		.btn-warning {
+			color: #fff;
+			background-color: #f0ad4e;
+			border-color: #eea236;
+		}
 
-        .btn-danger {
-            color: #fff;
-            background-color: #d9534f;
-            border-color: #d43f3a;
-        }
+		.btn-danger {
+			color: #fff;
+			background-color: #d9534f;
+			border-color: #d43f3a;
+		}
 
-        .text-nowrap {
-            white-space: nowrap;
-        }
-    </style>
-    <!--main content start-->
-    <section id="main-content">
-        <section class="wrapper">
+		.text-nowrap {
+			white-space: nowrap;
+		}
+	</style>
+	<!--main content start-->
+	<section id="main-content">
+		<section class="wrapper">
 
-            <!-- page start-->
-            <div class="row">
-                <div class="col-md-12">
-                    <div id="alert"></div>
-                    <section class="panel">
-                        <header class="panel-heading">
-                            <i class="glyphicons glyphicons-nameplate"></i>&nbsp; Descritor de Cargos/Funções
-                        </header>
-                        <div class="panel-body">
-                            <form action="#" id="busca">
-                                <div class="col-md-4">
-                                    <label class="control-label">Filtrar por cargo</label>
-                                    <?php echo form_dropdown('cargo', $cargo, '', 'onchange="atualizarFiltro()" class="form-control input-sm"'); ?>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="control-label">Filtrar por função</label>
-                                    <?php echo form_dropdown('funcao', $funcao, '', 'onchange="atualizarFiltro()" class="form-control input-sm"'); ?>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="control-label">Filtrar por versão</label>
-                                    <?php echo form_dropdown('versao', $versao, '', 'onchange="atualizarFiltro()" class="form-control input-sm"'); ?>
-                                </div>
-                                <div class="col-md-2 text-right">
-                                    <br>
-                                    <button type="button" id="limpar" class="btn btn-default">Limpar filtro</button>
-                                </div>
-                            </form>
-                        </div>
+			<!-- page start-->
+			<div class="row">
+				<div class="col-md-12">
+					<div id="alert"></div>
+					<section class="panel">
+						<header class="panel-heading">
+							<i class="glyphicons glyphicons-nameplate"></i>&nbsp; Descritor de Cargos/Funções
+						</header>
+						<div class="panel-body">
+							<form action="#" id="busca">
+								<div class="col-md-4">
+									<label class="control-label">Filtrar por cargo</label>
+									<?php echo form_dropdown('cargo', $cargo, '', 'onchange="atualizarFiltro()" class="form-control input-sm"'); ?>
+								</div>
+								<div class="col-md-4">
+									<label class="control-label">Filtrar por função</label>
+									<?php echo form_dropdown('funcao', $funcao, '', 'onchange="atualizarFiltro()" class="form-control input-sm"'); ?>
+								</div>
+								<div class="col-md-2">
+									<label class="control-label">Filtrar por versão</label>
+									<?php echo form_dropdown('versao', $versao, '', 'onchange="atualizarFiltro()" class="form-control input-sm"'); ?>
+								</div>
+								<div class="col-md-2 text-right">
+									<br>
+									<button type="button" id="limpar" class="btn btn-default">Limpar filtro</button>
+								</div>
+							</form>
+						</div>
 
-                        <br>
-                        <table id="table" class="table table-striped table-bordered table-condensed" cellspacing="0"
-                               width="100%">
-                            <thead>
-                            <tr>
-                                <th>Cargo</th>
-                                <th>Função</th>
-                                <th>CBO</th>
-                                <th>Ação</th>
-                                <th>Versões</th>
-                                <th>Ações para candidato</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </section>
-                </div>
-            </div>
-            <!-- page end-->
+						<br>
+						<table id="table" class="table table-striped table-bordered table-condensed" cellspacing="0"
+							   width="100%">
+							<thead>
+							<tr>
+								<th>Cargo</th>
+								<th>Função</th>
+								<th>CBO</th>
+								<th>Ação</th>
+								<th>Versões</th>
+								<th>Ações para candidato</th>
+							</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</section>
+				</div>
+			</div>
+			<!-- page end-->
 
-            <!-- Bootstrap modal -->
-            <div class="modal fade" id="modal_form" role="dialog">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                            <h3 class="modal-title">Adicionar versão de cargo/função</h3>
-                        </div>
-                        <div class="modal-body form">
-                            <div id="alert"></div>
-                            <form action="#" id="form" class="form-horizontal" autocomplete="off">
-                                <input type="hidden" value="<?= $empresa; ?>" name="id_empresa"/>
-                                <input type="hidden" value="" name="id"/>
-                                <input type="hidden" value="" name="id_versao_anterior"/>
-                                <input type="hidden" value="" name="id_cargo"/>
-                                <input type="hidden" value="" name="id_funcao"/>
-                                <div class="form-body">
-                                    <div class="row form-group">
-                                        <label class="control-label col-md-1">Versão</label>
-                                        <div class="col-md-5">
-                                            <input name="versao" class="form-control" type="text"
-                                                   placeholder="Nome da versão do cargo/função">
-                                            <span class="help-block"></span>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <!--<div class="dropdown">
-                                                <button class="btn btn-info dropdown-toggle" type="button"
-                                                        id="btnCopiarVersaoAnterior" data-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="true">
-                                                    Copiar versão anterior
-                                                    <span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu" aria-labelledby="btnCopiarVersaoAnterior">
-                                                    <li><a href="#" onclick="copiar_versao_anterior(0)">Copiar
-                                                            estrutura</a></li>
-                                                    <li><a href="#" onclick="copiar_versao_anterior(1)">Copiar estrutura
-                                                            e conteúdo</a></li>
-                                                </ul>
-                                            </div>-->
+			<!-- Bootstrap modal -->
+			<div class="modal fade" id="modal_form" role="dialog">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+									aria-hidden="true">&times;</span></button>
+							<h3 class="modal-title">Adicionar versão de cargo/função</h3>
+						</div>
+						<div class="modal-body form">
+							<div id="alert"></div>
+							<form action="#" id="form" class="form-horizontal" autocomplete="off">
+								<input type="hidden" value="<?= $empresa; ?>" name="id_empresa"/>
+								<input type="hidden" value="" name="id"/>
+								<input type="hidden" value="" name="id_versao_anterior"/>
+								<input type="hidden" value="" name="id_cargo"/>
+								<input type="hidden" value="" name="id_funcao"/>
+								<div class="form-body">
+									<div class="row form-group">
+										<label class="control-label col-md-1">Versão</label>
+										<div class="col-md-5">
+											<input name="versao" class="form-control" type="text"
+												   placeholder="Nome da versão do cargo/função">
+											<span class="help-block"></span>
+										</div>
+										<div class="col-md-3">
+											<!--<div class="dropdown">
+												<button class="btn btn-info dropdown-toggle" type="button"
+														id="btnCopiarVersaoAnterior" data-toggle="dropdown"
+														aria-haspopup="true" aria-expanded="true">
+													Copiar versão anterior
+													<span class="caret"></span>
+												</button>
+												<ul class="dropdown-menu" aria-labelledby="btnCopiarVersaoAnterior">
+													<li><a href="#" onclick="copiar_versao_anterior(0)">Copiar
+															estrutura</a></li>
+													<li><a href="#" onclick="copiar_versao_anterior(1)">Copiar estrutura
+															e conteúdo</a></li>
+												</ul>
+											</div>-->
 
 
-                                        </div>
-                                        <div class="col-md-3 text-right">
-                                            <button type="button" id="btnSave" onclick="save()" class="btn btn-success">
-                                                Salvar
-                                            </button>
-                                            <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                Cancelar
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-md-offset-1">
-                                            <button type="button" id="btnCopiarVersaoAnterior"
-                                                    onclick="copiar_versao_anterior(0)" class="btn btn-info">
-                                                Copiar estrutura da versão anterior
-                                            </button>
-                                            <button type="button" id="btnCopiarVersaoAnterior1"
-                                                    onclick="copiar_versao_anterior(1)" class="btn btn-info">
-                                                Copiar estrutura e conteúdo da versão anterior
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <select id="estruturas" name="estruturas[]" multiple class="form-control demo2">
-                                            <option value="sumario">Descrição sumária</option>
-                                            <option value="formacao_experiencia">Formação e experiência</option>
-                                            <option value="condicoes_gerais_exercicio">Condições gerais de exercício
-                                            </option>
-                                            <option value="codigo_internacional_CIUO88">Código Internacional CIUO88
-                                            </option>
-                                            <option value="notas">Notas</option>
-                                            <option value="recursos_trabalho">Recursos de trabalho</option>
-                                            <option value="atividades">Atribuições e atividades</option>
-                                            <option value="responsabilidades">Responsabilidades</option>
-                                            <option value="habilidades_basicas">Conhecimentos e habilidades - Básicas
-                                            </option>
-                                            <option value="habilidades_intermediarias">Conhecimentos e habilidades -
-                                                Intermediárias
-                                            </option>
-                                            <option value="habilidades_avancadas">Conhecimentos e habilidades -
-                                                Avançadas
-                                            </option>
-                                            <option value="ambiente_trabalho">Especificações gerais - Ambiente de
-                                                trabalho
-                                            </option>
-                                            <option value="condicoes_trabalho">Especificações gerais - Condições de
-                                                trabalho
-                                            </option>
-                                            <option value="esforcos_fisicos">Especificações gerais - Esforços físicos
-                                            </option>
-                                            <option value="grau_autonomia">Especificações gerais - Grau de autonomia
-                                            </option>
-                                            <option value="grau_complexidade">Especificações gerais - Grau de
-                                                complexidade
-                                            </option>
-                                            <option value="grau_iniciativa">Especificações gerais - Grau de iniciativa
-                                            </option>
-                                            <option value="competencias_tecnicas">Competências Técnicas</option>
-                                            <option value="competencias_comportamentais">Competências Comportamentais
-                                            </option>
-                                            <option value="tempo_experiencia">Tempo de experiência no cargo/função
-                                            </option>
-                                            <option value="formacao_minima">Formação/escolaridade mínima</option>
-                                            <option value="formacao_plena">Formação/escolaridade para exercício pleno
-                                            </option>
-                                            <option value="esforcos_mentais">Esforços mentais</option>
-                                            <option value="grau_pressao">Grau de pressão/estresse</option>
-                                        </select>
-                                    </div>
+										</div>
+										<div class="col-md-3 text-right">
+											<button type="button" id="btnSave" onclick="save()" class="btn btn-success">
+												Salvar
+											</button>
+											<button type="button" class="btn btn-default" data-dismiss="modal">
+												Cancelar
+											</button>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-md-offset-1">
+											<button type="button" id="btnCopiarVersaoAnterior"
+													onclick="copiar_versao_anterior(0)" class="btn btn-info">
+												Copiar estrutura da versão anterior
+											</button>
+											<button type="button" id="btnCopiarVersaoAnterior1"
+													onclick="copiar_versao_anterior(1)" class="btn btn-info">
+												Copiar estrutura e conteúdo da versão anterior
+											</button>
+										</div>
+									</div>
+									<div class="form-group">
+										<select id="estruturas" name="estruturas[]" multiple class="form-control demo2">
+											<option value="sumario">Descrição sumária</option>
+											<option value="formacao_experiencia">Formação e experiência</option>
+											<option value="condicoes_gerais_exercicio">Condições gerais de exercício
+											</option>
+											<option value="codigo_internacional_CIUO88">Código Internacional CIUO88
+											</option>
+											<option value="notas">Notas</option>
+											<option value="recursos_trabalho">Recursos de trabalho</option>
+											<option value="atividades">Atribuições e atividades</option>
+											<option value="responsabilidades">Responsabilidades</option>
+											<option value="conhecimentos_habilidades">Conhecimentos e habilidades
+											</option>
+											<option value="habilidades_basicas">Conhecimentos e habilidades - Básicas
+											</option>
+											<option value="habilidades_intermediarias">Conhecimentos e habilidades -
+												Intermediárias
+											</option>
+											<option value="habilidades_avancadas">Conhecimentos e habilidades -
+												Avançadas
+											</option>
+											<option value="ambiente_trabalho">Especificações gerais - Ambiente de
+												trabalho
+											</option>
+											<option value="condicoes_trabalho">Especificações gerais - Condições de
+												trabalho
+											</option>
+											<option value="esforcos_fisicos">Especificações gerais - Esforços físicos
+											</option>
+											<option value="grau_autonomia">Especificações gerais - Grau de autonomia
+											</option>
+											<option value="grau_complexidade">Especificações gerais - Grau de
+												complexidade
+											</option>
+											<option value="grau_iniciativa">Especificações gerais - Grau de iniciativa
+											</option>
+											<option value="competencias_tecnicas">Competências Técnicas</option>
+											<option value="competencias_comportamentais">Competências Comportamentais
+											</option>
+											<option value="tempo_experiencia">Tempo de experiência no cargo/função
+											</option>
+											<option value="formacao_minima">Formação/escolaridade mínima</option>
+											<option value="formacao_plena">Formação/escolaridade para exercício pleno
+											</option>
+											<option value="esforcos_mentais">Esforços mentais</option>
+											<option value="grau_pressao">Grau de pressão/estresse</option>
+										</select>
+									</div>
 
-                                    <br>
-                                    <h5>Descritivos personalizados para esta versão de cargo/função</h5>
-                                    <hr style="margin-top: 0px;">
+									<br>
+									<h5>Descritivos personalizados para esta versão de cargo/função</h5>
+									<hr style="margin-top: 0px;">
 
-                                    <div class="form-group">
-                                        <label class="control-label col-md-2">Descritivo n&ordm;1</label>
-                                        <div class="col-md-9">
-                                            <input name="campo_livre1" class="form-control" type="text"
-                                                   placeholder="Nome do novo descritivo">
-                                            <span class="help-block"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-2">Descritivo n&ordm;2</label>
-                                        <div class="col-md-9">
-                                            <input name="campo_livre2" class="form-control" type="text"
-                                                   placeholder="Nome do novo descritivo">
-                                            <span class="help-block"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-2">Descritivo n&ordm;3</label>
-                                        <div class="col-md-9">
-                                            <input name="campo_livre3" class="form-control" type="text"
-                                                   placeholder="Nome do novo descritivo">
-                                            <span class="help-block"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-2">Descritivo n&ordm;4</label>
-                                        <div class="col-md-9">
-                                            <input name="campo_livre4" class="form-control" type="text"
-                                                   placeholder="Nome do novo descritivo">
-                                            <span class="help-block"></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-2">Descritivo n&ordm;5</label>
-                                        <div class="col-md-9">
-                                            <input name="campo_livre5" class="form-control" type="text"
-                                                   placeholder="Nome do novo descritivo">
-                                            <span class="help-block"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-            </div><!-- /.modal -->
+									<div class="form-group">
+										<label class="control-label col-md-2">Descritivo n&ordm;1</label>
+										<div class="col-md-9">
+											<input name="campo_livre1" class="form-control" type="text"
+												   placeholder="Nome do novo descritivo">
+											<span class="help-block"></span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-md-2">Descritivo n&ordm;2</label>
+										<div class="col-md-9">
+											<input name="campo_livre2" class="form-control" type="text"
+												   placeholder="Nome do novo descritivo">
+											<span class="help-block"></span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-md-2">Descritivo n&ordm;3</label>
+										<div class="col-md-9">
+											<input name="campo_livre3" class="form-control" type="text"
+												   placeholder="Nome do novo descritivo">
+											<span class="help-block"></span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-md-2">Descritivo n&ordm;4</label>
+										<div class="col-md-9">
+											<input name="campo_livre4" class="form-control" type="text"
+												   placeholder="Nome do novo descritivo">
+											<span class="help-block"></span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-md-2">Descritivo n&ordm;5</label>
+										<div class="col-md-9">
+											<input name="campo_livre5" class="form-control" type="text"
+												   placeholder="Nome do novo descritivo">
+											<span class="help-block"></span>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
 
-            <!-- Bootstrap modal -->
-            <div class="modal fade" id="modal_respondentes" role="dialog">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                            <h3 class="modal-title">Responsáveis pelo preenchimento dos descritivos de cargo/função</h3>
-                        </div>
-                        <div class="modal-body form">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="well well-sm">
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <label class="control-label">Filtrar por departamento</label>
-                                                <?php echo form_dropdown('depto', $depto, '', 'class="form-control filtro input-sm"'); ?>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <label class="control-label">Filtrar por área</label>
-                                                <?php echo form_dropdown('area', $area, '', 'class="form-control filtro input-sm"'); ?>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <label class="control-label">Filtrar por setor</label>
-                                                <?php echo form_dropdown('setor', $setor, '', 'class="form-control filtro input-sm"'); ?>
-                                            </div>
-                                            <div class="col-md-3 text-right">
-                                                <label>&nbsp;</label><br>
-                                                <!--                                                <div class="btn-group" role="group" aria-label="...">-->
-                                                <!--<button type="button" id="limpa_filtro"
-                                                        class="btn btn-default">Limpar filtros
-                                                </button>-->
-                                                <button type="button" id="btnSaveRespondentes"
-                                                        onclick="save_respondentes()" class="btn btn-success">Salvar
-                                                </button>
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                    Cancelar
-                                                </button>
-                                                <!--                                                </div>-->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <form action="#" id="form_respondentes" class="form-horizontal">
-                                <div class="form-body" style="padding: 0 20px 20px;">
-                                    <input type="hidden" value="" name="id_descritor"/>
-                                    <div class="row form-group">
-                                        <?php echo form_multiselect('id_usuario[]', $respondentes, array(), 'size="10" id="respondentes" class="demo2"') ?>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-            </div><!-- /.modal -->
-            <!-- End Bootstrap modal -->
+			<!-- Bootstrap modal -->
+			<div class="modal fade" id="modal_respondentes" role="dialog">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+									aria-hidden="true">&times;</span></button>
+							<h3 class="modal-title">Responsáveis pelo preenchimento dos descritivos de cargo/função</h3>
+						</div>
+						<div class="modal-body form">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="well well-sm">
+										<div class="row">
+											<div class="col-md-3">
+												<label class="control-label">Filtrar por departamento</label>
+												<?php echo form_dropdown('depto', $depto, '', 'class="form-control filtro input-sm"'); ?>
+											</div>
+											<div class="col-md-3">
+												<label class="control-label">Filtrar por área</label>
+												<?php echo form_dropdown('area', $area, '', 'class="form-control filtro input-sm"'); ?>
+											</div>
+											<div class="col-md-3">
+												<label class="control-label">Filtrar por setor</label>
+												<?php echo form_dropdown('setor', $setor, '', 'class="form-control filtro input-sm"'); ?>
+											</div>
+											<div class="col-md-3 text-right">
+												<label>&nbsp;</label><br>
+												<!--                                                <div class="btn-group" role="group" aria-label="...">-->
+												<!--<button type="button" id="limpa_filtro"
+														class="btn btn-default">Limpar filtros
+												</button>-->
+												<button type="button" id="btnSaveRespondentes"
+														onclick="save_respondentes()" class="btn btn-success">Salvar
+												</button>
+												<button type="button" class="btn btn-default" data-dismiss="modal">
+													Cancelar
+												</button>
+												<!--                                                </div>-->
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<form action="#" id="form_respondentes" class="form-horizontal">
+								<div class="form-body" style="padding: 0 20px 20px;">
+									<input type="hidden" value="" name="id_descritor"/>
+									<div class="row form-group">
+										<?php echo form_multiselect('id_usuario[]', $respondentes, array(), 'size="10" id="respondentes" class="demo2"') ?>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+			<!-- End Bootstrap modal -->
 
-        </section>
-    </section>
-    <!--main content end-->
+		</section>
+	</section>
+	<!--main content end-->
 
 <?php
 require_once "end_js.php";
 ?>
-    <!-- Css -->
-    <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
-    <link href="<?php echo base_url('assets/bootstrap-duallistbox/bootstrap-duallistbox.css') ?>" rel="stylesheet">
+	<!-- Css -->
+	<link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
+	<link href="<?php echo base_url('assets/bootstrap-duallistbox/bootstrap-duallistbox.css') ?>" rel="stylesheet">
 
-    <!-- Js -->
-    <script>
+	<!-- Js -->
+	<script>
         $(document).ready(function () {
             document.title = 'CORPORATE RH - LMS - Gerenciar detalhes de eventos';
         });
-    </script>
-    <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js') ?>"></script>
-    <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js') ?>"></script>
-    <script src="<?php echo base_url('assets/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js') ?>"></script>
-    <script src="<?php echo base_url('assets/datatables/plugins/dataTables.rowsGroup.js'); ?>"></script>
-    <script>
+	</script>
+	<script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js') ?>"></script>
+	<script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js') ?>"></script>
+	<script src="<?php echo base_url('assets/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js') ?>"></script>
+	<script src="<?php echo base_url('assets/datatables/plugins/dataTables.rowsGroup.js'); ?>"></script>
+	<script>
 
         var save_method; //for save method string
         var table;
@@ -352,7 +354,7 @@ require_once "end_js.php";
                 },
                 // Load data for the table's content from an Ajax source
                 "ajax": {
-                    "url": "<?php echo site_url('jobDescriptor/ajax_list/') ?>",
+                    "url": "<?php echo site_url('jobDescriptor/ajax_list') ?>",
                     "type": "POST",
                     'data': function (d) {
                         d.busca = $('#busca').serialize();
@@ -405,7 +407,7 @@ require_once "end_js.php";
 
         function atualizarFiltro() {
             $.ajax({
-                url: "<?php echo site_url('jobDescriptor/atualizar_filtro/') ?>",
+                url: "<?php echo site_url('jobDescriptor/atualizar_filtro') ?>",
                 type: "POST",
                 dataType: "JSON",
                 data: $('#busca').serialize(),
@@ -555,7 +557,7 @@ require_once "end_js.php";
 
             //Ajax Load data from ajax
             $.ajax({
-                url: "<?php echo site_url('jobDescriptor/ajax_respondentes/') ?>/" + id,
+                url: "<?php echo site_url('jobDescriptor/ajax_respondentes') ?>/" + id,
                 type: "GET",
                 dataType: "JSON",
                 success: function (json) {
@@ -664,7 +666,7 @@ require_once "end_js.php";
             }
         }
 
-    </script>
+	</script>
 
 <?php
 require_once "end_html.php";

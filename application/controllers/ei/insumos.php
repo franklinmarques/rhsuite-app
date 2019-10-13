@@ -16,6 +16,8 @@ class Insumos extends MY_Controller
     //==========================================================================
     public function index()
     {
+		$date = preg_match('/^(\d{2,}):[0-5][0-9](:[0-5][0-9])?$/', '39:59');
+		var_dump($date);exit;
         $data['empresa'] = $this->session->userdata('empresa');
         $this->load->view('ei/insumos', $data);
     }

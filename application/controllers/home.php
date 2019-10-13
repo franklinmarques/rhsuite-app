@@ -17,6 +17,7 @@ class Home extends MY_Controller
         date_default_timezone_set('America/Sao_Paulo');
         $this->load->helper(array('date'));
 
+
         $data['depto'] = $this->input->get('depto');
         $data['area'] = $this->input->get('area');
 
@@ -444,47 +445,9 @@ class Home extends MY_Controller
 
     public function sair()
     {
-        $this->load->helper(array('date'));
+        $this->load->library('auth');
 
-        # Pega o id da empresa
-        $empresa = $this->session->userdata('id');
-
-        if ($this->session->userdata('empresa') > 0) {
-            $empresa = $this->session->userdata('empresa');
-        }
-
-        # Insere a data e hora do logout
-        $id_usuario = $this->session->userdata('id');
-        $data_saida = mdate("%Y-%m-%d %H:%i:%s");
-
-        $ultimo_acesso = $this->db->query("SELECT * FROM acessosistema WHERE usuario = ?
-                                           ORDER BY id DESC LIMIT 1
-                                          ", $id_usuario);
-        foreach ($ultimo_acesso->result() as $linha) {
-            $this->db->where('id', $linha->id)->update('acessosistema', array('data_saida' => $data_saida));
-        }
-
-        # Apaga arquivos temporários
-        $arquivos_temp = $this->db->query("SELECT * FROM arquivos_temp WHERE usuario = ?", $id_usuario);
-        foreach ($arquivos_temp->result() as $linha) {
-            unlink($linha->arquivo);
-            $this->db->where('id', $linha->id)->delete('arquivos_temp');
-        }
-
-        $url = $this->db->query("SELECT url FROM usuarios WHERE id = ?", $empresa)->row();
-        if ($url->url) {
-            $this->config->set_item('index_page', $url->url);
-        }
-
-        # Apaga as configurações nas sessoes nativas
-        session_start();
-        session_destroy();
-
-        # Apaga as sessões do usuario
-        $this->session->sess_destroy();
-
-        # Redireciona a tela de login        
-        redirect(site_url('login'));
+        $this->auth->logout();
     }
 
     public function novabiblioteca()

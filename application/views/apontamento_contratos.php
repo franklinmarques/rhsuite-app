@@ -999,13 +999,12 @@ require_once "end_js.php";
             if (confirm('Deseja remover?')) {
                 // ajax delete data to database
                 $.ajax({
-                    url: "<?php echo site_url('apontamento_contratos/ajax_delete') ?>/" + id,
+                    url: "<?php echo site_url('apontamento_contratos/ajax_delete') ?>",
                     type: "POST",
                     dataType: "JSON",
                     data: {id: id},
                     success: function (data) {
                         //if success reload ajax table
-                        $('#modal_form').modal('hide');
                         reload_table();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {

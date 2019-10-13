@@ -7,10 +7,10 @@
                 <div class="col-md-12">
                     <div id="alert"></div>
                     <ol class="breadcrumb" style="margin-bottom: 5px; background-color: #eee;">
-                        <li><a href="<?= site_url('cd/apontamento') ?>">Cuidadores - Apontamentos diários</a></li>
+                        <li><a href="<?= site_url('cd/apontamento') ?>">Apontamentos diários</a></li>
                         <li class="active">Gerenciar insumos</li>
                     </ol>
-                    <button class="btn btn-info" onclick="add_insumo()"><i class="glyphicon glyphicon-plus"></i>
+                    <button class="btn btn-success" onclick="add_insumo()"><i class="glyphicon glyphicon-plus"></i>
                         Adicionar insumo
                     </button>
                     <button class="btn btn-default" onclick="javascript:history.back()"><i
@@ -18,7 +18,7 @@
                     </button>
                     <br/>
                     <br/>
-                    <table id="table" class="table table-striped table-condensed" cellspacing="0" width="100%">
+                    <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                         <thead>
                         <tr>
                             <th>Nome do insumo</th>
@@ -46,6 +46,13 @@
                                 <input type="hidden" value="" name="id"/>
                                 <input type="hidden" value="<?= $empresa ?>" name="id_empresa"/>
                                 <div class="form-body">
+                                    <!--<div class="row form-group">
+                                        <label class="control-label col-md-2">Aluno(a)</label>
+                                        <div class="col-md-10">
+                                            <?php /*//echo form_dropdown('id_aluno', $alunos, $aluno_selecionado, 'class="form-control"'); */ ?>
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>-->
                                     <div class="row form-group">
                                         <label class="control-label col-md-2">Nome</label>
                                         <div class="col-md-10">
@@ -66,7 +73,7 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
+                            <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Salvar</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
@@ -82,7 +89,7 @@
 
     <script>
         $(document).ready(function () {
-            document.title = 'CORPORATE RH - LMS - Cuidadores - Gerenciar insumos';
+            document.title = 'CORPORATE RH - LMS - Gerenciar insumos' + '<?= $nome_aluno ?>';
         });
     </script>
 
@@ -105,7 +112,7 @@
                     'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
                 },
                 'ajax': {
-                    'url': '<?php echo site_url('cd/insumos/listar') ?>',
+                    'url': '<?php echo site_url('cd/insumos/ajax_list') ?>',
                     'type': 'POST'
                 },
                 'columnDefs': [
@@ -141,16 +148,11 @@
             $('.help-block').empty();
 
             $.ajax({
-                'url': '<?php echo site_url('cd/insumos/editar') ?>',
+                'url': '<?php echo site_url('cd/insumos/ajax_edit') ?>',
                 'type': 'POST',
                 'dataType': 'json',
                 'data': {'id': id},
                 'success': function (json) {
-                    if (json.erro) {
-                        alert(json.erro);
-                        return false;
-                    }
-
                     $.each(json, function (key, value) {
                         $('[name="' + key + '"]').val(value);
                     });
@@ -170,8 +172,15 @@
 
 
         function save() {
+            var url;
+            if (save_method === 'add') {
+                url = '<?php echo site_url('cd/insumos/ajax_add') ?>';
+            } else {
+                url = '<?php echo site_url('cd/insumos/ajax_update') ?>';
+            }
+
             $.ajax({
-                'url': '<?php echo site_url('cd/insumos/salvar') ?>',
+                'url': url,
                 'type': 'POST',
                 'data': $('#form').serialize(),
                 'dataType': 'json',
@@ -182,8 +191,6 @@
                     if (json.status) {
                         $('#modal_form').modal('hide');
                         reload_table();
-                    } else if (json.erro) {
-                        alert(json.erro);
                     }
                 },
                 'error': function (jqXHR, textStatus, errorThrown) {
@@ -199,16 +206,13 @@
         function delete_insumo(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    'url': '<?php echo site_url('cd/insumos/excluir') ?>',
+                    'url': '<?php echo site_url('cd/insumos/ajax_delete') ?>',
                     'type': 'POST',
                     'dataType': 'json',
                     'data': {'id': id},
                     'success': function (json) {
-                        if (json.erro) {
-                            alert(json.erro);
-                        } else {
-                            reload_table();
-                        }
+                        $('#modal_form').modal('hide');
+                        reload_table();
                     },
                     'error': function (jqXHR, textStatus, errorThrown) {
                         $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');

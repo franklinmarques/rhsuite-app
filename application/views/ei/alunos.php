@@ -507,7 +507,7 @@
             $('#id_diretoria option').prop('disabled', false);
             $('#id_escola option').prop('disabled', false);
             $('#id_curso option').prop('disabled', false);
-            $('#form_curso [name="semestre_inicial"]').prop('readonly', false);
+            // $('#form_curso [name="semestre_inicial"]').prop('readonly', false);
 
             $('.form-group').removeClass('has-error');
             $('.help-block').empty();
@@ -584,7 +584,7 @@
                     $('#id_diretoria option:not(:selected)').prop('disabled', true);
                     $('#id_escola option:not(:selected)').prop('disabled', true);
                     $('#id_curso option:not(:selected)').prop('disabled', true);
-                    $('#form_curso [name="semestre_inicial"]').prop('readonly', true);
+                    // $('#form_curso [name="semestre_inicial"]').prop('readonly', true);
 
                     $('.modal-title').text('Editar curso');
                     $('#modal_curso').modal('show');

@@ -179,10 +179,10 @@ class Apontamento_contratos extends MY_Controller
             $row[] = $apontamento->estrutura;
             $row[] = $apontamento->contrato;
             $row[] = '
-                      <button type="button" class="btn btn-sm btn-primary" onclick="edit_contrato(' . $apontamento->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
-                      <button type="button" class="btn btn-sm btn-success" onclick="edit_unidades(' . $apontamento->id . ')" title="Gerenciar unidades"><i class="glyphicon glyphicon-plus"></i> Unidades</button>
-                      <button type="button" class="btn btn-sm btn-success" onclick="edit_servicos(' . $apontamento->id . ')" title="Gerenciar serviços"><i class="glyphicon glyphicon-plus"></i> Serviços</button>
-                      <button type="button" class="btn btn-sm btn-success" onclick="edit_reajuste(' . $apontamento->id . ')" title="Gerenciar reajuste"><i class="glyphicon glyphicon-plus"></i> Reajustes</button>
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_contrato(' . $apontamento->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_unidades(' . $apontamento->id . ')" title="Gerenciar unidades"><i class="glyphicon glyphicon-plus"></i> Unidades</button>
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_servicos(' . $apontamento->id . ')" title="Gerenciar serviços"><i class="glyphicon glyphicon-plus"></i> Serviços</button>
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_reajuste(' . $apontamento->id . ')" title="Gerenciar reajuste"><i class="glyphicon glyphicon-plus"></i> Reajustes</button>
                       <button type="button" class="btn btn-sm btn-danger" onclick="delete_contrato(' . $apontamento->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
                      ';
             $data[] = $row;

@@ -598,7 +598,7 @@ class Funcionario extends MY_Controller
 
     public function alterar($id = '')
     {
-        header('Content-type: text/json');
+		header('Content-type: text/json');
         $this->load->helper(array('date'));
 
         $this->db->where('id', $id);

@@ -140,6 +140,7 @@ class Postos extends MY_Controller
             ->select('a.id, a.nome')
             ->join('empresa_setores b', 'b.id = a.id_setor OR b.nome = a.setor')
             ->where('a.empresa', $this->session->userdata('empresa'))
+            ->where('a.status', 1)
             ->where('b.id', $setor)
             ->group_by('a.id')
             ->order_by('a.nome', 'asc')

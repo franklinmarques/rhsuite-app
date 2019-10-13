@@ -371,7 +371,7 @@ require_once "end_js.php";
     }
 
     function novo() {
-        $.fileDownload('<?= site_url('backup/mysql'); ?>?tipo=sql').success(function () {
+        $.fileDownload('<?= site_url('backup/mysql'); ?>?tipo=sql').done(function () {
             reload_table();
             alert('Download efetuado com sucesso!');
         }).fail(function () {

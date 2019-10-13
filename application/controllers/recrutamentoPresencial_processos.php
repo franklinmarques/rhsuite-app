@@ -74,6 +74,13 @@ class RecrutamentoPresencial_processos extends MY_Controller
         );
 
         if ($this->uri->rsegment(3)) {
+//            $this->db->select('a.id, a.nome, c.nome AS nome_cargo, b.id AS candidato');
+//            $this->db->select('d.id AS id_requisicao, d.numero AS nome_requisicao');
+//            $this->db->join('requisicoes_pessoal_candidatos b', 'b.id_usuario = a.id');
+//            $this->db->join('requisicoes_pessoal d', 'd.id = b.id_requisicao');
+//            $this->db->join('empresa_cargos c', 'c.id = d.id_cargo');
+//            $this->db->where('b.id', $this->uri->rsegment(3));
+//            $row = $this->db->get('recrutamento_usuarios a')->row();
             $this->db->select('IFNULL(d.id, e.id) AS id', false);
             $this->db->select('IFNULL(d.nome, e.nome) AS nome', false);
             $this->db->select('c.nome AS nome_cargo, a.id AS candidato, b.id AS id_requisicao, b.numero AS nome_requisicao', false);
@@ -200,7 +207,7 @@ class RecrutamentoPresencial_processos extends MY_Controller
         foreach ($list as $requisicao) {
             $row = array();
             $row[] = $requisicao->cargo;
-            $row[] = '<button class="btn btn-success btn-sm" title="Adicionar teste" onclick="add_teste()"><i class="glyphicon glyphicon-plus"></i> Adicionar teste</button>';
+            $row[] = '<button class="btn btn-info btn-sm" title="Adicionar teste" onclick="add_teste()"><i class="glyphicon glyphicon-plus"></i> Adicionar teste</button>';
             $row[] = $requisicao->nome;
             $row[] = $requisicao->data_inicio;
             $row[] = $requisicao->data_termino;
@@ -217,22 +224,22 @@ class RecrutamentoPresencial_processos extends MY_Controller
             if ($requisicao->nome) {
                 if ($requisicao->tipo_teste === 'P') {
                     $row[] = '
-                              <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $requisicao->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                              <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $requisicao->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                               <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $requisicao->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                              <button class="btn btn-sm btn-info disabled" title="Relatório"><i class="glyphicon glyphicon-list-alt"></i> Relatório</button>
+                              <button class="btn btn-sm btn-primary disabled" title="Relatório"><i class="glyphicon glyphicon-list-alt"></i> Relatório</button>
                              ';
                 } else {
                     $row[] = '
-                              <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $requisicao->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                              <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_teste(' . "'" . $requisicao->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                               <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_teste(' . "'" . $requisicao->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                              <a class="btn btn-sm btn-info" href="' . site_url('recrutamentoPresencial/relatorio/' . $requisicao->id) . '" title="Relatório"><i class="glyphicon glyphicon-list-alt"></i> Relatório</a>
+                              <a class="btn btn-sm btn-primary" href="' . site_url('recrutamentoPresencial/relatorio/' . $requisicao->id) . '" title="Relatório"><i class="glyphicon glyphicon-list-alt"></i> Relatório</a>
                              ';
                 }
             } else {
                 $row[] = '
-                          <button class="btn btn-sm btn-primary disabled"><i class="glyphicon glyphicon-pencil"></i></button>
+                          <button class="btn btn-sm btn-info disabled"><i class="glyphicon glyphicon-pencil"></i></button>
                           <button class="btn btn-sm btn-danger disabled"><i class="glyphicon glyphicon-trash"></i></button>
-                          <button class="btn btn-sm btn-info disabled"><i class="glyphicon glyphicon-list-alt"></i> Relatório</button>
+                          <button class="btn btn-sm btn-primary disabled"><i class="glyphicon glyphicon-list-alt"></i> Relatório</button>
                          ';
             }
 

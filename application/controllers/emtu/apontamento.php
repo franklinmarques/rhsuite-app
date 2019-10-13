@@ -26,17 +26,6 @@ class Apontamento extends MY_Controller
             ->get('empresa_departamentos')
             ->result();
 
-        if (in_array($this->session->userdata('nivel'), [])) {
-        }
-
-
-        $areas = $this->db
-            ->select('id, nome')
-            ->where('id_empresa', $empresa)
-            ->order_by('nome', 'asc')
-            ->get('empresa_departamentos')
-            ->result();
-
         $data = [
             'empresa' => $empresa,
             'depto_atual' => '',

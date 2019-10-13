@@ -428,7 +428,6 @@
         }
     });
 
-
     function filtrar_os(numero_os) {
         $.ajax({
             'url': "<?php echo site_url('facilities/ordensServico/ajaxEdit') ?>",

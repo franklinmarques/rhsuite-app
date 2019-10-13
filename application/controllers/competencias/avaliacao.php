@@ -78,12 +78,12 @@ class Avaliacao extends MY_Controller
 
             //add html for action
             $row[] = '
-			<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_avaliacao(' . "'" . $avaliacao->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+			<a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_avaliacao(' . "'" . $avaliacao->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
 			<a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_avaliacao(' . "'" . $avaliacao->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-			<a class="btn btn-sm btn-success" href="' . site_url('competencias/avaliados/index/' . $avaliacao->id) . '" title="Gerenciar Avaliacao" ><i class="glyphicon glyphicon-plus"></i>Avaliador X Avaliados</a>
-			<a class="btn btn-sm btn-info" href="' . site_url('competencias/relatorios/index/' . $avaliacao->id) . '" title="Relatórios"><i class="glyphicon glyphicon-list-alt"></i> Relatórios</a>
-			<a class="btn btn-sm btn-info" href="' . site_url('competencias/relatorios/analise_comparativa/' . $avaliacao->id) . '" title="Análise Comparativa"><i class="glyphicon glyphicon-list-alt"> </i> Análise Comparativa</a>
-			<a class="btn btn-sm btn-warning" href="' . site_url('competencias/relatorios/andamento/' . $avaliacao->id) . '" title="Status"><i class="glyphicon glyphicon-info-sign"></i> Andamento</a>
+			<a class="btn btn-sm btn-primary" href="' . site_url('competencias/avaliados/index/' . $avaliacao->id) . '" title="Gerenciar Avaliacao" ><i class="glyphicon glyphicon-plus"></i> Avaliador X Avaliados</a>
+			<a class="btn btn-sm btn-primary" href="' . site_url('competencias/relatorios/index/' . $avaliacao->id) . '" title="Relatórios"><i class="glyphicon glyphicon-list-alt"></i> Relatórios</a>
+			<a class="btn btn-sm btn-primary" href="' . site_url('competencias/relatorios/analise_comparativa/' . $avaliacao->id) . '" title="Análise Comparativa"><i class="glyphicon glyphicon-list-alt"> </i> Análise Comparativa</a>
+			<a class="btn btn-sm btn-primary" href="' . site_url('competencias/relatorios/andamento/' . $avaliacao->id) . '" title="Status"><i class="glyphicon glyphicon-info-sign"></i> Andamento</a>
 			';
 
             $data[] = $row;

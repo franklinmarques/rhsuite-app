@@ -8,8 +8,6 @@ class Escolas extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-
-        $this->load->model('cd_escolas_model', 'escolas');
     }
 
     //==========================================================================
@@ -75,7 +73,7 @@ class Escolas extends MY_Controller
     }
 
     //==========================================================================
-    public function atualizarFiltro()
+    public function atualizar_filtro()
     {
         $empresa = $this->session->userdata('empresa');
         $id_usuario = $this->session->userdata('id');
@@ -130,109 +128,176 @@ class Escolas extends MY_Controller
     }
 
     //==========================================================================
-    public function listar()
+    public function ajax_list()
     {
-        parse_str($this->input->post('busca'), $busca);
+        $post = $this->input->post();
+        parse_str($this->input->post('busca'), $arrBusca);
+        $busca = $arrBusca['busca'] ?? array();
 
-        $idDiretoria = $this->input->post('id_diretoria');
+        $id_diretoria = $this->input->post('id_diretoria');
 
-        $this->db
-            ->select('b.alias AS diretoria, a.nome, b.contrato, a.id')
-            ->join('cd_diretorias b', 'b.id = a.id_diretoria')
-            ->join('cd_supervisores c', 'c.id_escola = a.id', 'left')
-            ->where('b.id_empresa', $this->session->userdata('empresa'));
-        if ($idDiretoria) {
-            $this->db->where('b.id', $busca['diretoria']);
+        $sql = "SELECT s.id, 
+                       s.diretoria,
+                       s.nome,
+                       s.contrato
+                FROM (SELECT a.id, 
+                             b.alias AS diretoria,==
+                      FROM cd_escolas a
+                      INNER JOIN cd_diretorias b ON
+                                b.id = a.id_diretoria
+                      LEFT JOIN cd_supervisores c ON 
+                                c.id_escola = a.id
+                      LEFT JOIN usuarios d ON
+                                 d.id = c.id_supervisor
+                      WHERE b.id_empresa = {$this->session->userdata('empresa')}";
+        if ($id_diretoria) {
+            $sql .= " AND b.id = {$id_diretoria}";
         } elseif (!empty($busca['diretoria'])) {
-            $this->db->where('b.id', $busca['diretoria']);
+            $sql .= " AND b.id = '{$busca['diretoria']}'";
         }
         if (!empty($busca['depto'])) {
-            $this->db->where('b.depto', $busca['depto']);
+            $sql .= " AND b.depto = '{$busca['depto']}'";
         }
         if (!empty($busca['supervisor'])) {
-            $this->db->where('c.id_coordenador', $busca['supervisor']);
+            $sql .= " AND (c.id_supervisor = '{$busca['supervisor']}' OR c.id_supervisor = '{$busca['supervisor']}')";
         }
         if (!empty($busca['contrato'])) {
-            $this->db->where('b.contrato', $busca['contrato']);
+            $sql .= " AND b.contrato = '{$busca['contrato']}'";
         }
-        $query = $this->db
-            ->group_by('a.id')
-            ->get('cd_escolas a');
+        $sql .= ' GROUP BY a.id) s';
+        $recordsTotal = $this->db->query($sql)->num_rows();
 
-        $this->load->library('dataTables', ['search' => ['diretoria', 'nome', 'supervisor', 'contrato']]);
+        $columns = array('s.id', 's.diretoria', 's.nome', 's.supervisor', 's.contrato');
+        if ($post['search']['value']) {
+            foreach ($columns as $key => $column) {
+                if ($key > 1) {
+                    $sql .= " OR
+                         {$column} LIKE '%{$post['search']['value']}%'";
+                } elseif ($key == 1) {
+                    $sql .= " 
+                        WHERE {$column} LIKE '%{$post['search']['value']}%'";
+                }
+            }
+        }
+        $recordsFiltered = $this->db->query($sql)->num_rows();
 
-        $output = $this->datatables->generate($query);
+        if (isset($post['order'])) {
+            $orderBy = array();
+            foreach ($post['order'] as $order) {
+                $orderBy[] = ($order['column'] + 1) . ' ' . $order['dir'];
+            }
+            $sql .= ' 
+                    ORDER BY ' . implode(', ', $orderBy);
+        }
+        $sql .= " 
+                LIMIT {$post['start']}, {$post['length']}";
+        $list = $this->db->query($sql)->result();
 
-        $data = [];
-
-        foreach ($output->data as $row) {
-            $data[] = [
-                $row->diretoria,
-                $row->nome,
-                $row->contrato,
-                '<button type="button" class="btn btn-sm btn-info" onclick="edit_escola(' . $row->id . ')" title="Editar escola"><i class="glyphicon glyphicon-pencil"></i></button>
-                 <a class="btn btn-sm btn-primary" href="' . site_url('cd/alunos/gerenciar/' . $row->id) . '" title="Gerenciar alunos"></i>Alunos</a>
-                 <button type="button" class="btn btn-sm btn-danger" onclick="delete_escola(' . $row->id . ')" title="Excluir escola"><i class="glyphicon glyphicon-trash"></i></button>'
-            ];
+        $data = array();
+        foreach ($list as $cd) {
+            $row = array();
+            $row[] = $cd->diretoria;
+            $row[] = $cd->nome;
+            $row[] = $cd->contrato;
+            $row[] = '
+                      <button type="button" class="btn btn-sm btn-info" onclick="edit_escola(' . $cd->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('cd/alunos/gerenciar/' . $cd->id) . '" title="Gerenciar alunos"><i class="glyphicon glyphicon-plus"></i> Alunos</a>
+                      <button type="button" class="btn btn-sm btn-danger" onclick="delete_escola(' . $cd->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+                     ';
+//            $row[] = '
+//                      <button type="button" class="btn btn-sm btn-info" onclick="edit_escola(' . $cd->id . ')" title="Editar"><i class="glyphicon glyphicon-pencil"></i> </button>
+//                      <a class="btn btn-sm btn-primary" href="' . site_url('cd/alunos/gerenciar/' . $cd->id) . '" title="Gerenciar alunos"><i class="glyphicon glyphicon-plus"></i> Alunos</a>
+//                      <button type="button" class="btn btn-sm btn-info" onclick="edit_insumos(' . $cd->id . ')" title="Gerenciar insumos"><i class="glyphicon glyphicon-plus"></i> Insumos</button>
+//                      <button type="button" class="btn btn-sm btn-danger" onclick="delete_escola(' . $cd->id . ')" title="Excluir"><i class="glyphicon glyphicon-trash"></i> </button>
+//                     ';
+            $data[] = $row;
         }
 
-        $output->data = $data;
+        $output = array(
+            "draw" => $this->input->post('draw'),
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $data,
+        );
 
         echo json_encode($output);
     }
 
     //==========================================================================
-    public function editar()
+    public function ajax_edit()
     {
-        $data = $this->escolas->find($this->input->post('id'));
-
-        if (empty($data)) {
-            exit(json_encode(['erro' => $this->escolas->errors()]));
-        }
-
+        $id = $this->input->post('id');
+        $data = $this->db->get_where('cd_escolas', array('id' => $id))->row();
         echo json_encode($data);
     }
 
     //==========================================================================
-    public function salvar()
+    public function ajax_add()
     {
-        $this->load->library('entities');
-
-        $data = $this->entities->create('cdEscolas', $this->input->post());
-
-        $this->escolas->setValidationLabel('nome', 'Nome Unidade Escolar');
-        $this->escolas->setValidationLabel('endereco', 'Endereço');
-        $this->escolas->setValidationLabel('numero', 'Número');
-        $this->escolas->setValidationLabel('complemento', 'Complemento');
-        $this->escolas->setValidationLabel('bairro', 'Bairro');
-        $this->escolas->setValidationLabel('municipio', 'Município');
-        $this->escolas->setValidationLabel('telefone', 'Telefone');
-        $this->escolas->setValidationLabel('telefone_contato', 'Telefone Contato');
-        $this->escolas->setValidationLabel('cep', 'CEP');
-        $this->escolas->setValidationLabel('email', 'E-Mail');
-        $this->escolas->setValidationLabel('id_diretoria', 'Cliente/Diretoria de Ensino');
-
-        $this->escolas->save($data) or exit(json_encode(['erro' => $this->escolas->errors()]));
-
-        echo json_encode(['status' => true]);
+        $data = $this->input->post();
+        if (empty($data['id_diretoria'])) {
+            exit(json_encode(array('erro' => 'A diretoria de ensino é obrigatória.')));
+        }
+        if (strlen($data['nome']) == 0) {
+            exit(json_encode(array('erro' => 'O nome da unidade de ensino é obrigatório.')));
+        }
+        if (strlen($data['municipio']) == 0) {
+            exit(json_encode(array('erro' => 'O município é obrigatório.')));
+        }
+        if (empty($data['numero'])) {
+            $data['numero'] = null;
+        }
+        $status = $this->db->insert('cd_escolas', $data);
+        echo json_encode(array('status' => $status !== false));
     }
 
     //==========================================================================
-    public function excluir()
+    public function ajax_update()
     {
-        $this->escolas->delete($this->input->post('id')) or exit(json_encode(['erro' => $this->escolas->errors()]));
-
-        echo json_encode(['status' => true]);
+        $data = $this->input->post();
+        if (empty($data['id_diretoria'])) {
+            exit(json_encode(array('erro' => 'A diretoria de ensino é obrigatória.')));
+        }
+        if (strlen($data['nome']) == 0) {
+            exit(json_encode(array('erro' => 'O nome da unidade de ensino é obrigatório.')));
+        }
+        if (strlen($data['municipio']) == 0) {
+            exit(json_encode(array('erro' => 'O município é obrigatório.')));
+        }
+        $id = $data['id'];
+        unset($data['id']);
+        if (empty($data['numero'])) {
+            $data['numero'] = null;
+        }
+        if (empty($data['periodo_manha'])) {
+            $data['periodo_manha'] = null;
+        }
+        if (empty($data['periodo_tarde'])) {
+            $data['periodo_tarde'] = null;
+        }
+        if (empty($data['periodo_noite'])) {
+            $data['periodo_noite'] = null;
+        }
+        $status = $this->db->update('cd_escolas', $data, array('id' => $id));
+        echo json_encode(array('status' => $status !== false));
     }
 
     //==========================================================================
-    public function importacao()
+    public function ajax_delete()
+    {
+        $id = $this->input->post('id');
+        $status = $this->db->delete('cd_escolas', array('id' => $id));
+        echo json_encode(array('status' => $status !== false));
+    }
+
+    //==========================================================================
+    public function importar()
     {
         $this->load->view('cd/importarEscolas');
     }
 
     //==========================================================================
-    public function importar()
+    public function importarCsv()
     {
         header('Content-type: text/json; charset=UTF-8');
         $this->load->helper(array('date'));

@@ -47,7 +47,7 @@
                     <section class="panel">
                         <header class="panel-heading">
                             <i class="fa fa-file-text-o"></i><span
-                                    class="hidden-xs hoidden-sm"> Orientações Para a Vida</span>
+                                    class="hidden-xs hidden-sm"> Orientações Para a Vida</span>
                             <div style="float:right; margin-top: -0.5%;">
                                 <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal">
                                     <i class="fa fa-check"></i> Enviar e finalizar
@@ -206,7 +206,7 @@
                         </p>
                     </div>
                     <div class='modal-footer'>
-                        <button type='button' class='btn btn-primary' data-dismiss="modal" id='enviar'>Enviar tudo e
+                        <button type='button' class='btn btn-success' data-dismiss="modal" id='enviar'>Enviar tudo e
                             finalizar
                         </button>
                         <button type='button' class='btn btn-default' data-dismiss="modal">Cancelar

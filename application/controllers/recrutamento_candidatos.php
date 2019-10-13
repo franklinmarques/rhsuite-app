@@ -205,10 +205,10 @@ class Recrutamento_candidatos extends MY_Controller
         $empresa = $this->session->userdata('empresa');
         $data = array(
             'estado' => array('' => 'Todos'),
-            'cidade' => array('' => 'Todas'),
-            'bairro' => array('' => 'Todos'),
-            'deficiencia' => array('' => 'Sem filtro'),
-            'escolaridade' => array('' => 'Todas')
+            'cidade' => array(),
+            'bairro' => array(),
+            'deficiencia' => array(),
+            'escolaridade' => array()
         );
 
 
@@ -240,7 +240,7 @@ class Recrutamento_candidatos extends MY_Controller
             $this->db->where('estado', $campos['estado']);
         }
         if (!empty($campos['cidade'])) {
-            $this->db->where('cidade', $campos['cidade']);
+            $this->db->where_in('cidade', $campos['cidade']);
         }
         $bairros = $this->db->get('recrutamento_usuarios')->result();
         foreach ($bairros as $bairro) {
@@ -255,10 +255,10 @@ class Recrutamento_candidatos extends MY_Controller
             $this->db->where('estado', $campos['estado']);
         }
         if (!empty($campos['cidade'])) {
-            $this->db->where('cidade', $campos['cidade']);
+            $this->db->where_in('cidade', $campos['cidade']);
         }
         if (!empty($campos['bairro'])) {
-            $this->db->where('bairro', $campos['bairro']);
+            $this->db->where_in('bairro', $campos['bairro']);
         }
         $deficiencias = $this->db->get('deficiencias a')->result();
         foreach ($deficiencias as $deficiencia) {
@@ -273,10 +273,10 @@ class Recrutamento_candidatos extends MY_Controller
             $this->db->where('estado', $campos['estado']);
         }
         if (!empty($campos['cidade'])) {
-            $this->db->where('cidade', $campos['cidade']);
+            $this->db->where_in('cidade', $campos['cidade']);
         }
         if (!empty($campos['bairro'])) {
-            $this->db->where('bairro', $campos['bairro']);
+            $this->db->where_in('bairro', $campos['bairro']);
         }
         $escolaridade = $this->db->get('escolaridade a')->result();
         foreach ($escolaridade as $nivel) {
@@ -307,17 +307,17 @@ class Recrutamento_candidatos extends MY_Controller
         if ($post['estado']) {
             $this->db->where('a.estado', $post['estado']);
         }
-        if ($post['cidade']) {
-            $this->db->where('a.cidade', $post['cidade']);
+        if (!empty($post['cidade'])) {
+            $this->db->where_in('a.cidade', $post['cidade']);
         }
-        if ($post['bairro']) {
-            $this->db->where('a.bairro', $post['bairro']);
+        if (!empty($post['bairro'])) {
+            $this->db->where_in('a.bairro', $post['bairro']);
         }
-        if ($post['deficiencia']) {
-            $this->db->where('a.deficiencia', $post['deficiencia']);
+        if (!empty($post['deficiencia'])) {
+            $this->db->where_in('a.deficiencia', $post['deficiencia']);
         }
-        if ($post['escolaridade']) {
-            $this->db->where('a.escolaridade', $post['escolaridade']);
+        if (!empty($post['escolaridade'])) {
+            $this->db->where_in('a.escolaridade', $post['escolaridade']);
         }
         if ($post['sexo']) {
             $this->db->where('a.sexo', $post['sexo']);
@@ -341,10 +341,10 @@ class Recrutamento_candidatos extends MY_Controller
 
         $filtros = $this->ajustarFiltros($post);
         $campos['estado'] = form_dropdown('estado', $filtros['estado'], $post['estado'], 'id="estado" class="form-control filtro input-sm"');
-        $campos['cidade'] = form_dropdown('cidade', $filtros['cidade'], $post['cidade'], 'id="cidade" class="form-control filtro input-sm"');
-        $campos['bairro'] = form_dropdown('bairro', $filtros['bairro'], $post['bairro'], 'id="bairro" class="form-control filtro input-sm"');
-        $campos['deficiencia'] = form_dropdown('deficiencia', $filtros['deficiencia'], $post['deficiencia'], 'id="deficiencia" class="form-control filtro input-sm"');
-        $campos['escolaridade'] = form_dropdown('escolaridade', $filtros['escolaridade'], $post['escolaridade'], 'id="escolaridade" class="form-control filtro input-sm"');
+        $campos['cidade'] = form_multiselect('cidade', $filtros['cidade'], $post['cidade'] ?? [], 'id="cidade" class="form-control filtro input-sm"');
+        $campos['bairro'] = form_multiselect('bairro', $filtros['bairro'], $post['bairro'] ?? [], 'id="bairro" class="form-control filtro input-sm"');
+        $campos['deficiencia'] = form_multiselect('deficiencia', $filtros['deficiencia'], $post['deficiencia'] ?? [], 'id="deficiencia" class="form-control filtro input-sm"');
+        $campos['escolaridade'] = form_multiselect('escolaridade', $filtros['escolaridade'], $post['escolaridade'] ?? [], 'id="escolaridade" class="form-control filtro input-sm"');
 
         $output->filtros = $campos;
 

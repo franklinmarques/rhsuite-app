@@ -277,7 +277,6 @@ require_once "end_js.php";
 
         //datatables
         table = $('#table').DataTable({
-            "info": false,
             "processing": true, //Feature control the processing indicator.
             "serverSide": true, //Feature control DataTables' server-side processing mode.
             "language": {

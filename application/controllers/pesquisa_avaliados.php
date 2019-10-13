@@ -123,11 +123,11 @@ class Pesquisa_avaliados extends MY_Controller
             $row[] = $pesquisa->cargo;
             $row[] = $pesquisa->depto;
             $row[] = '
-                      <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Editar" onclick="edit_participante(' . "'" . $pesquisa->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i> Entrevistados</a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_participante(' . "'" . $pesquisa->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i> Entrevistados</a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_participante(' . "'" . $pesquisa->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                      <a class="btn btn-sm btn-info" href="' . site_url('pesquisa_avaliados/relatorio/' . $pesquisa->id) . '/1" title="Relatório consolidado"><i class="glyphicon glyphicon-list-alt"></i> R. Cons.</a>
-                      <a class="btn btn-sm btn-info" href="' . site_url('pesquisa_avaliados/relatorio/' . $pesquisa->id) . '/2" title="Relatório individual" ><i class="glyphicon glyphicon-list-alt"></i> R. Ind.</a>
-                      <a class="btn btn-sm btn-warning" href="' . site_url('pesquisa/status/' . $id) . '" title="Status"><i class="glyphicon glyphicon-info-sign"></i> Status</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('pesquisa_avaliados/relatorio/' . $pesquisa->id) . '/1" title="Relatório consolidado"><i class="glyphicon glyphicon-list-alt"></i> R. Cons.</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('pesquisa_avaliados/relatorio/' . $pesquisa->id) . '/2" title="Relatório individual" ><i class="glyphicon glyphicon-list-alt"></i> R. Ind.</a>
+                      <a class="btn btn-sm btn-primary" href="' . site_url('pesquisa/status/' . $id) . '" title="Status"><i class="glyphicon glyphicon-info-sign"></i> Status</a>
                      ';
 
             $data[] = $row;

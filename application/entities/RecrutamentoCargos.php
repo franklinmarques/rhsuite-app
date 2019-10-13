@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Entities;
-
-use CodeIgniter\Entity;
+include_once APPPATH . 'entities/Entity.php';
 
 class RecrutamentoCargos extends Entity
 {
-    protected $id;
-    protected $id_recrutamento;
-    protected $cargo;
+	protected $id;
+	protected $id_recrutamento;
+	protected $cargo;
 
-    protected $casts = [
-        'id' => 'int',
-        'id_recrutamento' => 'int',
-        'cargo' => 'string'
-    ];
+	protected $casts = [
+		'id' => 'int',
+		'id_recrutamento' => 'int',
+		'cargo' => 'string'
+	];
 
 }

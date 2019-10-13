@@ -144,12 +144,10 @@ require_once "end_js.php";
     <script>
         $('.tags').tagsInput({width: 'auto', defaultText: 'Telefone', placeholderColor: '#999', delimiter: '/'});
         $('#data_admissao').mask('00/00/0000');
-        $('.hora').mask('Z#00:00', {
+        $('.hora').mask('Z00:00', {
             translation: {
-                'Z': {pattern: /-/, optional: true},
-                '#': {pattern: /\d/, optional: true}
-            },
-            reverse: true
+                'Z': {pattern: /-/, optional: true}
+            }
         });
 
         $(document).ready(function () {

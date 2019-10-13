@@ -520,11 +520,11 @@
             }
 
             $.ajax({
-                'url': url,
-                'type': 'POST',
-                'data': $('#form_turma').serialize(),
-                'dataType': 'JSON',
-                'success': function (data) {
+                url: url,
+                type: 'POST',
+                data: $('#form_turma').serialize(),
+                dataType: 'JSON',
+                success: function (data) {
                     if (data.status) {
                         $('#modal_turma').modal('hide');
                         reload_table();
@@ -533,7 +533,7 @@
                     $('#btnSaveTurma').text('Salvar');
                     $('#btnSaveTurma').attr('disabled', false);
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
+                error: function (jqXHR, textStatus, errorThrown) {
                     if (textStatus) {
                         alert(jqXHR.responseText);
                     } else {
@@ -548,14 +548,14 @@
         function delete_semestre(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    'url': '<?php echo site_url('ei/turmas/ajax_delete') ?>',
-                    'type': 'POST',
-                    'dataType': 'JSON',
-                    'data': {'id': id},
-                    'success': function (data) {
+                    url: '<?php echo site_url('ei/turmas/ajax_delete') ?>/',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {id: id},
+                    success: function (data) {
                         reload_table();
                     },
-                    'error': function (jqXHR, textStatus, errorThrown) {
+                    error: function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });
@@ -565,14 +565,14 @@
         function delete_turma(id) {
             if (confirm('Deseja remover?')) {
                 $.ajax({
-                    'url': '<?php echo site_url('ei/turmas/ajax_deleteTurma') ?>',
-                    'type': 'POST',
-                    'dataType': 'JSON',
-                    'data': {'id': id},
-                    'success': function (data) {
+                    url: '<?php echo site_url('ei/turmas/ajax_deleteTurma') ?>/',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {id: id},
+                    success: function (data) {
                         reload_table();
                     },
-                    'error': function (jqXHR, textStatus, errorThrown) {
+                    error: function (jqXHR, textStatus, errorThrown) {
                         alert('Error deleting data');
                     }
                 });

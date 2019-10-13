@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Vagas extends CI_Controller
 {
 
-    public function index()
+	public function index()
     {
         if ($this->session->userdata('logado')) {
             $indexPage = $this->config->item('index_page');

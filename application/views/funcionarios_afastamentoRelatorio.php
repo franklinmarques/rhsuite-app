@@ -264,11 +264,10 @@ require_once "end_js.php";
         table.ajax.reload(null, false);
     }
 
-
     function buscar() {
         reload_table();
+        setPdf_atributes();
     }
-
 
     function delete_prontuario(id_usuario) {
         if (confirm('Deseja remover os afastamentos do colaborador selecionado?')) {
@@ -289,7 +288,6 @@ require_once "end_js.php";
             });
         }
     }
-
 
     function setPdf_atributes() {
         var search = '';
@@ -317,7 +315,6 @@ require_once "end_js.php";
         }
         $('#pdf').prop('href', '<?= site_url('usuarioAfastamento/pdf'); ?>' + search);
     }
-
 </script>
 <?php
 require_once "end_html.php";

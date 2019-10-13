@@ -150,21 +150,21 @@ class Recrutamento_cargos extends MY_Controller
             $row = array();
             $row[] = $recrutamento->cargo;
             $row[] = '
-                      <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Editar" onclick="edit_cargo(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Editar" onclick="edit_cargo(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-pencil"></i></a>
                       <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir" onclick="delete_cargo(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                      <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Acicionar candidato" onclick="add_candidato(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i> Candidato</a>
+                      <a class="btn btn-sm btn-info" href="javascript:void(0)" title="Adicionar candidato" onclick="add_candidato(' . "'" . $recrutamento->id . "'" . ')"><i class="glyphicon glyphicon-plus"></i> Candidato</a>
                      ';
             $row[] = $recrutamento->candidato;
             $row[] = number_format($recrutamento->aproveitamento2, 1, ',', '');
             if ($recrutamento->candidato) {
                 $row[] = '
                           <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Excluir candidato" onclick="delete_candidato(' . "'" . $recrutamento->id_candidato . "'" . ')"><i class="glyphicon glyphicon-trash"></i></a>
-                          <a class="btn btn-sm btn-success" href="' . site_url('recrutamento_processos/gerenciar/' . $recrutamento->id_candidato) . '" title="Ver processo"><i class="glyphicon glyphicon-list-alt"></i> Testes seletivos</a>
+                          <a class="btn btn-sm btn-primary" href="' . site_url('recrutamento_processos/gerenciar/' . $recrutamento->id_candidato) . '" title="Ver processo"><i class="glyphicon glyphicon-list-alt"></i> Testes seletivos</a>
                          ';
             } else {
                 $row[] = '
                           <button class="btn btn-sm btn-danger disabled"><i class="glyphicon glyphicon-trash"></i></button>
-                          <button class="btn btn-sm btn-success disabled"><i class="glyphicon glyphicon-list-alt"></i> Testes seletivos</button>
+                          <button class="btn btn-sm btn-primary disabled"><i class="glyphicon glyphicon-list-alt"></i> Testes seletivos</button>
                          ';
             }
 

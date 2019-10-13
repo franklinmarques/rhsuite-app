@@ -63,7 +63,7 @@
                                         <select name="status" class="form-control filtro input-sm"
                                                 autocomplete="off">
                                             <option value="">Todas</option>
-                                            <option value="A">Abertura</option>
+                                            <option value="A">Ativas</option>
                                             <option value="S">Suspensas</option>
                                             <option value="C">Canceladas</option>
                                             <option value="G">Aguardando aprovação</option>
