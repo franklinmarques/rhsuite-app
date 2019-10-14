@@ -269,8 +269,11 @@ class Log_usuarios extends MY_Controller
 	 */
 	public function detalhes()
 	{
-		$id = $this->input->post('id');
-		$data = $this->logUsuarios->find($id);
+		$data = $this->logUsuarios->detalhes($this->input->post('id'));
+
+		if (empty($data)) {
+			exit(json_encode(['erro' => 'Não foi possível recuperar os detalhes do log selecionado.']));
+		}
 
 		echo json_encode($data);
 	}

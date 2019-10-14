@@ -11,7 +11,7 @@ class Clientes extends MY_Controller
 		$this->load->model('ead_clientes_model', 'cliente');
 	}
 
-
+	//==========================================================================
 	public function index()
 	{
 		$data['empresa'] = $this->session->userdata('empresa');

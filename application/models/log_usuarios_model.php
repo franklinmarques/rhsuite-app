@@ -54,4 +54,37 @@ class Log_usuarios_model extends MY_Model
 		return $retorno;
 	}
 
+	//==========================================================================
+	public function detalhes($idLog = null)
+	{
+		$this->db->select('id');
+		$this->db->where('usuario', $this->session->userdata('id'));
+		$this->db->order_by('id', 'desc');
+		$this->db->limit(1);
+		$log = $this->db->get(self::$table)->row();
+		$id = $log->id ?? null;
+
+		// $tempoLimite = $this->session->sess_expiration;
+		$tempoLimite = $this->config->item('sess_expiration');
+
+		$case = "CASE WHEN data_saida IS NOT NULL THEN 'finalizado'
+                      WHEN DATE_ADD(IFNULL(data_atualizacao, data_acesso), INTERVAL {$tempoLimite} SECOND)  >= NOW() THEN 'logado'
+                      ELSE 'expirado' END";
+
+		$this->db->select('*');
+		$this->db->select("DATE_FORMAT(data_acesso, '%d/%m/%Y &ensp; %H:%i:%s') AS data_hora_acesso", false);
+		$this->db->select("DATE_FORMAT(data_atualizacao, '%d/%m/%Y &ensp; %H:%i:%s') AS data_hora_atualizacao", false);
+		$this->db->select("DATE_FORMAT(data_saida, '%d/%m/%Y &ensp; %H:%i:%s') AS data_hora_saida", false);
+		$this->db->select("({$case}) AS status", false);
+		if ($idLog) {
+			$this->db->where('id', $idLog);
+		}
+		$row = $this->db->get(self::$table)->row();
+
+		$usuario = $this->db->select('nome')->get_where('usuarios', ['id' => $row->usuario])->row();
+		$row->nome = $usuario->nome ?? '';
+
+		return $row;
+	}
+
 }
