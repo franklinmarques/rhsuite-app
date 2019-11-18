@@ -454,6 +454,7 @@ abstract class Entity
 				$value = (int)$value;
 				break;
 			case 'float':
+			case 'decimal':
 				if (strpos($value, ',') !== false) {
 					$value = (float)str_replace(['.', ','], ['', '.'], $value);
 				} else {
@@ -536,4 +537,5 @@ abstract class Entity
 		}
 		return $tmp;
 	}
+
 }

@@ -10,8 +10,9 @@ class StAlocacaoFeriados extends Entity
 	protected $status;
 	protected $qtde_novos_processos;
 	protected $qtde_analistas;
-	protected $qtde_processos_tratados_dia;
+	protected $qtde_processos_analisados;
 	protected $qtde_pagamentos;
+	protected $qtde_linhas_analisadas;
 
 	protected $casts = [
 		'id' => 'int',
@@ -20,8 +21,9 @@ class StAlocacaoFeriados extends Entity
 		'status' => 'string',
 		'qtde_novos_processos' => '?int',
 		'qtde_analistas' => '?int',
-		'qtde_processos_tratados_dia' => '?int',
-		'qtde_pagamentos' => '?int'
+		'qtde_processos_analisados' => '?int',
+		'qtde_pagamentos' => '?int',
+		'qtde_linhas_analisadas' => '?int'
 	];
 
 }

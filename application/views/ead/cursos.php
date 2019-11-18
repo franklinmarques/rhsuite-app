@@ -98,9 +98,6 @@
                 'iDisplayLength': -1,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
                 'order': [[2, 'asc']],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('ead/cursos/ajax_list') ?>',
                     'type': 'POST',
@@ -244,9 +241,6 @@
                     },
                     'success': function (json) {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Erro ao excluir o curso');
                     }
                 });
 

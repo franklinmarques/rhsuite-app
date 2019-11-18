@@ -313,9 +313,6 @@
                     $('#form .senha').html('<small><i>Obs.: deixe em branco para conservar a senha atual</i></small>');
                     // $('#form .senha').html('<small><i>Obs.: caso não queira alterar a senha, deixar este campo em branco</i></small>');
                     $('#modal_form').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Erro ao excluir o cliente/usuário');
                 }
             });
         }
@@ -359,9 +356,6 @@
                             $('#alert_form').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
                         }
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    $('#alert_form').html('<div class="alert alert-warning">Erro ao salvar cliente/usuário</div>').hide().fadeIn('slow');
                 },
                 'complete': function () {
                     $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);

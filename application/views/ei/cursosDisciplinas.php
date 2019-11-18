@@ -277,9 +277,6 @@
                 'order': [], //Initial no order.
                 'iDisplayLength': -1,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 // Load data for the table's content from an Ajax source
                 'ajax': {
                     'url': '<?php echo site_url('ei/cursosDisciplinas/ajax_cursos') ?>',
@@ -320,9 +317,6 @@
                 'order': [], //Initial no order.
                 'iDisplayLength': -1,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 // Load data for the table's content from an Ajax source
                 'ajax': {
                     'url': '<?php echo site_url('ei/cursosDisciplinas/ajax_disciplinas') ?>',
@@ -381,9 +375,6 @@
                 'success': function (json) {
                     $('#id_escola').html($(json.escolas).html());
                     demo2.bootstrapDualListbox('refresh', true);
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         });
@@ -441,9 +432,6 @@
 
                     $('#modal_curso').modal('show');
                     $('.modal-title').text('Editar curso - ' + json.nome); // Set title to Bootstrap modal title
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -468,9 +456,6 @@
 
                     $('#modal_disciplina').modal('show');
                     $('.modal-title').text('Editar disciplina - ' + json.nome); // Set title to Bootstrap modal title
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -499,9 +484,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
                 },
                 'complete': function () {
                     $('#btnSaveCurso').text('Salvar').attr('disabled', false);
@@ -534,9 +516,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSaveDisciplina').text('Salvar').attr('disabled', false);
                 }
@@ -553,10 +532,6 @@
                     'success': function (json) {
                         $('#modal_curso').modal('hide');
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                        alert('Error deleting data');
                     }
                 });
             }
@@ -572,10 +547,6 @@
                     'success': function (json) {
                         $('#modal_disciplina').modal('hide');
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                        alert('Error deleting data');
                     }
                 });
             }

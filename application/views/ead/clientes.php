@@ -177,9 +177,6 @@
                 'serverSide': true,
                 'iDisplayLength': -1,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('ead/clientes/ajaxList') ?>',
                     'type': 'POST',
@@ -287,9 +284,6 @@
                     $('#form .senha').html('<small><i>Obs.: caso não queira alterar a senha, deixar este campo em branco</i></small>');
                     $('.modal-title').text('Editar cliente/usuário');
                     $('#modal_form').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Erro ao excluir o cliente/usuário');
                 }
             });
         }
@@ -335,9 +329,6 @@
                         }
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    $('#alert_form').html('<div class="alert alert-warning">Erro ao salvar cliente/usuário</div>').hide().fadeIn('slow');
-                },
                 'complete': function () {
                     $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);
                 }
@@ -360,9 +351,6 @@
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Erro ao excluir o cliente/usuário');
                     }
                 });
             }

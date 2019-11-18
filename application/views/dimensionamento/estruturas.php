@@ -431,8 +431,6 @@
 
     $(document).ready(function () {
 
-        var url_language = '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>';
-
         table_processo = $('#table_processo').DataTable({
             'processing': true,
             'serverSide': true,
@@ -441,9 +439,6 @@
             'bLengthChange': false,
             'searching': false,
             'paging': false,
-            'language': {
-                'url': url_language
-            },
             'ajax': {
                 'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListProcessos') ?>',
                 'type': 'POST',
@@ -483,9 +478,6 @@
             'bLengthChange': false,
             'searching': false,
             'paging': false,
-            'language': {
-                'url': url_language
-            },
             'ajax': {
                 'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListAtividades') ?>',
                 'type': 'POST',
@@ -536,9 +528,6 @@
             'bLengthChange': false,
             'searching': false,
             'paging': false,
-            'language': {
-                'url': url_language
-            },
             'ajax': {
                 'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListEtapas') ?>',
                 'type': 'POST',
@@ -590,9 +579,6 @@
             'bLengthChange': false,
             'searching': false,
             'paging': false,
-            'language': {
-                'url': url_language
-            },
             'ajax': {
                 'url': '<?php echo site_url('dimensionamento/estruturas/ajaxListItens') ?>',
                 'type': 'POST',
@@ -660,9 +646,6 @@
                 $('#setor').html($(json.setor).html());
                 estruturas = ($('#depto').val() !== '' && $('#area').val() !== '' && $('#setor').val() !== '');
                 reload_table();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
             }
         });
     }
@@ -773,9 +756,6 @@
 
                 $('#modal_processo').modal('show');
                 $('.modal-title').text('Editar processo - ' + json.nome);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -803,9 +783,6 @@
 
                 $('#modal_atividade').modal('show');
                 $('.modal-title').text('Editar atividade - ' + json.nome);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -833,9 +810,6 @@
 
                 $('#modal_etapa').modal('show');
                 $('.modal-title').text('Editar etapa - ' + json.nome);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -863,9 +837,6 @@
 
                 $('#modal_item').modal('show');
                 $('.modal-title').text('Editar item - ' + json.nome);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -894,9 +865,6 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
             },
             'complete': function () {
                 $('#btnSaveProcesso').text('Salvar').attr('disabled', false);
@@ -929,9 +897,6 @@
                     alert(json.erro);
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-            },
             'complete': function () {
                 $('#btnSaveAtividade').text('Salvar').attr('disabled', false);
             }
@@ -962,9 +927,6 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
             },
             'complete': function () {
                 $('#btnSaveEtapa').text('Salvar').attr('disabled', false);
@@ -997,9 +959,6 @@
                     alert(json.erro);
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-            },
             'complete': function () {
                 $('#btnSaveItem').text('Salvar').attr('disabled', false);
             }
@@ -1020,10 +979,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                    alert('Error deleting data');
                 }
             });
         }
@@ -1043,10 +998,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                    alert('Error deleting data');
                 }
             });
         }
@@ -1066,10 +1017,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                    alert('Error deleting data');
                 }
             });
         }
@@ -1089,10 +1036,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                    alert('Error deleting data');
                 }
             });
         }

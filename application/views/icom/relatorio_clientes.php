@@ -1,9 +1,3 @@
-<?php if ($is_pdf): ?>
-
-<?php else: ?>
-
-<?php endif; ?>
-
 <?php require_once APPPATH . 'views/header.php'; ?>
 
 <style>

@@ -202,13 +202,9 @@ require_once "header.php";
                     area: $('#area').val(),
                     usuario: $('#usuario').val()
                 },
-                dataType: "JSON",
                 success: function (json) {
                     $('#area').html($(json.area).html());
                     $('#usuario').html($(json.usuario).html());
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
                 }
             });
         });
@@ -220,8 +216,6 @@ require_once "header.php";
 
                 $.ajax({
                     url: '<?= base_url('agenda/finalizar'); ?>',
-                    type: 'POST',
-                    dataType: 'json',
                     data: {id: id},
                     beforeSend: function () {
                         $('html, body').animate({scrollTop: 0}, 1500);
@@ -251,8 +245,6 @@ require_once "header.php";
 
                 $.ajax({
                     url: '<?= base_url('agenda/excluir'); ?>',
-                    type: 'POST',
-                    dataType: 'json',
                     data: {id: id},
                     beforeSend: function () {
                         $('html, body').animate({scrollTop: 0}, 1500);

@@ -2,8 +2,53 @@
 
 application/cache/*
 !application/cache/index.html
-!application/cache/.htaccess
 
 application/logs/*
 !application/logs/index.html
-!application/logs/.htaccess
+
+!application/*/.htaccess
+
+composer.lock
+
+user_guide_src/build/*
+user_guide_src/cilexer/build/*
+user_guide_src/cilexer/dist/*
+user_guide_src/cilexer/pycilexer.egg-info/*
+/vendor/
+
+arquivos/backup/ftp/*
+arquivos/backup/sql/*
+arquivos/csv/*
+arquivos/curriculos/*
+arquivos/documentos/colaborador/*
+arquivos/documentos/organizacao/*
+arquivos/empresa-docs/*
+arquivos/icom/contratos/*
+arquivos/icom/propostas/*
+arquivos/laudos/*
+arquivos/media/*
+arquivos/pdf/*
+arquivos/temp/*
+arquivos/videos/*
+
+browser/upload/*
+
+imagens/emails/*
+imagens/usuarios/*
+
+videos/emails/*
+videos/usuarios/*
+
+# IDE Files
+#-------------------------
+/nbproject/
+.idea/*
+
+## Sublime Text cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+/tests/tests/
+/tests/results/

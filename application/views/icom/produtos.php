@@ -223,9 +223,6 @@
                 'processing': true,
                 'serverSide': true,
                 'order': [],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('icom/produtos/listar/') ?>',
                     'type': 'POST',
@@ -276,9 +273,6 @@
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
-                },
                 'complete': function () {
                     $('#estrutura select').prop('disabled', false);
                 }
@@ -326,9 +320,6 @@
 
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar produto');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -350,9 +341,6 @@
                         $('#id_area').html(json.areas);
                         $('#id_setor').html(json.setores);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('.estrutura, #btnSave').prop('disabled', false);
@@ -383,9 +371,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -406,9 +391,6 @@
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

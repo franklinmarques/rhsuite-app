@@ -750,9 +750,6 @@ require_once APPPATH . 'views/end_js.php';
                 'processing': true, //Feature control the processing indicator.
                 'serverSide': true, //Feature control DataTables' server-side processing mode.
                 'iDisplayLength': 25,
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 // Load data for the table's content from an Ajax source
                 'ajax': {
                     'url': '<?php echo site_url('ead/pagina_curso/ajax_questoes/' . $row->id) ?>',
@@ -883,9 +880,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('#modal_questao').modal('show');
                     $('#modal_questao .modal-title').text('Editar questão'); // Set title to Bootstrap modal title
                     $('#btnSaveQuestao').text('Atualizar lista'); // Set title to Bootstrap modal footer
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -949,9 +943,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('#form_conteudo [name="id"]').val(json.id);
                     $('#form_conteudo [name="conteudo"]').val(json.conteudo);
                     $('#modal_conteudo').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -1005,9 +996,6 @@ require_once APPPATH . 'views/end_js.php';
                     });
 
                     $('#modal_respostas').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -1358,7 +1346,8 @@ require_once APPPATH . 'views/end_js.php';
         var container_audio = document.getElementById('container-audio');
 
         // Mais variáveis de áudio
-        var isFirefox = Boolean(navigator.mozGetUserMedia);
+        // var isFirefox = Boolean(navigator.mozGetUserMedia);
+        var isFirefox = !!navigator.mozGetUserMedia;
         var strong = null;
         var progress = null;
         var audioStream;
@@ -1465,13 +1454,14 @@ require_once APPPATH . 'views/end_js.php';
             audio.src = '';
             fileName = Math.round(Math.random() * 99999999) + 99999999;
 
+                console.log(recorder);
             if (!isFirefox) {
                 recorder.stopRecording(function () {
                     save_audio(recorder.getBlob(), 'audio', fileName + '.mp3');
                 });
             } else {
                 recorder.stopRecording(function () {
-                    save_audio(recorder.getBlob(), 'audio', fileName + '.mp3');
+                    save_audio(recorder.getBlob(), 'audio', fileName + '.ogg');
                 });
             }
 

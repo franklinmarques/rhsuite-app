@@ -1028,6 +1028,7 @@ class Apontamento_relatorios extends MY_Controller
 		$dia = $this->input->get('dia_fechamento');
 		$mes = $this->input->get('mes');
 		$ano = $this->input->get('ano');
+		$mostrarColaboradores = $this->input->get('mostrar_colaborador');
 		if ($dia) {
 			$dataTermino = date('Y-m-d', mktime(0, 0, 0, $mes, $dia, $ano));
 		} else {
@@ -1057,7 +1058,7 @@ class Apontamento_relatorios extends MY_Controller
 			->result();
 
 		$alocacaoAtual = $this->db
-			->select('contrato')
+			->select('contrato, setor')
 			->where('id_empresa', $this->session->userdata('empresa'))
 			->where('depto', $this->input->get('depto'))
 			->where('area', $this->input->get('area'))
@@ -1067,7 +1068,7 @@ class Apontamento_relatorios extends MY_Controller
 			->row();
 
 		$contrato = $this->db
-			->select('a.contrato')
+			->select('a.contrato, b.setor')
 			->select('(SELECT MAX(c.valor_indice) FROM alocacao_reajuste c WHERE c.id_cliente = a.id ORDER BY c.data_reajuste DESC) AS valor_indice', false)
 			->join('alocacao_unidades b', 'b.id_contrato = a.id')
 			->where('a.id_empresa', $this->session->userdata('empresa'))
@@ -1093,8 +1094,10 @@ class Apontamento_relatorios extends MY_Controller
 				->get('usuarios')
 				->row(),
 			'contrato' => $alocacaoAtual->contrato ?? $contrato->contrato,
+			'setor' => $alocacaoAtual->setor ?? $contrato->setor,
+			'mostrarColaboradores' => $mostrarColaboradores,
 			'valor_unitario' => number_format($contrato->valor_indice * 100, 2, ',', '.'),
-			'query_string' => http_build_query($this->input->get()),
+			'query_string' => http_build_query($this->input->get() + ['mostrar_colaborador' => $mostrarColaboradores]),
 			'is_pdf' => false
 		];
 

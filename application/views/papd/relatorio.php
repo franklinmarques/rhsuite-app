@@ -141,9 +141,6 @@ require_once APPPATH . "views/end_js.php";
 //            scrollCollapse: true,
 //            scroller: true,
 //            "bPaginate": true,
-            "language": {
-                "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
-            },
             // Load data for the table's content from an Ajax source
             "ajax": {
                 "url": "<?php echo site_url('papd/relatorios/ajax_medicao_mensal/') ?>",

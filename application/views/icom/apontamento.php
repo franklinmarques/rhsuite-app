@@ -1246,8 +1246,6 @@
 
     $(document).ready(function () {
         busca = $('#busca').serialize();
-        var language = "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>";
-
 
         table = $('#table').DataTable({
             'processing': true,
@@ -1255,9 +1253,6 @@
             'order': [1, 'asc'],
             'iDisplayLength': -1,
             'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
-            'language': {
-                'url': language
-            },
             'ajax': {
                 'url': '<?php echo site_url('icom/apontamento/listarEventos') ?>',
                 'type': 'POST',
@@ -1408,9 +1403,6 @@
             'order': [0, 'asc'],
             'iDisplayLength': -1,
             'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
-            'language': {
-                'url': language
-            },
             'ajax': {
                 'url': '<?php echo site_url('icom/apontamento/listarTotalizacoes') ?>',
                 'type': 'POST',
@@ -1442,9 +1434,6 @@
             'order': [0, 'asc'],
             'iDisplayLength': -1,
             'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
-            'language': {
-                'url': language
-            },
             'ajax': {
                 'url': '<?php echo site_url('icom/apontamento/listarAvaliacoesPerformance') ?>',
                 'type': 'POST',
@@ -1551,9 +1540,6 @@
                 $('#busca [name="id_area"]').html($(json.areas).html()).prop;
                 $('#busca [name="id_setor"]').html($(json.setores).html());
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#busca [name="id_depto"]').prop('disabled', false);
                 $('#busca [name="id_area"]').prop('disabled', false);
@@ -1578,9 +1564,6 @@
                 $('#form_posto [name="id_usuario"]').html($(json.usuarios).html());
                 $('#form_posto [name="id_funcao"]').html($(json.funcoes).html());
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('.posto_estrutura').prop('disabled', false);
             }
@@ -1598,6 +1581,7 @@
                 $('.posto_estrutura').prop('disabled', true);
             },
             'success': function (json) {
+                $('#form_posto [name="id"]').val('');
                 $('#form_posto [name="id_funcao"]').val('');
                 $('#form_posto [name="valor_hora_mei"]').val('');
                 $('#form_posto [name="valor_mes_clt"]').val('');
@@ -1612,9 +1596,6 @@
                 });
 
                 $('#form_posto [name="categoria"]').trigger('change');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             },
             'complete': function () {
                 $('.posto_estrutura').prop('disabled', false);
@@ -1726,9 +1707,6 @@
                     alert('Mês alocado com sucesso.');
                     reload_table();
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -1753,9 +1731,6 @@
                         alert('Mês desalocado com sucesso.');
                         reload_table();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -1788,9 +1763,6 @@
                 $('#form_avaliado_dados').html(json.dados);
 
                 $('#modal_avaliado').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -1822,9 +1794,6 @@
                 $('#form_banco_horas_dados').html(json.dados);
 
                 $('#modal_banco_horas').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -1874,9 +1843,6 @@
                 $('#colaborador_data').html(json.colaborador_data);
 
                 $('#modal_form').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -1884,6 +1850,7 @@
 
     function edit_posto() {
         $('#form_posto')[0].reset();
+        $('#form_posto [name="id"]').val('')
 
         $.ajax({
             'url': '<?php echo site_url('icom/apontamento/editarPosto') ?>',
@@ -1910,9 +1877,6 @@
                 $('#form_posto [name="categoria"]').trigger('change');
 
                 $('#modal_posto').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -1944,9 +1908,6 @@
                 demo1.bootstrapDualListbox('refresh', true);
 
                 $('#modal_alocados').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -1968,9 +1929,6 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
             },
             'complete': function () {
                 $('#btnSaveAvaliado').text('Salvar').attr('disabled', false);
@@ -1995,9 +1953,6 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
             },
             'complete': function () {
                 $('#btnSaveBancoHoras').text('Salvar').attr('disabled', false);
@@ -2024,9 +1979,6 @@
                     alert(json.erro);
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-            },
             'complete': function () {
                 $('#btnSaveEvento').text('Salvar');
                 $('#btnSaveEvento, #btnLimparEvento').attr('disabled', false);
@@ -2052,9 +2004,6 @@
                     alert(json.erro);
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-            },
             'complete': function () {
                 $('#btnSavePosto').text('Salvar').attr('disabled', false);
             }
@@ -2078,9 +2027,6 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
             },
             'complete': function () {
                 $('#btnSaveAlocados').text('Salvar').attr('disabled', false);
@@ -2110,9 +2056,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
-                },
                 'complete': function () {
                     $('#btnLimparEvento').text('Excluir');
                     $('#btnLimparEvento, #btnSaveEvento').attr('disabled', false);
@@ -2138,9 +2081,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 },
                 'complete': function () {
                     $('#table tr td button.danger').attr('disabled', false);
@@ -2228,9 +2168,6 @@
                 $('#form_feedback [name="id"]').html($(json.id_feedback).html());
 
                 $('#modal_feedback').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error deleting data');
             }
         });
     }
@@ -2262,9 +2199,6 @@
                     });
                     $('#btnImprimirFeedback, #btnLimparFeedback').show();
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
-                },
                 'complete': function () {
                     $('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', false);
                     $('#form_feedback [name="id"], #form_feedback [name="tipo"]').attr('disabled', false);
@@ -2292,9 +2226,6 @@
                     alert(json.erro);
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding/update data');
-            },
             'complete': function () {
                 $('#btnSaveFeedback').text('Salvar');
                 $('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', false);
@@ -2321,9 +2252,6 @@
                     } else {
                         $('#modal_feedback').modal('hide');
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 },
                 'complete': function () {
                     $('#btnLimparFeedback').text('Excluir');

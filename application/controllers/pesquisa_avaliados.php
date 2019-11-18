@@ -9,7 +9,7 @@ class Pesquisa_avaliados extends MY_Controller
     {
         parent::__construct();
         $this->load->model('Pesquisa_model', 'pesquisa');
-        $this->load->model('Funcionarios_model', 'funcionarios');
+//        $this->load->model('Funcionarios_model', 'funcionarios');
     }
 
     public function index()
@@ -35,10 +35,12 @@ class Pesquisa_avaliados extends MY_Controller
         $data = array_combine($arrSql, array_pad(array(), count($arrSql), array()));
 
         foreach ($arrSql as $field) {
-            $sql = "SELECT DISTINCT(TRIM({$field})) AS {$field} 
+            $sql = "SELECT TRIM({$field}) AS {$field} 
                     FROM usuarios 
-                    WHERE empresa = {$empresa} AND NOT
-                          ({$field} IS NULL OR {$field} = '')";
+                    WHERE empresa = {$empresa} AND
+                     	  status = 1 AND NOT
+                          ({$field} IS NULL OR {$field} = '')
+                    GROUP BY {$field}";
             $rows = $this->db->query($sql)->result_array();
             $data[$field] = array('' => 'Todos');
             foreach ($rows as $row) {
@@ -51,6 +53,7 @@ class Pesquisa_avaliados extends MY_Controller
 
         $this->db->select('nome, id');
         $this->db->where('empresa', $data['empresa']);
+        $this->db->where('status', 1);
         $this->db->order_by('nome', 'ASC');
         $avaliadores = $this->db->get('usuarios')->result();
 
@@ -208,7 +211,7 @@ class Pesquisa_avaliados extends MY_Controller
     {
         $avaliadores = $this->input->post('avaliadores');
         if (empty($avaliadores)) {
-            exit(json_encode(array('retorno' => 0, 'aviso' => 'Nenhum avaliador incluso')));
+            exit(json_encode(array('retorno' => 0, 'aviso' => 'O Colaborador pesquisado é obrigatório')));
         }
 
         $data['id_pesquisa'] = $this->input->post('pesquisa');

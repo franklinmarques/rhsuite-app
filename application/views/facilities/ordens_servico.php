@@ -409,9 +409,6 @@ require_once APPPATH . 'views/end_js.php';
             'iDisplayLength': -1,
             'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
             'order': [['0', 'desc']],
-            'language': {
-                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-            },
             // Load data for the table's content from an Ajax source
             'ajax': {
                 'url': '<?php echo site_url('facilities/ordensServico/ajaxList/') ?>',
@@ -561,9 +558,6 @@ require_once APPPATH . 'views/end_js.php';
                 $('#modal_form').modal('show');
                 $('.modal-title').text('Nova ordem de serviço'); // Set title to Bootstrap modal title
                 $('.combo_nivel1').hide();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -671,9 +665,6 @@ require_once APPPATH . 'views/end_js.php';
 
                 $('#modal_form').modal('show');
                 $('.modal-title').text('Editar ordem de serviço'); // Set title to Bootstrap modal title
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -702,8 +693,7 @@ require_once APPPATH . 'views/end_js.php';
                 $('#setor').html($(json.setor).html());
                 $('#requisitante').html($(json.requisitante).html());
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
+            'complete': function () {
                 $('#depto,#area, #setor').prop('disabled', false);
             }
         });
@@ -745,9 +735,6 @@ require_once APPPATH . 'views/end_js.php';
                     alert(json.erro);
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-            },
             'complete': function () {
                 $('#btnSave').text('Salvar').attr('disabled', false);
             }
@@ -764,9 +751,6 @@ require_once APPPATH . 'views/end_js.php';
                 'data': {'numero_os': numero_os},
                 'success': function () {
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 }
             });
         }
@@ -788,9 +772,6 @@ require_once APPPATH . 'views/end_js.php';
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error deleting data');
             },
             'complete': function () {
                 $('.notificarFechamento').prop('disabled', false);

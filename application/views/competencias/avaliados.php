@@ -100,9 +100,6 @@ require_once APPPATH . 'views/end_js.php';
             'serverSide': true, //Feature control DataTables' server-side processing mode.
             'iDisplayLength': 25,
             'order': [], //Initial no order.
-            'language': {
-                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-            },
             // Load data for the table's content from an Ajax source
             'ajax': {
                 'url': '<?php echo site_url('competencias/avaliados/ajax_list/' . $id_competencia . '/' . $id_empresa) ?>',
@@ -139,9 +136,6 @@ require_once APPPATH . 'views/end_js.php';
                 },
                 'success': function (json) {
                     table.ajax.reload(null, false);
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 }
             });
         }

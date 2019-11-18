@@ -16,10 +16,18 @@
 </div><!-- /.modal -->
 
 <script>
+	$.extend(true, $.fn.dataTable.defaults, {
+        'language': {
+            'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+        }
+    });
+    
     if ($.fn.dataTable !== undefined) {
         $.fn.dataTable.ext.errMode = function (settings, tn, msg) {
             if (settings.jqXHR.status !== 401 && settings.jqXHR.statusText !== 'expirado') {
                 alert(msg);
+            } else {
+                $('#session_timeout').modal('show');
             }
         };
     }

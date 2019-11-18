@@ -371,6 +371,17 @@
 
 <script>
     $(document).ready(function () {
+        $.ajaxSetup({
+            'type': 'POST',
+            'dataType': 'json',
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ' ' + jqXHR.status + ': ' + (jqXHR.status === 0 ? 'Disconnected' : errorThrown));
+                if (jqXHR.status === 401) {
+                    window.close();
+                }
+            }
+        });
+
         $('.date').mask('00/00/0000');
     });
 
@@ -384,8 +395,6 @@
 
         $.ajax({
             'url': '<?php echo site_url('facilities/ordensServico/montarEstrutura') ?>',
-            'type': 'POST',
-            'dataType': 'json',
             'data': {
                 'depto': depto,
                 'area': area,
@@ -399,8 +408,7 @@
                 $('#setor').html($(json.setor).html());
                 $('#requisitante').html($(json.requisitante).html());
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
+            'complete': function () {
                 $('#depto,#area, #setor').prop('disabled', false);
             }
         });
@@ -431,8 +439,6 @@
     function filtrar_os(numero_os) {
         $.ajax({
             'url': "<?php echo site_url('facilities/ordensServico/ajaxEdit') ?>",
-            'type': 'POST',
-            'dataType': 'json',
             'data': {'numero_os': numero_os},
             'success': function (json) {
                 $('#form_os select:not([name="numero_os"]), #form_os input:not([type="hidden"]), #form_os textarea').prop('disabled', json.data.id_usuario !== '<?= $idUsuario ?>');
@@ -447,9 +453,6 @@
                         $('#form_os [name="' + key + '"][value="' + value + '"]').prop('checked', value === '1');
                     }
                 });
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -457,8 +460,6 @@
     function nova_os() {
         $.ajax({
             'url': '<?php echo site_url('facilities/ordensServico/ajaxNovo') ?>',
-            'type': 'POST',
-            'dataType': 'json',
             'success': function (json) {
                 $('#form_os select:not([name="numero_os"]), #form_os input:not([type="hidden"]), #form_os textarea').prop('disabled', false);
                 $('#depto').html($(json.deptos).html());
@@ -469,9 +470,6 @@
                 $('[name="data_abertura"]').val(moment().format('DD/MM/YYYY'));
                 $('[name="status"]').val('A');
                 $('[name="data_fechamento"], [name="descricao_problema"], [name="observacoes"]').val('');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -482,8 +480,6 @@
 
         $.ajax({
             'url': '<?php echo site_url('facilities/vistorias/salvarOS') ?>',
-            'type': 'POST',
-            'dataType': 'json',
             'data': $('#form_os').serialize(),
             'success': function (json) {
                 if (json.status) {
@@ -492,12 +488,8 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSaveOS').text('Salvar'); //change button text
-                $('#btnSaveOS').attr('disabled', false); //set button enable
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
+            'complete': function () {
                 $('#btnSaveOS').text('Salvar'); //change button text
                 $('#btnSaveOS').attr('disabled', false); //set button enable
             }

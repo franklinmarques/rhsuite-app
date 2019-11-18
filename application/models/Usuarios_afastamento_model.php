@@ -14,8 +14,8 @@ class Usuarios_afastamento_model extends MY_Model
 		'motivo_afastamento' => 'integer|max_length[1]',
 		'motivo_afastamento_bck' => 'max_length[255]',
 		'data_pericia_medica' => 'valid_date',
-		'data_limite_beneficio' => 'valid_date|before_or_equal_date[data_pericia_medica]',
-		'data_retorno' => 'valid_date|after_date[data_afastamento]',
+		'data_limite_beneficio' => 'valid_date',
+		'data_retorno' => 'valid_date',
 		'historico_afastamento' => 'max_length[65535]'
 	];
 

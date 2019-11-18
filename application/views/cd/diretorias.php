@@ -526,9 +526,6 @@ require_once APPPATH . 'views/header.php';
                 'serverSide': true,
                 'iDisplayLength': 100,
                 'lengthMenu': [[5, 10, 25, 50, 100, 500], [5, 10, 25, 50, 100, 500]],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('cd/diretorias/ajax_list') ?>',
                     'type': 'POST',
@@ -579,9 +576,6 @@ require_once APPPATH . 'views/header.php';
                     $('[name="busca[coordenador]"]').html($(json.coordenador).html());
                     $('[name="busca[contrato]"]').html($(json.contrato).html());
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -610,9 +604,6 @@ require_once APPPATH . 'views/header.php';
                 },
                 'success': function (json) {
                     $('[name="id_coordenador"]').html($(json.id_coordenador).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -649,9 +640,6 @@ require_once APPPATH . 'views/header.php';
                     atualizar_estrutura(json.id_coordenador);
 
                     $('#modal_form').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -678,9 +666,6 @@ require_once APPPATH . 'views/header.php';
                     $('#modal_unidades').modal('show');
 
                     demo2.bootstrapDualListbox('refresh', true);
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -716,9 +701,6 @@ require_once APPPATH . 'views/header.php';
                         $('#form_servicos_nao_compartilhados [name="valor[]"]:eq(' + i + ')').val(v.valor);
                     });
                     $('#modal_servicos').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -747,9 +729,6 @@ require_once APPPATH . 'views/header.php';
                     });
 
                     $('#modal_reajuste').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -782,9 +761,6 @@ require_once APPPATH . 'views/header.php';
                         atualizarFiltro();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -808,9 +784,6 @@ require_once APPPATH . 'views/header.php';
                         $('#modal_unidades').modal('hide');
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSaveUnidades').text('Salvar').attr('disabled', false);
                 }
@@ -831,9 +804,6 @@ require_once APPPATH . 'views/header.php';
                     if (json.status) {
                         $('#modal_servicos').modal('hide');
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
                 },
                 'complete': function () {
                     $('#btnSaveServicos').text('Salvar').attr('disabled', false);
@@ -856,9 +826,6 @@ require_once APPPATH . 'views/header.php';
                         $('#modal_reajuste').modal('hide');
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSaveReajuste').text('Salvar').attr('disabled', false);
                 }
@@ -876,9 +843,6 @@ require_once APPPATH . 'views/header.php';
                     'success': function (json) {
                         $('#modal_form').modal('hide');
                         atualizarFiltro();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

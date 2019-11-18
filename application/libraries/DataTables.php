@@ -353,7 +353,7 @@ class DataTables
 			}
 
 			foreach ($searchColumns as $field) {
-				$search[] = $this->alias . '.' . $field . " LIKE '%" . $input['search']['value'] . "%'";
+				$search[] = $this->alias . '.' . $field . " LIKE '%" . trim(addslashes($input['search']['value'])) . "%'";
 			}
 		}
 

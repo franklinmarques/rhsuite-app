@@ -11,6 +11,7 @@ CKEDITOR.editorConfig = function( config ) {
         // config.extraPlugins = 'allMedias';
     config.extraPlugins = 'widgetselection';
     config.extraPlugins = 'widget';
+    config.extraPlugins = 'basewidget';
     config.extraPlugins = 'toolbar';
     config.extraPlugins = 'dialog';
     config.extraPlugins = 'dialogui';

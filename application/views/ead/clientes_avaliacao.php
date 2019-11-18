@@ -138,9 +138,6 @@
                 'searching': false,
                 'ordering': false,
                 'paging': false,
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'columnDefs': [
                     {
                         'width': '50%',
@@ -173,9 +170,6 @@
                             $('#alert').html('<div class="alert alert-warning">' + json.aviso + '</div>').hide().fadeIn('slow');
                         }
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Erro ao salvar a avaliação');
                 },
                 'complete': function () {
                     $('#btnSave').html('<i class="fa fa-save"></i> Salvar').prop('disabled', false);

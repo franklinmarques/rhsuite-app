@@ -8,7 +8,7 @@ class Avaliacaoexp_modelos extends MY_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('Avaliacaoexp_model', 'avaliacaoexp');
+		$this->load->model('Avaliacaoexp_modelos_model', 'modelos');
 	}
 
 	public function index()
@@ -115,7 +115,7 @@ class Avaliacaoexp_modelos extends MY_Controller
 	public function ajax_edit($id)
 	{
 //        set_status_header(401, utf8_decode('sessão expirada'));
-		$data = $this->avaliacaoexp->find($id);
+		$data = $this->modelos->find($id);
 		echo json_encode($data);
 	}
 
@@ -128,7 +128,7 @@ class Avaliacaoexp_modelos extends MY_Controller
 			'observacao' => $this->input->post('observacao')
 		);
 
-		$this->avaliacaoexp->insert($data) or exit(json_encode(['erro' => $this->avaliacaoexp->errors()]));
+		$this->modelos->insert($data) or exit(json_encode(['erro' => $this->modelos->errors()]));
 
 		echo json_encode(['status' => true]);
 	}
@@ -142,14 +142,14 @@ class Avaliacaoexp_modelos extends MY_Controller
 			'observacao' => $this->input->post('observacao')
 		);
 
-		$this->avaliacaoexp->update($data) or exit(json_encode(['erro' => $this->avaliacaoexp->errors()]));
+		$this->modelos->update($this->input->post('id'), $data) or exit(json_encode(['erro' => $this->modelos->errors()]));
 
 		echo json_encode(['status' => true]);
 	}
 
 	public function ajax_delete($id)
 	{
-		$status = $this->avaliacaoexp->delete($id);
+		$status = $this->modelos->delete($id);
 		echo json_encode(array("status" => $status !== false));
 	}
 

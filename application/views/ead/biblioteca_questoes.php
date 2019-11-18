@@ -339,9 +339,6 @@ require_once APPPATH . 'views/end_js.php';
                 'serverSide': true, //Feature control DataTables' server-side processing mode.
                 'iDisplayLength': 25,
                 'order': [], //Initial no order.
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 // Load data for the table's content from an Ajax source
                 'ajax': {
                     'url': '<?php echo site_url('ead/biblioteca/ajax_list/' . $empresa) ?>',
@@ -419,9 +416,6 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#modal_form').modal('show');
                     $('#modal_form .modal-title').text('Editar modelo de questão'); // Set title to Bootstrap modal title
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -447,9 +441,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('[name="conteudo"]').val(json.conteudo);
 
                     $('#modal_conteudo').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -488,9 +479,6 @@ require_once APPPATH . 'views/end_js.php';
                     });
 
                     $('#modal_respostas').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -526,9 +514,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('#btnSave').text('Salvar'); //change button text
                     $('#btnSave').attr('disabled', false); //set button enable 
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -551,9 +536,6 @@ require_once APPPATH . 'views/end_js.php';
                         $('#modal_conteudo').modal('hide');
                         reload_table();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
                 },
                 'complete': function () {
                     $('#btnSaveConteudo').text('Salvar').attr('disabled', false);
@@ -578,9 +560,6 @@ require_once APPPATH . 'views/end_js.php';
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSaveRespostas').text('Salvar').attr('disabled', false);
                 }
@@ -601,10 +580,6 @@ require_once APPPATH . 'views/end_js.php';
                         //if success reload ajax table
                         $('#modal_form').modal('hide');
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-//                    alert('Error deleting data');
                     }
                 });
             }

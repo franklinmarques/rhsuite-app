@@ -143,9 +143,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('[name="setor"]').html($(json.setor).html());
                     $('[name="cargo"]').html($(json.cargo).html());
                     $('[name="funcao"]').html($(json.funcao).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }

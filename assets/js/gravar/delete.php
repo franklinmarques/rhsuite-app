@@ -1,14 +1,41 @@
 <?php
 // Muaz Khan     - www.MuazKhan.com 
 // MIT License   - https://www.webrtc-experiment.com/licence/
-// Documentation - https://github.com/muaz-khan/WebRTC-Experiment/tree/master/RecordRTC
-if (isset($_POST['delete-file'])) {
-    $fileName = 'uploads/'.$_POST['delete-file'];
-    if(!unlink($fileName.'.webm') || !unlink($fileName.'.wav')) {
-        echo(' problema ao deletar arquivos.');
+// Documentation - https://github.com/muaz-khan/RecordRTC
+
+header("Access-Control-Allow-Origin: *");
+
+function selfInvoker()
+{
+    if (!isset($_POST['delete-file'])) {
+        echo 'PermissionDeniedError';
+        return;
     }
-    else {
-        echo(' arquivos deletados com sucesso.');
+    
+    $fileName = $_POST['delete-file'];
+    $filePath = 'uploads/' . $fileName;
+    
+    // make sure that one can delete only allowed audio/video files
+    $allowed = array(
+        'webm',
+        'wav',
+        'mp4',
+        "mkv",
+        'mp3',
+        'ogg'
+    );
+    $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+    if (!$extension || empty($extension) || !in_array($extension, $allowed)) {
+        echo 'PermissionDeniedError';
+        return;
+    }
+    
+    if (!unlink($filePath)) {
+        echo ('Problema ao excluir arquivo.');
+    } else {
+        echo ($fileName . ' excluído com sucesso.');
     }
 }
+
+selfInvoker();
 ?>

@@ -149,9 +149,6 @@ require_once APPPATH . "views/end_js.php";
 //            scrollCollapse: true,
 //            scroller: true,
 //            "bPaginate": true,
-            "language": {
-                "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
-            },
             // Load data for the table's content from an Ajax source
             "ajax": {
                 "url": "<?php echo site_url('papd/atividades_deficiencias/ajax_deficiencias/') ?>",
@@ -199,9 +196,6 @@ require_once APPPATH . "views/end_js.php";
             "bLengthChange": false,
             "processing": true, //Feature control the processing indicator.
             "serverSide": true, //Feature control DataTables' server-side processing mode.
-            "language": {
-                "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
-            },
             // Load data for the table's content from an Ajax source
             "ajax": {
                 "url": "<?php echo site_url('papd/atividades_deficiencias/ajax_atividades/') ?>",
@@ -300,10 +294,6 @@ require_once APPPATH . "views/end_js.php";
                     reload_table_deficiencias();
                     $('#btnCancelDeficiencia').trigger('click');
                 }
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                alert('Error adding / update data');
             }
         });
     });
@@ -322,10 +312,6 @@ require_once APPPATH . "views/end_js.php";
                     reload_table_atividades();
                     $('#btnCancelAtividade').trigger('click');
                 }
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                alert('Error adding / update data');
             }
         });
     });
@@ -344,10 +330,6 @@ require_once APPPATH . "views/end_js.php";
                 {
                     //if success reload ajax table
                     reload_table_deficiencias();
-                },
-                error: function (jqXHR, textStatus, errorThrown)
-                {
-                    alert('Error deleting data');
                 }
             });
         }
@@ -367,10 +349,6 @@ require_once APPPATH . "views/end_js.php";
                 {
                     //if success reload ajax table
                     reload_table_atividades();
-                },
-                error: function (jqXHR, textStatus, errorThrown)
-                {
-                    alert('Error deleting data');
                 }
             });
         }

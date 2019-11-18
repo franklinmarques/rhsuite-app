@@ -134,7 +134,7 @@
 					<td><?= $row->escola ?></td>
 					<td class="text-center"><?= $row->data_liberacao_pagto ?></td>
 					<td><?= nl2br($row->observacoes) ?></td>
-					<td class="text-center"><?= str_replace('.', ',', round($row->total_horas, 2)) ?></td>
+					<td class="text-center"><?= str_replace('.', ',', round($row->total_horas, 1)) ?></td>
 					<td class="text-right"><?= $row->valor_total ?></td>
 				</tr>
 			<?php endforeach; ?>

@@ -538,6 +538,10 @@ require_once 'header.php';
 										<button type="button" class="btn btn-info btn-sm"
 												onclick="imprimir_fechamento_mensal();"><i class="fa fa-print"></i>
 											Relatório de Fechamento Mensal
+										</button>&emsp;
+										<button type="button" class="btn btn-info btn-sm"
+												onclick="imprimir_fechamento_mensal(0);"><i class="fa fa-print"></i>
+											Relatório Mensal
 										</button>
 									</div>
 									<div class="col-sm-6 col-md-5 text-right">
@@ -580,7 +584,18 @@ require_once 'header.php';
 							<div role="tabpanel" class="tab-pane" id="relatorio_producao_emtu">
 								<br>
 								<div class="row" style="margin: 0 2px;">
-									<div class="col-sm-12 text-right">
+									<div class="col-sm-6 form-inline">
+										<div class="form-group">
+											<label for="exampleInputFile">Fator divisor</label>
+											<input type="text" id="fator_divisor_emtu"
+												   class="form-control input-sm numero"
+												   style="width:100px;">
+										</div>
+										<button type="button" class="btn btn-default btn-sm"
+												onclick="table_producao_emtu.ajax.reload()">Calcular
+										</button>
+									</div>
+									<div class="col-sm-6 text-right">
 										<button type="button" class="btn btn-info btn-sm"
 												onclick="imprimir_relatorio_producao();"><i class="fa fa-print"></i>
 											Imprimir
@@ -1791,7 +1806,7 @@ require_once 'header.php';
 										<input type="radio" name="status" value="EM"> Emenda de feriado
 									</label>
 									<label class="checkbox-inline">
-										<input type="radio" name="status" value=""> Nenhum
+										<input type="radio" name="status" value="" checked> Nenhum
 									</label>
 								</div>
 							</div>
@@ -1801,9 +1816,9 @@ require_once 'header.php';
 								<div class="col-md-2">
 									<input type="text" name="qtde_novos_processos" class="form-control numero">
 								</div>
-								<label class="control-label col-md-3">Qtde. proc. tratados dia</label>
+								<label class="control-label col-md-3">Qtde. proc. analisados</label>
 								<div class="col-md-2">
-									<input type="text" name="qtde_processos_tratados_dia" class="form-control numero">
+									<input type="text" name="qtde_processos_analisados" class="form-control numero">
 								</div>
 							</div>
 							<div class="row form-group">
@@ -1814,6 +1829,12 @@ require_once 'header.php';
 								<label class="control-label col-md-3">Qtde. pagamentos AME</label>
 								<div class="col-md-2">
 									<input type="text" name="qtde_pagamentos" class="form-control numero">
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-3">Qtde. linhas analisadas</label>
+								<div class="col-md-2">
+									<input type="text" name="qtde_linhas_analisadas" class="form-control numero">
 								</div>
 							</div>
 						</form>
@@ -1940,7 +1961,7 @@ require_once 'end_js.php';
                             coluna.addClass('text-danger').css('background-color', '#dbdbdb');
                         }
                         coluna.css('cursor', 'pointer').on('click', function () {
-                            edit_feriado($(this).data('dia'));
+                            edit_feriado($(this).data('dia'), i);
                         });
                         if ((dt1.getTime() === dt2.getTime()) && dt1.getDate() === i) {
                             coluna.css('background-color', '#0f0');
@@ -2986,6 +3007,7 @@ require_once 'end_js.php';
                     d.busca = busca;
                     d.consolidado = true;
                     d.dia_fechamento = $('#dia_fechamento').val();
+                    d.fator_divisor = $('#fator_divisor_emtu').val();
                     return d;
                 },
                 'dataSrc': function (json) {
@@ -3131,19 +3153,23 @@ require_once 'end_js.php';
                 } else {
                     $('#ipesp').show();
                 }
-                // Usado somente para a área "EMTU"
-                if (json.emtu === null) {
-                    $('.emtu').hide();
-                    $('li.aba_totalizacao').show();
-                } else {
-                    $('.emtu').show();
-                    $('li.aba_totalizacao').hide();
-                }
 
                 if (json.dia_fechamento > 0) {
                     $('.nav-tabs li:eq(3), .nav-tabs li:eq(4)').show();
                 } else {
                     $('.nav-tabs li:eq(3), .nav-tabs li:eq(4)').hide();
+                }
+
+                // Usado somente para a área "EMTU"
+                if (json.emtu === null) {
+                    $('.emtu').hide();
+                    $('.nav-tabs li:eq(2)').show();
+                    $('li.aba_totalizacao').show();
+                } else {
+                    $('.emtu').show();
+                    $('.nav-tabs li:eq(2)').hide();
+                    $('li.aba_totalizacao').hide();
+                    console.log(1);
                 }
             },
             'error': function (jqXHR, textStatus, errorThrown) {
@@ -3584,7 +3610,8 @@ require_once 'end_js.php';
         }
     }
 
-    function edit_feriado(dia) {
+    function edit_feriado(dia, i) {
+        console.log(i);
         $('#form_feriado')[0].reset();
         $('#form_feriado [name="id"], #form_feriado [name="id_alocacao"]').val('');
         $.ajax({
@@ -4171,12 +4198,13 @@ require_once 'end_js.php';
     }
 
 
-    function imprimir_fechamento_mensal() {
+    function imprimir_fechamento_mensal(elem = 1) {
         if ($('#busca [name="depto"]').val() === '' || $('#busca [name="area"]').val() === '' || $('#busca [name="setor"]').val() === '') {
             alert('Para gerar o relatório, ajuste os filtros de Departamento, Área e Setor.');
             return false;
         }
-        window.open('<?php echo site_url('apontamento_relatorios/fechamentoMensal'); ?>/q?' + $('#busca').serialize() + '&dia_fechamento=' + $('#dia_fechamento').val() + '&consolidado=1', '_blank');
+        var mostrar_colaborador = elem.toString();
+        window.open('<?php echo site_url('apontamento_relatorios/fechamentoMensal'); ?>/q?' + $('#busca').serialize() + '&dia_fechamento=' + $('#dia_fechamento').val() + '&consolidado=1&mostrar_colaborador=' + mostrar_colaborador, '_blank');
     }
 
     function imprimir_medicao_consolidada() {
@@ -4192,7 +4220,7 @@ require_once 'end_js.php';
             alert('Para gerar o relatório, ajuste os filtros de Departamento, Área e Setor.');
             return false;
         }
-        window.open('<?php echo site_url('apontamento/imprimirRelatorioProducao'); ?>/q?' + $('#busca').serialize() + '&dia_fechamento=' + $('#dia_fechamento').val() + '&consolidado=1', '_blank');
+        window.open('<?php echo site_url('apontamento/imprimirRelatorioProducao'); ?>/q?' + $('#busca').serialize() + '&dia_fechamento=' + $('#dia_fechamento').val() + '&consolidado=1&fator_divisor=' + $('#fator_divisor_emtu').val(), '_blank');
     }
 
 

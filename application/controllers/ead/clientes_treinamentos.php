@@ -205,7 +205,7 @@ class Clientes_treinamentos extends MY_Controller
 		$this->treinamento->setValidationLabel('data_inicio', 'Data Início');
 		$this->treinamento->setValidationLabel('data_termino', 'Data Término');
 
-		$this->treinamento->update($data) or exit(json_encode(['erro' => $this->treinamento->errors()]));
+		$this->treinamento->update($data->id, $data) or exit(json_encode(['erro' => $this->treinamento->errors()]));
 
 		echo json_encode(['status' => true]);
 	}

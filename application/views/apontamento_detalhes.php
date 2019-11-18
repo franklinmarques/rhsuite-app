@@ -129,14 +129,8 @@ require_once "end_js.php";
 
         //datatables
         table = $('#table').DataTable({
-            "info": false,
             "processing": true, //Feature control the processing indicator.
             "serverSide": true, //Feature control DataTables' server-side processing mode.
-            "order": [], //Initial no order.
-            "language": {
-                "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
-            },
-            // Load data for the table's content from an Ajax source
             "ajax": {
                 "url": "<?php echo site_url('apontamento_detalhes/ajax_list/') ?>",
                 "type": "POST"

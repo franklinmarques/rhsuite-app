@@ -15,4 +15,16 @@ class Ei_ordem_servico_model extends MY_Model
 		'semestre' => 'required|numeric|max_length[1]'
 	];
 
+	//==========================================================================
+	public function prepararNaoAlocados($where = [], $associative = true)
+	{
+		$data = $this->db
+			->select('a.*', false)
+			->join('ei_contratos b', 'b.id = a.id_contrato')
+			->join('ei_diretorias c', 'c.id = b.id_cliente')
+			->join('ei_alocacao d', 'd.ano = a.ano AND d.semestre = a.semestre');
+
+		return $data;
+	}
+
 }

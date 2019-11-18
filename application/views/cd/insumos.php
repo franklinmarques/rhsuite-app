@@ -108,9 +108,6 @@
                 'processing': true,
                 'serverSide': true,
                 'order': [],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('cd/insumos/ajax_list') ?>',
                     'type': 'POST'
@@ -158,9 +155,6 @@
                     });
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar insumo');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -193,9 +187,6 @@
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -213,10 +204,6 @@
                     'success': function (json) {
                         $('#modal_form').modal('hide');
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                        alert('Error deleting data');
                     }
                 });
 

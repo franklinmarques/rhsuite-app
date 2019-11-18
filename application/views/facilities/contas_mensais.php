@@ -197,9 +197,6 @@ require_once APPPATH . 'views/end_js.php';
             table = $('#table').DataTable({
                 'processing': true, //Feature control the processing indicator.
                 'serverSide': true, //Feature control DataTables' server-side processing mode.
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'iDisplayLength': -1,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
                 // Load data for the table's content from an Ajax source
@@ -266,11 +263,8 @@ require_once APPPATH . 'views/end_js.php';
                 'success': function (json) {
                     $('#id_unidade').html($(json.unidades).html());
                     $('#id_item').html($(json.itens).html());
-
-                    $('#id_conta_empresa, #id_unidade, #id_item').prop('disabled', false);
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
+                'complete': function (jqXHR, textStatus, errorThrown) {
                     $('#id_conta_empresa, #id_unidade, #id_item').prop('disabled', false);
                 }
             });
@@ -302,9 +296,6 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar despesa'); // Set title to Bootstrap modal title
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -337,12 +328,8 @@ require_once APPPATH . 'views/end_js.php';
                         $('#modal_form').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
+                'complete': function () {
                     $('#btnSave').text('Salvar'); //change button text
                     $('#btnSave').attr('disabled', false); //set button enable
                 }
@@ -359,9 +346,6 @@ require_once APPPATH . 'views/end_js.php';
                     'data': {'id': id},
                     'success': function () {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

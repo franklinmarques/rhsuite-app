@@ -364,7 +364,9 @@ require_once "end_js.php";
                 data: $('#form').serialize(),
                 dataType: "JSON",
                 success: function (data) {
-                    if (data.status) //if success close modal and reload ajax table
+                    if (data.aviso) {
+                        alert(data.aviso);
+					} else if (data.status) //if success close modal and reload ajax table
                     {
                         $('#modal_form').modal('hide');
                         reload_table();

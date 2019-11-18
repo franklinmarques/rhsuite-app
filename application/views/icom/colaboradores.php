@@ -117,9 +117,6 @@
                 'processing': true,
                 'serverSide': true,
                 'order': [['0', 'asc']],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('icom/colaboradores/listar') ?>',
                     'type': 'POST',
@@ -167,9 +164,6 @@
                         $('#estrutura [name="id_setor"]').html(json.setores);
                         reload_table();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('#estrutura select').prop('disabled', false);

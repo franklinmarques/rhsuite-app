@@ -142,6 +142,17 @@
     var table;
 
     $(document).ready(function () {
+        $.ajaxSetup({
+            'type': 'POST',
+            'dataType': 'json',
+            'error': function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ' ' + jqXHR.status + ': ' + (jqXHR.status === 0 ? 'Disconnected' : errorThrown));
+                if (jqXHR.status === 401) {
+                    window.close();
+                }
+            }
+        });
+
         $('.meses').mask('0000');
 
         table = $('#table').DataTable({
@@ -190,8 +201,6 @@
 
         $.ajax({
             url: '<?php echo site_url('facilities/itensVistorias/ajaxEdit/') ?>',
-            type: 'POST',
-            dataType: 'JSON',
             data: {
                 id: id,
                 busca: $('.filtro').serialize()
@@ -203,9 +212,6 @@
 
                 $('.modal-title').text('Editar item de vistoria de facilities');
                 $('#modal_form').modal('show');
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -221,9 +227,7 @@
 
         $.ajax({
             url: url,
-            type: 'POST',
             data: $('#form').serialize(),
-            dataType: 'JSON',
             success: function (json) {
                 if (json.status) {
                     $('#modal_form').modal('hide');
@@ -231,15 +235,8 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-
-                $('#btnSave').text('Salvar').attr('disabled', false);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                if (textStatus) {
-                    alert(jqXHR.responseText);
-                } else {
-                    alert('Error adding / update data');
-                }
+            complete: function () {
                 $('#btnSave').text('Salvar').attr('disabled', false);
             }
         });
@@ -249,15 +246,9 @@
         if (confirm('Deseja remover?')) {
             $.ajax({
                 url: '<?php echo site_url('facilities/itensVistorias/ajaxDelete') ?>',
-                type: 'POST',
-                dataType: 'JSON',
                 data: {id: id},
                 success: function (data) {
                     reload_table();
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                    alert('Error deleting data');
                 }
             });
 

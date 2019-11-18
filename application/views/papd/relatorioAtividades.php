@@ -142,9 +142,6 @@ require_once APPPATH . "views/end_js.php";
             "processing": true,
             "serverSide": true,
             "iDisplayLength": 25,
-            "language": {
-                "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
-            },
             "ajax": {
                 "url": "<?php echo site_url('papd/relatorios/ajax_atendimentos_realizados/') ?>",
                 "type": "POST",

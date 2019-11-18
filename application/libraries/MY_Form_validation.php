@@ -243,16 +243,24 @@ class MY_Form_validation extends CI_Form_validation
 	 * @param string
 	 * @return    bool
 	 */
-	function valid_time($str)
+	function valid_time($str, $maxHours)
 	{
 		if (strlen($str) == 0) {
 			return true;
 		}
 
+		if ($maxHours === '24') {
+			$regex = '/^-?((2[0-3])?|[0-1]?[0-9]):[0-5][0-9](:[0-5][0-9])?$/';
+		} elseif ($maxHours === '12') {
+			$regex = '/^-?((1[0-2])?|0?[0-9]):[0-5][0-9](:[0-5][0-9])?$/';
+		} else {
+			$regex = '/^-?(\d{1,}):[0-5][0-9](:[0-5][0-9])?$/';
+		}
+
 		$CI = &get_instance();
 		$CI->form_validation->set_message('valid_time', 'O campo {field} não contém um horário válido.');
 
-		return (bool)preg_match('/^-?(\d{1,}):[0-5][0-9](:[0-5][0-9])?$/', $str);
+		return (bool)preg_match($regex, $str);
 	}
 
 	/**
@@ -481,6 +489,11 @@ class MY_Form_validation extends CI_Form_validation
 		}
 
 		$str = str_replace('/', '-', $str);
+
+		if (strpos($str, ':') === false or strpos($field, ':') === false) {
+			$str = strstr($str, ' ', true);
+			$field = strstr($field, ' ', true);
+		}
 
 		if ($greather and $equal) {
 			return strtotime($str) >= strtotime($field);

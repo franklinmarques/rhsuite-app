@@ -8,7 +8,7 @@ class Clientes extends MY_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('ead_clientes_model', 'cliente');
+		$this->load->model('ead_clientes_model', 'clientes');
 	}
 
 	//==========================================================================
@@ -88,10 +88,10 @@ class Clientes extends MY_Controller
 			->find($this->input->post('id'));
 
 		if (empty($data)) {
-			exit(json_encode(['erro' => $this->clientes->errors()]));
+			exit(json_encode(['erro' => 'Cliente não encontrado ou excluído recentemente']));
 		};
 
-		unset($data->senha);
+		unset($data->senha, $data->token);
 
 		echo json_encode($data);
 	}
@@ -115,7 +115,7 @@ class Clientes extends MY_Controller
 
 		$data = $this->entities->create('eadClientes', $this->input->post());
 
-		if (is_null($data->senha) and is_null($data->confirmar_senha)) {
+		if (strlen($data->senha) == 0 and strlen($data->confirmar_senha) == 0) {
 			unset($data->senha);
 		} else {
 			$this->clientes->setValidationRule('confirmar_senha', 'required|matches[senha]');
@@ -150,7 +150,7 @@ class Clientes extends MY_Controller
 
 		$data = $this->entities->create('eadClientes', $this->input->post());
 
-		if (is_null($data->senha) and is_null($data->confirmar_senha)) {
+		if (strlen($data->senha) == 0 and strlen($data->confirmar_senha) == 0) {
 			unset($data->senha);
 		} else {
 			$this->clientes->setValidationRule('confirmar_senha', 'required|matches[senha]');

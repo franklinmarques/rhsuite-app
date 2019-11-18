@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class MY_Model extends CI_Model
 {
+
 	protected static $table = '';
 
 	protected static $primaryKey = 'id';
@@ -38,6 +39,8 @@ class MY_Model extends CI_Model
 
 	protected $afterUpdate = [];
 
+	protected $beforeFind = [];
+
 	protected $afterFind = [];
 
 	protected $beforeDelete = [];
@@ -46,6 +49,8 @@ class MY_Model extends CI_Model
 
 
 	//==========================================================================
+
+
 	public function __construct()
 	{
 		if (get_called_class() !== __CLASS__ and empty(static::$table)) {
@@ -55,21 +60,121 @@ class MY_Model extends CI_Model
 		parent::__construct();
 	}
 
+
 	//==========================================================================
-	public function find($id = null)
+
+
+	public function formatData($originalData = [])
 	{
-		if (is_array($id)) {
-			$this->db->where_in(static::$primaryKey, $id);
-		} elseif (is_numeric($id) || is_string($id)) {
-			$this->db->where(static::$primaryKey, $id);
+		if (empty($originalData)) {
+			return $originalData;
 		}
 
-		return $this->db->get(static::$table)->row();
+		$entity = str_replace(' ', '', ucwords(str_replace(['_model', '_'], ['', ' '], get_class($this))));
+
+		require_once APPPATH . 'entities/' . $entity . '.php';
+
+		$reflection = new ReflectionClass($entity);
+		$reflectionProperty = $reflection->getProperty('casts');
+		$reflectionProperty->setAccessible(true);
+		$casts = $reflectionProperty->getValue(new $entity);
+
+		foreach ($casts as &$cast) {
+			if (substr($cast, 0, 1) === '?') {
+				$cast = substr($cast, 1);
+			}
+			if (in_array($cast, ['date', 'datetime', 'time', 'timestamp', 'float', 'double', 'decimal']) == false) {
+				unset($cast);
+			}
+		}
+
+		if (empty($casts)) {
+			return $originalData;
+		}
+
+		$originalDataObject = new ArrayObject($originalData);
+		$data = $originalDataObject->getArrayCopy();
+
+		if (is_object($originalData)) {
+			$data = (object)$data;
+		}
+
+		function formatDataValues($data, $casts)
+		{
+			foreach ($data as $key => &$value) {
+				if (is_array($value) or is_object($value)) {
+					formatDataValues($value, $casts);
+					continue;
+				}
+
+				$type = $casts[$key] ?? null;
+
+				if (strlen($value) == 0 or is_null($type)) {
+					continue;
+				}
+
+				switch ($type) {
+					case 'date':
+					case 'datetime':
+						$value = substr($value, 0, strrchr($value, ' '));
+						if (strpos($value, '/') !== false) {
+							$value = preg_replace('/^(\d+)\-(\d+)\-(\d+)/', '$3/$2/$1', $value);
+						}
+						break;
+					case 'time':
+					case 'timestamp':
+						$value = substr($value, 0, strrchr($value, ':'));
+						break;
+					case 'float':
+					case 'double':
+						$value = str_replace('.', ',', $value);
+						break;
+					case 'decimal':
+						$value = number_format($value, 2, ',', '.');
+				}
+			}
+		}
+
+		formatDataValues($data, $casts);
+
+		return $data;
 	}
 
+
 	//==========================================================================
+
+
+	public function find($id = null)
+	{
+		$this->trigger('beforeFind', ['id' => $id]);
+
+		if (is_iterable($id)) {
+			$row = $this->db
+				->where_in(static::$primaryKey, $id)
+				->get(static::$table)
+				->result();
+		} else {
+			if (is_null($id) == false) {
+				$this->db->where(static::$primaryKey, $id);
+			}
+			$row = $this->db
+				->get(static::$table)
+				->row();
+		}
+
+		$row = $this->trigger('afterFind', ['id' => $id, 'data' => $row]);
+
+		return $row['data'];
+	}
+
+
+	//==========================================================================
+
+
 	public function findAll(int $limit = null, int $offset = 0)
 	{
+		$this->trigger('beforeFind', ['limit' => $limit, 'offset' => $offset]);
+
 		if (!is_null($limit)) {
 			$this->db->limit($limit);
 		}
@@ -78,15 +183,25 @@ class MY_Model extends CI_Model
 			$this->db->limit($offset);
 		}
 
-		return $this->db->get(static::$table)->result();
+		$row = $this->db->get(static::$table)->result();
+
+		$row = $this->trigger('afterFind', ['data' => $row, 'limit' => $limit, 'offset' => $offset]);
+
+		return $row['data'];
 	}
 
+
 	//==========================================================================
+
+
 	public function findColumn(string $columnName, $columnKey = null, string $defaultValue = '')
 	{
+		$this->trigger('beforeFind', ['columnName' => $columnName, 'columnKey' => $columnKey]);
+
+
 		if (strpos($columnName, ',') !== false or strpos($columnKey, ',') !== false) {
 			$class = get_called_class();
-			throw new InvalidArgumentException("Parâmetro inválido em {$class}::insert()");
+			throw new InvalidArgumentException("Parâmetro inválido em {$class}::findColumn()");
 		}
 
 		$resultSet = $this->db
@@ -94,7 +209,9 @@ class MY_Model extends CI_Model
 			->select($columnName)
 			->order_by($columnName, 'asc')
 			->get(static::$table)
-			->result();
+			->result_array();
+
+//		$row = $this->trigger('afterFind', ['data' => $resultSet, 'columnName' => $columnName, 'columnKey' => $columnKey]);
 
 		if ($defaultValue) {
 			$defaultValue = ['' => $defaultValue];
@@ -105,7 +222,10 @@ class MY_Model extends CI_Model
 		return array_filter($defaultValue + array_column($resultSet, $columnName, $columnKey));
 	}
 
+
 	//==========================================================================
+
+
 	public function skipValidation(bool $skip = true)
 	{
 		$this->skipValidation = $skip;
@@ -113,7 +233,10 @@ class MY_Model extends CI_Model
 		return $this;
 	}
 
+
 	//==========================================================================
+
+
 	public function disableUseTimestamps(bool $use = false)
 	{
 		$this->useTimestamps = !$use;
@@ -121,7 +244,10 @@ class MY_Model extends CI_Model
 		return $this;
 	}
 
+
 	//==========================================================================
+
+
 	public function requireAutoIncrement(bool $required = true)
 	{
 		$this->requireAutoIncrement = $required;
@@ -129,19 +255,28 @@ class MY_Model extends CI_Model
 		return $this;
 	}
 
+
 	//==========================================================================
+
+
 	public function getUploadConfig(): array
 	{
 		return $this->uploadConfig;
 	}
 
+
 	//==========================================================================
+
+
 	public function setUploadConfig(array $config = [])
 	{
 		$this->uploadConfig = $config;
 	}
 
+
 	//==========================================================================
+
+
 	public function getValidationRules(array $options = []): array
 	{
 		$rules = $this->validationRules;
@@ -155,7 +290,10 @@ class MY_Model extends CI_Model
 		return $rules;
 	}
 
+
 	//==========================================================================
+
+
 	public function setValidationRules(array $validationRules, bool $reset = false)
 	{
 		if ($reset) {
@@ -167,7 +305,10 @@ class MY_Model extends CI_Model
 		}
 	}
 
+
 	//==========================================================================
+
+
 	public function setValidationRule(string $field, $rules)
 	{
 		if (is_array($rules)) {
@@ -191,32 +332,47 @@ class MY_Model extends CI_Model
 		}
 	}
 
+
 	//==========================================================================
+
+
 	public function setValidationLabels(array $validationLabels)
 	{
 		$this->validationLabels = $validationLabels;
 	}
 
+
 	//==========================================================================
+
+
 	public function setValidationLabel(string $field, string $label)
 	{
 		unset($this->validationLabels[$field]);
 		$this->validationLabels[$field] = $label;
 	}
 
+
 	//==========================================================================
+
+
 	public function setValidationMessages(array $validationMessages)
 	{
 		$this->validationMessages = $validationMessages;
 	}
 
+
 	//==========================================================================
+
+
 	public function setValidationMessage(string $field, array $fieldMessages)
 	{
 		$this->validationMessages[$field] = $fieldMessages;
 	}
 
+
 	//==========================================================================
+
+
 	public function validate($data): bool
 	{
 		if ($this->skipValidation === true || empty($this->validationRules)) {
@@ -230,6 +386,8 @@ class MY_Model extends CI_Model
 		if ($data instanceof Entity) {
 			$data = $data->toArray();
 		}
+
+		$this->form_validation->set_data($data);
 
 		$validationRules = array_intersect_key($this->validationRules, $data);
 
@@ -260,7 +418,10 @@ class MY_Model extends CI_Model
 		return $this->form_validation->run();
 	}
 
+
 	//==========================================================================
+
+
 	public function save($data)
 	{
 		if (empty($data)) {
@@ -282,7 +443,10 @@ class MY_Model extends CI_Model
 		return $response;
 	}
 
+
 	//==========================================================================
+
+
 	public function insert($data = null, bool $returnID = true)
 	{
 		if (empty($data)) {
@@ -343,7 +507,10 @@ class MY_Model extends CI_Model
 		return $returnID ? static::$insertID : true;
 	}
 
+
 	//==========================================================================
+
+
 	public function insertBatch(array $set = null, bool $escape = null, int $batchSize = 100)
 	{
 		if (is_array($set) && $this->skipValidation === false) {
@@ -361,7 +528,10 @@ class MY_Model extends CI_Model
 		return $this->db->insert_batch(static::$table, $set, $escape);
 	}
 
+
 	//==========================================================================
+
+
 	public function update($id = null, $data = null): bool
 	{
 		if (empty($data)) {
@@ -420,7 +590,10 @@ class MY_Model extends CI_Model
 		return $result;
 	}
 
+
 	//==========================================================================
+
+
 	public function updateBatch(array $set = null, string $index = null, int $batchSize = 100)
 	{
 		if (is_array($set) && $this->skipValidation === false) {
@@ -438,7 +611,10 @@ class MY_Model extends CI_Model
 		return $this->db->update_batch(static::$table, $set, $index);
 	}
 
+
 	//==========================================================================
+
+
 	public function replace($data = null)
 	{
 		if (!empty($data) && $this->skipValidation === false) {
@@ -450,7 +626,10 @@ class MY_Model extends CI_Model
 		return $this->db->replace(static::$table, $data);
 	}
 
+
 	//==========================================================================
+
+
 	public function delete($id = null)
 	{
 		if (!empty($id) && is_numeric($id)) {
@@ -480,7 +659,10 @@ class MY_Model extends CI_Model
 		return $result;
 	}
 
+
 	//==========================================================================
+
+
 	protected function uploadFiles(&$data): bool
 	{
 		$files = [];
@@ -521,7 +703,10 @@ class MY_Model extends CI_Model
 		return true;
 	}
 
+
 	//==========================================================================
+
+
 	protected function deleteFiles(&$data): bool
 	{
 		if (empty($data) or empty($this->uploadConfig)) {
@@ -577,7 +762,10 @@ class MY_Model extends CI_Model
 		return true;
 	}
 
+
 	//==========================================================================
+
+
 	protected function trigger(string $event, array $data)
 	{
 		if (!isset($this->{$event}) || empty($this->{$event})) {
@@ -596,7 +784,10 @@ class MY_Model extends CI_Model
 		return $data;
 	}
 
+
 	//==========================================================================
+
+
 	public function errors(bool $forceDB = false)
 	{
 		if ($forceDB === false && $this->skipValidation === false) {
@@ -618,7 +809,10 @@ class MY_Model extends CI_Model
 		return $error['message'] ?? null;
 	}
 
+
 	//==========================================================================
+
+
 	public function __call(string $name, array $params)
 	{
 		$result = null;
@@ -634,7 +828,10 @@ class MY_Model extends CI_Model
 		return $this;
 	}
 
+
 	//==========================================================================
+
+
 	public static function __callStatic(string $name, array $params = [])
 	{
 		$class = get_called_class();
@@ -652,5 +849,6 @@ class MY_Model extends CI_Model
 
 		throw new BadMethodCallException("Método não encontrado: {$class}::{$name}()");
 	}
+
 
 }

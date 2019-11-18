@@ -366,9 +366,6 @@
                 'processing': true,
                 'serverSide': true,
                 'order': [],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('dimensionamento/performance/ajaxList') ?>',
                     'type': 'POST',
@@ -455,9 +452,6 @@
                     }
 
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
                 }
             });
         }
@@ -523,9 +517,6 @@
                     $.each(json, function (key, value) {
                         $('#valores [name="' + key + '"]').val(value);
                     });
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -560,9 +551,6 @@
                         $('#valores input').val('');
                         reload_table();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -596,9 +584,6 @@
                         $('#valores input').val('');
                         reload_table();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -617,12 +602,8 @@
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
-
             }
         }
 

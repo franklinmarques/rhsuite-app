@@ -146,6 +146,20 @@ class ExamePeriodico extends MY_Controller
 	public function ajax_edit($id)
 	{
 		$data = $this->exame->find($id);
+
+		if (!empty($data->data_programada)) {
+			$data->data_programada = date('d/m/Y', strtotime($data->data_programada));
+		}
+		if (!empty($data->data_realizacao)) {
+			$data->data_realizacao = date('d/m/Y', strtotime($data->data_realizacao));
+		}
+		if (!empty($data->data_entrega)) {
+			$data->data_entrega = date('d/m/Y', strtotime($data->data_entrega));
+		}
+		if (!empty($data->data_entrega_copia)) {
+			$data->data_entrega_copia = date('d/m/Y', strtotime($data->data_entrega_copia));
+		}
+
 		echo json_encode($data);
 	}
 
@@ -182,7 +196,7 @@ class ExamePeriodico extends MY_Controller
 
 		$data = $this->entities->create('UsuariosExamePeriodico', $this->input->post());
 
-		$this->exame->update($data) or exit(json_encode(['retorno' => 0, 'aviso' => $this->exame->errors()]));
+		$this->exame->update($data->id, $data) or exit(json_encode(['retorno' => 0, 'aviso' => $this->exame->errors()]));
 
 //		$this->enviarEmail(false);
 

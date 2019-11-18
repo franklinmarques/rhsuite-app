@@ -173,9 +173,6 @@ require_once APPPATH . 'views/end_js.php';
             'serverSide': true,
             'iDisplayLength': 25,
             'order': [],
-            'language': {
-                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-            },
             'ajax': {
                 'url': '<?php echo site_url('competencias/avaliacao/ajax_list/' . $id_usuario) ?>',
                 'type': 'POST',
@@ -247,9 +244,6 @@ require_once APPPATH . 'views/end_js.php';
 
                 $('#modal_form').modal('show');
                 $('.modal-title').text('Editar avaliação');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -283,9 +277,6 @@ require_once APPPATH . 'views/end_js.php';
                     reload_table();
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-            },
             'complete': function () {
                 $('#btnSave').text('Salvar').attr('disabled', false);
             }
@@ -306,9 +297,6 @@ require_once APPPATH . 'views/end_js.php';
                 'success': function (json) {
                     $('#modal_form').modal('hide');
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 }
             });
         }

@@ -1697,7 +1697,6 @@ require_once APPPATH . 'views/end_js.php';
 
         $(document).ready(function () {
             busca = $('#busca').serialize();
-            var url = '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>';
 
             table = $('#table').DataTable({
                 'dom': "<'row'<'col-sm-3'l><'#legenda.col-sm-5'><'col-sm-4'f>>" +
@@ -1714,9 +1713,6 @@ require_once APPPATH . 'views/end_js.php';
                         return '<strong>Municipio: </strong>' + group;
                     },
                     'dataSrc': 1
-                },
-                'language': {
-                    'url': url
                 },
                 'ajax': {
                     'url': '<?php echo site_url('cd/apontamento/ajax_list') ?>',
@@ -1981,9 +1977,6 @@ require_once APPPATH . 'views/end_js.php';
                         },
                         'dataSrc': 1
                     },
-                    'language': {
-                        'url': url
-                    },
                     'ajax': {
                         'url': '<?php echo site_url('cd/apontamento/ajax_funcionarios') ?>',
                         'type': 'POST',
@@ -2154,9 +2147,6 @@ require_once APPPATH . 'views/end_js.php';
                     },
                     'dataSrc': 1
                 },
-                'language': {
-                    'url': url
-                },
                 'ajax': {
                     'url': '<?php echo site_url('cd/apontamento/ajax_cuidadores') ?>',
                     'type': 'POST',
@@ -2233,9 +2223,6 @@ require_once APPPATH . 'views/end_js.php';
                         return '<strong>Municipio: </strong>' + group;
                     },
                     'dataSrc': 1
-                },
-                'language': {
-                    'url': url
                 },
                 'ajax': {
                     'url': '<?php echo site_url('cd/apontamento/ajax_frequencias') ?>',
@@ -2395,10 +2382,7 @@ require_once APPPATH . 'views/end_js.php';
                 'success': function (json) {
                     $('#busca [name="diretoria"]').replaceWith(json.diretoria);
                     $('#busca [name="supervisor"]').replaceWith(json.supervisor);
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
-                },
+                }
                 'complete': function () {
                     $('#busca [name="depto"], #busca [name="diretoria"], #busca [name="supervisor"]').prop('disabled', false);
                 }
@@ -2424,9 +2408,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('#form_colaborador [name="ano"], #form_matriculados [name="mes"]').val($('#busca [name="ano"]').val() + 1);
                     $('#form_colaborador_alocado [name="id_vinculado"]').html($(json.id_usuario_alocado).html());
                     $('[name="id_cuidador_sub"]').html($(json.id_cuidador_sub).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2439,9 +2420,6 @@ require_once APPPATH . 'views/end_js.php';
                 'dataType': 'html',
                 'success': function (json) {
                     $('#detalhes').replaceWith(json);
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2460,9 +2438,6 @@ require_once APPPATH . 'views/end_js.php';
                 'success': function (json) {
                     $('#form_colaborador #id_escola').html($(json.id_escola).html());
                     $('#form_colaborador [name="id_vinculado"]').html($(json.id_vinculado).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2479,9 +2454,6 @@ require_once APPPATH . 'views/end_js.php';
                 },
                 'success': function (json) {
                     $('#form_matriculados #id_escola_matr').html($(json.id_escola).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2547,9 +2519,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('#form_config [name="faturamento_projetado"]').val(json.faturamento_projetado);
                     $('#form_config [name="faturamento_realizado"]').val(json.faturamento_realizado);
 
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         });
@@ -2650,9 +2619,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('[name="valor_posto"]').val(json.valor_posto);
                     $('[name="valor_dia"]').val(json.valor_dia);
                     $('[name="valor_hora"]').val(json.valor_hora);
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2696,9 +2662,6 @@ require_once APPPATH . 'views/end_js.php';
                     } else {
                         $('#btnLimparfrequencia').hide();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2754,9 +2717,6 @@ require_once APPPATH . 'views/end_js.php';
                     } else {
                         reload_table();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2770,9 +2730,6 @@ require_once APPPATH . 'views/end_js.php';
                 'data': busca,
                 'success': function (json) {
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2787,9 +2744,6 @@ require_once APPPATH . 'views/end_js.php';
                     'data': busca,
                     'success': function (json) {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error get data from ajax');
                     }
                 });
             }
@@ -2818,9 +2772,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('#form_colaborador [name="status"]').val(json.status);
                     $('#colaborador').html(json.nome);
                     $('#modal_colaboradores').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2843,9 +2794,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('#nome').text(json.nome);
                     $('[name="observacoes"]').val(json.observacoes);
                     $('#modal_form').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2903,9 +2851,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('#form_config [name="total_cuidadores_ativos"]').val(json.total_cuidadores_ativos);
                     $('#form_config [name="total_supervisores_ativos"]').val(json.total_supervisores_ativos);
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
-                },
                 'complete': function () {
                     $('#btnBuscarConfig').text('Buscar valores').attr('disabled', false);
                 }
@@ -2924,9 +2869,6 @@ require_once APPPATH . 'views/end_js.php';
                 },
                 'success': function (json) {
                     $('#modal_config').modal('hide');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('#btnSaveConfig').text('Salvar').attr('disabled', false);
@@ -2947,9 +2889,6 @@ require_once APPPATH . 'views/end_js.php';
                 'success': function (json) {
                     $('#modal_remanejado').modal('hide');
                     table.ajax.reload(null, false);
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('#btnSaveRemanejado').text('Salvar').attr('disabled', false);
@@ -2972,9 +2911,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('#form_alocado [name="id"]').val(json.id);
                     $('#form_alocado [name="id_vinculado"]').html($(json.id_vinculado).html());
                     $('#modal_alocado').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -2997,9 +2933,6 @@ require_once APPPATH . 'views/end_js.php';
                         table.ajax.reload(null, false);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
-                },
                 'complete': function () {
                     $('#btnSaveAlocado').text('Salvar').attr('disabled', false);
                 }
@@ -3020,13 +2953,6 @@ require_once APPPATH . 'views/end_js.php';
                     if (json.status) {
                         $('#modal_backup').modal('hide');
                         reload_table();
-                    }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.statusText === 'OK') {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert('Erro ao enviar formulário');
                     }
                 },
                 'complete': function () {
@@ -3053,13 +2979,6 @@ require_once APPPATH . 'views/end_js.php';
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.statusText === 'OK') {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert('Erro ao enviar formulário');
-                    }
-                },
                 'complete': function () {
                     $('#btnSaveSubstituto').text('Salvar');
                     $('#btnSaveSubstituto, #btnLimparSubstituto').attr('disabled', false);
@@ -3082,13 +3001,6 @@ require_once APPPATH . 'views/end_js.php';
                     if (json.status) {
                         $('#modal_backup2').modal('hide');
                         reload_table();
-                    }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.statusText === 'OK') {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert('Erro ao enviar formulário');
                     }
                 },
                 'complete': function () {
@@ -3137,9 +3049,6 @@ require_once APPPATH . 'views/end_js.php';
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar');
                     $('#btnSave, #btnApagar').attr('disabled', false);
@@ -3164,9 +3073,6 @@ require_once APPPATH . 'views/end_js.php';
                 'success': function (json) {
                     $('#modal_eventos').modal('hide');
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('#btnSaveEventos').text('Replicar');
@@ -3194,9 +3100,6 @@ require_once APPPATH . 'views/end_js.php';
                         $('#modal_eventos').modal('hide');
                         reload_table();
                     },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error get data from ajax');
-                    },
                     'complete': function () {
                         $('#btnDeleteEventos').text('Limpar');
                         $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
@@ -3222,9 +3125,6 @@ require_once APPPATH . 'views/end_js.php';
                             reload_table();
                         }
                     },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error adding / update data');
-                    },
                     'complete': function () {
                         $('#btnSaveTotalizacao').text('Salvar').attr('disabled', false);
                     }
@@ -3247,9 +3147,6 @@ require_once APPPATH . 'views/end_js.php';
                         $('#modal_alunos').modal('hide');
                         table_frequencias.ajax.reload(null, false);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
                 },
                 'complete': function () {
                     $('#btnSaveFrequencia').text('Salvar');
@@ -3278,9 +3175,6 @@ require_once APPPATH . 'views/end_js.php';
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSaveColaborador').text('Alocar').attr('disabled', false);
                 }
@@ -3302,9 +3196,6 @@ require_once APPPATH . 'views/end_js.php';
                         $('#modal_matriculados').modal('hide');
                         reload_table();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
                 },
                 'complete': function () {
                     $('#btnSaveMatriculados').text('Alocar').attr('disabled', false);
@@ -3330,9 +3221,6 @@ require_once APPPATH . 'views/end_js.php';
                             $('#modal_alunos').modal('hide');
                             reload_table();
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error adding / update data');
                     },
                     'complete': function () {
                         $('#btnLimparfrequencia').text('Limpar evento').attr('disabled', false);
@@ -3363,9 +3251,6 @@ require_once APPPATH . 'views/end_js.php';
                             alert(json.erro);
                         }
                     },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error adding / update data');
-                    },
                     'complete': function () {
                         $('#btnDeleteColaborador').text('Desalocar').attr('disabled', false);
                     }
@@ -3394,9 +3279,6 @@ require_once APPPATH . 'views/end_js.php';
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert(textStatus ? textStatus : 'Error adding / update data');
                     },
                     'complete': function () {
                         $('#btnApagar').text('Limpar evento').attr('disabled', false);

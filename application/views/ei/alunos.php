@@ -315,9 +315,6 @@
                 'serverSide': true,
                 'iDisplayLength': 500,
                 'lengthMenu': [[5, 10, 25, 50, 100, 500, 1000], [5, 10, 25, 50, 100, 500, 1000]],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('ei/alunos/ajax_list') ?>',
                     'type': 'POST',
@@ -409,9 +406,6 @@
                     $('[name="busca[status]"]').html($(json.status).html());
                     $('[name="busca[curso]"]').html($(json.curso).html());
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -430,9 +424,6 @@
                 'success': function (json) {
                     $('#area').html($(json.area).html());
                     $('#setor').html($(json.setor).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -451,9 +442,6 @@
                 'success': function (json) {
                     $('#municipio').html($(json.municipios).html());
                     $('#form_curso [name="id_escola"]').html($(json.escolas).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -473,9 +461,6 @@
                         // $('#periodo_manha').prop('disabled', json.periodo_manha === '0');
                         // $('#periodo_tarde').prop('disabled', json.periodo_tarde === '0');
                         // $('#periodo_noite').prop('disabled', json.periodo_noite === '0');
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error get data from ajax');
                     }
                 });
             } else {
@@ -550,9 +535,6 @@
                     $('.modal-title').text('Editar aluno');
                     $('#modal_form').modal('show');
 
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -588,9 +570,6 @@
 
                     $('.modal-title').text('Editar curso');
                     $('#modal_curso').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -625,13 +604,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    if (textStatus) {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert('Error adding / update data');
-                    }
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -663,13 +635,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    if (textStatus) {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert('Error adding / update data');
-                    }
-                },
                 'complete': function () {
                     $('#btnSaveCurso').text('Salvar').attr('disabled', false);
                 }
@@ -686,9 +651,6 @@
                     'data': {'id': id},
                     'success': function (json) {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }
@@ -704,9 +666,6 @@
                     'data': {'id': id},
                     'success': function (json) {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

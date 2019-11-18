@@ -196,9 +196,6 @@ require_once APPPATH . "views/end_js.php";
                 "iDisplayLength": -1,
                 "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
                 "order": [[0, 'asc']],
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
-                },
                 // Load data for the table's content from an Ajax source
                 "ajax": {
                     "url": "<?php echo site_url('papd/relatorios/ajax_medicao_consolidada/') ?>",

@@ -221,9 +221,6 @@ require_once APPPATH . 'views/end_js.php';
                 'serverSide': true,
                 'iDisplayLength': 500,
                 'lengthMenu': [[5, 10, 25, 50, 100, 250, 500], [5, 10, 25, 50, 100, 250, 500]],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('cd/supervisores/ajax_list') ?>',
                     'type': 'POST',
@@ -287,9 +284,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('#id_supervisor').html($(json.id_supervisor).html());
                     $('#depto').html($(json.depto).html());
                     $('#id_diretoria').html($(json.id_diretoria).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         });
@@ -316,9 +310,6 @@ require_once APPPATH . 'views/end_js.php';
 
                         demo2.bootstrapDualListbox('refresh', true);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         });
@@ -361,9 +352,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('[name="busca[diretoria]"]').html($(json.diretoria).html());
                     $('[name="busca[supervisor]"]').html($(json.supervisor).html());
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -423,9 +411,6 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#form .nav-tabs a:first').tab('show');
                     $('#modal_form').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -451,9 +436,6 @@ require_once APPPATH . 'views/end_js.php';
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -475,9 +457,6 @@ require_once APPPATH . 'views/end_js.php';
                         'success': function (json) {
                             $('#modal_form').modal('hide');
                             reload_table();
-                        },
-                        'error': function (jqXHR, textStatus, errorThrown) {
-                            alert('Error deleting data');
                         }
                     });
                 }

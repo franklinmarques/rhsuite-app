@@ -348,9 +348,11 @@ class Email extends MY_Controller
         $html = null;
 
         $mensagens = $this->db->query("SELECT m.*, 
-                                              u.nome AS remetente_mensagem 
+                                              u.nome AS remetente_mensagem, u.foto,
+                                              u2.nome AS destinatario_mensagem
                                        FROM mensagensrecebidas m
                                        INNER JOIN usuarios u ON u.id = m.remetente
+                                       INNER JOIN usuarios u2 ON u2.id = m.destinatario
                                        WHERE m.destinatario = ? AND 
                                              m.status = 0 
                                        ORDER BY m.datacadastro DESC", $this->session->userdata('id'));

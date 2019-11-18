@@ -169,6 +169,20 @@ class UsuarioAfastamento extends MY_Controller
 	public function ajax_edit($id)
 	{
 		$data = $this->afastamento->find($id);
+
+		if (!empty($data->data_afastamento)) {
+			$data->data_afastamento = date('d/m/Y', strtotime($data->data_afastamento));
+		}
+		if (!empty($data->data_pericia_medica)) {
+			$data->data_pericia_medica = date('d/m/Y', strtotime($data->data_pericia_medica));
+		}
+		if (!empty($data->data_limite_beneficio)) {
+			$data->data_limite_beneficio = date('d/m/Y', strtotime($data->data_limite_beneficio));
+		}
+		if (!empty($data->data_retorno)) {
+			$data->data_retorno = date('d/m/Y', strtotime($data->data_retorno));
+		}
+
 		echo json_encode($data);
 	}
 
@@ -203,7 +217,7 @@ class UsuarioAfastamento extends MY_Controller
 
 		$data = $this->entities->create('UsuariosAfastamento', $this->input->post());
 
-		$this->afastamento->update($data) or exit(json_encode(['retorno' => 0, 'aviso' => $this->afastamento->errors()]));
+		$this->afastamento->update($data->id, $data) or exit(json_encode(['retorno' => 0, 'aviso' => $this->afastamento->errors()]));
 
 		echo json_encode(['status' => true]);
 	}

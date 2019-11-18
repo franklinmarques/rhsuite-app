@@ -180,9 +180,6 @@ require_once APPPATH . 'views/end_js.php';
         'paging': false,
         'ordering': false,
         'paginate': false,
-        'language': {
-            'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-        },
         'columnDefs': [
             {
                 'width': '50%',
@@ -237,9 +234,6 @@ require_once APPPATH . 'views/end_js.php';
                 }
 
                 $('#pdf').prop('href', "<?= site_url('competencias/relatorios/pdfAndamento/' . $this->uri->rsegment(3)); ?>" + search);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             },
             'complete': function () {
                 $('.status').attr('disabled', false);

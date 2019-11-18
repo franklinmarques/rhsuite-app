@@ -311,9 +311,6 @@ require_once APPPATH . 'views/end_js.php';
         'paging': false,
         'ordering': false,
         'paginate': false,
-        'language': {
-            'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-        },
         'columnDefs': [
             {
                 'width': '100%',
@@ -434,9 +431,6 @@ require_once APPPATH . 'views/end_js.php';
             'success': function (json) {
                 $('#avaliados').html(json).val(avaliados);
                 demo2.bootstrapDualListbox('refresh', true);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -487,9 +481,6 @@ require_once APPPATH . 'views/end_js.php';
                 }
 
                 $('#pdf').prop('href', "<?= site_url('competencias/relatorios/pdfAnalise_comparativa/' . $this->uri->rsegment(3)); ?>" + search);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             },
             'complete': function () {
                 $('#gerar_comparativo').text('Gerar comparativo').attr('disabled', false);

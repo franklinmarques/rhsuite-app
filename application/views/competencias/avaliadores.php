@@ -171,6 +171,7 @@ require_once APPPATH . 'views/end_js.php';
                 history.go(-1);
             },
             'error': function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ' ' + jqXHR.status + ': ' + (jqXHR.status === 0 ? 'Disconnected' : errorThrown));
                 history.go(-1);
             }
         });
@@ -236,9 +237,6 @@ require_once APPPATH . 'views/end_js.php';
                 $('#id_usuario_avaliadores').html(json.avaliadores).val(avaliadores);
 
                 demo2.bootstrapDualListbox('refresh', true);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }

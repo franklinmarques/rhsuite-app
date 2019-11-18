@@ -299,7 +299,6 @@
 
         var save_method;
         var table, table_periodo;
-        var url = '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>';
 
         $('.date').mask('00/00/0000');
         $('.ano').mask('0000');
@@ -323,9 +322,6 @@
                 'processing': true,
                 'serverSide': true,
                 'order': [],
-                'language': {
-                    'url': url
-                },
                 'ajax': {
                     'url': '<?php echo site_url('icom/sessoes/listar') ?>',
                     'type': 'POST',
@@ -367,9 +363,6 @@
             'searching': false,
             'info': false,
             'paging': false,
-            'language': {
-                'url': url
-            },
             'ajax': {
                 'url': '<?php echo site_url('icom/sessoes/listarPeriodos') ?>',
                 'type': 'POST',
@@ -468,9 +461,6 @@
 
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar sessão de atividades');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -494,9 +484,6 @@
                     } else {
                         $('#form [name="codigo_contrato"]').html($(json.contratos).html());
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error filtering element');
                 },
                 'complete': function () {
                     $('#form [name="codigo_contrato"]').attr('disabled', false);
@@ -535,9 +522,6 @@
                         $('#form [name="valor_faturamento"], #form [name="valor_pagamento_profissional"]').val('');
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error filtering element');
-                },
                 'complete': function () {
                     $('#form .hora, #form [name="valor_desconto"], #form [name="valor_faturamento"]').attr('disabled', false);
                 }
@@ -568,9 +552,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -591,9 +572,6 @@
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

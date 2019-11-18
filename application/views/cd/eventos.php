@@ -242,27 +242,7 @@ require_once APPPATH . 'views/end_js.php';
                 'lengthMenu': [[5, 10, 25, 50, 100, 500, 1000, 1500, 2000], [5, 10, 25, 50, 100, 500, 1000, 1500, 2000]],
                 'order': [],
                 'language': {
-                    'sEmptyTable': "Nenhum registro encontrado",
-                    'sInfo': "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                    'sInfoEmpty': "Mostrando 0 até 0 de 0 registros",
-                    'sInfoFiltered': "(Filtrados de _MAX_ registros)",
-                    'sInfoPostFix': "",
-                    'sInfoThousands': ".",
-                    'sLengthMenu': "Mostrar _MENU_ resultados",
-                    'sLoadingRecords': "Carregando...",
-                    'sProcessing': "Processando...",
-                    'sZeroRecords': "Nenhum registro encontrado",
                     'sSearch': "Cuidador(a) / Escola / Substituto(a)",
-                    'oPaginate': {
-                        'sNext': "Próximo",
-                        'sPrevious': "Anterior",
-                        'sFirst': "Primeiro",
-                        'sLast': "Último"
-                    },
-                    'oAria': {
-                        'sSortAscending': ": Ordenar colunas de forma ascendente",
-                        'sSortDescending': ": Ordenar colunas de forma descendente"
-                    }
                 },
                 'ajax': {
                     'url': '<?php echo site_url('cd/eventos/ajax_list') ?>',
@@ -368,9 +348,6 @@ require_once APPPATH . 'views/end_js.php';
                     $('[name="diretoria"]').html($(json.diretoria).html());
                     $('[name="supervisor"]').html($(json.supervisor).html());
                     $('[name="escola"]').html($(json.escola).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }

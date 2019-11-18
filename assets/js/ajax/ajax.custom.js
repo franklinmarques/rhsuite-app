@@ -3,7 +3,7 @@ function ajax_post(url, serialize, html) {
         url: url,
         type: (serialize === null) ? 'GET' : 'POST',
         data: serialize,
-        beforeSend: function() {
+        beforeSend: function(buu) {
             $('html, body').animate({scrollTop: 0}, 1500);
             html.html('<div class="alert alert-info">Carregando...</div>').hide().fadeIn('slow');
         },

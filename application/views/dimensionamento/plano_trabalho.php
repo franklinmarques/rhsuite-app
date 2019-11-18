@@ -613,15 +613,10 @@
 
         $(document).ready(function () {
 
-            var url_language = '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>';
-
             table = $('#table').DataTable({
                 'processing': true,
                 'serverSide': true,
                 'order': [],
-                'language': {
-                    'url': url_language
-                },
                 'ajax': {
                     'url': '<?php echo site_url('dimensionamento/planoTrabalho/ajaxList') ?>',
                     'type': 'POST',
@@ -674,9 +669,6 @@
                 'processing': true,
                 'serverSide': true,
                 'order': [['1', 'asc']],
-                'language': {
-                    'url': url_language
-                },
                 'ajax': {
                     'url': '<?php echo site_url('dimensionamento/planoTrabalho/ajaxListMedicoes') ?>',
                     'type': 'POST',
@@ -878,9 +870,6 @@
                     $('#form_medicao select').prop('disabled', false);
                     reload_table_medicoes();
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#form_medicao select, #btnSavePrograma, #btnCalcularValorMedicao, #btnCalcularMaoObraMedicao').prop('disabled', false);
                 }
@@ -961,9 +950,6 @@
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar plano de trabalho');
 
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -998,9 +984,6 @@
                     $('#modal_job').modal('show');
                     $('.modal-title').text('Editar job');
 
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -1059,9 +1042,6 @@
                     $('#modal_programa').modal('show');
                     $('.modal-title').text('Editar programa');
 
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -1101,9 +1081,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -1134,9 +1111,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
                 },
                 'complete': function () {
                     $('#btnSaveJob').text('Salvar').attr('disabled', false);
@@ -1169,9 +1143,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSavePrograma').text('Salvar').attr('disabled', false);
                 }
@@ -1192,9 +1163,6 @@
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }
@@ -1214,9 +1182,6 @@
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }
@@ -1236,9 +1201,6 @@
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

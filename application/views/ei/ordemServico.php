@@ -329,9 +329,6 @@
                 'serverSide': true,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
                 'iDisplayLength': -1,
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('ei/ordemServico/ajaxList') ?>',
                     'type': 'POST',
@@ -406,9 +403,6 @@
                 },
                 'success': function (json) {
                     $('#contrato').html($(json.contrato).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         });
@@ -435,9 +429,6 @@
                     $('[name="busca[municipio]"]').html($(json.municipio).html());
                     $('[name="busca[escola]"]').html($(json.escola).html());
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -501,9 +492,6 @@
 
                     $('.modal-title').text('Editar Ordem de Serviço');
                     $('#modal_form').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -531,9 +519,6 @@
                 'success': function (json) {
                     $('#ordens_servico').html($(json.ordens_servico).html());
                     demo2.bootstrapDualListbox('refresh', true);
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('.bootstrap-duallistbox-container').find('*').prop('disabled', false);
@@ -563,9 +548,6 @@
                     demo1.bootstrapDualListbox('refresh', true);
 
                     $('#modal_escolas').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -589,9 +571,6 @@
                 'success': function (json) {
                     $('#escola').html($(json.escola).html());
                     demo1.bootstrapDualListbox('refresh', true);
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('.bootstrap-duallistbox-container').find('*').prop('disabled', false);
@@ -621,9 +600,6 @@
                         $('.demo1 option:selected[value="' + value + '"]').show();
                     });
                     demo1.bootstrapDualListbox('refresh', true);
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('.bootstrap-duallistbox-container').find('*').prop('disabled', false);
@@ -655,13 +631,6 @@
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    if (textStatus) {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert('Error adding / update data');
-                    }
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -684,13 +653,6 @@
                         reload_table();
                     } else if (json.erro) {
                         alert(json.erro);
-                    }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    if (textStatus) {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert('Error adding / update data');
                     }
                 },
                 'complete': function () {
@@ -717,13 +679,6 @@
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    if (textStatus) {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert('Error adding / update data');
-                    }
-                },
                 'complete': function () {
                     $('#btnSaveEscolas').text('Salvar').attr('disabled', false);
                 }
@@ -745,13 +700,6 @@
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    if (textStatus) {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert('Error adding / update data');
-                    }
-                },
                 'complete': function () {
                     $('#btnSaveCurso').text('Salvar').attr('disabled', false);
                 }
@@ -771,13 +719,6 @@
                     if (json.status) {
                         $('#modal_profissional').modal('hide');
                         reload_table();
-                    }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    if (textStatus) {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert('Error adding / update data');
                     }
                 },
                 'complete': function () {
@@ -807,10 +748,6 @@
                         } else {
                             reload_table();
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                        alert('Error deleting data');
                     }
                 });
             }
@@ -825,10 +762,6 @@
                     'data': {'id': id},
                     'success': function (json) {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                        alert('Error deleting data');
                     }
                 });
 

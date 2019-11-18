@@ -13,7 +13,7 @@ class Ead_clientes_treinamentos_model extends MY_Model
 		'id_usuario' => 'required|is_natural_no_zero|max_length[11]',
 		'id_curso' => 'is_natural_no_zero|max_length[11]',
 		'data_cadastro' => 'required|valid_datetime',
-		'data_inicio' => 'valid_date|after_or_equal_date[data_cadastro]',
+		'data_inicio' => 'valid_date',
 		'data_maxima' => 'valid_date|after_or_equal_date[data_inicio]',
 		'colaboradores_maximo' => 'integer|max_length[11]',
 		'nota_aprovacao' => 'integer|max_length[3]',

@@ -90,9 +90,6 @@
                     'selector': 'td.reorder',
                     'update': false
                 },
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('ead/pagina_curso/ajax_list') ?>',
                     'type': 'POST',
@@ -177,9 +174,6 @@
                     },
                     'success': function (json) {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Erro ao excluir a página do curso');
                     }
                 });
 

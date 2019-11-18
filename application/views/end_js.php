@@ -20,21 +20,39 @@
 //     alert(event.which);
 
 //});
-
-        $.ajax({
-            url: '<?php echo base_url('email/getNovasMensagens'); ?>',
-            type: 'GET',
-            data: '',
-            success: function (data) {
-                $('#script_js').append(data);
+        $.ajaxSetup({
+            'error': function (jqXHR, textStatus, errorThrown) {
+                if (navigator.onLine) {
+                    if (jqXHR.status === 401) {
+                        $('#session_timeout').modal('show');
+                    } else if (jqXHR.status !== 0) {
+                        alert(textStatus + ' ' + jqXHR.status + ': ' + errorThrown);
+                    }
+                } else {
+                    if (jqXHR.status === 0) {
+                        alert(textStatus + ' ' + jqXHR.status + ': ' + 'Disconnected');
+                    }
+                }
             }
         });
+
+
+        $.ajax({
+            'url': '<?php echo base_url('email/getNovasMensagens'); ?>',
+            'type': 'GET',
+            'dataType': 'html',
+            'data': '',
+            'success': function (html) {
+                $('#script_js').append(html);
+            }
+        });
+
     });
 
-    <?php
-    # Geolocalização
-    if (empty($localização)) {
-    ?>
+	<?php
+	# Geolocalização
+	if (empty($localização)) {
+	?>
 
     //    var x = document.getElementById("demo");
     //
@@ -64,19 +82,13 @@
     //        });
     //    }
 
-    <?php
-    }
-    ?>
+	<?php
+	}
+	?>
 
     //    function modalAjuda(){
     //        $('#modal-ajuda').modal('show');
     //    }
-
-    $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
-        if (jqxhr.status === 401) {
-            $('#session_timeout').modal('show');
-        }
-    });
 
 </script>
 

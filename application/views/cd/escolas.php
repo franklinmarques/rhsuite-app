@@ -188,9 +188,6 @@
                 'serverSide': true,
                 'iDisplayLength': 500,
                 'lengthMenu': [[5, 10, 25, 50, 100, 500, 1000], [5, 10, 25, 50, 100, 500, 1000]],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('cd/escolas/ajax_list') ?>',
                     'type': 'POST',
@@ -242,9 +239,6 @@
                     $('[name="busca[diretoria]"]').html($(json.diretoria).html());
                     $('[name="busca[supervisor]"]').html($(json.supervisor).html());
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -286,9 +280,6 @@
 
                     $('.modal-title').text('Editar unidade escolar');
                     $('#modal_form').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -323,9 +314,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -343,9 +331,6 @@
                     'success': function (json) {
                         $('#modal_form').modal('hide');
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

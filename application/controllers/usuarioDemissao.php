@@ -145,6 +145,11 @@ class UsuarioDemissao extends MY_Controller
 	public function ajax_edit($id)
 	{
 		$data = $this->demissao->find($id);
+
+		if (!empty($data->data_demissao)) {
+			$data->data_demissao = date('d/m/Y', strtotime($data->data_demissao));
+		}
+
 		echo json_encode($data);
 	}
 
@@ -179,7 +184,7 @@ class UsuarioDemissao extends MY_Controller
 
 		$data = $this->entities->create('UsuariosDemissao', $this->input->post());
 
-		$this->demissao->update($data) or exit(json_encode(['retorno' => 0, 'aviso' => $this->demissao->errors()]));
+		$this->demissao->update($data->id, $data) or exit(json_encode(['retorno' => 0, 'aviso' => $this->demissao->errors()]));
 
 		echo json_encode(['status' => true]);
 	}

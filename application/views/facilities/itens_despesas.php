@@ -233,9 +233,6 @@ require_once APPPATH . 'views/end_js.php';
             table = $('#table').DataTable({
                 'processing': true, //Feature control the processing indicator.
                 'serverSide': true, //Feature control DataTables' server-side processing mode.
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'iDisplayLength': -1,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
                 // Load data for the table's content from an Ajax source
@@ -319,9 +316,6 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar empresa'); // Set title to Bootstrap modal title
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -345,9 +339,6 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#modal_unidades').modal('show');
                     $('.modal-title').text('Editar unidade'); // Set title to Bootstrap modal title
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -373,9 +364,6 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#modal_itens').modal('show');
                     $('.modal-title').text('Editar item'); // Set title to Bootstrap modal title
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -408,12 +396,8 @@ require_once APPPATH . 'views/end_js.php';
                         $('#modal_form').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSave').text('Salvar'); //change button text
-                    $('#btnSave').attr('disabled', false); //set button enable
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
+                'complete': function () {
                     $('#btnSave').text('Salvar'); //change button text
                     $('#btnSave').attr('disabled', false); //set button enable
                 }
@@ -443,12 +427,8 @@ require_once APPPATH . 'views/end_js.php';
                         $('#modal_unidades').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveUnidade').text('Salvar'); //change button text
-                    $('#btnSaveUnidade').attr('disabled', false); //set button enable
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
+                'complete': function () {
                     $('#btnSaveUnidade').text('Salvar'); //change button text
                     $('#btnSaveUnidade').attr('disabled', false); //set button enable
                 }
@@ -478,12 +458,8 @@ require_once APPPATH . 'views/end_js.php';
                         $('#modal_itens').modal('hide');
                         reload_table();
                     }
-
-                    $('#btnSaveItem').text('Salvar'); //change button text
-                    $('#btnSaveItem').attr('disabled', false); //set button enable
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
+                'complete': function () {
                     $('#btnSaveItem').text('Salvar'); //change button text
                     $('#btnSaveItem').attr('disabled', false); //set button enable
                 }
@@ -500,9 +476,6 @@ require_once APPPATH . 'views/end_js.php';
                     'data': {'id': id},
                     'success': function () {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }
@@ -517,9 +490,6 @@ require_once APPPATH . 'views/end_js.php';
                     'data': {'id': id},
                     'success': function () {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }
@@ -534,9 +504,6 @@ require_once APPPATH . 'views/end_js.php';
                     'data': {'id': id},
                     'success': function () {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

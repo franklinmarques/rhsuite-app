@@ -340,9 +340,6 @@ require_once APPPATH . "views/end_js.php";
                 fixedColumns: {
                     leftColumns: 1
                 },
-                "language": {
-                    "url": "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>"
-                },
                 // Load data for the table's content from an Ajax source
                 "ajax": {
                     "url": "<?php echo site_url('papd/atendimento/ajax_list') ?>",
@@ -493,9 +490,6 @@ require_once APPPATH . "views/end_js.php";
 
                     $('#modal_form').modal('show');
                     $('#modal_form .modal-title').text('Editar atendimento'); // Set title to Bootstrap modal title
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -528,12 +522,8 @@ require_once APPPATH . "views/end_js.php";
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSave, #btnSave2').text('Salvar'); //change button text
-                    $('#btnSave, #btnSave2').attr('disabled', false); //set button enable
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
+                complete: function () {
                     $('#btnSave, #btnSave2').text('Salvar'); //change button text
                     $('#btnSave, #btnSave2').attr('disabled', false); //set button enable
                 }
@@ -554,9 +544,6 @@ require_once APPPATH . "views/end_js.php";
                         //if success reload ajax table
                         $('#modal_form').modal('hide');
                         reload_table();
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

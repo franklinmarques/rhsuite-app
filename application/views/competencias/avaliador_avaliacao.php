@@ -210,9 +210,6 @@ require_once APPPATH . 'views/end_js.php';
             'processing': true, //Feature control the processing indicator.
             'serverSide': true, //Feature control DataTables' server-side processing mode.
             'order': [], //Initial no order.
-            'language': {
-                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-            },
             'ajax': {
                 'url': '<?php echo site_url('competencias/avaliador/ajax_list/' . $id_usuario) ?>',
                 'type': 'POST'
@@ -287,9 +284,6 @@ require_once APPPATH . 'views/end_js.php';
 
                 $('.modal-title').text('Editar cargo/função');
                 $('#modal_form').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -322,9 +316,6 @@ require_once APPPATH . 'views/end_js.php';
                     reload_table();
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-            },
             'complete': function () {
                 $('#btnSave').text('Salvar').attr('disabled', false);
             }
@@ -341,9 +332,6 @@ require_once APPPATH . 'views/end_js.php';
                 'success': function (json) {
                     $('#modal_form').modal('hide');
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 }
             });
         }

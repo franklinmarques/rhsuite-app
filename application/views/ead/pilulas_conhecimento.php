@@ -140,9 +140,6 @@
                 'serverSide': true,
                 'iDisplayLength': -1,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('ead/pilulasConhecimento/ajaxList') ?>',
                     'type': 'POST'
@@ -224,9 +221,6 @@
                         $('#usuarios').html($(json.usuarios).html());
                         demo1.bootstrapDualListbox('refresh', true);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Erro ao montar a estrutura');
                 }
             });
         });
@@ -283,9 +277,6 @@
                     $('#alert_form').html('');
                     $('.modal-title').text('Editar pílula de conhecimento');
                     $('#modal_form').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Erro ao excluir o cliente/usuário');
                 }
             });
         }
@@ -323,10 +314,7 @@
                             $('#alert_form').html('<div class="alert alert-danger">' + json.erro + '</div>').hide().fadeIn('slow');
                         }
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    $('#alert_form').html('<div class="alert alert-warning">Erro ao salvar cliente/usuário</div>').hide().fadeIn('slow');
-                },
+                }
                 'complete': function () {
                     $('#btnSave, #btnSave2').text('Salvar').attr('disabled', false);
                 }
@@ -349,9 +337,6 @@
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Erro ao excluir o cliente/usuário');
                     }
                 });
             }

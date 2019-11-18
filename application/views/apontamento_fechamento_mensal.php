@@ -93,14 +93,14 @@
 						<h3 class="text-center" style="font-weight: bold;">
 							RELATÓRIO DE FECHAMENTO MENSAL<br>
 							DIGITAÇÃO DO CARTÃO PASSE ESCOLAR<br>
-							<?= $contrato ? 'Contrato: ' . $contrato : ''; ?><br>
+							<?= $contrato ? 'Contrato: ' . $contrato : ''; ?> | <?= $setor; ?><br>
 							Período: <?= $data_inicio; ?> a <?= $data_termino; ?>
 						</h3>
 					<?php else: ?>
 						<h4 class="text-center" style="font-weight: bold;">
 							RELATÓRIO DE FECHAMENTO MENSAL<br>
 							DIGITAÇÃO DO CARTÃO PASSE ESCOLAR<br>
-							<?= $contrato ? 'Contrato: ' . $contrato : ''; ?><br>
+							<?= $contrato ? 'Contrato: ' . $contrato : ''; ?> | <?= $setor; ?><br>
 							Período: <?= $data_inicio; ?> a <?= $data_termino; ?>
 						</h4>
 					<?php endif; ?>
@@ -113,44 +113,59 @@
 
 	<div>
 		<table id="fechamento_mensal" class="table table-bordered table-condensed">
-			<thead>
-			<tr class="active">
-				<th rowspan="2" style="vertical-align: middle;">Colaborador(a)</th>
-				<th colspan="2" class="text-center" style="vertical-align: middle;">Quantidade</th>
-			</tr>
-			<tr>
-				<th class="text-center">Requisições</th>
-				<th class="text-center">Processamentos</th>
-			</tr>
-			</thead>
-			<tbody>
-			<?php foreach ($rows as $row): ?>
-				<tr>
-					<td><?= $row->nome; ?></td>
-					<td class="text-center"><?= $row->qtde_req; ?></td>
-					<td class="text-center"><?= $row->qtde_rev; ?></td>
+			<?php if ($mostrarColaboradores): ?>
+				<thead>
+				<tr class="active">
+					<th rowspan="2" style="vertical-align: middle;">Colaborador(a)</th>
+					<th colspan="2" class="text-center" style="vertical-align: middle;">Quantidade</th>
 				</tr>
-			<?php endforeach; ?>
-			</tbody>
-			<tfoot>
-			<tr>
-				<th>Subtotal</th>
-				<th class="text-center"><?= $subtotal_req; ?></th>
-				<th class="text-center"><?= $subtotal_rev; ?></th>
-			</tr>
-			<tr>
-				<th>Total geral</th>
-				<th colspan="2" class="text-center"><?= $total; ?></th>
-			</tr>
-			<tr>
-				<th>Valor unitário (R$)</th>
-				<th colspan="2" class="text-center"><?= $valor_unitario; ?></th>
-			</tr>
-			<tr>
-				<th>Valor faturamento (R$)</th>
-				<th colspan="2" class="text-center"><?= $valor_faturamento; ?></th>
-			</tr>
-			</tfoot>
+				<tr>
+					<th class="text-center">Requisições</th>
+					<th class="text-center">Processamentos</th>
+				</tr>
+				</thead>
+				<tbody>
+				<?php foreach ($rows as $row): ?>
+					<tr>
+						<td><?= $row->nome; ?></td>
+						<td class="text-center"><?= $row->qtde_req; ?></td>
+						<td class="text-center"><?= $row->qtde_rev; ?></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+				<tfoot>
+				<tr>
+					<th>Subtotal</th>
+					<th class="text-center"><?= $subtotal_req; ?></th>
+					<th class="text-center"><?= $subtotal_rev; ?></th>
+				</tr>
+				<tr>
+					<th>Total geral</th>
+					<th colspan="2" class="text-center"><?= $total; ?></th>
+				</tr>
+				<tr>
+					<th>Valor unitário (R$)</th>
+					<th colspan="2" class="text-center"><?= $valor_unitario; ?></th>
+				</tr>
+				<tr>
+					<th>Valor faturamento (R$)</th>
+					<th colspan="2" class="text-center"><?= $valor_faturamento; ?></th>
+				</tr>
+				</tfoot>
+			<?php else: ?>
+				<tr>
+					<th class="active">Total geral</th>
+					<td class="text-center"><?= $total; ?></td>
+				</tr>
+				<tr>
+					<th class="active">Valor unitário (R$)</th>
+					<td class="text-center"><?= $valor_unitario; ?></td>
+				</tr>
+				<tr>
+					<th class="active">Valor faturamento (R$)</th>
+					<td class="text-center"><?= $valor_faturamento; ?></td>
+				</tr>
+			<?php endif; ?>
 		</table>
 	</div>
 

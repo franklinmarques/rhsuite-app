@@ -264,9 +264,6 @@
                     $('[name="setor"]').html($(json.setor).html());
                     $('[name="cargo"]').html($(json.cargo).html());
                     $('[name="funcao"]').html($(json.funcao).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -290,9 +287,6 @@
                     $('#form_contrato [name="colaborador"]').val(id_usuario);
 
                     $('#modal_contratos').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -334,9 +328,6 @@
                         $('#modal_contratos').modal('hide');
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSaveContrato').text('Salvar').attr('disabled', false);
                 }
@@ -368,9 +359,6 @@
                         } else if (json.status) {
                             $('#modal_contratos').modal('hide');
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error adding / update data');
                     },
                     'complete': function () {
                         $('#btnDeleteContrato').text('Excluir').attr('disabled', false);

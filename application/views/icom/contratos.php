@@ -295,9 +295,6 @@
                 'processing': true,
                 'serverSide': true,
                 'order': [],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('icom/contratos/listar/') ?>',
                     'type': 'POST',
@@ -377,9 +374,6 @@
                         reload_table();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
-                },
                 'complete': function () {
                     $('#estrutura select').prop('disabled', false);
                 }
@@ -454,9 +448,6 @@
 
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar contrato');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -480,9 +471,6 @@
                         $('#id_cliente').html(json.clientes);
                         $('#codigo_proposta').html(json.propostas);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('.estrutura, #btnSave').prop('disabled', false);
@@ -517,9 +505,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -540,9 +525,6 @@
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }
@@ -567,9 +549,6 @@
                         } else if (json.status) {
                             $('#modal_form').modal('hide');
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error adding / update data');
                     },
                     'complete': function () {
                         $('#btnDeleteContrato').text('Excluir');

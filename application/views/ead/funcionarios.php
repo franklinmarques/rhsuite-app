@@ -127,9 +127,6 @@
                 'serverSide': true,
                 'iDisplayLength': -1,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('ead/funcionarios/ajaxList') ?>',
                     'type': 'POST',
@@ -173,9 +170,6 @@
                     $('#busca [name="area"]').html($(json.area).html());
                     $('#busca [name="setor"]').html($(json.setor).html());
                     $('#busca [name="treinamento"]').html($(json.treinamento).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -210,9 +204,6 @@
                     },
                     'success': function (json) {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Erro ao excluir treinamento');
                     }
                 });
 

@@ -406,9 +406,6 @@
                 'serverSide': true,
                 'iDisplayLength': 100,
                 'lengthMenu': [[5, 10, 25, 50, 100, 500], [5, 10, 25, 50, 100, 500]],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('ei/diretorias/ajax_list') ?>',
                     'type': 'POST',
@@ -459,9 +456,6 @@
                     $('[name="busca[coordenador]"]').html($(json.coordenador).html());
                     $('[name="busca[contrato]"]').html($(json.contrato).html());
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -493,9 +487,6 @@
                 },
                 'success': function (json) {
                     $('[name="id_coordenador"]').html($(json.id_coordenador).html());
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -546,9 +537,6 @@
                     $('.modal-title').text('Adicionar valores para faturamento');
                     $('.combo_nivel1').hide();
                     $('#modal_valores').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -576,10 +564,6 @@
 
                     $('.modal-title').text('Editar cliente');
                     $('#modal_form').modal('show');
-
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -603,9 +587,6 @@
 
                     $('.modal-title').text('Editar contrato - ' + json.contrato);
                     $('#modal_contrato').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -638,9 +619,6 @@
                     $('.contrato').html(json.contrato);
                     $('.modal-title').text('Editar valores para faturamento');
                     $('#modal_valores').modal('show');
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -673,9 +651,6 @@
                         atualizar_filtro();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -704,9 +679,6 @@
                         $('#modal_contrato').modal('hide');
                         atualizar_filtro();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
                 },
                 'complete': function () {
                     $('#btnSaveContrato').text('Salvar').attr('disabled', false);
@@ -737,9 +709,6 @@
                         atualizar_filtro();
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSaveValores').text('Salvar').attr('disabled', false);
                 }
@@ -757,9 +726,6 @@
                     'success': function (json) {
                         $('#modal_form').modal('hide');
                         atualizar_filtro();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }
@@ -776,9 +742,6 @@
                     'success': function (json) {
                         $('#modal_contrato').modal('hide');
                         atualizar_filtro();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }
@@ -794,9 +757,6 @@
                     'data': {'id': id},
                     'success': function (json) {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

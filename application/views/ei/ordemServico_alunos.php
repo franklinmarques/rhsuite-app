@@ -1,162 +1,167 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CORPORATE RH - LMS - Gerenciar Ordem de Serviço de Alunos</title>
-    <link href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-    <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>CORPORATE RH - LMS - Gerenciar Ordem de Serviço de Alunos</title>
+	<link href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
+	<link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
 
-    <!--HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries-->
-    <!--WARNING: Respond.js doesn't work if you view the page via file://-->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+	<!--HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries-->
+	<!--WARNING: Respond.js doesn't work if you view the page via file://-->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
 
-    <script src="<?= base_url("assets/js/jquery.js"); ?>"></script>
-    <style>
-        @page {
-            margin: 40px 20px;
-        }
+	<script src="<?= base_url("assets/js/jquery.js"); ?>"></script>
+	<style>
+		@page {
+			margin: 40px 20px;
+		}
 
-        .btn-success {
-            background-color: #5cb85c;
-            border-color: #4cae4c;
-            color: #fff;
-        }
+		.btn-success {
+			background-color: #5cb85c;
+			border-color: #4cae4c;
+			color: #fff;
+		}
 
-        .btn-primary {
-            background-color: #337ab7 !important;
-            border-color: #2e6da4 !important;
-            color: #fff;
-        }
+		.btn-primary {
+			background-color: #337ab7 !important;
+			border-color: #2e6da4 !important;
+			color: #fff;
+		}
 
-        .btn-info {
-            color: #fff;
-            background-color: #5bc0de;
-            border-color: #46b8da;
-        }
+		.btn-info {
+			color: #fff;
+			background-color: #5bc0de;
+			border-color: #46b8da;
+		}
 
-        .btn-warning {
-            color: #fff;
-            background-color: #f0ad4e;
-            border-color: #eea236;
-        }
+		.btn-warning {
+			color: #fff;
+			background-color: #f0ad4e;
+			border-color: #eea236;
+		}
 
-        .btn-danger {
-            color: #fff;
-            background-color: #d9534f;
-            border-color: #d43f3a;
-        }
+		.btn-danger {
+			color: #fff;
+			background-color: #d9534f;
+			border-color: #d43f3a;
+		}
 
-        .text-nowrap {
-            white-space: nowrap;
-        }
+		.text-nowrap {
+			white-space: nowrap;
+		}
 
-        tr.group, tr.group:hover {
-            background-color: #ddd !important;
-        }
-    </style>
+		tr.group, tr.group:hover {
+			background-color: #ddd !important;
+		}
+	</style>
 </head>
 <body style="color: #000;">
 <div class="container-fluid">
-    <br>
-    <button class="btn btn-info" onclick="add_aluno()"><i class="glyphicon glyphicon-plus"></i>
-        Matricular aluno(a)
-    </button>
-    <button class="btn btn-default" onclick="javascript:window.close()"><i
-                class="glyphicon glyphicon-remove"></i> Fechar
-    </button>
-    <br>
-    <br>
-    <h5 class="text-primary">
-        <strong>Cliente/diretoria: <?= $nomeCliente ?></strong></h5>
-    <h5 class="text-primary">
-        <strong>Unidade de ensino: <?= $nomeEscola ?></strong></h5>
-    <h5 class="text-primary">
-        <strong>Contrato: <?= $nomeContrato ?></strong></h5>
-    <h5 class="text-primary">
-        <strong>Ordem de Serviço: <?= $ordemServico ?></strong>
-    </h5>
-    <h5 class="text-primary">
-        <strong>Ano/semestre: <?= $anoSemestre ?></strong>
-    </h5>
-    <table id="table" class="table table-striped table-bordered table-condensed" cellspacing="0"
-           width="100%">
-        <thead>
-        <tr>
-            <th>Curso</th>
-            <th>Aluno(a)</th>
-            <th>Data início</th>
-            <th>Data término</th>
-            <th>Módulo</th>
-            <th>Ações</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+	<br>
+	<button class="btn btn-info" onclick="add_aluno()"><i class="glyphicon glyphicon-plus"></i>
+		Matricular aluno(a)
+	</button>
+	<button class="btn btn-default" onclick="javascript:window.close()"><i
+			class="glyphicon glyphicon-remove"></i> Fechar
+	</button>
+	<br>
+	<br>
+	<h5 class="text-primary">
+		<strong>Cliente/diretoria: <?= $nomeCliente ?></strong></h5>
+	<h5 class="text-primary">
+		<strong>Unidade de ensino: <?= $nomeEscola ?></strong></h5>
+	<h5 class="text-primary">
+		<strong>Contrato: <?= $nomeContrato ?></strong></h5>
+	<h5 class="text-primary">
+		<strong>Ordem de Serviço: <?= $ordemServico ?></strong>
+	</h5>
+	<h5 class="text-primary">
+		<strong>Ano/semestre: <?= $anoSemestre ?></strong>
+	</h5>
+	<div class="row">
+	<div class="col-sm-offset-6 text-danger">
+		<h4><strong>* Datas de início e término referentes ao semestre.</strong></h4>
+	</div>
+	</div>
+	<table id="table" class="table table-striped table-bordered table-condensed" cellspacing="0"
+		   width="100%">
+		<thead>
+		<tr>
+			<th>Curso</th>
+			<th>Aluno(a)</th>
+			<th>Data início *</th>
+			<th>Data término *</th>
+			<th>Módulo</th>
+			<th>Ações</th>
+		</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
 
-    <div class="modal fade" id="modal_form" role="dialog">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                    <h3 class="modal-title">Matricular aluno(a)</h3>
-                </div>
-                <div class="modal-body form">
-                    <form action="#" id="form" class="form-horizontal">
-                        <input type="hidden" value="" name="id"/>
-                        <input type="hidden" value="<?= $this->uri->rsegment(3) ?>" name="id_ordem_servico_escola"
-                               class="filtro"/>
-                        <div class="form-body">
-                            <div class="row form-group">
-                                <label class="control-label col-md-2">Aluno<span class="text-danger"> *</span></label>
-                                <div class="col-md-9">
-                                    <?php echo form_dropdown('id_aluno', $alunos, '', 'id="aluno" class="form-control filtro"'); ?>
-                                </div>
-                            </div>
-                            <div class="row form-group">
-                                <label class="control-label col-md-2">Curso<span class="text-danger"> *</span></label>
-                                <div class="col-md-9">
-                                    <?php echo form_dropdown('id_aluno_curso', ['' => 'selecione...'], '', 'id="aluno_curso" class="form-control filtro"'); ?>
-                                </div>
-                            </div>
-                            <div class="row form-group">
-                                <label class="control-label col-md-2">Data início</label>
-                                <div class="col-md-2">
-                                    <input name="data_inicio" class="form-control text-center data"
-                                           placeholder="dd/mm/aaaa">
-                                </div>
-                                <label class="control-label col-md-2">Data término</label>
-                                <div class="col-md-2">
-                                    <input name="data_termino" class="form-control text-center data"
-                                           placeholder="dd/mm/aaaa">
-                                </div>
-                            </div>
-                            <div class="row form-group">
-                                <label class="control-label col-md-2">Módulo</label>
-                                <div class="col-md-3">
-                                    <input name="modulo" class="form-control" placeholder="N&ordm; do módulo">
-                                </div>
-                                <label class="control-label col-md-1">Nota</label>
-                                <div class="col-md-2">
-                                    <input name="nota" class="form-control text-center nota" placeholder="0-100">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="modal fade" id="modal_form" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+							aria-hidden="true">&times;</span></button>
+					<h3 class="modal-title">Matricular aluno(a)</h3>
+				</div>
+				<div class="modal-body form">
+					<form action="#" id="form" class="form-horizontal">
+						<input type="hidden" value="" name="id"/>
+						<input type="hidden" value="<?= $this->uri->rsegment(3) ?>" name="id_ordem_servico_escola"
+							   class="filtro"/>
+						<div class="form-body">
+							<div class="row form-group">
+								<label class="control-label col-md-2">Aluno<span class="text-danger"> *</span></label>
+								<div class="col-md-9">
+									<?php echo form_dropdown('id_aluno', $alunos, '', 'id="aluno" class="form-control filtro"'); ?>
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-2">Curso<span class="text-danger"> *</span></label>
+								<div class="col-md-9">
+									<?php echo form_dropdown('id_aluno_curso', ['' => 'selecione...'], '', 'id="aluno_curso" class="form-control filtro"'); ?>
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-2">Data início</label>
+								<div class="col-md-2">
+									<input name="data_inicio" class="form-control text-center data"
+										   placeholder="dd/mm/aaaa">
+								</div>
+								<label class="control-label col-md-2">Data término</label>
+								<div class="col-md-2">
+									<input name="data_termino" class="form-control text-center data"
+										   placeholder="dd/mm/aaaa">
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-2">Módulo</label>
+								<div class="col-md-3">
+									<input name="modulo" class="form-control" placeholder="N&ordm; do módulo">
+								</div>
+								<label class="control-label col-md-1">Nota</label>
+								<div class="col-md-2">
+									<input name="nota" class="form-control text-center nota" placeholder="0-100">
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="btnSave" onclick="save()" class="btn btn-success">Salvar</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </div>
 <div id="script_js" style="display: none;"></div>

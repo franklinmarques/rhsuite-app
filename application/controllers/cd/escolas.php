@@ -139,9 +139,9 @@ class Escolas extends MY_Controller
         $sql = "SELECT s.id, 
                        s.diretoria,
                        s.nome,
-                       s.contrato
-                FROM (SELECT a.id, 
-                             b.alias AS diretoria,==
+                       s.contrato,
+                       s.supervisor
+                FROM (SELECT b.alias AS diretoria, a.nome, b.contrato, d.nome AS supervisor, a.id
                       FROM cd_escolas a
                       INNER JOIN cd_diretorias b ON
                                 b.id = a.id_diretoria
@@ -151,7 +151,7 @@ class Escolas extends MY_Controller
                                  d.id = c.id_supervisor
                       WHERE b.id_empresa = {$this->session->userdata('empresa')}";
         if ($id_diretoria) {
-            $sql .= " AND b.id = {$id_diretoria}";
+            $sql .= " AND b.id = '{$id_diretoria}'";
         } elseif (!empty($busca['diretoria'])) {
             $sql .= " AND b.id = '{$busca['diretoria']}'";
         }

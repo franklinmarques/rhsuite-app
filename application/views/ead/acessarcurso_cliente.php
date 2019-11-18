@@ -441,10 +441,10 @@
                 id_curso: id_curso,
                 id_pagina: id_pagina
             },
-            success: function () {
-                atualizandoTempoEstudo = false;
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ' ' + jqXHR.status + ': ' + (jqXHR.status === 0 ? 'Disconnected' : errorThrown));
             },
-            error: function () {
+            complete: function () {
                 atualizandoTempoEstudo = false;
             }
         });

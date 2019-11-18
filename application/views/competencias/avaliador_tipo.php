@@ -119,9 +119,6 @@ require_once APPPATH . 'views/end_js.php';
             'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
             'lengthChange': (is_mobile === false),
             'searching': (is_mobile === false),
-            'language': {
-                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-            },
             // Load data for the table's content from an Ajax source
             'ajax': {
                 'url': '<?php echo site_url('competencias/avaliador/ajax_tipo/' . $id_usuario . '/' . $id_avaliado . '/' . $tipo_competencia) ?>',
@@ -192,9 +189,6 @@ require_once APPPATH . 'views/end_js.php';
 
                 $('#modal_form').modal('show');
                 $('.modal-title').text('Editar avaliação'); // Set title to Bootstrap modal title
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -229,9 +223,6 @@ require_once APPPATH . 'views/end_js.php';
                     reload_table();
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-            },
             'complete': function () {
                 $('#btnSave').text('Salvar').attr('disabled', false);
             }
@@ -249,9 +240,6 @@ require_once APPPATH . 'views/end_js.php';
                     //if success reload ajax table
                     $('#modal_form').modal('hide');
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 }
             });
 

@@ -93,7 +93,7 @@ class UsuarioContratos extends MY_Controller
 
 		$data = $this->entities->create('UsuariosContratos', $this->input->post());
 
-		$this->contratos->update($data) or exit(json_encode(['retorno' => 0, 'aviso' => $this->contratos->errors()]));
+		$this->contratos->update($data->id, $data) or exit(json_encode(['retorno' => 0, 'aviso' => $this->contratos->errors()]));
 
 		echo json_encode(['status' => true]);
 	}

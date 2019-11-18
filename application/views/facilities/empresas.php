@@ -216,9 +216,6 @@ require_once APPPATH . 'views/end_js.php';
                 'serverSide': true, //Feature control DataTables' server-side processing mode.
                 'iDisplayLength': -1,
                 'lengthMenu': [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, 'Todos']],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 // Load data for the table's content from an Ajax source
                 'ajax': {
                     'url': '<?php echo site_url('facilities/empresas/ajaxList/') ?>',
@@ -303,9 +300,6 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar ativo/facility'); // Set title to Bootstrap modal title
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -330,9 +324,6 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#modal_revisao').modal('show');
                     $('.modal-title').text('Editar vistoria/manutenção'); // Set title to Bootstrap modal title
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -367,11 +358,8 @@ require_once APPPATH . 'views/end_js.php';
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-
-                    $('#btnSave').text('Salvar').attr('disabled', false); //set button enable
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
+                'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false); //set button enable
                 }
             });
@@ -405,8 +393,7 @@ require_once APPPATH . 'views/end_js.php';
 
                     $('#btnSaveRevisao').text('Salvar').attr('disabled', false); //set button enable
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
+                'complete': function () {
                     $('#btnSaveRevisao').text('Salvar').attr('disabled', false); //set button enable
                 }
             });
@@ -440,9 +427,6 @@ require_once APPPATH . 'views/end_js.php';
                     'data': {'id': id},
                     'success': function () {
                         reload_table();
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
             }

@@ -697,39 +697,39 @@ class Apontamento extends MY_Controller
 		$alocacao = $this->getAlocacao($busca, $consolidado);
 
 		$sql = "SELECT s.*
-                FROM (SELECT a.id, c.nome, 'qtde_req' AS tipo, 'Req.' AS nome_tipo
+                FROM (SELECT a.id_usuario, c.nome, 'qtde_req' AS tipo, 'Req.' AS nome_tipo
                       FROM alocacao_usuarios a 
                       INNER JOIN alocacao b ON b.id = a.id_alocacao
                       INNER JOIN usuarios c ON c.id = a.id_usuario
-                      WHERE b.id = '{$alocacao->id}' AND 
+                      WHERE b.id IN ('{$alocacao->id}') AND 
                             b.area = 'EMTU' AND 
                             b.setor LIKE '%Passe Escolar%' AND
                             (a.cargo = '{$busca['cargo']}' OR CHAR_LENGTH('{$busca['cargo']}') = 0) AND 
                             (a.funcao = '{$busca['funcao']}' OR CHAR_LENGTH('{$busca['funcao']}') = 0)
-                      GROUP BY a.id 
+                      GROUP BY a.id_usuario 
                       UNION
-                      SELECT a2.id, c2.nome, 'qtde_rev' AS tipo, 'Rev.' AS nome_tipo
+                      SELECT a2.id_usuario, c2.nome, 'qtde_rev' AS tipo, 'Rev.' AS nome_tipo
                       FROM alocacao_usuarios a2
                       INNER JOIN alocacao b2 ON b2.id = a2.id_alocacao
                       INNER JOIN usuarios c2 ON c2.id = a2.id_usuario
-                      WHERE b2.id = '{$alocacao->id}' AND 
+                      WHERE b2.id IN ('{$alocacao->id}') AND 
                             b2.area = 'EMTU' AND 
                             b2.setor LIKE '%Passe Escolar%' AND
                             (a2.cargo = '{$busca['cargo']}' OR CHAR_LENGTH('{$busca['cargo']}') = 0) AND 
                             (a2.funcao = '{$busca['funcao']}' OR CHAR_LENGTH('{$busca['funcao']}') = 0)
-                      GROUP BY a2.id) s
-                GROUP BY s.id, s.tipo 
-                ORDER BY s.id ASC, s.tipo ASC";
+                      GROUP BY a2.id_usuario) s
+                GROUP BY s.id_usuario, s.tipo 
+                ORDER BY s.id_usuario ASC, s.tipo ASC";
 
 		$this->load->library('dataTables', ['search' => ['nome']]);
 
 		$output = $this->datatables->query($sql);
 
 		$rowsApontamentos = $this->db
-			->select("a.id_alocado, DATE_FORMAT(a.data, '%d') AS dia, SUM(a.qtde_req) AS qtde_req, SUM(a.qtde_rev) AS qtde_rev", false)
+			->select("b.id_usuario, DATE_FORMAT(a.data, '%d') AS dia, SUM(a.qtde_req) AS qtde_req, SUM(a.qtde_rev) AS qtde_rev", false)
 			->join('alocacao_usuarios b', 'b.id = a.id_alocado')
 			->join('alocacao c', 'c.id = b.id_alocacao')
-			->where_in('c.id', [$alocacao->id, $alocacao->id_anterior])
+			->where_in('c.id', [$alocacao->id, $alocacao->id_anterior ?? 0])
 			->where("a.data BETWEEN '{$alocacao->data_abertura}' AND '{$alocacao->data_fechamento}'")
 			->group_by(['b.id', 'a.data'])
 			->get('alocacao_apontamento a')
@@ -738,7 +738,7 @@ class Apontamento extends MY_Controller
 		$eventos = [];
 
 		foreach ($rowsApontamentos as $rowApontamento) {
-			$eventos[$rowApontamento->id_alocado][$rowApontamento->dia] = [
+			$eventos[$rowApontamento->id_usuario][$rowApontamento->dia] = [
 				'qtde_req' => $rowApontamento->qtde_req,
 				'qtde_rev' => $rowApontamento->qtde_rev
 			];
@@ -782,7 +782,7 @@ class Apontamento extends MY_Controller
 
 			$total = null;
 			foreach ($arrayDias as $dia) {
-				$evento = $eventos[$row->id][$dia][$row->tipo] ?? null;
+				$evento = $eventos[$row->id_usuario][$dia][$row->tipo] ?? null;
 				$rows[] = $evento;
 				$total += $evento;
 			}
@@ -824,11 +824,16 @@ class Apontamento extends MY_Controller
 	{
 		$alocacao = $this->getAlocacao($busca, $consolidado);
 
+		$fatorDivisor = (int)$this->input->get_post('fator_divisor');
+
 		$feriados = [
 			'qtde_novos_processos' => ['Qtde. processos novos'],
 			'qtde_analistas' => ['Qtde. analistas'],
-			'qtde_processos_tratados_dia' => ['Qtde. processos tratados/dia'],
-			'qtde_pagamentos' => ['Pagamentos gerados paraba AME']
+			'qtde_pagamentos' => ['Pagamentos gerados para a AME'],
+			'qtde_processos_analisados' => ['Qtde. processos analisados'],
+			'qtde_linhas_analisadas' => ['Qtde. linhas analisadas'],
+			'total_analisados' => ['Total analisados'],
+			'qtde_colaboradores_estimada' => ['Qtde. estimada de colaboradores']
 		];
 
 		$order = $this->input->post('order')[0]['dir'] ?? '';
@@ -838,15 +843,19 @@ class Apontamento extends MY_Controller
 
 		$rows = $this->db
 			->select("*, DATE_FORMAT(data, '%d') AS dia", false)
-			->where('id_alocacao', $alocacao->id)
+			->where_in('id_alocacao', [$alocacao->id, $alocacao->id_anterior ?? 0])
+			->where("data BETWEEN '{$alocacao->data_abertura}' AND '{$alocacao->data_fechamento}'")
 			->get('alocacao_feriados')
 			->result();
 
 		foreach ($rows as $row) {
 			$feriados['qtde_novos_processos'][$row->dia] = $row->qtde_novos_processos;
 			$feriados['qtde_analistas'][$row->dia] = $row->qtde_analistas;
-			$feriados['qtde_processos_tratados_dia'][$row->dia] = $row->qtde_processos_tratados_dia;
 			$feriados['qtde_pagamentos'][$row->dia] = $row->qtde_pagamentos;
+			$feriados['qtde_processos_analisados'][$row->dia] = $row->qtde_processos_analisados;
+			$feriados['qtde_linhas_analisadas'][$row->dia] = $row->qtde_linhas_analisadas;
+			$feriados['total_analisados'][$row->dia] = $row->qtde_processos_analisados + $row->qtde_linhas_analisadas;
+			$feriados['qtde_colaboradores_estimada'][$row->dia] = round(($row->qtde_processos_analisados + $row->qtde_linhas_analisadas) / max($fatorDivisor, 1));
 		}
 
 		$this->load->library('Calendar');

@@ -273,9 +273,6 @@
 							<li role="presentation" style="font-size: 13px; font-weight: bolder"><a
 									href="#visitas" aria-controls="visitas" role="tab"
 									data-toggle="tab">Mapa de visitação</a></li>
-							<li role="presentation" style="display:none; font-size: 13px; font-weight: bolder"><a
-									href="#visitas2" aria-controls="visitas2" role="tab"
-									data-toggle="tab">Mapa de visitação 2</a></li>
 							<li role="presentation" style="font-size: 13px; font-weight: bolder"><a
 									href="#dias_letivos" aria-controls="dias_letivos" role="tab"
 									data-toggle="tab">Dias letivos</a></li>
@@ -371,7 +368,7 @@
 										<th rowspan="2" class="warning" style="vertical-align: middle;">Função
 										</th>
 										<th colspan="6" class="text-center">Profissional principal</th>
-										<th colspan="6" class="text-center">Profissional substituto(a)</th>
+										<th colspan="6" class="text-center">Profissional substituto(a) do semestre</th>
 										<th colspan="6" class="text-center">Profissional substituto(a) 2</th>
 									</tr>
 									<tr>
@@ -454,31 +451,6 @@
 								</table>
 							</div>
 
-							<div role="tabpane" class="tab-pane" id="visitas2">
-								<table id="table_visitas2"
-									   class="table table-hover table-condensed table-bordered" cellspacing="0"
-									   width="100%" style="border-radius: 0 !important;">
-									<thead>
-									<tr>
-										<th rowspan="2" class="warning">Município</th>
-										<th rowspan="2" class="warning" style="vertical-align: middle;">Unidade</th>
-										<th colspan="7" class="text-center">Mapa de Visitas do semestre</th>
-									</tr>
-									<tr>
-										<th class="text-center nome_mes1"><?= $semestre[0]; ?></th>
-										<th class="text-center nome_mes2"><?= $semestre[1]; ?></th>
-										<th class="text-center nome_mes3"><?= $semestre[2]; ?></th>
-										<th class="text-center nome_mes4"><?= $semestre[3]; ?></th>
-										<th class="text-center nome_mes5"><?= $semestre[4]; ?></th>
-										<th class="text-center nome_mes6"><?= $semestre[5]; ?></th>
-										<th class="text-center nome_mes7"><?= $semestre[6]; ?></th>
-									</tr>
-									</thead>
-									<tbody>
-									</tbody>
-								</table>
-							</div>
-
 							<div role="tabpane" class="tab-pane" id="dias_letivos">
 								<table id="table_dias_letivos"
 									   class="table table-hover table-condensed table-bordered" cellspacing="0"
@@ -519,11 +491,6 @@
 										</button>
 									</div>
 									<div class="col-sm-6 form-inline">
-										<div class="form-group" style="display:none;">
-											<label>Saldo do mês</label>
-											<input type="text" class="form-control text-center input-sm hora"
-												   id="saldo_mes" placeholder="hh:mm" style="width: 70px;" readonly>
-										</div>&emsp;
 										<div class="form-group">
 											<label style="font-size:14px;">Saldo acumulado na data
 												de <?= date('d/m/Y'); ?></label>
@@ -531,6 +498,12 @@
 												   id="saldo_acumulado" placeholder="hh:mm"
 												   style="width: 120px; font-weight: bold;"
 												   readonly>
+										</div>
+										&emsp;
+										<div class="form-group">
+											<label>Saldo total do mês</label>
+											<input type="text" class="form-control text-center input-sm hora"
+												   id="saldo_mes" placeholder="hh:mm" style="width: 70px;" readonly>
 										</div>
 									</div>
 									<div class="col-sm-3 text-right">
@@ -715,13 +688,19 @@
 							<div class="row form-group">
 								<label class="control-label col-md-3">Ordem de serviço</label>
 								<div class="col-md-8">
-									<?php echo form_dropdown('ordem_servico', array('' => 'selecione...'), '', 'class="form-control"'); ?>
+									<?php echo form_dropdown('ordem_servico', array('' => 'selecione...'), '', 'class="form-control" onchange="preparar_os_escola_individual(this);"'); ?>
 								</div>
 							</div>
 							<div class="row form-group">
 								<label class="control-label col-md-3">Escola</label>
 								<div class="col-md-8">
-									<?php echo form_dropdown('escola', ['' => 'selecione...'], '', 'class="form-control"'); ?>
+									<?php echo form_dropdown('escola', ['' => 'selecione...'], '', 'class="form-control" onchange="preparar_os_aluno_individual(this);"'); ?>
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-3">Aluno</label>
+								<div class="col-md-8">
+									<?php echo form_dropdown('aluno', ['' => 'selecione...'], '', 'class="form-control"'); ?>
 								</div>
 							</div>
 						</form>
@@ -1507,12 +1486,12 @@
 										   class="form-control">
 								</div>
 								<div class="col-md-2 text-nowrap">
-									<div class="checkbox">
+									<!--<div class="checkbox">
 										<label>
 											<input type="checkbox" name="pagamento_proporcional" value="1">
 											Pagamento proporcional
 										</label>
-									</div>
+								</div>-->
 								</div>
 								<div class="col-md-6 text-right">
 									<button type="button" id="btnSavePagamentoPrestador"
@@ -1523,8 +1502,7 @@
 											onclick="recuperar_pagamento_prestador()"
 											class="btn btn-info">Recuperar e validar base
 									</button>
-									<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar
-									</button>
+									<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
 								</div>
 							</div>
 							<div class="row form-group">
@@ -1571,12 +1549,12 @@
 								<label class="control-label col-md-1 text-nowrap">Data início</label>
 								<div class="col-md-2">
 									<input name="data_inicio_contrato" type="text" value=""
-										   class="form-control text-center data">
+										   class="form-control text-center data" readonly="">
 								</div>
 								<label class="control-label col-md-2 text-nowrap">Data término</label>
 								<div class="col-md-2">
 									<input name="data_termino_contrato" type="text" value=""
-										   class="form-control text-center data">
+										   class="form-control text-center data" readonly="">
 								</div>
 							</div>
 							<hr style="margin-top: 0px;">
@@ -2029,6 +2007,26 @@
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
 
+		<!--
+				<div id="modal_teste_pagamento_prestador" class="modal fade" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+										aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title">Dados escritos no banco</h4>
+							</div>
+							<div class="modal-body">
+								<div id="teste_pagamento_prestador" style="word-wrap: break-spaces;" width="100%"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+		-->
+
 	</section>
 </section>
 <!--main content end-->
@@ -2057,8 +2055,7 @@
 
 <script>
 
-    var table, table_faturamento, table_controle_materiais, table_visitas, table_visitas2, table_dias_letivos,
-        table_banco_horas;
+    var table, table_faturamento, table_controle_materiais, table_visitas, table_dias_letivos, table_banco_horas;
     var busca, save_method, demo1;
     var edicaoEvento = true;
 
@@ -2118,8 +2115,6 @@
 
     $(document).ready(function () {
         busca = $('#busca').serialize();
-        var language = "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>";
-
 
         table = $('#table').DataTable({
             'dom': "<'row'<'col-sm-3'l><'#legenda.col-sm-5'><'col-sm-4'f>>" +
@@ -2138,7 +2133,6 @@
                 'dataSrc': 1
             },
             'language': {
-                'url': language,
                 'searchPlaceholder': 'Município/escola/cuidador'
             },
             'ajax': {
@@ -2310,7 +2304,6 @@
                 'dataSrc': 0
             },
             'language': {
-                'url': language,
                 'searchPlaceholder': 'Município/escola/cuidador/aluno'
             },
             'ajax': {
@@ -2379,10 +2372,12 @@
                 },
                 {
                     'createdCell': function (td, cellData, rowData, row, col) {
+                        if (rowData[col] === null || rowData[col] === '') {
+                            $(td).css('background-color', '#ff0');
+                        }
                         $(td).css('cursor', 'pointer').on('click', function () {
                             edit_horario(rowData[24], table_faturamento.context[0].json.mes);
                         }).html('<a>' + cellData + '</a>');
-
                     },
                     'targets': [2]
                 },
@@ -2627,9 +2622,6 @@
                 },
                 'dataSrc': 0
             },
-            'language': {
-                'url': language
-            },
             'ajax': {
                 'url': '<?php echo site_url('ei/apontamento/ajaxListControleMateriais') ?>',
                 'type': 'POST',
@@ -2730,9 +2722,6 @@
             'processing': true,
             'serverSide': true,
             'iDisplayLength': 50,
-            'language': {
-                'url': language
-            },
             'rowGroup': {
                 'className': 'active',
                 'startRender': function (rows, group) {
@@ -2827,117 +2816,10 @@
             ]
         });
 
-        table_visitas2 = $('#table_visitas2').DataTable({
-            'dom': "<'row'<'col-sm-5'l><'#pdf_visitas.col-sm-3'><'col-sm-4'f>>" +
-                "<'row'<'col-sm-12'tr>>" +
-                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-            'processing': true,
-            'serverSide': true,
-            'iDisplayLength': 50,
-            'language': {
-                'url': language
-            },
-            'rowGroup': {
-                'className': 'active',
-                'startRender': function (rows, group) {
-                    return '<strong>Município: </strong>' + group;
-                },
-                'dataSrc': 0
-            },
-            'ajax': {
-                'url': '<?php echo site_url('ei/apontamento/ajaxListVisitas2') ?>',
-                'type': 'POST',
-                'timeout': 90000,
-                'data': function (d) {
-                    d.busca = busca;
-                    return d;
-                },
-                'dataSrc': function (json) {
-                    $('#table_visitas2 .nome_mes1').text(json.semestre[0]).attr('data-mes', json.meses[0]);
-                    $('#table_visitas2 .nome_mes2').text(json.semestre[1]).attr('data-mes', json.meses[1]);
-                    $('#table_visitas2 .nome_mes3').text(json.semestre[2]).attr('data-mes', json.meses[2]);
-                    $('#table_visitas2 .nome_mes4').text(json.semestre[3]).attr('data-mes', json.meses[3]);
-                    $('#table_visitas2 .nome_mes5').text(json.semestre[4]).attr('data-mes', json.meses[4]);
-                    $('#table_visitas2 .nome_mes6').text(json.semestre[5]).attr('data-mes', json.meses[5]);
-                    $('#table_visitas2 .nome_mes7').text(json.semestre[6]).attr('data-mes', json.meses[6]);
-
-                    if (table_visitas2.context[0].json.semestre.length === 6) {
-                        table_visitas2.column(8).visible(false);
-                    } else {
-                        table_visitas2.column(8).visible(true);
-                    }
-
-                    if (json.draw === 1) {
-                        $("#pdf_visitas2").html('<button title="Imprimir" style="margin: 15px 10px 0;" class="btn btn-info btn-sm" onclick="imprimir_mapa_visitacao();">' +
-                            '<i class="fa fa-print"></i> <span class="hidden-xs"> Imprimir relatório</span>' +
-                            '</button>');
-                    }
-
-                    return json.data;
-                }
-            },
-            'columnDefs': [
-                {
-                    'visible': false,
-                    'targets': [0]
-                },
-                {
-                    'createdCell': function (td, cellData, rowData, row, col) {
-                        $(td).css({
-                            'cursor': 'pointer'
-                            // }).on('click', function () {
-                            //     unidade_visitada(rowData[9]);
-                        }).html('<a href="<?= site_url('ei/relatorios/unidadeVisitada2') ?>/q?id_mapa_unidade=' + rowData[9] + '" target="_blank">' + cellData + '</a>');
-                    },
-                    'width': '40%',
-                    'targets': [1]
-                },
-                {
-                    'createdCell': function (td, cellData, rowData, row, col) {
-                        $(td).css({
-                            'cursor': 'pointer'
-                        });
-                        $(td).addClass('total_horas_mes');
-                        if (rowData[col] !== null) {
-                            // if ((rowData[col + 8]) !== null && (rowData[col + 8]) !== '0') {
-                            if (rowData[col + 22] === '1') {
-                                $(td).css({
-                                    'background-color': '#5cb85c',
-                                    'color': '#fff'
-                                }).html(moment(rowData[col + 15]).format('DD/MM/YYYY'));
-                                // } else if (rowData[col + 22] > 0) {
-                            } else if (rowData[col + 22] === '2') {
-                                $(td).css({
-                                    'background-color': '#c9302c',
-                                    'color': '#fff'
-                                }).html(moment(rowData[col + 15]).format('DD/MM/YYYY'));
-                            } else {
-                                $(td).css({
-                                    'background-color': '#f0ad4e',
-                                    'color': '#fff'
-                                }).html(moment(rowData[col + 15]).format('DD/MM/YYYY'));
-                            }
-                        }
-                        $(td).on('click', function () {
-                            gerenciar_visitas2(rowData[9], table_visitas2.column(col).header().dataset.mes);
-                        });
-                    },
-                    'width': '10%',
-                    'className': 'text-center',
-                    'orderable': false,
-                    'searchable': false,
-                    'targets': [2, 3, 4, 5, 6, 7, 8]
-                }
-            ]
-        });
-
         table_dias_letivos = $('#table_dias_letivos').DataTable({
             'processing': true,
             'serverSide': true,
             'iDisplayLength': 50,
-            'language': {
-                'url': language
-            },
             'rowGroup': {
                 'className': 'active',
                 'startRender': function (rows, group) {
@@ -2994,9 +2876,6 @@
             'processing': true,
             'serverSide': true,
             'iDisplayLength': 50,
-            'language': {
-                'url': language
-            },
             'ajax': {
                 'url': '<?php echo site_url('ei/apontamento/ajaxListBancoHoras') ?>',
                 'type': 'POST',
@@ -3078,21 +2957,21 @@
             }
         }
         if ((status === 'FA' || status === 'PV' || status === 'AT' || status === 'SA' || status === 'AN') && desconto_sub1.length > 0) {
-            if (moment.duration(desconto_sub1, 'HH:mm').asSeconds() > 0) {
-                desconto_sub1 = '-' + desconto_sub1;
-            }
-        } else {
             if (desconto_sub1.indexOf('-') === 0) {
                 desconto_sub1 = desconto_sub1.replace('-', '');
             }
+        } else {
+            if (moment.duration(desconto_sub1, 'HH:mm').asSeconds() > 0) {
+                desconto_sub1 = '-' + desconto_sub1;
+            }
         }
         if ((status === 'FA' || status === 'PV' || status === 'AT' || status === 'SA' || status === 'AN') && desconto_sub2.length > 0) {
-            if (moment.duration(desconto_sub2, 'HH:mm').asSeconds() > 0) {
-                desconto_sub2 = '-' + desconto_sub2;
-            }
-        } else {
             if (desconto_sub2.indexOf('-') === 0) {
                 desconto_sub2 = desconto_sub2.replace('-', '');
+            }
+        } else {
+            if (moment.duration(desconto_sub2, 'HH:mm').asSeconds() > 0) {
+                desconto_sub2 = '-' + desconto_sub2;
             }
         }
         $('#form [name="desconto"]').val(desconto);
@@ -3137,9 +3016,6 @@
                 $('#busca [name="supervisor"]').replaceWith(json.supervisor);
                 $('#form_visitas [name="supervisor_visitante"]').replaceWith(json.supervisor_visitante);
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#busca [name="depto"], #busca [name="diretoria"], #busca [name="supervisor"]').prop('disabled', false);
             }
@@ -3172,9 +3048,6 @@
             },
             'success': function (json) {
                 $('#form_substituto [name="id_cuidador_sub1"]').html($(json.usuario).html());
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     });
@@ -3191,9 +3064,6 @@
             },
             'success': function (json) {
                 $('#form_substituto [name="id_cuidador_sub2"]').html($(json.usuario).html());
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     });
@@ -3350,9 +3220,6 @@
                 $('#form_os [name="possui_mapa_visitacao"][value="1"]').prop('checked', true);
                 $('#form_os .iniciar_os[value="1"]').prop('checked', true).trigger('change');
                 $('#modal_os').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3367,9 +3234,6 @@
             'success': function (json) {
                 $('#os_escolas').html($(json.escolas).html());
                 demo1.bootstrapDualListbox('refresh', true);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3392,9 +3256,6 @@
                     reload_table();
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnSaveOS').text('Alocar').attr('disabled', false);
             }
@@ -3409,11 +3270,15 @@
         }
 
         $.ajax({
-            'url': '<?php echo site_url('ei/apontamento/prepararOSIndividual') ?>',
+            'url': '<?php echo site_url('ei/apontamento/montarOSRestantes') ?>',
             'type': 'POST',
             'dataType': 'json',
             'data': busca,
             'success': function (json) {
+                if (json.erro) {
+                    alert(json.erro);
+                    return false;
+                }
                 $('#form_os_individual [name="depto"]').val(json.depto);
                 $('#form_os_individual [name="diretoria"]').val(json.diretoria);
                 $('#form_os_individual [name="supervisor"]').val(json.supervisor);
@@ -3422,10 +3287,53 @@
 
                 $('#form_os_individual [name="ordem_servico"]').html($(json.ordem_servico).html());
                 $('#form_os_individual [name="escola"]').html($(json.escola).html());
+                $('#form_os_individual [name="aluno"]').html($(json.aluno).html());
                 $('#modal_os_individual').modal('show');
+            }
+        });
+    }
+
+    function preparar_os_escola_individual(elem) {
+        $.ajax({
+            'url': '<?php echo site_url('ei/apontamento/montarEscolasRestantes') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {'ordem_servico': elem.value},
+            'beforeSend': function () {
+                $('#form_os_individual select').prop('disabled', true);
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
+            'success': function (json) {
+                if (json.erro) {
+                    alert(json.erro);
+                } else {
+                    $('#form_os_individual [name="escola"]').html($(json.escola).html());
+                    $('#form_os_individual [name="aluno"]').html($(json.aluno).html());
+                }
+            },
+            'complete': function () {
+                $('#form_os_individual select').prop('disabled', false);
+            }
+        });
+    }
+
+    function preparar_os_aluno_individual(elem) {
+        $.ajax({
+            'url': '<?php echo site_url('ei/apontamento/montarAlunosRestantes') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': {'escola': elem.value},
+            'beforeSend': function () {
+                $('#form_os_individual select').prop('disabled', true);
+            },
+            'success': function (json) {
+                if (json.erro) {
+                    alert(json.erro);
+                } else {
+                    $('#form_os_individual [name="aluno"]').html($(json.aluno).html());
+                }
+            },
+            'complete': function () {
+                $('#form_os_individual select').prop('disabled', false);
             }
         });
     }
@@ -3451,9 +3359,6 @@
 
                 $('#form_os_exclusao [name="possui_mapa_visitacao"][value="0"]').prop('checked', true);
                 $('#modal_os_exclusao').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3481,9 +3386,6 @@
                         $('#modal_os_exclusao').modal('hide');
                         reload_table();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('#btnLimparOS').text('Limpar').attr('disabled', false);
@@ -3534,9 +3436,6 @@
                 $('#form_cuidador [name="id_cuidador"]').html($(json.id_cuidador).html());
 
                 $('#modal_cuidador').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3563,9 +3462,6 @@
                 $('#form_disciplina_aluno [name="media_semestral"]').val(json.media_semestral);
 
                 $('#modal_disciplina_aluno').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3583,9 +3479,6 @@
             },
             'success': function (json) {
                 $('#form_cuidador [name="id_cuidador"]').html($(json.id_cuidador).html());
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3633,9 +3526,6 @@
                 $('#form [name="ocorrencia_aluno"]').val(json.ocorrencia_aluno);
 
                 $('#modal_form').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3660,9 +3550,6 @@
                 $('#form_faturamento [name="desconto"]').val(json.desconto);
 
                 $('#modal_faturamento').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3700,9 +3587,6 @@
 
                     $('#modal_data_real_totalizacao').modal('show');
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3735,9 +3619,6 @@
 
                     $('#modal_delete_alocados').modal('show');
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3760,9 +3641,6 @@
                         $('#modal_delete_alocados').modal('hide');
                         reload_table();
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 },
                 'complete': function () {
                     $('#btnDeleteAlocados').text('Excluir').attr('disabled', false);
@@ -3797,9 +3675,6 @@
 
                 $('#modal_banco_horas').modal('show');
                 $('.modal-title').text('Editar medição');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3829,9 +3704,6 @@
                     alert(json.erro);
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-            },
             'complete': function () {
                 $('#btnSaveBancoHoras').text('Salvar').attr('disabled', false);
             }
@@ -3852,9 +3724,6 @@
                     } else if (json.erro) {
                         alert(json.erro);
                     }
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 }
             });
         }
@@ -3887,9 +3756,6 @@
                 $('#form_horario [name="horario_termino"]').val(json.horario_termino);
 
                 $('#modal_horario').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3927,9 +3793,6 @@
                 $('#form_substituto [name="data_substituicao2"]').val(json.data_substituicao2);
 
                 $('#modal_substituto').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3975,9 +3838,6 @@
                 $('#planilha_faturamento').html(json.planilha_faturamento);
 
                 $('#modal_totalizacao').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -3994,9 +3854,6 @@
                 $('#planilha_faturamento_consolidado').html(json.planilha_faturamento_consolidado);
 
                 $('#modal_faturamento_consolidado').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -4028,9 +3885,6 @@
                 $('#form_ajuste_mensal [name="horas_descontadas"]').val(json.horas_descontadas);
 
                 $('#modal_ajuste_mensal').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -4039,6 +3893,7 @@
     function edit_pagamento_prestador(id_horario, mes, substituto) {
         $('#form_pagamento_prestador')[0].reset();
         $('#form_pagamento_prestador [name="id"], #form [name="id_aloacao"]').val('');
+        $('#btnSavePagamentoPrestador, #btnRecuperarPagamentoPrestador').prop('disabled', false);
 
         $.ajax({
             'url': '<?= site_url('ei/apontamento/ajaxEditPagamentoPrestador') ?>',
@@ -4075,9 +3930,6 @@
                 $('#planilha_pagamento_prestador').html(json.planilha_pagamento_prestador);
 
                 $('#modal_pagamento_prestador').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -4120,9 +3972,6 @@
                     $('#modal_controle_materiais .modal-title').text('Adicionar evento de aluno(a)');
                 }
                 $('#modal_controle_materiais').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -4171,9 +4020,6 @@
                 }
                 $('#modal_visitas').modal('show');
                 $('.combo_nivel1').hide();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -4200,9 +4046,6 @@
                     relatorio_unidade_visitada();
                     $('#modal_unidade_visitada').modal('show');
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -4252,9 +4095,6 @@
                     $('#modal_visitas .modal-title').text('Adicionar relatório de visita');
                     $('#btnLimparVisitas').hide();
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -4278,9 +4118,6 @@
                 $('#form_visitas [name="municipio"]').html($(json.municipio).html());
                 $('#form_visitas [name="unidade_visitada"]').html($(json.unidade_visitada).html());
                 $('#form_visitas [name="prestadores_servicos_tratados"]').val(json.prestadores_servicos_tratados);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -4303,9 +4140,6 @@
                     reload_table();
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnSaveOSIndividual').text('Salvar').attr('disabled', false);
             }
@@ -4326,9 +4160,6 @@
             'success': function (json) {
                 $('#modal_form').modal('hide');
                 reload_table();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             },
             'complete': function () {
                 $('#btnSave').text('Salvar');
@@ -4355,9 +4186,6 @@
                 $('#modal_eventos').modal('hide');
                 reload_table();
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnSaveEventos').text('Replicar');
                 $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
@@ -4379,9 +4207,6 @@
                 $('#modal_cuidador').modal('hide');
                 reload_table();
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnSaveCuidador').text('Salvar').attr('disabled', false);
             }
@@ -4401,9 +4226,6 @@
             'success': function (json) {
                 $('#modal_disciplina_aluno').modal('hide');
                 reload_table();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             },
             'complete': function () {
                 $('#btnSaveDisciplinaAluno').text('Salvar').attr('disabled', false);
@@ -4430,9 +4252,6 @@
                     $('#modal_eventos').modal('hide');
                     reload_table();
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
-                },
                 'complete': function () {
                     $('#btnDeleteEventos').text('Limpar');
                     $('#btnSaveEventos, #btnDeleteEventos').attr('disabled', false);
@@ -4454,9 +4273,6 @@
             'success': function (json) {
                 $('#modal_faturamento').modal('hide');
                 reload_table();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             },
             'complete': function () {
                 $('#btnSaveFaturamento').text('Salvar').attr('disabled', false);
@@ -4482,9 +4298,6 @@
                     reload_table();
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnSaveDataRealTotalizacao').text('Salvar').attr('disabled', false);
             }
@@ -4505,9 +4318,6 @@
                 $('#modal_faturamento_consolidado').modal('hide');
                 reload_table();
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnSaveFaturamentoConsolidado').text('Salvar').attr('disabled', false);
             }
@@ -4526,9 +4336,6 @@
             },
             'success': function (json) {
                 $('#planilha_faturamento_consolidado').html(json.planilha_faturamento_consolidado);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             },
             'complete': function () {
                 $(elem).attr('disabled', false);
@@ -4551,9 +4358,6 @@
             },
             'success': function (json) {
                 $('#planilha_faturamento_consolidado').html(json.planilha_faturamento_consolidado);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             },
             'complete': function () {
                 $('#btnRecuperarFaturamentoConsolidado').text('Recuperar e validar base').attr('disabled', false);
@@ -4579,9 +4383,6 @@
                     reload_table();
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnSaveHorario').text('Salvar').attr('disabled', false);
             }
@@ -4601,9 +4402,6 @@
             'success': function (json) {
                 $('#modal_substituto').modal('hide');
                 reload_table();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             },
             'complete': function () {
                 $('#btnSaveSubstituto').text('Salvar').attr('disabled', false);
@@ -4639,9 +4437,6 @@
                 $('#modal_totalizacao').modal('hide');
                 reload_table();
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnSaveTotalizacao').text('Salvar').attr('disabled', false);
             }
@@ -4669,9 +4464,6 @@
                 $('#form_totalizacao [name="observacoes"]').val(json.observacoes);
                 $('#planilha_faturamento').html(json.planilha_faturamento);
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnRecuperarTotalizacao').text('Recuperar e validar base').attr('disabled', false);
             }
@@ -4692,9 +4484,6 @@
                 $('#modal_ajuste_mensal').modal('hide');
                 reload_table();
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnSaveAjusteMensal').text('Salvar').attr('disabled', false);
             }
@@ -4714,9 +4503,10 @@
             'success': function (json) {
                 $('#modal_pagamento_prestador').modal('hide');
                 reload_table();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
+                /*if (json.status) {
+                    $('#teste_pagamento_prestador').html(json.status);
+                    $('#modal_teste_pagamento_prestador').modal('show');
+                }*/
             },
             'complete': function () {
                 $('#btnSavePagamentoPrestador').text('Salvar').attr('disabled', false);
@@ -4743,9 +4533,6 @@
             },
             'success': function (json) {
                 $('#planilha_pagamento_prestador').html(json.planilha_pagamento_prestador);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             },
             'complete': function () {
                 $('#btnRecuperarPagamentoPrestador').text('Recuperar e validar base').attr('disabled', false);
@@ -4774,9 +4561,6 @@
             'success': function (json) {
                 $('#planilha_pagamento_prestador').html(json.planilha_pagamento_prestador);
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnRecuperarPagamentoPrestador').text('Recuperar e validar base').attr('disabled', false);
                 $('#btnUsoHorasFaturadas').text('Usar horas de faturamento').attr('disabled', false);
@@ -4802,9 +4586,6 @@
                 } else if (json.erro) {
                     alert(json.erro);
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
             },
             'complete': function () {
                 $('#btnSaveControleMateriais').text('Salvar');
@@ -4839,9 +4620,6 @@
                     alert(json.erro);
                 }
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-            },
             'complete': function () {
                 $('#btnSaveVisitas').text('Salvar');
                 $('#btnSaveVisitas, #btnLimparVisitas').attr('disabled', false);
@@ -4862,9 +4640,6 @@
                 'success': function (json) {
                     $('#modal_visitas').modal('hide');
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 }
             });
         }
@@ -4883,9 +4658,6 @@
                 'success': function (json) {
                     $('#modal_controle_materiais').modal('hide');
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 }
             });
         }
@@ -4902,9 +4674,6 @@
                 'success': function (json) {
                     $('#modal_visitas').modal('hide');
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
                 }
             });
         }
@@ -4929,9 +4698,6 @@
                 $('#btnSave, #btnApagar').attr('disabled', false);
                 reload_table();
             },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
             'complete': function () {
                 $('#btnApagar').text('Excluir');
                 $('#btnSave, #btnApagar').attr('disabled', false);
@@ -4945,6 +4711,11 @@
             alert('Para fechar o mês, ajuste os filtros de Departamento, Cliente e Supervisor.');
             return false;
         }
+        if (id_alocado === '' && periodo === '') {
+            if (!confirm('Deseja fechar o mês para todos os colaboradores?')) {
+                return false;
+            }
+        }
         $.ajax({
             'url': '<?php echo site_url('ei/apontamento/fecharMes') ?>',
             'type': 'POST',
@@ -4952,9 +4723,6 @@
             'data': $('#busca').serialize() + '&id_alocado=' + id_alocado + '&periodo=' + periodo,
             'success': function (json) {
                 reload_table();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -4965,6 +4733,11 @@
             alert('Para recalcular qtde. dias letivos no semestre, ajuste os filtros de Departamento, Cliente e Supervisor.');
             return false;
         }
+        if (id_alocado === '' && periodo === '') {
+            if (!confirm('Deseja fechar o semestre para todos os colaboradores?')) {
+                return false;
+            }
+        }
         $.ajax({
             'url': '<?php echo site_url('ei/apontamento/fecharSemestre') ?>',
             'type': 'POST',
@@ -4972,9 +4745,6 @@
             'data': $('#busca').serialize() + '&id_alocado=' + id_alocado + '&periodo=' + periodo,
             'success': function (json) {
                 reload_table();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -4984,6 +4754,11 @@
         if ($('#busca [name="depto"]').val() === '' || $('#busca [name="diretoria"]').val() === '' || $('#busca [name="supervisor"]').val() === '') {
             alert('Para totalizar o mês, ajuste os filtros de Departamento, Cliente e Supervisor.');
             return false;
+        }
+        if (id_alocado === '' && periodo === '') {
+            if (!confirm('Deseja totalizar o mês para todos os colaboradores?')) {
+                return false;
+            }
         }
         $.ajax({
             'url': '<?php echo site_url('ei/apontamento/totalizarMes') ?>',
@@ -4995,9 +4770,6 @@
                     alert(json.erro);
                 }
                 reload_table();
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -5009,28 +4781,27 @@
             return false;
         }
 
-        $.ajax({
-            'url': '<?php echo site_url('ei/apontamento/recalcularIngresso') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': $('#busca').serialize(),
-            'beforeSend': function () {
-                $('#btnRecalcularIngresso').attr('disabled', true).text('Recalculando datas início reais...');
-            },
-            'success': function (json) {
-                if (json.erro) {
-                    alert(json.erro);
-                } else {
-                    table_faturamento.ajax.reload(null, false);
+        if (confirm('Tem certeza que deseja restaurar as datas de início reais deste semestre?')) {
+            $.ajax({
+                'url': '<?php echo site_url('ei/apontamento/recalcularIngresso') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'beforeSend': function () {
+                    $('#btnRecalcularIngresso').attr('disabled', true).text('Recalculando datas início reais...');
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        table_faturamento.ajax.reload(null, false);
+                    }
+                },
+                'complete': function () {
+                    $('#btnRecalcularIngresso').attr('disabled', false).text('Recalcular datas início reais');
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
-            'complete': function () {
-                $('#btnRecalcularIngresso').attr('disabled', false).text('Recalcular datas início reais');
-            }
-        });
+            });
+        }
     }
 
 
@@ -5040,28 +4811,27 @@
             return false;
         }
 
-        $.ajax({
-            'url': '<?php echo site_url('ei/apontamento/recalcularRecesso') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': $('#busca').serialize(),
-            'beforeSend': function () {
-                $('#btnRecalcularRecesso').attr('disabled', true).text('Recalculando datas término reais...');
-            },
-            'success': function (json) {
-                if (json.erro) {
-                    alert(json.erro);
-                } else {
-                    table_faturamento.ajax.reload(null, false);
+        if (confirm('Tem certeza que deseja restaurar as datas de término reais deste semestre?')) {
+            $.ajax({
+                'url': '<?php echo site_url('ei/apontamento/recalcularRecesso') ?>',
+                'type': 'POST',
+                'dataType': 'json',
+                'data': $('#busca').serialize(),
+                'beforeSend': function () {
+                    $('#btnRecalcularRecesso').attr('disabled', true).text('Recalculando datas término reais...');
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        table_faturamento.ajax.reload(null, false);
+                    }
+                },
+                'complete': function () {
+                    $('#btnRecalcularRecesso').attr('disabled', false).text('Recalcular datas término reais');
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            },
-            'complete': function () {
-                $('#btnRecalcularRecesso').attr('disabled', false).text('Recalcular datas término reais');
-            }
-        });
+            });
+        }
     }
 
 
@@ -5153,7 +4923,6 @@
         table_faturamento.ajax.reload(stmt, reset);
         table_controle_materiais.ajax.reload(stmt, reset);
         table_visitas.ajax.reload(stmt, reset);
-        table_visitas2.ajax.reload(stmt, reset);
         table_dias_letivos.ajax.reload(stmt, reset);
         table_banco_horas.ajax.reload(stmt, reset);
     }
@@ -5171,9 +4940,6 @@
                 } else {
                     table_banco_horas2.ajax.reload(null, false);
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }
@@ -5191,9 +4957,6 @@
                 } else {
                     table_banco_horas2.ajax.reload(null, false);
                 }
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
             }
         });
     }

@@ -321,9 +321,6 @@
                 'searching': false,
                 'iDisplayLength': -1,
                 'order': [],
-                'language': {
-                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-                },
                 'ajax': {
                     'url': '<?php echo site_url('dimensionamento/medicoes/ajaxList') ?>',
                     'type': 'POST',
@@ -417,9 +414,6 @@
                     $('#atividade').html($(json.atividade).html());
                     $('#etapa').html($(json.etapa).html());
                     reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
                 }
             });
         }
@@ -492,9 +486,6 @@
                     $('#modal_form').modal('show');
                     $('.modal-title').text('Editar medição');
 
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error get data from ajax');
                 }
             });
         }
@@ -531,9 +522,6 @@
                         alert(json.erro);
                     }
                 },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Error adding / update data');
-                },
                 'complete': function () {
                     $('#btnSave').text('Salvar').attr('disabled', false);
                 }
@@ -554,9 +542,6 @@
                         } else if (json.erro) {
                             alert(json.erro);
                         }
-                    },
-                    'error': function (jqXHR, textStatus, errorThrown) {
-                        alert('Error deleting data');
                     }
                 });
 

@@ -97,9 +97,6 @@
                 'success': function (json) {
                     //if success reload ajax table
                     location.reload();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    alert('Erro ao excluir treinamento');
                 }
             });
 
