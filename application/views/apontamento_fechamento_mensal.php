@@ -92,8 +92,8 @@
 					<?php if ($is_pdf == false): ?>
 						<h3 class="text-center" style="font-weight: bold;">
 							RELATÓRIO DE FECHAMENTO MENSAL<br>
-							DIGITAÇÃO DO CARTÃO PASSE ESCOLAR<br>
-							<?= $contrato ? 'Contrato: ' . $contrato : ''; ?> | <?= $setor; ?><br>
+							PASSE ESCOLAR<?= $contrato ? ' | Contrato: ' . $contrato : ''; ?><br>
+							<?= $setor; ?> | CNPJ: <?= $cnpj; ?><br>
 							Período: <?= $data_inicio; ?> a <?= $data_termino; ?>
 						</h3>
 					<?php else: ?>
@@ -154,19 +154,48 @@
 				</tfoot>
 			<?php else: ?>
 				<tr>
-					<th class="active">Total geral</th>
+					<th class="active text-center">Quantidade</th>
+					<th class="active text-center">Valor unitário (R$)</th>
+					<th class="active text-center">Valor total (R$)</th>
+				</tr>
+				<tr>
 					<td class="text-center"><?= $total; ?></td>
-				</tr>
-				<tr>
-					<th class="active">Valor unitário (R$)</th>
 					<td class="text-center"><?= $valor_unitario; ?></td>
-				</tr>
-				<tr>
-					<th class="active">Valor faturamento (R$)</th>
 					<td class="text-center"><?= $valor_faturamento; ?></td>
 				</tr>
 			<?php endif; ?>
 		</table>
+
+		<?php if ($mostrarColaboradores == false): ?>
+			<table class="table table-bordered table-condensed">
+				<tr>
+					<th class="active text-center">Valor da nota fiscal (R$)</th>
+					<td class="text-center"><?= $valor_faturamento; ?></td>
+				</tr>
+			</table>
+		<?php endif; ?>
+
+		<div style="float: right; width: 36%;" id="gestor">
+			<br>
+			<div class="well text-center" style="margin-left: 30px;">
+				<p>
+					<strong>São Paulo, <?= utf8_encode(strftime('%d de %B de %Y')) ?></strong>
+				</p>
+				<br>
+				<?php if (!empty($coordenador->nome_usuario)): ?>
+					<h4><?= $coordenador->nome_usuario ?></h4>
+				<?php endif; ?>
+				<?php if (!empty($coordenador->depto_usuario)): ?>
+					<p><?= $coordenador->depto_usuario ?></p>
+				<?php endif; ?>
+				<?php if (!empty($coordenador->telefone)): ?>
+					<p>Tel.: <?= str_replace('/', ' / ', $coordenador->telefone) ?></p>
+				<?php endif; ?>
+				<?php if (!empty($coordenador->email)): ?>
+					<p>E-mail: <a href="mailto:<?= $coordenador->email ?>"><u><?= $coordenador->email ?></u></a></p>
+				<?php endif; ?>
+			</div>
+		</div>
 	</div>
 
 </div>

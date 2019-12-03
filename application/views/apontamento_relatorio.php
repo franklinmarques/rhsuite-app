@@ -415,9 +415,6 @@
 					<?php if ($contrato->depto_usuario): ?>
 						<p><?= $contrato->depto_usuario ?></p>
 					<?php endif; ?>
-					<?php if ($contrato->telefone): ?>
-						<p>Tel.: <?= str_replace('/', ' / ', $contrato->telefone) ?></p>
-					<?php endif; ?>
 					<?php if ($contrato->email): ?>
 						<p>E-mail: <a href="mailto:<?= $contrato->email ?>"><u><?= $contrato->email ?></u></a></p>
 					<?php endif; ?>

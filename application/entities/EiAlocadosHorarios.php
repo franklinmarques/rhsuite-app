@@ -46,6 +46,15 @@ class EiAlocadosHorarios extends Entity
 	protected $desconto_mes5;
 	protected $desconto_mes6;
 	protected $desconto_mes7;
+	protected $endosso_mes1;
+	protected $endosso_mes2;
+	protected $endosso_mes3;
+	protected $endosso_mes4;
+	protected $endosso_mes5;
+	protected $endosso_mes6;
+	protected $endosso_mes7;
+	protected $endosso_sub1;
+	protected $endosso_sub2;
 	protected $total_mes1;
 	protected $total_mes2;
 	protected $total_mes3;
@@ -53,6 +62,15 @@ class EiAlocadosHorarios extends Entity
 	protected $total_mes5;
 	protected $total_mes6;
 	protected $total_mes7;
+	protected $total_endossado_mes1;
+	protected $total_endossado_mes2;
+	protected $total_endossado_mes3;
+	protected $total_endossado_mes4;
+	protected $total_endossado_mes5;
+	protected $total_endossado_mes6;
+	protected $total_endossado_mes7;
+	protected $total_endossado_sub1;
+	protected $total_endossado_sub2;
 	protected $id_cuidador_sub1;
 	protected $cargo_sub1;
 	protected $funcao_sub1;
@@ -118,6 +136,15 @@ class EiAlocadosHorarios extends Entity
 		'desconto_mes5' => '?float',
 		'desconto_mes6' => '?float',
 		'desconto_mes7' => '?float',
+		'endosso_mes1' => '?float',
+		'endosso_mes2' => '?float',
+		'endosso_mes3' => '?float',
+		'endosso_mes4' => '?float',
+		'endosso_mes5' => '?float',
+		'endosso_mes6' => '?float',
+		'endosso_mes7' => '?float',
+		'endosso_sub1' => '?float',
+		'endosso_sub2' => '?float',
 		'total_mes1' => '?time',
 		'total_mes2' => '?time',
 		'total_mes3' => '?time',
@@ -125,6 +152,15 @@ class EiAlocadosHorarios extends Entity
 		'total_mes5' => '?time',
 		'total_mes6' => '?time',
 		'total_mes7' => '?time',
+		'total_endossado_mes1' => '?time',
+		'total_endossado_mes2' => '?time',
+		'total_endossado_mes3' => '?time',
+		'total_endossado_mes4' => '?time',
+		'total_endossado_mes5' => '?time',
+		'total_endossado_mes6' => '?time',
+		'total_endossado_mes7' => '?time',
+		'total_endossado_sub1' => '?time',
+		'total_endossado_sub2' => '?time',
 		'id_cuidador_sub1' => '?int',
 		'cargo_sub1' => '?string',
 		'funcao_sub1' => '?string',

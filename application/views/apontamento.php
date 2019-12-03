@@ -309,6 +309,11 @@ require_once 'header.php';
 									href="#relatorio_producao_emtu"
 									aria-controls="relatorio_producao_emtu"
 									role="tab" data-toggle="tab">Relatório de produção</a></li>
+							<li role="presentation" style="font-size: 14px; font-weight: bolder; display: none;"
+								class="emtu"><a
+									href="#relatorio_gestao_emtu"
+									aria-controls="relatorio_gestao_emtu"
+									role="tab" data-toggle="tab">Relatório de gestão</a></li>
 						</ul>
 
 						<div class="tab-content" style="border: 1px solid #ddd; border-top-width: 0;">
@@ -534,17 +539,20 @@ require_once 'header.php';
 							<div role="tabpanel" class="tab-pane" id="apontamento_consolidado_emtu">
 								<br>
 								<div class="row" style="margin: 0 2px;">
-									<div class="col-sm-6 col-md-7 text-right">
+									<div class="col-sm-10 text-right">
 										<button type="button" class="btn btn-info btn-sm"
 												onclick="imprimir_fechamento_mensal();"><i class="fa fa-print"></i>
-											Relatório de Fechamento Mensal
+											Relatório de Fechamento Mensal (individual)
 										</button>&emsp;
 										<button type="button" class="btn btn-info btn-sm"
 												onclick="imprimir_fechamento_mensal(0);"><i class="fa fa-print"></i>
-											Relatório Mensal
+											Relatório de Fechamento Mensal (consolidado)
+										</button>&emsp;
+										<button type="button" class="btn btn-info btn-sm"
+												onclick="edit_fechamento_mensal();">Salvar dados
 										</button>
 									</div>
-									<div class="col-sm-6 col-md-5 text-right">
+									<div class="col-sm-2 text-right">
 										<button type="button" class="btn btn-info btn-sm"
 												onclick="imprimir_medicao_consolidada();"><i class="fa fa-print"></i>
 											Imprimir
@@ -584,18 +592,21 @@ require_once 'header.php';
 							<div role="tabpanel" class="tab-pane" id="relatorio_producao_emtu">
 								<br>
 								<div class="row" style="margin: 0 2px;">
-									<div class="col-sm-6 form-inline">
+									<div class="col-sm-7 form-inline">
 										<div class="form-group">
 											<label for="exampleInputFile">Fator divisor</label>
 											<input type="text" id="fator_divisor_emtu"
 												   class="form-control input-sm numero"
-												   style="width:100px;">
+												   style="width:100px;">&ensp;
+											<label>Mínimo:</label> <span id="fator_divisor_min"></span>&ensp;
+											<label>Média:</label> <span id="fator_divisor_avg"></span>&ensp;
+											<label>Máximo:</label> <span id="fator_divisor_max"></span>
 										</div>
 										<button type="button" class="btn btn-default btn-sm"
 												onclick="table_producao_emtu.ajax.reload()">Calcular
 										</button>
 									</div>
-									<div class="col-sm-6 text-right">
+									<div class="col-sm-5 text-right">
 										<button type="button" class="btn btn-info btn-sm"
 												onclick="imprimir_relatorio_producao();"><i class="fa fa-print"></i>
 											Imprimir
@@ -622,6 +633,54 @@ require_once 'header.php';
 												<th class="date-width"><?= str_pad($i, 2, '0', STR_PAD_LEFT) ?></th>
 											<?php endif; ?>
 										<?php endfor; ?>
+									</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+
+							<div role="tabpanel" class="tab-pane" id="relatorio_gestao_emtu">
+								<br>
+								<div class="row" style="margin: 0 2px;">
+									<div class="col-sm-10 form-inline">
+										<div class="form-group">
+											<label>Unidade:</label>
+											<select id="unidade_emtu" class="form-control input-sm"
+													style="width:280px;" onchange="table_gestao_emtu.ajax.reload()">&ensp;
+												<option value="">Todas</option>
+											</select>&emsp;
+											<label>Mês/ano início:</label>
+											<input type="text" id="mes_ano_inicio_emtu"
+												   onchange="table_gestao_emtu.ajax.reload()"
+												   class="form-control input-sm mes_ano" style="width:70px;">&emsp;
+											<label>Mês/ano término:</label>
+											<input type="text" id="mes_ano_termino_emtu"
+												   onchange="table_gestao_emtu.ajax.reload()"
+												   class="form-control input-sm mes_ano" style="width:70px;">
+										</div>
+									</div>
+									<div class="col-sm-2 text-right">
+										<button type="button" class="btn btn-info btn-sm"
+												onclick="imprimir_relatorio_producao();"><i class="fa fa-print"></i>
+											Imprimir
+										</button>
+									</div>
+								</div>
+								<table id="table_gestao_emtu" class="table table-hover table-condensed table-bordered"
+									   cellspacing="0" width="100%">
+									<thead>
+									<tr class="warning">
+										<th>Período</th>
+										<th>Qtde.&nbsp;dados digitados</th>
+										<th>Dias úteis</th>
+										<th>Qtde. digitadores</th>
+										<th>Receita (R$)</th>
+										<th>Custo fixo (R$)</th>
+										<th>Custo extra (R$)</th>
+										<th>Custo total (R$)</th>
+										<th>Superávit / déficit (R$)</th>
+										<th>Superávit / déficit (%)</th>
 									</tr>
 									</thead>
 									<tbody>
@@ -1843,6 +1902,131 @@ require_once 'header.php';
 			</div>
 		</div>
 
+		<div class="modal fade" id="modal_fechamento_mensal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+								aria-hidden="true">&times;</span></button>
+						<h3 class="modal-title">Passe Escolar - Resultado consolidado</h3>
+					</div>
+					<div class="modal-body">
+						<form action="#" id="form_fechamento_mensal" class="form-horizontal" autocomplete="off">
+							<input name="id" type="hidden" value="">
+							<input name="id_alocacao" type="hidden" value="">
+							<input name="mes" type="hidden" value="">
+							<input name="ano" type="hidden" value="">
+							<input name="unidade" type="hidden" value="">
+							<div class="row form-group">
+								<label class="control-label col-md-3">Mês/ano:</label>
+								<div class="col-md-3">
+									<p id="fechamento_mensal_mes_ano" class="form-control-static"></p>
+								</div>
+								<div class="col-md-6 text-right">
+									<button type="button" id="btnSaveFechamentoMensal"
+											onclick="salvar_fechamento_mensal()"
+											class="btn btn-success">
+										Salvar
+									</button>
+									<button type="button" id="btnLimparFechamentoMensal"
+											onclick="limpar_fechamento_mensal()"
+											class="btn btn-danger">
+										Limpar
+									</button>
+									<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-3">Unidade:</label>
+								<div class="col-md-8">
+									<p id="fechamento_mensal_unidade" class="form-control-static"></p>
+								</div>
+							</div>
+							<hr>
+							<div class="row form-group">
+								<label class="control-label col-md-4">Qtde. dados</label>
+								<div class="col-md-3">
+									<input type="text" name="qtde_dados" class="form-control numero">
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-4">Qtde. digitadores</label>
+								<div class="col-md-3">
+									<input type="text" name="qtde_digitadores" class="form-control numero">
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-4">Qtde. dias úteis</label>
+								<div class="col-md-3">
+									<input type="text" name="qtde_dias_uteis" class="form-control numero">
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-4">Receita</label>
+								<div class="col-md-4">
+									<div class="input-group">
+										<span class="input-group-addon">R$</span>
+										<input type="text" name="valor_receita" class="form-control valor">
+									</div>
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-4">Custo fixo</label>
+								<div class="col-md-4">
+									<div class="input-group">
+										<span class="input-group-addon">R$</span>
+										<input type="text" name="valor_custo_fixo" class="form-control valor">
+									</div>
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-4">Custo variável</label>
+								<div class="col-md-4">
+									<div class="input-group">
+										<span class="input-group-addon">R$</span>
+										<input type="text" name="valor_custo_variavel" class="form-control valor">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<button type="button" id="btnCalcularFechamentoMensal"
+											onclick="calcular_fechamento_mensal();" class="btn btn-default btn-sm">
+										Calcular
+									</button>
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-4">Custo total</label>
+								<div class="col-md-4">
+									<div class="input-group">
+										<span class="input-group-addon">R$</span>
+										<input type="text" name="valor_custo_total" class="form-control valor">
+									</div>
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-4">Resultado</label>
+								<div class="col-md-4">
+									<div class="input-group">
+										<span class="input-group-addon">R$</span>
+										<input type="text" name="valor_resultado" class="form-control valor">
+									</div>
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-4">Resultado percentual</label>
+								<div class="col-md-3">
+									<div class="input-group">
+										<input type="text" name="resultado_percentual" class="form-control porcentagem">
+										<span class="input-group-addon">%</span>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</section>
 </section>
 <!--main content end-->
@@ -1869,8 +2053,15 @@ require_once 'end_js.php';
 
 <script>
 
-    var table, table_totalizacao, table_colaboradores, table_apontamento_consolidado, table_totalizacao_consolidada,
-        table_emtu, table_producao_emtu;
+    var table,
+        table_totalizacao,
+        table_colaboradores,
+        table_apontamento_consolidado,
+        table_totalizacao_consolidada,
+        table_emtu,
+        table_producao_emtu,
+        table_gestao_emtu;
+
     var busca;
     var edicaoEvento = true;
     var nivel_usuario = '<?= $this->session->userdata('nivel'); ?>';
@@ -1891,6 +2082,7 @@ require_once 'end_js.php';
     });
     $('[name="data_recesso"], [name="data_retorno"], [name="data_desligamento"]').mask('00/00/0000');
     $('.hora').mask('00:00');
+    $('.mes_ano').mask('00/0000');
     $('.valor').mask('##.###.##0,00', {'reverse': true});
     $('.numero').mask('00000000000');
     $('.porcentagem').mask('#00,0', {'reverse': true});
@@ -3013,6 +3205,9 @@ require_once 'end_js.php';
                 'dataSrc': function (json) {
                     $('[name="mes"]').val(json.calendar.mes);
                     $('[name="ano"]').val(json.calendar.ano);
+                    $('#fator_divisor_min').html(json.fator_divisor.min);
+                    $('#fator_divisor_avg').html(json.fator_divisor.avg);
+                    $('#fator_divisor_max').html(json.fator_divisor.max);
                     $('#mes_ano').html(json.calendar.mes_ano[0].toUpperCase() + json.calendar.mes_ano.slice(1));
                     var dt1 = new Date();
                     var dt2 = new Date();
@@ -3087,6 +3282,42 @@ require_once 'end_js.php';
                     'className': 'text-center',
                     'targets': 'date-width',
                     'orderable': false
+                }
+            ]
+        });
+
+        table_gestao_emtu = $('#table_gestao_emtu').DataTable({
+            'info': false,
+            'searching': false,
+            'processing': true,
+            'serverSide': true,
+            'language': {
+                'url': url
+            },
+            'ajax': {
+                'url': '<?php echo site_url('apontamento/listarRelatorioDeGestaoEMTU') ?>',
+                'type': 'POST',
+                'timeout': 90000,
+                'data': function (d) {
+                    d.busca = busca;
+                    d.unidade = $('#unidade_emtu').val();
+                    d.mes_ano_inicio = $('#mes_ano_inicio_emtu').val();
+                    d.mes_ano_termino = $('#mes_ano_termino_emtu').val();
+                    return d;
+                },
+                'dataSrc': function (json) {
+                    $('#unidade_emtu').html($(json.unidades).html());
+                    return json.data;
+                }
+            },
+            'columnDefs': [
+                {
+                    'className': 'text-right',
+                    'targets': [4, 5, 6, 7, 8, 9]
+                },
+                {
+                    'className': 'text-center',
+                    'targets': [0, 1, 2, 3]
                 }
             ]
         });
@@ -3775,6 +4006,7 @@ require_once 'end_js.php';
         table_colaboradores.ajax.reload(null, reset);
         table_emtu.ajax.reload(null, reset);
         table_producao_emtu.ajax.reload(null, reset);
+        table_gestao_emtu.ajax.reload(null, reset);
     }
 
     function set_edicao_evento() {
@@ -4194,6 +4426,123 @@ require_once 'end_js.php';
             $('#config_ipesp, #atividades_mensais').parent('li').css('display', 'block');
         } else {
             $('#config_ipesp, #atividades_mensais').parent('li').css('display', 'none');
+        }
+    }
+
+
+    function edit_fechamento_mensal() {
+        $.ajax({
+            'url': '<?php echo site_url('apontamento/editarFechamentoMensalEMTU') ?>',
+            'type': 'POST',
+            'data': busca,
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#form_fechamento_mensal')[0].reset();
+                $('#form_fechamento_mensal [type="hidden"]').val();
+            },
+            'success': function (json) {
+                if (json.erro) {
+                    alert(json.erro);
+                } else {
+                    if (json.id) {
+                        $('#btnLimparFechamentoMensal').show();
+                    } else {
+                        $('#btnLimparFechamentoMensal').hide();
+                    }
+                    $('#fechamento_mensal_mes_ano').html(json.mes_ano);
+                    $('#fechamento_mensal_unidade').html(json.unidade);
+                    $.each(json, function (key, value) {
+                        $('#form_fechamento_mensal [name="' + key + '"]').val(value);
+                    });
+                    $('#modal_fechamento_mensal').modal('show');
+                }
+            }
+        });
+    }
+
+
+    function calcular_fechamento_mensal() {
+        var receita = parseFloat($('#form_fechamento_mensal [name="valor_receita"]').val().replace('.', '').replace(',', '.'));
+        if (isNaN(receita)) {
+            $('#form_fechamento_mensal').find('[name="valor_custo_total"], [name="valor_resultado"], [name="resultado_percentual"]').val('');
+            return;
+        }
+
+        var custo_fixo = parseFloat($('#form_fechamento_mensal [name="valor_custo_fixo"]').val().replace('.', '').replace(',', '.'));
+        var custo_variavel = parseFloat($('#form_fechamento_mensal [name="valor_custo_variavel"]').val().replace('.', '').replace(',', '.'));
+        var custo_total = custo_fixo + custo_variavel;
+
+        if (isNaN(custo_total)) {
+            $('#form_fechamento_mensal [name="valor_custo_total"]').val('');
+            custo_total = 0;
+        } else {
+            $('#form_fechamento_mensal [name="valor_custo_total"]').val((custo_total).toLocaleString('pt-BR', {
+                'minimumFractionDigits': 2,
+                'maximumFractionDigits': 2
+            }));
+        }
+
+        var resultado = receita - custo_total;
+
+        $('#form_fechamento_mensal [name="valor_resultado"]').val((resultado).toLocaleString('pt-BR', {
+            'minimumFractionDigits': 2,
+            'maximumFractionDigits': 2
+        }));
+        $('#form_fechamento_mensal [name="resultado_percentual"]').val((receita > 0 ? resultado / receita * 100 : 0).toLocaleString('pt-BR', {
+            'minimumFractionDigits': 1,
+            'maximumFractionDigits': 1
+        }));
+    }
+
+
+    function salvar_fechamento_mensal() {
+        $.ajax({
+            'url': '<?php echo site_url('apontamento/salvarFechamentoMensalEMTU') ?>',
+            'type': 'POST',
+            'data': $('#form_fechamento_mensal').serialize(),
+            'dataType': 'json',
+            'beforeSend': function () {
+                $('#btnSaveFechamentoMensal').text('Salvando...');
+                $('#btnSaveFechamentoMensal, #btnLimparFechamentoMensal').prop('disabled', true);
+            },
+            'success': function (json) {
+                if (json.erro) {
+                    alert(json.erro);
+                } else {
+                    $('#modal_fechamento_mensal').modal('hide');
+                }
+            },
+            'complete': function () {
+                $('#btnSaveFechamentoMensal').text('Salvar');
+                $('#btnSaveFechamentoMensal, #btnLimparFechamentoMensal').prop('disabled', false);
+            }
+        });
+    }
+
+
+    function limpar_fechamento_mensal() {
+        if (confirm('Deseja limpar o resultado consolidado deste mês?')) {
+            $.ajax({
+                'url': '<?php echo site_url('apontamento/excluirFechamentoMensalEMTU') ?>',
+                'type': 'POST',
+                'data': {'id': $('#form_fechamento_mensal [name="id"]').val()},
+                'dataType': 'json',
+                'beforeSend': function () {
+                    $('#btnLimparFechamentoMensal').text('Limpando...');
+                    $('#btnSaveFechamentoMensal, #btnLimparFechamentoMensal').prop('disabled', true);
+                },
+                'success': function (json) {
+                    if (json.erro) {
+                        alert(json.erro);
+                    } else {
+                        $('#modal_fechamento_mensal').modal('hide');
+                    }
+                },
+                'complete': function () {
+                    $('#btnLimparFechamentoMensal').text('Limpar');
+                    $('#btnSaveFechamentoMensal, #btnLimparFechamentoMensal').prop('disabled', false);
+                }
+            });
         }
     }
 

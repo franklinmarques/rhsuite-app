@@ -17,4 +17,13 @@ class Ei_diretorias_model extends MY_Model
 		'senha_exclusao' => 'max_length[255]'
 	];
 
+	protected $beforeFind = ['filtrarPorEmpresa'];
+
+	//==========================================================================
+
+	protected function filtrarPorEmpresa($id)
+	{
+		$this->db->where('id_empresa', $this->session->userdata('empresa'));
+	}
+
 }

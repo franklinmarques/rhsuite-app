@@ -453,8 +453,8 @@ abstract class Entity
 			case 'integer': //alias for 'integer'
 				$value = (int)$value;
 				break;
+			case 'real':
 			case 'float':
-			case 'decimal':
 				if (strpos($value, ',') !== false) {
 					$value = (float)str_replace(['.', ','], ['', '.'], $value);
 				} else {
@@ -467,6 +467,9 @@ abstract class Entity
 				} else {
 					$value = (double)$value;
 				}
+				break;
+			case 'decimal':
+				$value = (double)number_format(str_replace(['.', ','], ['', '.'], $value), 2, '.', '');
 				break;
 			case 'string':
 				$value = (string)$value;

@@ -41,4 +41,13 @@ class Ei_alocacao_model extends MY_Model
 		'observacoes_mes7' => 'max_length[65535]'
 	];
 
+	protected $beforeFind = ['filtrarPorEmpresa'];
+
+	//==========================================================================
+
+	protected function filtrarPorEmpresa($id)
+	{
+		$this->db->where('id_empresa', $this->session->userdata('empresa'));
+	}
+
 }

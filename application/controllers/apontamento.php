@@ -824,7 +824,7 @@ class Apontamento extends MY_Controller
 	{
 		$alocacao = $this->getAlocacao($busca, $consolidado);
 
-		$fatorDivisor = (int)$this->input->get_post('fator_divisor');
+		$fatorDivisor = max((int)$this->input->get_post('fator_divisor'), 1);
 
 		$feriados = [
 			'qtde_novos_processos' => ['Qtde. processos novos'],
@@ -855,7 +855,7 @@ class Apontamento extends MY_Controller
 			$feriados['qtde_processos_analisados'][$row->dia] = $row->qtde_processos_analisados;
 			$feriados['qtde_linhas_analisadas'][$row->dia] = $row->qtde_linhas_analisadas;
 			$feriados['total_analisados'][$row->dia] = $row->qtde_processos_analisados + $row->qtde_linhas_analisadas;
-			$feriados['qtde_colaboradores_estimada'][$row->dia] = round(($row->qtde_processos_analisados + $row->qtde_linhas_analisadas) / max($fatorDivisor, 1));
+			$feriados['qtde_colaboradores_estimada'][$row->dia] = round(($row->qtde_processos_analisados + $row->qtde_linhas_analisadas) / $fatorDivisor);
 		}
 
 		$this->load->library('Calendar');
@@ -887,7 +887,7 @@ class Apontamento extends MY_Controller
 
 		$data = [];
 
-		foreach ($feriados as $feriado) {
+		foreach ($feriados as $k => $feriado) {
 			$rows = [$feriado[0]];
 
 			$total = null;
@@ -901,10 +901,28 @@ class Apontamento extends MY_Controller
 			$data[] = $rows;
 		}
 
+		$count = $order === 'desc' ? 0 : count($data) - 1;
+		foreach ($data[$count] as &$row2) {
+			$row2 = '<strong>' . $row2 . '</strong>';
+		}
+
+		$mediaColaboradores = array_filter($feriados['qtde_colaboradores_estimada']);
+		unset($mediaColaboradores[0]);
+		if (empty($mediaColaboradores)) {
+			$mediaColaboradores = [''];
+		}
+		$calculoFatorDivisor = [
+			'base' => $fatorDivisor,
+			'min' => min($mediaColaboradores),
+			'avg' => round(array_sum($mediaColaboradores) / count($mediaColaboradores)),
+			'max' => max($mediaColaboradores)
+		];
+
 		$output = [
 			'draw' => $this->input->post('draw'),
 			'recordsTotal' => count($data),
 			'recordsFiltered' => count($data),
+			'fator_divisor' => $calculoFatorDivisor,
 			'calendar' => [
 				'dias' => $arrayDias,
 				'mes_anterior' => $arrDataAnterior[1],
@@ -921,6 +939,100 @@ class Apontamento extends MY_Controller
 		];
 
 		return $output;
+	}
+
+
+	public function listarRelatorioDeGestaoEMTU()
+	{
+		parse_str($this->input->post('busca'), $busca);
+
+		$setores = $this->db
+			->select('a.nome')
+			->join('empresa_areas b', 'b.id = a.id_area')
+			->join('empresa_departamentos c', 'c.id = b.id_departamento')
+			->where('c.id_empresa', $this->session->userdata('empresa'))
+			->where('c.nome', $busca['depto'])
+			->where('b.nome', 'EMTU')
+			->like('a.nome', 'Passe Escolar', 'both')
+			->group_by('a.id')
+			->order_by('a.nome', 'asc')
+			->get('empresa_setores a')
+			->result_array();
+
+		$alocacoes = $this->db
+			->select('id, setor', false)
+			->where('id_empresa', $this->session->userdata('empresa'))
+			->where('depto', $busca['depto'])
+			->where('area', 'EMTU')
+			->like('setor', 'Passe Escolar', 'both')
+//			->where('MONTH(data)', $busca['mes'])
+//			->where('YEAR(data)', $busca['ano'])
+			->order_by('setor', 'asc')
+			->get('alocacao')
+			->result_array();
+
+		$idAlocacoes = array_column($alocacoes, 'id');
+		$unidades = array_column($setores, 'nome', 'nome');
+
+
+		$unidade = $this->input->post('unidade');
+		$mesAnoInicio = $this->input->post('mes_ano_inicio');
+		$mesAnoTermino = $this->input->post('mes_ano_termino');
+
+		$anoMesInicio = date('Y-m-d', strtotime(preg_replace('/^(\d+)\/(\d+)*/', '$2-$1-01', $mesAnoInicio)));
+		$anoMesTermino = date('Y-m-t', strtotime(preg_replace('/^(\d+)\/(\d+)*/', '$2-$1-01', $mesAnoTermino)));
+		
+		$this->db
+			->select('a.*')
+			->join('alocacao b', 'b.id = a.id_alocacao')
+			->where_in('b.id', $idAlocacoes + [0]);
+		if (strlen($unidade) > 0) {
+			$this->db->where('a.unidade', $unidade);
+		}
+		if (strlen($mesAnoInicio) > 0) {
+			$this->db
+				->where("(b.data >= '{$anoMesInicio}')")
+				->where("STR_TO_DATE(CONCAT(a.ano, '-', a.mes, '-01'), '%Y-%m-%d') >= '{$anoMesInicio}'");
+		}
+//		else {
+//			$this->db->where("b.data >= STR_TO_DATE('{$busca['ano']}-{$busca['mes']}-01', '%Y-%m-%d')");
+//		}
+		if (strlen($mesAnoTermino) > 0) {
+			$this->db
+				->where("(b.data <= '{$anoMesTermino}')")
+				->where("LAST_DAY(STR_TO_DATE(CONCAT(a.ano, '-', a.mes, '-01'), '%Y-%m-%d')) <= '{$anoMesTermino}'");
+		}
+//		else {
+//			$this->db->where("b.data <= LAST_DAY(STR_TO_DATE('{$busca['ano']}-{$busca['mes']}-01', '%Y-%m-%d'))");
+//		}
+		$query = $this->db
+			->get('alocacao_fechamento_mensal_emtu a');
+
+		$this->load->library('dataTables', ['search' => ['nome']]);
+
+		$output = $this->datatables->generate($query);
+
+		$this->load->library('calendar', ['month_type' => 'short']);
+
+		$data = [];
+		foreach ($output->data as $row) {
+			$data[] = [
+				$this->calendar->get_month_name($row->mes) . '/' . $row->ano,
+				$row->qtde_dados,
+				$row->qtde_dias_uteis,
+				$row->qtde_digitadores,
+				number_format($row->valor_receita, 2, ',', '.'),
+				number_format($row->valor_custo_fixo, 2, ',', '.'),
+				number_format($row->valor_custo_variavel, 2, ',', '.'),
+				number_format($row->valor_custo_total, 2, ',', '.'),
+				number_format($row->valor_resultado, 2, ',', '.'),
+				str_replace('.', ',', $row->resultado_percentual)
+			];
+		}
+		$output->data = $data;
+		$output->unidades = form_dropdown('', ['' => 'Todas'] + $unidades, $unidade);
+
+		echo json_encode($output);
 	}
 
 
@@ -2305,6 +2417,7 @@ class Apontamento extends MY_Controller
 
 		$data = [
 			'data' => $output['data'],
+			'fator_divisor' => $output['fator_divisor'],
 			'empresa' => $this->db
 				->select('foto, foto_descricao')
 				->where('id', $this->session->userdata('empresa'))
@@ -2332,5 +2445,157 @@ class Apontamento extends MY_Controller
 
 		$this->m_pdf->pdf->Output('Serviços Terceirizados - Relatório de Produção - ' . lcfirst($mes_ano) . '.pdf', 'D');
 	}
+
+
+	public function editarFechamentoMensalEMTU()
+	{
+		$alocacao = $this->db
+			->where('id_empresa', $this->session->userdata('empresa'))
+			->where('depto', $this->input->post('depto'))
+			->where('area', $this->input->post('area'))
+			->where('setor', $this->input->post('setor'))
+			->where('MONTH(data)', $this->input->post('mes'))
+			->where('YEAR(data)', $this->input->post('ano'))
+			->get('alocacao')
+			->row();
+
+		if (empty($alocacao)) {
+			exit(json_encode(['erro' => 'Alocação mensal não encontrada.']));
+		}
+
+		$data = $this->db
+			->where('id_alocacao', $alocacao->id)
+			->where('mes', $this->input->post('mes'))
+			->where('ano', $this->input->post('ano'))
+			->get('alocacao_fechamento_mensal_emtu')
+			->row();
+
+		if (empty($data)) {
+			$output = $this->montarEMTU($this->input->post(), true);
+
+			$contrato = $this->db
+				->select('(SELECT MAX(c.valor_indice) FROM alocacao_reajuste c WHERE c.id_cliente = a.id ORDER BY c.data_reajuste DESC) AS valor_indice', false)
+				->join('alocacao_unidades b', 'b.id_contrato = a.id')
+				->join('usuarios c', 'c.id = a.id_usuario', 'left')
+				->where('a.id_empresa', $this->session->userdata('empresa'))
+				->where('a.depto', $this->input->post('depto'))
+				->where('a.area', $this->input->post('area'))
+				->where('b.setor', $this->input->post('setor'))
+				->order_by('a.data_assinatura', 'desc')
+				->limit(1)
+				->get('alocacao_contratos a')
+				->row();
+
+			$data = new stdClass();
+			$dadosEMTU = $output->data;
+			$data->qtde_dias_uteis = $output->calendar['qtde_dias'];
+			$data->qtde_dados = array_sum(array_filter(array_column($dadosEMTU, $data->qtde_dias_uteis + 2)));
+			$data->qtde_digitadores = count(array_unique(array_column($dadosEMTU, 0)));
+			$data->valor_receita = isset($contrato->valor_indice) ? ($contrato->valor_indice * 100) * $data->qtde_dados : null;
+			$data->id_alocacao = $alocacao->id;
+			$data->unidade = $this->input->post('setor');
+			$data->mes = $this->input->post('mes');
+			$data->ano = $this->input->post('ano');
+		}
+
+		$this->load->library('Calendar');
+		$data->mes_ano = $this->calendar->get_month_name($data->mes) . '/' . $data->ano;
+
+		if (!empty($data->valor_receita)) {
+			$data->valor_receita = number_format($data->valor_receita, 2, ',', '.');
+		}
+		if (!empty($data->valor_custo_fixo)) {
+			$data->valor_custo_fixo = number_format($data->valor_custo_fixo, 2, ',', '.');
+		}
+		if (!empty($data->valor_custo_variavel)) {
+			$data->valor_custo_variavel = number_format($data->valor_custo_variavel, 2, ',', '.');
+		}
+		if (!empty($data->valor_custo_total)) {
+			$data->valor_custo_total = number_format($data->valor_custo_total, 2, ',', '.');
+		}
+		if (!empty($data->valor_resultado)) {
+			$data->valor_resultado = number_format($data->valor_resultado, 2, ',', '.');
+		}
+		if (!empty($data->resultado_percentual)) {
+			$data->resultado_percentual = str_replace('.', ',', $data->resultado_percentual);
+		}
+
+		echo json_encode($data);
+	}
+
+
+	public function salvarFechamentoMensalEMTU()
+	{
+		$data = $this->input->post();
+
+		if (strlen($data['valor_receita']) > 0) {
+			$data['valor_receita'] = str_replace(['.', ','], ['', '.'], $data['valor_receita']);
+		} else {
+			$data['valor_receita'] = null;
+		}
+
+		if (strlen($data['valor_custo_fixo']) > 0) {
+			$data['valor_custo_fixo'] = str_replace(['.', ','], ['', '.'], $data['valor_custo_fixo']);
+		} else {
+			$data['valor_custo_fixo'] = null;
+		}
+
+		if (strlen($data['valor_custo_variavel']) > 0) {
+			$data['valor_custo_variavel'] = str_replace(['.', ','], ['', '.'], $data['valor_custo_variavel']);
+		} else {
+			$data['valor_custo_variavel'] = null;
+		}
+
+		if (strlen($data['valor_custo_total']) > 0) {
+			$data['valor_custo_total'] = str_replace(['.', ','], ['', '.'], $data['valor_custo_total']);
+		} else {
+			$data['valor_custo_total'] = null;
+		}
+
+		if (strlen($data['valor_resultado']) > 0) {
+			$data['valor_resultado'] = str_replace(['.', ','], ['', '.'], $data['valor_resultado']);
+		} else {
+			$data['valor_resultado'] = null;
+		}
+
+		if (strlen($data['resultado_percentual']) > 0) {
+			$data['resultado_percentual'] = str_replace(',', '.', $data['resultado_percentual']);
+		} else {
+			$data['resultado_percentual'] = null;
+		}
+
+		$id = $data['id'];
+		unset($data['id']);
+
+		$this->db->trans_start();
+		if ($id) {
+			$this->db->update('alocacao_fechamento_mensal_emtu', $data, ['id' => $id]);
+		} else {
+			$this->db->insert('alocacao_fechamento_mensal_emtu', $data);
+		}
+		$this->db->trans_complete();
+
+		if ($this->db->trans_status() == false) {
+			exit(json_encode(['erro' => 'Não foi possível salvar o fechamento mensal.']));
+		}
+
+		echo json_encode(['status' => true]);
+	}
+
+
+	public function excluirFechamentoMensalEMTU()
+	{
+		$id = $this->input->post('id');
+		$this->db->trans_start();
+		$this->db->delete('alocacao_fechamento_mensal_emtu', ['id' => $id]);
+		$this->db->trans_complete();
+
+		if ($this->db->trans_status() == false) {
+			exit(json_encode(['erro' => 'Não foi possível excluir o fechamento mensal.']));
+		}
+
+		echo json_encode(['status' => true]);
+	}
+
 
 }

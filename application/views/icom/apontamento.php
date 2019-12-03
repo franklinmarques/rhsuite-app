@@ -351,7 +351,7 @@
 									</tr>
 									<tr>
 										<th class="warning">Nome</th>
-										<th class="warning">Comprometimeto</th>
+										<th class="warning">Compromet.</th>
 										<th class="warning">Pontualidade</th>
 										<th class="warning">Script</th>
 										<th class="warning">Simpatia</th>
@@ -649,6 +649,7 @@
 					<div class="modal-body form">
 						<form action="#" id="form_avaliado" class="form-horizontal" autocomplete="off">
 							<input type="hidden" value="" name="id"/>
+							<input type="hidden" value="" name="id_usuario"/>
 							<div class="row form-group">
 								<label
 									class="control-label col-md-2"><strong>Colaborador(a):<br>Mês/ano:</strong></label>
@@ -672,8 +673,8 @@
 							</div>
 							<br>
 							<div class="row form-group">
-								<label class="control-label col-md-2">Comprometimento</label>
-								<div class="col-md-2">
+								<div class="col-md-2 col-md-offset-1">
+									<label class="control-label">Comprometimento</label>
 									<select name="comprometimento" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -683,8 +684,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-								<label class="control-label col-md-1">Simpatia</label>
 								<div class="col-md-2">
+									<label class="control-label">Simpatia</label>
 									<select name="simpatia" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -694,8 +695,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-								<label class="control-label col-md-1">Script</label>
 								<div class="col-md-2">
+									<label class="control-label">Script</label>
 									<select name="script" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -705,10 +706,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-							</div>
-							<div class="row form-group">
-								<label class="control-label col-md-2">Pontualidade</label>
 								<div class="col-md-2">
+									<label class="control-label">Pontualidade</label>
 									<select name="pontualidade" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -718,8 +717,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-								<label class="control-label col-md-1">Empatia</label>
 								<div class="col-md-2">
+									<label class="control-label">Empatia</label>
 									<select name="empatia" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -729,8 +728,10 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-								<label class="control-label col-md-1">Postura</label>
-								<div class="col-md-2">
+							</div>
+							<div class="row form-group">
+								<div class="col-md-2 col-md-offset-1">
+									<label class="control-label">Postura</label>
 									<select name="postura" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -740,10 +741,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-							</div>
-							<div class="row form-group">
-								<label class="control-label col-md-2">Ferramenta</label>
 								<div class="col-md-2">
+									<label class="control-label">Ferramenta</label>
 									<select name="ferramenta" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -753,8 +752,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-								<label class="control-label col-md-1">Tradutório</label>
 								<div class="col-md-2">
+									<label class="control-label">Tradutório</label>
 									<select name="tradutorio" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -764,8 +763,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-								<label class="control-label col-md-1">Linguístico</label>
 								<div class="col-md-2">
+									<label class="control-label">Linguístico</label>
 									<select name="linguistico" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -775,10 +774,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-							</div>
-							<div class="row form-group">
-								<label class="control-label col-md-2">Neutralidade</label>
 								<div class="col-md-2">
+									<label class="control-label">Neutralidade</label>
 									<select name="neutralidade" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -788,8 +785,10 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-								<label class="control-label col-md-1">Discrição</label>
-								<div class="col-md-2">
+							</div>
+							<div class="row form-group">
+								<div class="col-md-2 col-md-offset-1">
+									<label class="control-label">Discrição</label>
 									<select name="discricao" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -799,8 +798,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-								<label class="control-label col-md-1">Fidelidade</label>
 								<div class="col-md-2">
+									<label class="control-label">Fidelidade</label>
 									<select name="fidelidade" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -810,10 +809,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-							</div>
-							<div class="row form-group">
-								<label class="control-label col-md-2">Extra 1</label>
 								<div class="col-md-2">
+									<label class="control-label">Extra 1</label>
 									<select name="extra_1" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -823,8 +820,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-								<label class="control-label col-md-1">Extra 2</label>
 								<div class="col-md-2">
+									<label class="control-label">Extra 2</label>
 									<select name="extra_2" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -834,8 +831,8 @@
 										<option value="5">5</option>
 									</select>
 								</div>
-								<label class="control-label col-md-1">Extra 3</label>
 								<div class="col-md-2">
+									<label class="control-label">Extra 3</label>
 									<select name="extra_3" class="form-control">
 										<option value="">selecione...</option>
 										<option value="1">1</option>
@@ -844,6 +841,48 @@
 										<option value="4">4</option>
 										<option value="5">5</option>
 									</select>
+								</div>
+							</div>
+							<hr>
+							<div class="row form-group">
+								<div class="col-sm-8 col-sm-offset-3">
+									<label class="radio-inline">
+										<input type="radio" name="tipo_feedback" id="feedback_novo1" value="0" checked>
+										Novo feedback
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="tipo_feedback" id="feedback_existente1" value="1">
+										Ver/editar feedbacks
+										existentes
+									</label>
+								</div>
+							</div>
+							<div class="row form-group feedback_novo">
+								<label class="control-label col-md-3">Colaborador(a) orientador(a)</label>
+								<div class="col-md-5">
+									<input type="text" name="nome_usuario_orientador" class="form-control feedback">
+								</div>
+								<label class="control-label col-md-1">Data</label>
+								<div class="col-md-2">
+									<input type="text" name="data_feedback"
+										   class="form-control text-center data feedback"
+										   placeholder="dd/mm/aaaa">
+								</div>
+							</div>
+							<div class="row form-group feedback_existente" style="display: none;">
+								<label class="control-label col-md-3">Colaborador(a) orientador(a)</label>
+								<div class="col-md-8">
+									<select name="id_feedback" class="form-control feedback"
+											onchange="selecionar_feedback_avaliado(this);">
+										<option value="">selecione...</option>
+									</select>
+								</div>
+							</div>
+							<div class="row form-group">
+								<div class="col-md-10 col-md-offset-1">
+									<label class="control-label">Feedback repassado + Plano de ações de melhoria</label>
+									<textarea name="descricao" class="form-control descritivo_feedback feedback"
+											  rows="5"></textarea>
 								</div>
 							</div>
 						</form>
@@ -1096,7 +1135,7 @@
 					</div>
 					<div class="modal-body form">
 						<form action="#" id="form_feedback" class="form-horizontal" autocomplete="off">
-							<input type="hidden" name="id_alocado" value="">
+							<input type="hidden" name="id_usuario" value="">
 							<div class="row form-group">
 								<label class="control-label col-md-3"><strong>Colaborador(a)
 										orientado(a):</strong></label>
@@ -1154,14 +1193,16 @@
 								<label class="control-label col-md-3">Feedback repassado + Plano de ações de
 									melhoria</label>
 								<div class="col-md-8">
-									<textarea name="descricao" class="form-control" rows="5"></textarea>
+									<textarea name="descricao" class="form-control descritivo_feedback"
+											  rows="5"></textarea>
 								</div>
 							</div>
 							<div class="row form-group">
 								<label class="control-label col-md-3">Resultado do feedback/Plano de
 									ações</label>
 								<div class="col-md-8">
-									<textarea name="resultado" class="form-control" rows="5"></textarea>
+									<textarea name="resultado" class="form-control descritivo_feedback"
+											  rows="5"></textarea>
 								</div>
 							</div>
 						</form>
@@ -1181,12 +1222,14 @@
 
 <!-- Js -->
 <script>
-    $(document).ready(function () {
-        document.title = 'CORPORATE RH - LMS - Gestão Operacional ICOM';
-    });
+	$(document).ready(function () {
+		document.title = 'CORPORATE RH - LMS - Gestão Operacional ICOM';
+	});
 </script>
 <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js'); ?>"></script>
 <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js'); ?>"></script>
+<script src="<?php echo base_url('assets/js/ckeditor/ckeditor.js'); ?>"></script>
+<script src="<?php echo base_url('assets/js/ckeditor/adapters/jquery.js'); ?>"></script>
 <script src="<?php echo base_url('assets/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js') ?>"></script>
 <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
 <script src="<?php echo base_url('assets/JQuery-Mask/jquery.maskMoney.js'); ?>"></script>
@@ -1194,1072 +1237,1205 @@
 
 <script>
 
-    var table, table_totalizacao, table_avaliacao_performance;
-    var busca, save_method, demo1;
-    var edicaoEvento = true;
-
-    $('.data').mask('00/00/0000');
-    $('.hora').mask('00:00');
-    $('.banco_horas').mask('Z00:00', {
-        'translation': {
-            'Z': {
-                'pattern': /[\-\+]/, 'optional': true
-            }
-        }
-    });
-    $('.hora_mes').mask('#00:00', {'reverse': true});
-
-    // $('.horas').mask(function (hour) {
-    //     var signal = hour.indexOf('-') === 0 ? 'Z' : '';
-    //     return signal + (('###00:00').substr(hour.length * (-1)));
-    // }, {'reverse': true});
-    /*$('.horas').maskMoney({
-        thousands: "",
-        decimal: ":",
-        precision: 2,
-        allowZero: true,
-        allowNegative: true,
-        affixesStay: false,
-        allowEmpty: true,
-        bringCaretAtEndOnFocus: false
-    });*/
-
-    $('.horas2').mask('Z###00:00', {
-        'reverse': true,
-        'translation': {
-            ':': {
-                'pattern': /:-/, 'optional': true
-            },
-            '0': {
-                'pattern': /[0-9]-/, 'optional': true
-            },
-            '#': {
-                'pattern': /[0-9]-/, 'optional': true
-            },
-            'Z': {
-                'pattern': /-/, 'optional': true
-            }
-        }
-    });
-    $('.valor').mask('##.###.##0,00', {'reverse': true});
-
-
-    $(document).ready(function () {
-        busca = $('#busca').serialize();
-
-        table = $('#table').DataTable({
-            'processing': true,
-            'serverSide': true,
-            'order': [1, 'asc'],
-            'iDisplayLength': -1,
-            'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
-            'ajax': {
-                'url': '<?php echo site_url('icom/apontamento/listarEventos') ?>',
-                'type': 'POST',
-                'timeout': 90000,
-                'data': function (d) {
-                    d.busca = busca;
-                    return d;
-                },
-                'dataSrc': function (json) {
-                    $('#mes_ano').html(json.calendar.mes_ano[0].toUpperCase() + json.calendar.mes_ano.slice(1));
-
-                    var dt1 = new Date();
-                    var dt2 = new Date();
-                    dt2.setFullYear(json.calendar.ano, (json.calendar.mes - 1));
-
-                    var semana = 1;
-                    var colunasUsuario = 4;
-                    for (i = 1; i <= 31; i++) {
-                        if (i > 28) {
-                            if (i > json.calendar.qtde_dias) {
-                                table.column(i + colunasUsuario).visible(false, false);
-                                continue;
-                            } else {
-                                table.column(i + colunasUsuario).visible(true, false);
-                            }
-                        }
-                        var coluna = $(table.columns(i + colunasUsuario).header());
-                        coluna.removeClass('text-danger').css('background-color', '');
-                        coluna.attr({
-                            'data-dia': json.calendar.ano + '-' + json.calendar.mes + '-' + coluna.text(),
-                            'data-mes_ano': json.calendar.semana[semana] + ', ' + coluna.text() + '/' + json.calendar.mes + '/' + json.calendar.ano,
-                            'title': json.calendar.semana[semana] + ', ' + coluna.text() + ' de ' + json.calendar.mes_ano.replace(' ', ' de ')
-                        });
-                        if (json.calendar.semana[semana] === 'Sábado' || json.calendar.semana[semana] === 'Domingo') {
-                            coluna.addClass('text-danger').css('background-color', '#dbdbdb');
-                        }
-                        if ((dt1.getTime() === dt2.getTime()) && dt1.getDate() === i) {
-                            coluna.css('background-color', '#0f0');
-                        }
-                        if (i % 7 === 0) {
-                            semana = 1;
-                        } else {
-                            semana++;
-                        }
-                        if (json.data.length > 0) {
-                            coluna.css('cursor', 'pointer').on('click', function () {
-                                $('#data_evento').html(this.dataset.mes_ano);
-                                $('#form_eventos [name="data"]').val(this.dataset.dia);
-                                $('#modal_eventos').modal('show');
-                            });
-                        }
-                    }
-                    if (json.data.length > 0) {
-                        $('#dias').html('<strong>Dias</strong> (clique em um dia do mês para replicar/limpar feriados ou emendas de feriados)');
-                    } else {
-                        $('#dias').html('<strong>Dias</strong>');
-                    }
-                    if (json.draw === 1) {
-                        $("#legenda").html('<button title="Mostrar legenda de eventos" data-toggle="modal" data-target="#modal_legenda" style="margin: 15px 10px 0;" class="btn btn-default btn-sm">' +
-                            '<i class="glyphicon glyphicon-exclamation-sign"></i> <span class="hidden-xs"> Mostrar legenda de eventos</span>' +
-                            '</button>');
-                    }
-                    return json.data;
-                }
-            },
-            'columnDefs': [
-                {
-                    'createdCell': function (td, cellData, rowData, row, col) {
-                        $(td).addClass('evento').css({
-                            'cursor': 'pointer',
-                            'vertical-align': 'middle'
-                        }).on('click', function () {
-                            edit_avaliacao_performance(rowData[36]);
-                        });
-                        $(td).html(rowData[col]);
-                    },
-                    'width': '100%',
-                    'targets': [1]
-                },
-                {
-                    'className': 'text-center',
-                    'targets': [2]
-                },
-                {
-                    'className': 'text-center',
-                    'orderable': false,
-                    'searchable': false,
-                    'targets': [0]
-                },
-                {
-                    'className': 'text-center',
-                    'targets': [3]
-                },
-                {
-                    'createdCell': function (td, cellData, rowData, row, col) {
-                        $(td).addClass('evento').css({
-                            'cursor': 'pointer',
-                            'vertical-align': 'middle'
-                        }).on('click', function () {
-                            edit_banco_horas(rowData[36]);
-                        });
-                        $(td).html(rowData[col]);
-                    },
-                    'className': 'text-center text-nowrap',
-                    'targets': [4]
-                },
-                {
-                    'createdCell': function (td, cellData, rowData, row, col) {
-                        if (rowData[col]) {
-                            $(td).css({'color': '#fff', 'background-color': '#47a447'});
-                        } else if ($(table.column(col).header()).hasClass('text-danger')) {
-                            $(td).css('background-color', '#e9e9e9');
-                        }
-
-                        $(td).popover({
-                            'container': 'body',
-                            'placement': 'auto bottom',
-                            'trigger': 'hover',
-                            'content': function () {
-                                if (rowData[col].length === 0) {
-                                    return '<span style="color: #aaa;">Vazio</span>';
-                                } else {
-                                    return '<strong>Eventos cadastrados:</strong> ' + rowData[col]['tipo_evento'];
-                                }
-                            },
-                            'html': true
-                        });
-                        $(td).addClass('evento').css({
-                            'cursor': 'pointer',
-                            'vertical-align': 'middle'
-                        }).on('click', function () {
-                            $(td).popover('hide');
-                            edit_evento(rowData[36], col - 4);
-                        });
-                        $(td).html(rowData[col]['tipo_evento']);
-                    },
-                    'className': 'text-center',
-                    'orderable': false,
-                    'searchable': false,
-                    'targets': 'date-width'
-                }
-            ]
-        });
-
-        table_totalizacao = $('#table_totalizacao').DataTable({
-            'processing': true,
-            'serverSide': true,
-            'order': [0, 'asc'],
-            'iDisplayLength': -1,
-            'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
-            'ajax': {
-                'url': '<?php echo site_url('icom/apontamento/listarTotalizacoes') ?>',
-                'type': 'POST',
-                'timeout': 90000,
-                'data': function (d) {
-                    d.busca = busca;
-                    return d;
-                }
-            },
-            'columnDefs': [
-                {
-                    'width': '100%',
-                    'targets': [0]
-                },
-                {
-                    'className': 'text-center',
-                    'searchable': false,
-                    'targets': [1, 2, 3, 4, 5, 6, 7, 8]
-                }
-            ],
-            'preDrawCallback': function () {
-                $('#pdfTotalizacao').prop('disabled', ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' || $('#busca [name="id_setor"]').val() === ''));
-            }
-        });
-
-        table_avaliacao_performance = $('#table_avaliacao_performance').DataTable({
-            'processing': true,
-            'serverSide': true,
-            'order': [0, 'asc'],
-            'iDisplayLength': -1,
-            'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
-            'ajax': {
-                'url': '<?php echo site_url('icom/apontamento/listarAvaliacoesPerformance') ?>',
-                'type': 'POST',
-                'timeout': 90000,
-                'data': function (d) {
-                    d.busca = busca;
-                    return d;
-                },
-                'dataSrc': function (json) {
-                    for (i = 0; i <= 12; i++) {
-                        $(table_avaliacao_performance.context[0].aoHeader[2][i + 1].cell).html(json.abaixo_media[i]);
-                        $(table_avaliacao_performance.context[0].aoHeader[3][i + 1].cell).html(json.acima_media[i]);
-                        $(table_avaliacao_performance.column(i + 1).header()).html(json.media[i]);
-                    }
-
-                    return json.data;
-                }
-            },
-            'columnDefs': [
-                {
-                    'createdCell': function (td, cellData, rowData, row, col) {
-                        $(td).css({
-                            'cursor': 'pointer'
-                        }).on('click', function () {
-                            edit_feedback(rowData[14]);
-                        });
-                        $(td).html('<a>' + rowData[col] + '</a>');
-                    },
-                    'width': '100%',
-                    'targets': [0]
-                },
-                {
-                    'className': 'text-center',
-                    'orderable': false,
-                    'targets': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-                }
-            ],
-            'preDrawCallback': function () {
-                $('#pdfAvaliacaoPerformance').prop('disabled', ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' || $('#busca [name="id_setor"]').val() === ''));
-            }
-        });
-
-        demo1 = $('.demo1').bootstrapDualListbox({
-            'nonSelectedListLabel': 'Colaboradores disponíveis',
-            'selectedListLabel': 'Colaboradores selecionados',
-            'preserveSelectionOnMove': 'moved',
-            'moveOnSelect': false,
-            'filterPlaceHolder': 'Filtrar',
-            'helperSelectNamePostfix': false,
-            'selectorMinimalHeight': 132,
-            'infoText': false
-        });
-
-    });
-
-
-    $('#form [name="tipo_evento"]').on('change', function () {
-        $('#form [name="saldo_banco_horas"]').prop('readonly', $('#form [name="tipo_evento"]:checked').val() !== 'BH');
-    });
-
-
-    $('#form_feedback [name="tipo"]').on('change', function () {
-        var value = $('#form_feedback [name="tipo"]:checked').val();
-        $('#form_feedback')[0].reset();
-        $('#btnImprimirFeedback, #btnLimparFeedback').hide();
-        $('#form_feedback [name="tipo"][value="' + value + '"]').prop('checked', true);
-        if (value === '0') {
-            $('#form_feedback .feedback_novo').show();
-            $('#form_feedback .feedback_existente').hide();
-            $('#form_feedback [name="resultado"]').prop('disabled', true);
-        } else if (value === '1') {
-            $('#form_feedback .feedback_novo').hide();
-            $('#form_feedback .feedback_existente').show();
-            $('#form_feedback [name="resultado"]').prop('disabled', false);
-        }
-    });
-
-
-    $('#form_posto [name="categoria"]').on('change', function () {
-        $('#form_posto .clt, #form_posto .mei').prop('disabled', true);
-        if (this.value === 'MEI') {
-            $('#form_posto .mei').prop('disabled', false);
-            $('#form_posto .clt').val('');
-        } else if (this.value === 'CLT') {
-            $('#form_posto .clt').prop('disabled', false);
-            $('#form_posto .mei').val('');
-        }
-    });
-
-
-    function filtrar_alocacao() {
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/filtrarAlocacao/') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': $('#busca').serialize(),
-            'beforeSend': function () {
-                $('#busca [name="id_depto"]').prop('disabled', true);
-                $('#busca [name="id_area"]').prop('disabled', true);
-                $('#busca [name="id_setor"]').prop('disabled', true);
-            },
-            'success': function (json) {
-                $('#busca [name="id_depto"]').prop('disabled', false);
-                $('#busca [name="id_area"]').html($(json.areas).html()).prop;
-                $('#busca [name="id_setor"]').html($(json.setores).html());
-            },
-            'complete': function () {
-                $('#busca [name="id_depto"]').prop('disabled', false);
-                $('#busca [name="id_area"]').prop('disabled', false);
-                $('#busca [name="id_setor"]').prop('disabled', false);
-            }
-        });
-    }
-
-
-    function filtrar_posto_estrutura() {
-        $.ajax({
-            'url': '<?php echo site_url('icom/postos/montarEstrutura') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': $('#form_posto .posto_estrutura').serialize(),
-            'beforeSend': function () {
-                $('.posto_estrutura').prop('disabled', true);
-            },
-            'success': function (json) {
-                $('#form_posto [name="id_area"]').html($(json.areas).html());
-                $('#form_posto [name="id_setor"]').html($(json.setores).html());
-                $('#form_posto [name="id_usuario"]').html($(json.usuarios).html());
-                $('#form_posto [name="id_funcao"]').html($(json.funcoes).html());
-            },
-            'complete': function () {
-                $('.posto_estrutura').prop('disabled', false);
-            }
-        });
-    }
-
-
-    function filtrar_alocado() {
-        $.ajax({
-            'url': '<?php echo site_url('icom/postos/editarColaboradorAlocado') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': $('#form_posto .posto_estrutura, #busca [name="mes"], #busca [name="ano"]').serialize(),
-            'beforeSend': function () {
-                $('.posto_estrutura').prop('disabled', true);
-            },
-            'success': function (json) {
-                $('#form_posto [name="id"]').val('');
-                $('#form_posto [name="id_funcao"]').val('');
-                $('#form_posto [name="valor_hora_mei"]').val('');
-                $('#form_posto [name="valor_mes_clt"]').val('');
-                $('#form_posto [name="qtde_horas_mei"]').val('');
-                $('#form_posto [name="qtde_meses_clt"]').val('');
-                $('#form_posto [name="horario_entrada"]').val('');
-                $('#form_posto [name="horario_intervalo"]').val('');
-                $('#form_posto [name="horario_retorno"]').val('');
-                $('#form_posto [name="horario_saida"]').val('');
-                $.each(json, function (key, value) {
-                    $('#form_posto [name="' + key + '"]').val(value);
-                });
-
-                $('#form_posto [name="categoria"]').trigger('change');
-            },
-            'complete': function () {
-                $('.posto_estrutura').prop('disabled', false);
-            }
-        });
-    }
-
-
-    $('#limpar').on('click', function () {
-        $.each(busca.split('&'), function (index, elem) {
-            var vals = elem.split('=');
-            if (vals[0] === 'mes' || vals[0] === 'ano') {
-                $("[name='" + vals[0] + "']").val(vals[1]);
-            } else {
-                $("[name='" + vals[0] + "']").val($("[name='" + vals[0] + "'] option:first").val());
-            }
-        });
-
-        filtrar_alocacao();
-    });
-
-
-    function mes_anterior() {
-        $('#mes_anterior, #mes_seguinte').prop('disabled', true).hover();
-
-        var dt = moment({
-            'year': $('#busca [name="ano"]').val(),
-            'month': $('#busca [name="mes"]').val() - 1,
-            'day': 1
-        });
-
-        dt.subtract(1, 'month');
-
-        $('#busca [name="mes"]').val(moment(dt).format('MM'));
-        $('#busca [name="ano"]').val(dt.year());
-
-        busca = $('#busca').serialize();
-        reload_table(true);
-        $('#mes_anterior, #mes_seguinte').prop('disabled', false);
-    }
-
-
-    function mes_seguinte() {
-        if ($('#mes_seguinte').hasClass('disabled')) {
-            return false;
-        }
-
-        $('#mes_anterior, #mes_seguinte').prop('disabled', true).hover();
-
-        var dt = moment({
-            'year': $('#busca [name="ano"]').val(),
-            'month': $('#busca [name="mes"]').val() - 1,
-            'day': 1
-        });
-
-        dt.add(1, 'month');
-
-        $('#busca [name="mes"]').val(moment(dt).format('MM'));
-        $('#busca [name="ano"]').val(dt.year());
-
-        busca = $('#busca').serialize();
-        reload_table(true);
-        $('#mes_anterior, #mes_seguinte').prop('disabled', false);
-    }
-
-
-    function filtrar() {
-        var data_busca = {
-            'year': $('#busca [name="ano"]').val(),
-            'month': $('#busca [name="mes"]').val() - 1,
-            'day': 1
-        };
-        var data_proximo_mes = moment(data_busca).add(1, 'month');
-
-        busca = $('#busca').serialize();
-        reload_table();
-        if (moment(data_proximo_mes).isBefore(data_busca)) {
-            $('[name="mes"]').val(moment(data_proximo_mes).format('MM'));
-            $('[name="ano"]').val(data_proximo_mes.year());
-        }
-        $('#alerta_depto').text($('#busca [name="id_depto"] option:selected').html());
-        $('#alerta_area').text($('#busca [name="id_area"] option:selected').html());
-        $('#alerta_setor').text($('#busca [name="id_setor"] option:selected').html());
-    }
-
-
-    function alocacao_filtrada() {
-        return busca.split('&').every(function (e) {
-            return e.indexOf('=') < (e.length - 1);
-        });
-    }
-
-
-    function iniciar_mes() {
-        if (alocacao_filtrada() === false) {
-            alert('Para iniciar o mês, ajuste os filtros de Departamento, Área e Setor.');
-            return false;
-        }
-
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/alocarNovoMes') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': busca,
-            'success': function (json) {
-                if (json.erro) {
-                    alert(json.erro);
-                } else {
-                    alert('Mês alocado com sucesso.');
-                    reload_table();
-                }
-            }
-        });
-    }
-
-
-    function limpar_mes() {
-        if (alocacao_filtrada() === false) {
-            alert('Para limpar o mês, ajuste os filtros de Departamento, Área e Setor.');
-            return false;
-        }
-
-        if (confirm('Deseja limpar o mês?')) {
-            $.ajax({
-                'url': '<?php echo site_url('icom/apontamento/desalocarMes') ?>',
-                'type': 'POST',
-                'dataType': 'json',
-                'data': busca,
-                'success': function (json) {
-                    if (json.erro) {
-                        alert(json.erro);
-                    } else {
-                        alert('Mês desalocado com sucesso.');
-                        reload_table();
-                    }
-                }
-            });
-        }
-    }
-
-
-    function edit_avaliacao_performance(id_alocado) {
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/editarAvaliacaoPerformance') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': {'id_alocado': id_alocado},
-            'beforeSend': function () {
-                $('#form_avaliado')[0].reset();
-            },
-            'success': function (json) {
-                if (json.erro) {
-                    alert(json.erro);
-                    return false;
-                }
-
-                $.each(json, function (key, value) {
-                    if ($('#form_avaliado [name="' + key + '"]').prop('type') === 'radio') {
-                        $('#form_avaliado [name="' + key + '"][value="' + value + '"]').prop('checked', value !== null);
-                    } else {
-                        $('#form_avaliado [name="' + key + '"]').val(value);
-                    }
-                });
-
-                $('#form_avaliado_dados').html(json.dados);
-
-                $('#modal_avaliado').modal('show');
-            }
-        });
-    }
-
-
-    function edit_banco_horas(id_alocado) {
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/editarBancoHoras') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': {'id_alocado': id_alocado},
-            'beforeSend': function () {
-                $('#form_banco_horas')[0].reset();
-            },
-            'success': function (json) {
-                if (json.erro) {
-                    alert(json.erro);
-                    return false;
-                }
-
-                $.each(json, function (key, value) {
-                    if ($('#form_banco_horas [name="' + key + '"]').prop('type') === 'radio') {
-                        $('#form_banco_horas [name="' + key + '"][value="' + value + '"]').prop('checked', value !== null);
-                    } else {
-                        $('#form_banco_horas [name="' + key + '"]').val(value);
-                    }
-                });
-
-                $('#form_banco_horas_dados').html(json.dados);
-
-                $('#modal_banco_horas').modal('show');
-            }
-        });
-    }
-
-
-    function edit_evento(id_alocado, dia) {
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/editarEvento') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': {
-                'id_alocado': id_alocado,
-                'data': moment({
-                    'year': $('#busca [name="ano"]').val(),
-                    'month': $('#busca [name="mes"]').val() - 1,
-                    'day': dia
-                }).format('YYYY-MM-DD')
-            },
-            'beforeSend': function () {
-                $('#form')[0].reset();
-            },
-            'success': function (json) {
-                if (json.erro) {
-                    alert(json.erro);
-                    return false;
-                }
-
-                $.each(json, function (key, value) {
-                    if ($('#form [name="' + key + '"]').prop('type') === 'radio') {
-                        $('#form [name="' + key + '"][value="' + value + '"]').prop('checked', value !== null);
-                    } else {
-                        $('#form [name="' + key + '"]').val(value);
-                    }
-                });
-
-                if (json.id) {
-                    save_method = 'update';
-                    $('#modal_form .modal-title').text('Editar evento operacional');
-                    $('#btnLimparEvento').show();
-                } else {
-                    save_method = 'add';
-                    $('#modal_form .modal-title').text('Adicionar evento operacional');
-                    $('#btnLimparEvento').hide();
-                }
-
-                $('#form [name="tipo_evento"]').trigger('change');
-                $('#colaborador_data').html(json.colaborador_data);
-
-                $('#modal_form').modal('show');
-            }
-        });
-    }
-
-
-    function edit_posto() {
-        $('#form_posto')[0].reset();
-        $('#form_posto [name="id"]').val('')
-
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/editarPosto') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': busca,
-            'success': function (json) {
-                if (json.erro) {
-                    alert(json.erro);
-                    return false;
-                }
-
-                $.each(json, function (key, value) {
-                    $('#form_posto [name="' + key + '"]').val(value);
-                });
-
-                $('#form_posto [name="id_depto"]').html($(json.deptos).html());
-                $('#form_posto [name="id_area"]').html($(json.areas).html());
-                $('#form_posto [name="id_setor"]').html($(json.setores).html());
-                $('#form_posto [name="id_usuario"]').html($(json.usuarios).html());
-                $('#form_posto [name="id_funcao"]').html($(json.funcoes).html());
-
-
-                $('#form_posto [name="categoria"]').trigger('change');
-
-                $('#modal_posto').modal('show');
-            }
-        });
-    }
-
-
-    function preparar_novo_alocado() {
-        if ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' ||
-            $('#busca [name="id_setor"]').val() === '' || $('#busca [name="ano"]').val() === '') {
-            alert('Para alocar um novo cloadorador, ajuste os filtros de Departamento, Área, Setor, Mês e Ano.');
-            return false;
-        }
-
-        $('#form_alocados')[0].reset();
-
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/prepararNovoAlocado') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': busca,
-            'success': function (json) {
-                if (json.erro) {
-                    alert(json.erro);
-                    return false;
-                }
-
-                $('#form_alocados [name="id_alocacao"]').val(json.id_alocacao);
-                $('#alocados').html($(json.id_usuario).html());
-
-                demo1.bootstrapDualListbox('refresh', true);
-
-                $('#modal_alocados').modal('show');
-            }
-        });
-    }
-
-
-    function save_avaliacao_performance() {
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/salvarAvaliacaoPerformance') ?>',
-            'type': 'POST',
-            'data': $('#form_avaliado').serialize(),
-            'dataType': 'json',
-            'beforeSend': function () {
-                $('#btnSaveAvaliado').text('Salvando...').attr('disabled', true);
-            },
-            'success': function (json) {
-                if (json.status) {
-                    $('#modal_avaliado').modal('hide');
-                    reload_table();
-                } else if (json.erro) {
-                    alert(json.erro);
-                }
-            },
-            'complete': function () {
-                $('#btnSaveAvaliado').text('Salvar').attr('disabled', false);
-            }
-        });
-    }
-
-
-    function save_banco_horas() {
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/salvarBancoHoras') ?>',
-            'type': 'POST',
-            'data': $('#form_banco_horas').serialize(),
-            'dataType': 'json',
-            'beforeSend': function () {
-                $('#btnSaveBancoHoras').text('Salvando...').attr('disabled', true);
-            },
-            'success': function (json) {
-                if (json.status) {
-                    $('#modal_banco_horas').modal('hide');
-                    reload_table();
-                } else if (json.erro) {
-                    alert(json.erro);
-                }
-            },
-            'complete': function () {
-                $('#btnSaveBancoHoras').text('Salvar').attr('disabled', false);
-            }
-        });
-    }
-
-
-    function save_evento() {
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/salvarEvento') ?>',
-            'type': 'POST',
-            'data': $('#form').serialize(),
-            'dataType': 'json',
-            'beforeSend': function () {
-                $('#btnSaveEvento').text('Salvando...');
-                $('#btnSaveEvento, #btnLimparEvento').attr('disabled', true);
-            },
-            'success': function (json) {
-                if (json.status) {
-                    $('#modal_form').modal('hide');
-                    reload_table();
-                } else if (json.erro) {
-                    alert(json.erro);
-                }
-            },
-            'complete': function () {
-                $('#btnSaveEvento').text('Salvar');
-                $('#btnSaveEvento, #btnLimparEvento').attr('disabled', false);
-            }
-        });
-    }
-
-
-    function save_posto() {
-        $.ajax({
-            'url': '<?php echo site_url('icom/postos/salvar') ?>',
-            'type': 'POST',
-            'data': $('#form_posto').serialize(),
-            'dataType': 'json',
-            'beforeSend': function () {
-                $('#btnSavePosto').text('Salvando...').attr('disabled', true);
-            },
-            'success': function (json) {
-                if (json.status) {
-                    $('#modal_posto').modal('hide');
-                    reload_table();
-                } else if (json.erro) {
-                    alert(json.erro);
-                }
-            },
-            'complete': function () {
-                $('#btnSavePosto').text('Salvar').attr('disabled', false);
-            }
-        });
-    }
-
-
-    function save_novo_alocado() {
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/salvarNovoAlocado') ?>',
-            'type': 'POST',
-            'data': $('#form_alocados').serialize(),
-            'dataType': 'json',
-            'beforeSend': function () {
-                $('#btnSaveAlocados').text('Salvando...').attr('disabled', true);
-            },
-            'success': function (json) {
-                if (json.status) {
-                    $('#modal_alocados').modal('hide');
-                    reload_table();
-                } else if (json.erro) {
-                    alert(json.erro);
-                }
-            },
-            'complete': function () {
-                $('#btnSaveAlocados').text('Salvar').attr('disabled', false);
-            }
-        });
-    }
-
-
-    function delete_evento() {
-        if (confirm('Deseja limpar o evento?')) {
-            $.ajax({
-                'url': '<?php echo site_url('icom/apontamento/excluirEvento') ?>',
-                'type': 'POST',
-                'dataType': 'json',
-                'data': {
-                    'id': $('#form [name="id"]').val()
-                },
-                'beforeSend': function () {
-                    $('#btnLimparEvento').text('Excluindo...');
-                    $('#btnLimparEvento, #btnSaveEvento').attr('disabled', true);
-                },
-                'success': function (json) {
-                    if (json.status) {
-                        $('#modal_form').modal('hide');
-                        reload_table();
-                    } else if (json.erro) {
-                        alert(json.erro);
-                    }
-                },
-                'complete': function () {
-                    $('#btnLimparEvento').text('Excluir');
-                    $('#btnLimparEvento, #btnSaveEvento').attr('disabled', false);
-                }
-            });
-        }
-    }
-
-
-    function delete_alocado(id) {
-        if (confirm('Deseja desalocado o(a) colaborador(a)?')) {
-            $.ajax({
-                'url': '<?php echo site_url('icom/apontamento/excluirAlocado') ?>',
-                'type': 'POST',
-                'dataType': 'json',
-                'data': {'id': id},
-                'beforeSend': function () {
-                    $('#table tr td button.danger').attr('disabled', true);
-                },
-                'success': function (json) {
-                    if (json.status) {
-                        reload_table();
-                    } else if (json.erro) {
-                        alert(json.erro);
-                    }
-                },
-                'complete': function () {
-                    $('#table tr td button.danger').attr('disabled', false);
-                }
-            });
-        }
-    }
-
-
-    function reload_table(reset = false) {
-        edicaoEvento = false;
-        $('#mes_ano').append('&ensp;(Processando - Aguarde...)');
-        var count = 0;
-        var stmt = function (json) {
-            count = count + 1;
-            if (count === 3) {
-                edicaoEvento = true;
-            }
-        };
-        table.ajax.reload(stmt, reset);
-        table_totalizacao.ajax.reload(stmt, reset);
-        table_avaliacao_performance.ajax.reload(stmt, reset);
-        // table_totalizacao.ajax.reload(stmt, reset);
-        // table_colaboradores.ajax.reload(stmt, reset);
-    }
-
-
-    function imprimir_totalizacao() {
-        if ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' ||
-            $('#busca [name="id_setor"]').val() === '' || $('#busca [name="ano"]').val() === '') {
-            alert('Para gerar o relatório, ajuste os filtros de Departamento, Área, Setor, Mês e Ano.');
-            return false;
-        }
-
-        var q = new Array();
-        q.push("id_depto=" + $('#busca [name="id_depto"]').val());
-        q.push("id_area=" + $('#busca [name="id_area"]').val());
-        q.push("id_setor=" + $('#busca [name="id_setor"]').val());
-        q.push("mes=" + $('#busca [name="mes"]').val());
-        q.push("ano=" + $('#busca [name="ano"]').val());
-
-        window.open('<?php echo site_url('icom/apontamento/pdfTotalizacao'); ?>/q?' + q.join('&'), '_blank');
-    }
-
-
-    function imprimir_avaliacao_performance() {
-        if ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' ||
-            $('#busca [name="id_setor"]').val() === '' || $('#busca [name="ano"]').val() === '') {
-            alert('Para gerar o relatório, ajuste os filtros de Departamento, Área, Setor, Mês e Ano.');
-            return false;
-        }
-
-        var q = new Array();
-        q.push("id_depto=" + $('#busca [name="id_depto"]').val());
-        q.push("id_area=" + $('#busca [name="id_area"]').val());
-        q.push("id_setor=" + $('#busca [name="id_setor"]').val());
-        q.push("mes=" + $('#busca [name="mes"]').val());
-        q.push("ano=" + $('#busca [name="ano"]').val());
-
-        window.open('<?php echo site_url('icom/apontamento/pdfAvaliacaoPerformance'); ?>/q?' + q.join('&'), '_blank');
-    }
-
-    function imprimir_feedback() {
-        window.open('<?php echo site_url('icom/apontamento/pdfAvaliadoFeedback'); ?>/q?id=' + $('#form_feedback [name="id"]').val(), '_blank');
-    }
-
-
-    function edit_feedback(id_alocado) {
-        $('#form_feedback [name="tipo"][value="0"]').prop('checked', true).trigger('change');
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/editarFeedback') ?>',
-            'type': 'POST',
-            'dataType': 'json',
-            'data': {'id_alocado': id_alocado},
-            'success': function (json) {
-                if (json.erro) {
-                    alert(json.erro);
-                    return false;
-                }
-                $.each(json, function (key, value) {
-                    $('#form_feedback [name="' + key + '"]').val(value);
-                });
-
-                $('#feedback_nome_usuario').html(json.nome_usuario_orientado);
-                $('#form_feedback [name="id"]').html($(json.id_feedback).html());
-
-                $('#modal_feedback').modal('show');
-            }
-        });
-    }
-
-
-    function selecionar_feedback(elem) {
-        var id = elem.value;
-
-        if (id.length === 0) {
-            $('#form_feedback [name="descricao"], #form_feedback [name="resultado"]').val('');
-            $('#btnImprimirFeedback, #btnLimparFeedback').hide();
-        } else {
-            $.ajax({
-                'url': '<?php echo site_url('icom/apontamento/selecionarFeedback') ?>',
-                'type': 'POST',
-                'dataType': 'json',
-                'data': {'id': id},
-                'beforeSend': function () {
-                    $('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', true);
-                    $('#form_feedback [name="id"], #form_feedback [name="tipo"]').attr('disabled', true);
-                },
-                'success': function (json) {
-                    if (json.erro) {
-                        alert(json.erro);
-                        return false;
-                    }
-                    $.each(json, function (key, value) {
-                        $('#form_feedback [name="' + key + '"]').val(value);
-                    });
-                    $('#btnImprimirFeedback, #btnLimparFeedback').show();
-                },
-                'complete': function () {
-                    $('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', false);
-                    $('#form_feedback [name="id"], #form_feedback [name="tipo"]').attr('disabled', false);
-                }
-            });
-        }
-    }
-
-
-    function save_feedback() {
-        $.ajax({
-            'url': '<?php echo site_url('icom/apontamento/salvarFeedback') ?>',
-            'type': 'POST',
-            'data': $('#form_feedback').serialize(),
-            'dataType': 'json',
-            'beforeSend': function () {
-                $('#btnSaveFeedback').text('Salvando...');
-                $('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', true);
-            },
-            'success': function (json) {
-                if (json.status) {
-                    $('#modal_feedback').modal('hide');
-                    reload_table();
-                } else if (json.erro) {
-                    alert(json.erro);
-                }
-            },
-            'complete': function () {
-                $('#btnSaveFeedback').text('Salvar');
-                $('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', false);
-            }
-        });
-    }
-
-    function excluir_feedback() {
-        if (confirm('Deseja excluir o feedback?')) {
-            $.ajax({
-                'url': '<?php echo site_url('icom/apontamento/excluirFeedback') ?>',
-                'type': 'POST',
-                'dataType': 'json',
-                'data': {
-                    'id': $('#form_feedback [name="id"]').val()
-                },
-                'beforeSend': function () {
-                    $('#btnLimparFeedback').text('Excluindo...');
-                    $('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', true);
-                },
-                'success': function (json) {
-                    if (json.erro) {
-                        alert(json.erro);
-                    } else {
-                        $('#modal_feedback').modal('hide');
-                    }
-                },
-                'complete': function () {
-                    $('#btnLimparFeedback').text('Excluir');
-                    $('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', false);
-                }
-            });
-        }
-    }
+	var table, table_totalizacao, table_avaliacao_performance;
+	var busca, save_method, demo1;
+	var edicaoEvento = true;
+
+	$('.data').mask('00/00/0000');
+	$('.hora').mask('00:00');
+	$('.banco_horas').mask('Z00:00', {
+		'translation': {
+			'Z': {
+				'pattern': /[\-\+]/, 'optional': true
+			}
+		}
+	});
+	$('.hora_mes').mask('#00:00', {'reverse': true});
+	$('.horas2').mask('Z###00:00', {
+		'reverse': true,
+		'translation': {
+			':': {
+				'pattern': /:-/, 'optional': true
+			},
+			'0': {
+				'pattern': /[0-9]-/, 'optional': true
+			},
+			'#': {
+				'pattern': /[0-9]-/, 'optional': true
+			},
+			'Z': {
+				'pattern': /-/, 'optional': true
+			}
+		}
+	});
+	$('.valor').mask('##.###.##0,00', {'reverse': true});
+
+	$('.descritivo_feedback').ckeditor({
+		'height': '150',
+		'toolbarGroups': [{
+			'name': 'basicstyles',
+			'groups': ['basicstyles']
+		},
+			{
+				'name': 'links',
+				'groups': ['links']
+			},
+			{
+				'name': 'paragraph',
+				'groups': ['list']
+			},
+			// {
+			// 	'name': 'insert',
+			// 	'groups': ['insert']
+			// },
+			// {
+			// 	'name': 'styles',
+			// 	'groups': ['styles']
+			// },
+			{
+				'name': 'about',
+				'groups': ['about']
+			}
+		],
+		// Remove the redundant buttons from toolbar groups defined above.
+		'removeButtons': 'Underline,Strike,Subscript,Superscript,NewPage,Preview,Save,Anchor,Styles,Specialchar,Flash,PageBreak,Slideshow'
+	});
+
+	$(document).ready(function () {
+		busca = $('#busca').serialize();
+		var language = "<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>";
+
+
+		table = $('#table').DataTable({
+			'processing': true,
+			'serverSide': true,
+			'order': [1, 'asc'],
+			'iDisplayLength': -1,
+			'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
+			'language': {
+				'url': language
+			},
+			'ajax': {
+				'url': '<?php echo site_url('icom/apontamento/listarEventos') ?>',
+				'type': 'POST',
+				'timeout': 90000,
+				'data': function (d) {
+					d.busca = busca;
+					return d;
+				},
+				'dataSrc': function (json) {
+					$('#mes_ano').html(json.calendar.mes_ano[0].toUpperCase() + json.calendar.mes_ano.slice(1));
+
+					var dt1 = new Date();
+					var dt2 = new Date();
+					dt2.setFullYear(json.calendar.ano, (json.calendar.mes - 1));
+
+					var semana = 1;
+					var colunasUsuario = 4;
+					for (i = 1; i <= 31; i++) {
+						if (i > 28) {
+							if (i > json.calendar.qtde_dias) {
+								table.column(i + colunasUsuario).visible(false, false);
+								continue;
+							} else {
+								table.column(i + colunasUsuario).visible(true, false);
+							}
+						}
+						var coluna = $(table.columns(i + colunasUsuario).header());
+						coluna.removeClass('text-danger').css('background-color', '');
+						coluna.attr({
+							'data-dia': json.calendar.ano + '-' + json.calendar.mes + '-' + coluna.text(),
+							'data-mes_ano': json.calendar.semana[semana] + ', ' + coluna.text() + '/' + json.calendar.mes + '/' + json.calendar.ano,
+							'title': json.calendar.semana[semana] + ', ' + coluna.text() + ' de ' + json.calendar.mes_ano.replace(' ', ' de ')
+						});
+						if (json.calendar.semana[semana] === 'Sábado' || json.calendar.semana[semana] === 'Domingo') {
+							coluna.addClass('text-danger').css('background-color', '#dbdbdb');
+						}
+						if ((dt1.getTime() === dt2.getTime()) && dt1.getDate() === i) {
+							coluna.css('background-color', '#0f0');
+						}
+						if (i % 7 === 0) {
+							semana = 1;
+						} else {
+							semana++;
+						}
+						if (json.data.length > 0) {
+							coluna.css('cursor', 'pointer').on('click', function () {
+								$('#data_evento').html(this.dataset.mes_ano);
+								$('#form_eventos [name="data"]').val(this.dataset.dia);
+								$('#modal_eventos').modal('show');
+							});
+						}
+					}
+					if (json.data.length > 0) {
+						$('#dias').html('<strong>Dias</strong> (clique em um dia do mês para replicar/limpar feriados ou emendas de feriados)');
+					} else {
+						$('#dias').html('<strong>Dias</strong>');
+					}
+					if (json.draw === 1) {
+						$("#legenda").html('<button title="Mostrar legenda de eventos" data-toggle="modal" data-target="#modal_legenda" style="margin: 15px 10px 0;" class="btn btn-default btn-sm">' +
+							'<i class="glyphicon glyphicon-exclamation-sign"></i> <span class="hidden-xs"> Mostrar legenda de eventos</span>' +
+							'</button>');
+					}
+					return json.data;
+				}
+			},
+			'columnDefs': [
+				{
+					'createdCell': function (td, cellData, rowData, row, col) {
+						$(td).addClass('evento').css({
+							'cursor': 'pointer',
+							'vertical-align': 'middle'
+						}).on('click', function () {
+							edit_avaliacao_performance(rowData[36]);
+						});
+						$(td).html('<a>' + rowData[col] + '</a>');
+					},
+					'width': '100%',
+					'targets': [1]
+				},
+				{
+					'className': 'text-center',
+					'targets': [2]
+				},
+				{
+					'className': 'text-center',
+					'orderable': false,
+					'searchable': false,
+					'targets': [0]
+				},
+				{
+					'className': 'text-center',
+					'targets': [3]
+				},
+				{
+					'createdCell': function (td, cellData, rowData, row, col) {
+						$(td).addClass('evento').css({
+							'cursor': 'pointer',
+							'vertical-align': 'middle'
+						}).on('click', function () {
+							edit_banco_horas(rowData[36]);
+						});
+						$(td).html('<a>' + rowData[col] + '</a>');
+					},
+					'className': 'text-center text-nowrap',
+					'targets': [4]
+				},
+				{
+					'createdCell': function (td, cellData, rowData, row, col) {
+						if (rowData[col]) {
+							$(td).css({'color': '#fff', 'background-color': '#47a447'});
+						} else if ($(table.column(col).header()).hasClass('text-danger')) {
+							$(td).css('background-color', '#e9e9e9');
+						}
+
+						$(td).popover({
+							'container': 'body',
+							'placement': 'auto bottom',
+							'trigger': 'hover',
+							'content': function () {
+								if (rowData[col].length === 0) {
+									return '<span style="color: #aaa;">Vazio</span>';
+								} else {
+									return '<strong>Eventos cadastrados:</strong> ' + rowData[col]['tipo_evento'];
+								}
+							},
+							'html': true
+						});
+						$(td).addClass('evento').css({
+							'cursor': 'pointer',
+							'vertical-align': 'middle'
+						}).on('click', function () {
+							$(td).popover('hide');
+							edit_evento(rowData[36], col - 4);
+						});
+						$(td).html(rowData[col]['tipo_evento']);
+					},
+					'className': 'text-center',
+					'orderable': false,
+					'searchable': false,
+					'targets': 'date-width'
+				}
+			]
+		});
+
+		table_totalizacao = $('#table_totalizacao').DataTable({
+			'processing': true,
+			'serverSide': true,
+			'order': [0, 'asc'],
+			'iDisplayLength': -1,
+			'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
+			'language': {
+				'url': language
+			},
+			'ajax': {
+				'url': '<?php echo site_url('icom/apontamento/listarTotalizacoes') ?>',
+				'type': 'POST',
+				'timeout': 90000,
+				'data': function (d) {
+					d.busca = busca;
+					return d;
+				}
+			},
+			'columnDefs': [
+				{
+					'width': '100%',
+					'targets': [0]
+				},
+				{
+					'className': 'text-center',
+					'searchable': false,
+					'targets': [1, 2, 3, 4, 5, 6, 7, 8]
+				}
+			],
+			'preDrawCallback': function () {
+				$('#pdfTotalizacao').prop('disabled', ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' || $('#busca [name="id_setor"]').val() === ''));
+			}
+		});
+
+		table_avaliacao_performance = $('#table_avaliacao_performance').DataTable({
+			'processing': true,
+			'serverSide': true,
+			'order': [0, 'asc'],
+			'iDisplayLength': -1,
+			'lengthMenu': [[5, 10, 25, 50, 100, 500, -1], [5, 10, 25, 50, 100, 500, 'Todos']],
+			'language': {
+				'url': language
+			},
+			'ajax': {
+				'url': '<?php echo site_url('icom/apontamento/listarAvaliacoesPerformance') ?>',
+				'type': 'POST',
+				'timeout': 90000,
+				'data': function (d) {
+					d.busca = busca;
+					return d;
+				},
+				'dataSrc': function (json) {
+					for (i = 0; i <= 12; i++) {
+						$(table_avaliacao_performance.context[0].aoHeader[2][i + 1].cell).html(json.abaixo_media[i]);
+						$(table_avaliacao_performance.context[0].aoHeader[3][i + 1].cell).html(json.acima_media[i]);
+						$(table_avaliacao_performance.column(i + 1).header()).html(json.media[i]);
+					}
+
+					return json.data;
+				}
+			},
+			'columnDefs': [
+				{
+					'createdCell': function (td, cellData, rowData, row, col) {
+						$(td).css({
+							'cursor': 'pointer'
+						}).on('click', function () {
+							edit_feedback(rowData[14]);
+						});
+						$(td).html('<a>' + rowData[col] + '</a>');
+					},
+					'width': '100%',
+					'targets': [0]
+				},
+				{
+					'createdCell': function (td, cellData, rowData, row, col) {
+						if (rowData[col] !== null) {
+							$(td).css({
+								'color': rowData[col] < table_avaliacao_performance.context[0].json.media_real[col - 1] ? '#d9534f' : '#5cb85c'
+							}).html('<strong>' + (rowData[col]).toLocaleString('pt-BR', {
+								'minimumFractionDigits': 2,
+								'maximumFractionDigits': 2
+							}) + '</strong>');
+						}
+					},
+					'className': 'text-center',
+					'orderable': false,
+					'targets': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+				}
+			],
+			'preDrawCallback': function () {
+				$('#pdfAvaliacaoPerformance').prop('disabled', ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' || $('#busca [name="id_setor"]').val() === ''));
+			}
+		});
+
+		demo1 = $('.demo1').bootstrapDualListbox({
+			'nonSelectedListLabel': 'Colaboradores disponíveis',
+			'selectedListLabel': 'Colaboradores selecionados',
+			'preserveSelectionOnMove': 'moved',
+			'moveOnSelect': false,
+			'filterPlaceHolder': 'Filtrar',
+			'helperSelectNamePostfix': false,
+			'selectorMinimalHeight': 132,
+			'infoText': false
+		});
+
+	});
+
+
+	$('#form [name="tipo_evento"]').on('change', function () {
+		$('#form [name="saldo_banco_horas"]').prop('readonly', $('#form [name="tipo_evento"]:checked').val() !== 'BH');
+	});
+
+
+	$('#form_feedback [name="tipo"]').on('change', function () {
+		var tipo_feedback = $('#form_feedback [name="tipo"]:checked').val();
+		$('#form_feedback')[0].reset();
+		$('#btnImprimirFeedback, #btnLimparFeedback').hide();
+		$('#form_feedback [name="tipo"][value="' + tipo_feedback + '"]').prop('checked', true);
+		if (tipo_feedback === '0') {
+			$('#form_feedback .feedback_novo').show();
+			$('#form_feedback .feedback_existente').hide();
+			$('#form_feedback [name="resultado"]').prop('disabled', true);
+		} else if (tipo_feedback === '1') {
+			$('#form_feedback .feedback_novo').hide();
+			$('#form_feedback .feedback_existente').show();
+			$('#form_feedback [name="resultado"]').prop('disabled', false);
+		}
+	});
+
+
+	$('#form_avaliado [name="tipo_feedback"]').on('change', function () {
+		var tipo_feedback_avaliado = $('#form_avaliado [name="tipo_feedback"]:checked').val();
+		$('#form_avaliado .feedback').val('');
+		if (tipo_feedback_avaliado === '0') {
+			$('#form_avaliado .feedback_novo').show();
+			$('#form_avaliado .feedback_existente').hide();
+		} else if (tipo_feedback_avaliado === '1') {
+			$('#form_avaliado .feedback_novo').hide();
+			$('#form_avaliado .feedback_existente').show();
+		}
+	});
+
+
+	$('#form_posto [name="categoria"]').on('change', function () {
+		$('#form_posto .clt, #form_posto .mei').prop('disabled', true);
+		if (this.value === 'MEI') {
+			$('#form_posto .mei').prop('disabled', false);
+			$('#form_posto .clt').val('');
+		} else if (this.value === 'CLT') {
+			$('#form_posto .clt').prop('disabled', false);
+			$('#form_posto .mei').val('');
+		}
+	});
+
+
+	function filtrar_alocacao() {
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/filtrarAlocacao/') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': $('#busca').serialize(),
+			'beforeSend': function () {
+				$('#busca [name="id_depto"]').prop('disabled', true);
+				$('#busca [name="id_area"]').prop('disabled', true);
+				$('#busca [name="id_setor"]').prop('disabled', true);
+			},
+			'success': function (json) {
+				$('#busca [name="id_depto"]').prop('disabled', false);
+				$('#busca [name="id_area"]').html($(json.areas).html()).prop;
+				$('#busca [name="id_setor"]').html($(json.setores).html());
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			},
+			'complete': function () {
+				$('#busca [name="id_depto"]').prop('disabled', false);
+				$('#busca [name="id_area"]').prop('disabled', false);
+				$('#busca [name="id_setor"]').prop('disabled', false);
+			}
+		});
+	}
+
+
+	function filtrar_posto_estrutura() {
+		$.ajax({
+			'url': '<?php echo site_url('icom/postos/montarEstrutura') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': $('#form_posto .posto_estrutura').serialize(),
+			'beforeSend': function () {
+				$('.posto_estrutura').prop('disabled', true);
+			},
+			'success': function (json) {
+				$('#form_posto [name="id_area"]').html($(json.areas).html());
+				$('#form_posto [name="id_setor"]').html($(json.setores).html());
+				$('#form_posto [name="id_usuario"]').html($(json.usuarios).html());
+				$('#form_posto [name="id_funcao"]').html($(json.funcoes).html());
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			},
+			'complete': function () {
+				$('.posto_estrutura').prop('disabled', false);
+			}
+		});
+	}
+
+
+	function filtrar_alocado() {
+		$.ajax({
+			'url': '<?php echo site_url('icom/postos/editarColaboradorAlocado') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': $('#form_posto .posto_estrutura, #busca [name="mes"], #busca [name="ano"]').serialize(),
+			'beforeSend': function () {
+				$('.posto_estrutura').prop('disabled', true);
+			},
+			'success': function (json) {
+				$('#form_posto [name="id"]').val('');
+				$('#form_posto [name="id_funcao"]').val('');
+				$('#form_posto [name="valor_hora_mei"]').val('');
+				$('#form_posto [name="valor_mes_clt"]').val('');
+				$('#form_posto [name="qtde_horas_mei"]').val('');
+				$('#form_posto [name="qtde_meses_clt"]').val('');
+				$('#form_posto [name="horario_entrada"]').val('');
+				$('#form_posto [name="horario_intervalo"]').val('');
+				$('#form_posto [name="horario_retorno"]').val('');
+				$('#form_posto [name="horario_saida"]').val('');
+				$.each(json, function (key, value) {
+					$('#form_posto [name="' + key + '"]').val(value);
+				});
+
+				$('#form_posto [name="categoria"]').trigger('change');
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			},
+			'complete': function () {
+				$('.posto_estrutura').prop('disabled', false);
+			}
+		});
+	}
+
+
+	$('#limpar').on('click', function () {
+		$.each(busca.split('&'), function (index, elem) {
+			var vals = elem.split('=');
+			if (vals[0] === 'mes' || vals[0] === 'ano') {
+				$("[name='" + vals[0] + "']").val(vals[1]);
+			} else {
+				$("[name='" + vals[0] + "']").val($("[name='" + vals[0] + "'] option:first").val());
+			}
+		});
+
+		filtrar_alocacao();
+	});
+
+
+	function mes_anterior() {
+		$('#mes_anterior, #mes_seguinte').prop('disabled', true).hover();
+
+		var dt = moment({
+			'year': $('#busca [name="ano"]').val(),
+			'month': $('#busca [name="mes"]').val() - 1,
+			'day': 1
+		});
+
+		dt.subtract(1, 'month');
+
+		$('#busca [name="mes"]').val(moment(dt).format('MM'));
+		$('#busca [name="ano"]').val(dt.year());
+
+		busca = $('#busca').serialize();
+		reload_table(true);
+		$('#mes_anterior, #mes_seguinte').prop('disabled', false);
+	}
+
+
+	function mes_seguinte() {
+		if ($('#mes_seguinte').hasClass('disabled')) {
+			return false;
+		}
+
+		$('#mes_anterior, #mes_seguinte').prop('disabled', true).hover();
+
+		var dt = moment({
+			'year': $('#busca [name="ano"]').val(),
+			'month': $('#busca [name="mes"]').val() - 1,
+			'day': 1
+		});
+
+		dt.add(1, 'month');
+
+		$('#busca [name="mes"]').val(moment(dt).format('MM'));
+		$('#busca [name="ano"]').val(dt.year());
+
+		busca = $('#busca').serialize();
+		reload_table(true);
+		$('#mes_anterior, #mes_seguinte').prop('disabled', false);
+	}
+
+
+	function filtrar() {
+		var data_busca = {
+			'year': $('#busca [name="ano"]').val(),
+			'month': $('#busca [name="mes"]').val() - 1,
+			'day': 1
+		};
+		var data_proximo_mes = moment(data_busca).add(1, 'month');
+
+		busca = $('#busca').serialize();
+		reload_table();
+		if (moment(data_proximo_mes).isBefore(data_busca)) {
+			$('[name="mes"]').val(moment(data_proximo_mes).format('MM'));
+			$('[name="ano"]').val(data_proximo_mes.year());
+		}
+		$('#alerta_depto').text($('#busca [name="id_depto"] option:selected').html());
+		$('#alerta_area').text($('#busca [name="id_area"] option:selected').html());
+		$('#alerta_setor').text($('#busca [name="id_setor"] option:selected').html());
+	}
+
+
+	function alocacao_filtrada() {
+		return busca.split('&').every(function (e) {
+			return e.indexOf('=') < (e.length - 1);
+		});
+	}
+
+
+	function iniciar_mes() {
+		if (alocacao_filtrada() === false) {
+			alert('Para iniciar o mês, ajuste os filtros de Departamento, Área e Setor.');
+			return false;
+		}
+
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/alocarNovoMes') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': busca,
+			'success': function (json) {
+				if (json.erro) {
+					alert(json.erro);
+				} else {
+					alert('Mês alocado com sucesso.');
+					reload_table();
+				}
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			}
+		});
+	}
+
+
+	function limpar_mes() {
+		if (alocacao_filtrada() === false) {
+			alert('Para limpar o mês, ajuste os filtros de Departamento, Área e Setor.');
+			return false;
+		}
+
+		if (confirm('Deseja limpar o mês?')) {
+			$.ajax({
+				'url': '<?php echo site_url('icom/apontamento/desalocarMes') ?>',
+				'type': 'POST',
+				'dataType': 'json',
+				'data': busca,
+				'success': function (json) {
+					if (json.erro) {
+						alert(json.erro);
+					} else {
+						alert('Mês desalocado com sucesso.');
+						reload_table();
+					}
+				},
+				'error': function (jqXHR, textStatus, errorThrown) {
+					alert('Error get data from ajax');
+				}
+			});
+		}
+	}
+
+
+	function edit_avaliacao_performance(id_alocado) {
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/editarAvaliacaoPerformance') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': {'id_alocado': id_alocado},
+			'beforeSend': function () {
+				$('#form_avaliado')[0].reset();
+				$('#form_avaliado [name="tipo_feedback"][value="0"]').prop('checked', true).trigger('change');
+			},
+			'success': function (json) {
+				if (json.erro) {
+					alert(json.erro);
+					return false;
+				}
+
+				$.each(json, function (key, value) {
+					if ($('#form_avaliado [name="' + key + '"]').prop('type') === 'radio') {
+						$('#form_avaliado [name="' + key + '"][value="' + value + '"]').prop('checked', value !== null);
+					} else {
+						$('#form_avaliado [name="' + key + '"]').val(value);
+					}
+				});
+
+				$('#form_avaliado_dados').html(json.dados);
+				$('#form_avaliado [name="id_feedback"]').html($(json.id_feedback).html());
+
+				$('#modal_avaliado').modal('show');
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			}
+		});
+	}
+
+
+	function edit_banco_horas(id_alocado) {
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/editarBancoHoras') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': {'id_alocado': id_alocado},
+			'beforeSend': function () {
+				$('#form_banco_horas')[0].reset();
+			},
+			'success': function (json) {
+				if (json.erro) {
+					alert(json.erro);
+					return false;
+				}
+
+				$.each(json, function (key, value) {
+					if ($('#form_banco_horas [name="' + key + '"]').prop('type') === 'radio') {
+						$('#form_banco_horas [name="' + key + '"][value="' + value + '"]').prop('checked', value !== null);
+					} else {
+						$('#form_banco_horas [name="' + key + '"]').val(value);
+					}
+				});
+
+				$('#form_banco_horas_dados').html(json.dados);
+
+				$('#modal_banco_horas').modal('show');
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			}
+		});
+	}
+
+
+	function edit_evento(id_alocado, dia) {
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/editarEvento') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': {
+				'id_alocado': id_alocado,
+				'data': moment({
+					'year': $('#busca [name="ano"]').val(),
+					'month': $('#busca [name="mes"]').val() - 1,
+					'day': dia
+				}).format('YYYY-MM-DD')
+			},
+			'beforeSend': function () {
+				$('#form')[0].reset();
+			},
+			'success': function (json) {
+				if (json.erro) {
+					alert(json.erro);
+					return false;
+				}
+
+				$.each(json, function (key, value) {
+					if ($('#form [name="' + key + '"]').prop('type') === 'radio') {
+						$('#form [name="' + key + '"][value="' + value + '"]').prop('checked', value !== null);
+					} else {
+						$('#form [name="' + key + '"]').val(value);
+					}
+				});
+
+				if (json.id) {
+					save_method = 'update';
+					$('#modal_form .modal-title').text('Editar evento operacional');
+					$('#btnLimparEvento').show();
+				} else {
+					save_method = 'add';
+					$('#modal_form .modal-title').text('Adicionar evento operacional');
+					$('#btnLimparEvento').hide();
+				}
+
+				$('#form [name="tipo_evento"]').trigger('change');
+				$('#colaborador_data').html(json.colaborador_data);
+
+				$('#modal_form').modal('show');
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			}
+		});
+	}
+
+
+	function edit_posto() {
+		$('#form_posto')[0].reset();
+		$('#form_posto [name="id"]').val('')
+
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/editarPosto') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': busca,
+			'success': function (json) {
+				if (json.erro) {
+					alert(json.erro);
+					return false;
+				}
+
+				$.each(json, function (key, value) {
+					$('#form_posto [name="' + key + '"]').val(value);
+				});
+
+				$('#form_posto [name="id_depto"]').html($(json.deptos).html());
+				$('#form_posto [name="id_area"]').html($(json.areas).html());
+				$('#form_posto [name="id_setor"]').html($(json.setores).html());
+				$('#form_posto [name="id_usuario"]').html($(json.usuarios).html());
+				$('#form_posto [name="id_funcao"]').html($(json.funcoes).html());
+
+
+				$('#form_posto [name="categoria"]').trigger('change');
+
+				$('#modal_posto').modal('show');
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			}
+		});
+	}
+
+
+	function preparar_novo_alocado() {
+		if ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' ||
+			$('#busca [name="id_setor"]').val() === '' || $('#busca [name="ano"]').val() === '') {
+			alert('Para alocar um novo cloadorador, ajuste os filtros de Departamento, Área, Setor, Mês e Ano.');
+			return false;
+		}
+
+		$('#form_alocados')[0].reset();
+
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/prepararNovoAlocado') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': busca,
+			'success': function (json) {
+				if (json.erro) {
+					alert(json.erro);
+					return false;
+				}
+
+				$('#form_alocados [name="id_alocacao"]').val(json.id_alocacao);
+				$('#alocados').html($(json.id_usuario).html());
+
+				demo1.bootstrapDualListbox('refresh', true);
+
+				$('#modal_alocados').modal('show');
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			}
+		});
+	}
+
+
+	function save_avaliacao_performance() {
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/salvarAvaliacaoPerformance') ?>',
+			'type': 'POST',
+			'data': $('#form_avaliado').serialize(),
+			'dataType': 'json',
+			'beforeSend': function () {
+				$('#btnSaveAvaliado').text('Salvando...').attr('disabled', true);
+			},
+			'success': function (json) {
+				if (json.status) {
+					$('#modal_avaliado').modal('hide');
+					reload_table();
+				} else if (json.erro) {
+					alert(json.erro);
+				}
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error adding / update data');
+			},
+			'complete': function () {
+				$('#btnSaveAvaliado').text('Salvar').attr('disabled', false);
+			}
+		});
+	}
+
+
+	function save_banco_horas() {
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/salvarBancoHoras') ?>',
+			'type': 'POST',
+			'data': $('#form_banco_horas').serialize(),
+			'dataType': 'json',
+			'beforeSend': function () {
+				$('#btnSaveBancoHoras').text('Salvando...').attr('disabled', true);
+			},
+			'success': function (json) {
+				if (json.status) {
+					$('#modal_banco_horas').modal('hide');
+					reload_table();
+				} else if (json.erro) {
+					alert(json.erro);
+				}
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error adding / update data');
+			},
+			'complete': function () {
+				$('#btnSaveBancoHoras').text('Salvar').attr('disabled', false);
+			}
+		});
+	}
+
+
+	function save_evento() {
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/salvarEvento') ?>',
+			'type': 'POST',
+			'data': $('#form').serialize(),
+			'dataType': 'json',
+			'beforeSend': function () {
+				$('#btnSaveEvento').text('Salvando...');
+				$('#btnSaveEvento, #btnLimparEvento').attr('disabled', true);
+			},
+			'success': function (json) {
+				if (json.status) {
+					$('#modal_form').modal('hide');
+					reload_table();
+				} else if (json.erro) {
+					alert(json.erro);
+				}
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error adding / update data');
+			},
+			'complete': function () {
+				$('#btnSaveEvento').text('Salvar');
+				$('#btnSaveEvento, #btnLimparEvento').attr('disabled', false);
+			}
+		});
+	}
+
+
+	function save_posto() {
+		$.ajax({
+			'url': '<?php echo site_url('icom/postos/salvar') ?>',
+			'type': 'POST',
+			'data': $('#form_posto').serialize(),
+			'dataType': 'json',
+			'beforeSend': function () {
+				$('#btnSavePosto').text('Salvando...').attr('disabled', true);
+			},
+			'success': function (json) {
+				if (json.status) {
+					$('#modal_posto').modal('hide');
+					reload_table();
+				} else if (json.erro) {
+					alert(json.erro);
+				}
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error adding / update data');
+			},
+			'complete': function () {
+				$('#btnSavePosto').text('Salvar').attr('disabled', false);
+			}
+		});
+	}
+
+
+	function save_novo_alocado() {
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/salvarNovoAlocado') ?>',
+			'type': 'POST',
+			'data': $('#form_alocados').serialize(),
+			'dataType': 'json',
+			'beforeSend': function () {
+				$('#btnSaveAlocados').text('Salvando...').attr('disabled', true);
+			},
+			'success': function (json) {
+				if (json.status) {
+					$('#modal_alocados').modal('hide');
+					reload_table();
+				} else if (json.erro) {
+					alert(json.erro);
+				}
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error adding / update data');
+			},
+			'complete': function () {
+				$('#btnSaveAlocados').text('Salvar').attr('disabled', false);
+			}
+		});
+	}
+
+
+	function delete_evento() {
+		if (confirm('Deseja limpar o evento?')) {
+			$.ajax({
+				'url': '<?php echo site_url('icom/apontamento/excluirEvento') ?>',
+				'type': 'POST',
+				'dataType': 'json',
+				'data': {
+					'id': $('#form [name="id"]').val()
+				},
+				'beforeSend': function () {
+					$('#btnLimparEvento').text('Excluindo...');
+					$('#btnLimparEvento, #btnSaveEvento').attr('disabled', true);
+				},
+				'success': function (json) {
+					if (json.status) {
+						$('#modal_form').modal('hide');
+						reload_table();
+					} else if (json.erro) {
+						alert(json.erro);
+					}
+				},
+				'error': function (jqXHR, textStatus, errorThrown) {
+					alert('Error deleting data');
+				},
+				'complete': function () {
+					$('#btnLimparEvento').text('Excluir');
+					$('#btnLimparEvento, #btnSaveEvento').attr('disabled', false);
+				}
+			});
+		}
+	}
+
+
+	function delete_alocado(id) {
+		if (confirm('Deseja desalocado o(a) colaborador(a)?')) {
+			$.ajax({
+				'url': '<?php echo site_url('icom/apontamento/excluirAlocado') ?>',
+				'type': 'POST',
+				'dataType': 'json',
+				'data': {'id': id},
+				'beforeSend': function () {
+					$('#table tr td button.danger').attr('disabled', true);
+				},
+				'success': function (json) {
+					if (json.status) {
+						reload_table();
+					} else if (json.erro) {
+						alert(json.erro);
+					}
+				},
+				'error': function (jqXHR, textStatus, errorThrown) {
+					alert('Error deleting data');
+				},
+				'complete': function () {
+					$('#table tr td button.danger').attr('disabled', false);
+				}
+			});
+		}
+	}
+
+
+	function reload_table(reset = false) {
+		edicaoEvento = false;
+		$('#mes_ano').append('&ensp;(Processando - Aguarde...)');
+		var count = 0;
+		var stmt = function (json) {
+			count = count + 1;
+			if (count === 3) {
+				edicaoEvento = true;
+			}
+		};
+		table.ajax.reload(stmt, reset);
+		table_totalizacao.ajax.reload(stmt, reset);
+		table_avaliacao_performance.ajax.reload(stmt, reset);
+		// table_totalizacao.ajax.reload(stmt, reset);
+		// table_colaboradores.ajax.reload(stmt, reset);
+	}
+
+
+	function imprimir_totalizacao() {
+		if ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' ||
+			$('#busca [name="id_setor"]').val() === '' || $('#busca [name="ano"]').val() === '') {
+			alert('Para gerar o relatório, ajuste os filtros de Departamento, Área, Setor, Mês e Ano.');
+			return false;
+		}
+
+		var q = new Array();
+		q.push("id_depto=" + $('#busca [name="id_depto"]').val());
+		q.push("id_area=" + $('#busca [name="id_area"]').val());
+		q.push("id_setor=" + $('#busca [name="id_setor"]').val());
+		q.push("mes=" + $('#busca [name="mes"]').val());
+		q.push("ano=" + $('#busca [name="ano"]').val());
+
+		window.open('<?php echo site_url('icom/apontamento/pdfTotalizacao'); ?>/q?' + q.join('&'), '_blank');
+	}
+
+
+	function imprimir_avaliacao_performance() {
+		if ($('#busca [name="id_depto"]').val() === '' || $('#busca [name="id_area"]').val() === '' ||
+			$('#busca [name="id_setor"]').val() === '' || $('#busca [name="ano"]').val() === '') {
+			alert('Para gerar o relatório, ajuste os filtros de Departamento, Área, Setor, Mês e Ano.');
+			return false;
+		}
+
+		var q = new Array();
+		q.push("id_depto=" + $('#busca [name="id_depto"]').val());
+		q.push("id_area=" + $('#busca [name="id_area"]').val());
+		q.push("id_setor=" + $('#busca [name="id_setor"]').val());
+		q.push("mes=" + $('#busca [name="mes"]').val());
+		q.push("ano=" + $('#busca [name="ano"]').val());
+
+		window.open('<?php echo site_url('icom/apontamento/pdfAvaliacaoPerformance'); ?>/q?' + q.join('&'), '_blank');
+	}
+
+	function imprimir_feedback() {
+		window.open('<?php echo site_url('icom/apontamento/pdfAvaliadoFeedback'); ?>/q?id=' + $('#form_feedback [name="id"]').val(), '_blank');
+	}
+
+
+	function edit_feedback(id_alocado) {
+		$('#form_feedback [name="tipo"][value="0"]').prop('checked', true).trigger('change');
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/editarFeedback') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': {'id_alocado': id_alocado},
+			'success': function (json) {
+				if (json.erro) {
+					alert(json.erro);
+					return false;
+				}
+				$.each(json, function (key, value) {
+					$('#form_feedback [name="' + key + '"]').val(value);
+				});
+
+				$('#feedback_nome_usuario').html(json.nome_usuario_orientado);
+				$('#form_feedback [name="id"]').html($(json.id_feedback).html());
+
+				$('#modal_feedback').modal('show');
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error deleting data');
+			}
+		});
+	}
+
+
+	function selecionar_feedback(elem) {
+		var id = elem.value;
+
+		if (id.length === 0) {
+			$('#form_feedback [name="descricao"], #form_feedback [name="resultado"]').val('');
+			$('#btnImprimirFeedback, #btnLimparFeedback').hide();
+		} else {
+			$.ajax({
+				'url': '<?php echo site_url('icom/apontamento/selecionarFeedback') ?>',
+				'type': 'POST',
+				'dataType': 'json',
+				'data': {'id': id},
+				'beforeSend': function () {
+					$('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', true);
+					$('#form_feedback [name="id"], #form_feedback [name="tipo"]').attr('disabled', true);
+				},
+				'success': function (json) {
+					if (json.erro) {
+						alert(json.erro);
+						return false;
+					}
+					$.each(json, function (key, value) {
+						$('#form_feedback [name="' + key + '"]').val(value);
+					});
+					$('#btnImprimirFeedback, #btnLimparFeedback').show();
+				},
+				'complete': function () {
+					$('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', false);
+					$('#form_feedback [name="id"], #form_feedback [name="tipo"]').attr('disabled', false);
+				}
+			});
+		}
+	}
+
+
+	function selecionar_feedback_avaliado(elem) {
+		var id = elem.value;
+
+		if (id.length === 0) {
+			$('#form_avaliado .feedback').val('');
+		} else {
+			$.ajax({
+				'url': '<?php echo site_url('icom/apontamento/selecionarFeedback') ?>',
+				'type': 'POST',
+				'dataType': 'json',
+				'data': {'id': id},
+				'success': function (json) {
+					if (json.erro) {
+						alert(json.erro);
+						return false;
+					}
+					$('#form_avaliado [name="descricao"]').val(json.descricao);
+				}
+			});
+		}
+	}
+
+
+	function save_feedback() {
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/salvarFeedback') ?>',
+			'type': 'POST',
+			'data': $('#form_feedback').serialize(),
+			'dataType': 'json',
+			'beforeSend': function () {
+				$('#btnSaveFeedback').text('Salvando...');
+				$('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', true);
+			},
+			'success': function (json) {
+				if (json.status) {
+					$('#modal_feedback').modal('hide');
+					reload_table();
+				} else if (json.erro) {
+					alert(json.erro);
+				}
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error adding/update data');
+			},
+			'complete': function () {
+				$('#btnSaveFeedback').text('Salvar');
+				$('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', false);
+			}
+		});
+	}
+
+	function excluir_feedback() {
+		if (confirm('Deseja excluir o feedback?')) {
+			$.ajax({
+				'url': '<?php echo site_url('icom/apontamento/excluirFeedback') ?>',
+				'type': 'POST',
+				'dataType': 'json',
+				'data': {
+					'id': $('#form_feedback [name="id"]').val()
+				},
+				'beforeSend': function () {
+					$('#btnLimparFeedback').text('Excluindo...');
+					$('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', true);
+				},
+				'success': function (json) {
+					if (json.erro) {
+						alert(json.erro);
+					} else {
+						$('#modal_feedback').modal('hide');
+					}
+				},
+				'error': function (jqXHR, textStatus, errorThrown) {
+					alert('Error deleting data');
+				},
+				'complete': function () {
+					$('#btnLimparFeedback').text('Excluir');
+					$('#btnImprimirFeedback, #btnSaveFeedback, #btnLimparFeedback').attr('disabled', false);
+				}
+			});
+		}
+	}
 
 </script>
 

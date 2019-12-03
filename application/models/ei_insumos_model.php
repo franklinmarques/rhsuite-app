@@ -13,4 +13,13 @@ class Ei_insumos_model extends MY_Model
 		'tipo' => 'required|max_length[255]'
 	];
 
+	protected $beforeFind = ['filtrarPorEmpresa'];
+
+	//==========================================================================
+
+	protected function filtrarPorEmpresa($id)
+	{
+		$this->db->where('id_empresa', $this->session->userdata('empresa'));
+	}
+
 }

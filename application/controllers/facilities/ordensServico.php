@@ -40,6 +40,7 @@ class OrdensServico extends MY_Controller
 		$post = $this->input->post();
 
 		$idUsuario = $this->session->userdata('id');
+		$nivelAcesso = $this->session->userdata('nivel');
 
 
 		$sql = "SELECT a.numero_os,
@@ -68,16 +69,21 @@ class OrdensServico extends MY_Controller
                              WHEN 4 THEN 'Urgente' END) AS descricao_prioridade,
                        a.status
                 FROM facilities_ordens_servico a
-                INNER JOIN usuarios c ON 
-                           c.id = a.id_requisitante
-                LEFT JOIN usuarios b ON 
-                           b.id = a.id_usuario";
+                INNER JOIN usuarios c ON c.id = a.id_requisitante
+                LEFT JOIN empresa_departamentos c1 ON c1.id = c.id_depto OR c1.nome = c.depto
+                LEFT JOIN usuarios b ON b.id = a.id_usuario
+                LEFT JOIN empresa_departamentos b1 ON b1.id = b.id_depto OR b1.nome = b.depto";
 		if ($this->session->userdata('tipo') == 'empresa') {
 			$sql .= " WHERE (b.id = '{$idUsuario}' OR b.empresa = '{$idUsuario}')";
-		} elseif (in_array($this->session->userdata('nivel'), [9, 10]) or ($this->session->userdata('nivel') == 6 or $this->session->userdata('tipo') == 'selecionador')) {
-			$sql .= " WHERE b.id = '{$idUsuario}'";
-		} elseif (in_array($this->session->userdata('nivel'), [7, 8, 18])) {
-			$sql .= " WHERE c.empresa = '{$this->session->userdata('empresa')}'";
+		} else {
+//			$sql .= ' WHERE b1.id = c1.id';
+			if (in_array($nivelAcesso, [9, 10])) {
+				$sql .= " WHERE a.id_depto = (SELECT id_depto FROM usuarios WHERE id = '{$idUsuario}')";
+			} elseif ($nivelAcesso == 6 or $this->session->userdata('tipo') == 'selecionador') {
+				$sql .= " WHERE b.id = '{$idUsuario}'";
+			} elseif (in_array($nivelAcesso, [7, 8, 18])) {
+				$sql .= " WHERE c.empresa = '{$this->session->userdata('empresa')}'";
+			}
 		}
 		if (!empty($post['status'])) {
 			$sql .= " AND a.status = '{$post['status']}'";
@@ -97,7 +103,7 @@ class OrdensServico extends MY_Controller
 		$data = array();
 
 		foreach ($rows->data as $row) {
-			if ($this->session->userdata('nivel') === '17') {
+			if ($nivelAcesso === '17') {
 //                if ($row->status === 'G') {
 				$acoes = '<button class="btn btn-sm btn-info" onclick="edit_os(' . $row->numero_os . ');" title="Editar ordem de serviço"><i class="glyphicon glyphicon-pencil"></i></button>
                               <button class="btn btn-sm btn-danger" onclick="delete_os(' . $row->numero_os . ');" title="Excluir ordem de serviço"><i class="glyphicon glyphicon-trash"></i></button>

@@ -464,18 +464,18 @@ class Apontamento extends MY_Controller
 
 		foreach ($output->data as $row) {
 			$avaliacoesPerformance = [
-				$row->comprometimento,
-				$row->pontualidade,
-				$row->script,
-				$row->simpatia,
-				$row->empatia,
-				$row->postura,
-				$row->ferramenta,
-				$row->tradutorio,
-				$row->linguistico,
-				$row->neutralidade,
-				$row->discricao,
-				$row->fidelidade
+				$row->comprometimento !== null ? (int)$row->comprometimento : null,
+				$row->pontualidade !== null ? (int)$row->pontualidade : null,
+				$row->script !== null ? (int)$row->script : null,
+				$row->simpatia !== null ? (int)$row->simpatia : null,
+				$row->empatia !== null ? (int)$row->empatia : null,
+				$row->postura !== null ? (int)$row->postura : null,
+				$row->ferramenta !== null ? (int)$row->ferramenta : null,
+				$row->tradutorio !== null ? (int)$row->tradutorio : null,
+				$row->linguistico !== null ? (int)$row->linguistico : null,
+				$row->neutralidade !== null ? (int)$row->neutralidade : null,
+				$row->discricao !== null ? (int)$row->discricao : null,
+				$row->fidelidade !== null ? (int)$row->fidelidade : null
 			];
 
 			$mediaPerformance[0][] = $row->comprometimento;
@@ -501,6 +501,11 @@ class Apontamento extends MY_Controller
 
 		$output->media = array_map(function ($value) {
 			return str_replace('.', ',', round(array_sum($value) / max(count(array_filter($value)), 1), 2));
+		}, $mediaPerformance);
+
+
+		$output->media_real = array_map(function ($value) {
+			return array_sum($value) / max(count(array_filter($value)), 1);
 		}, $mediaPerformance);
 
 
@@ -815,6 +820,24 @@ class Apontamento extends MY_Controller
 
 		$data->dados = $data->nome_usuario . '<br>' . ucfirst($nomeMes) . '/' . $data->ano;
 
+		$feedbacks = $this->feedback
+			->select('id, nome_usuario_orientador')
+			->select(["DATE_FORMAT(data, '%d/%m/%Y') AS data"], false)
+			->where('id_usuario', $data->id_usuario)
+			->where('YEAR(data)', $data->ano)
+			->order_by('nome_usuario_orientador', 'asc')
+			->order_by('data', 'asc')
+			->findAll();
+
+		$idsFeedback = ['' => 'selecione...'];
+		if ($feedbacks) {
+			foreach ($feedbacks as $feedback) {
+				$idsFeedback[$feedback->id] = $feedback->data . ' - ' . $feedback->nome_usuario_orientador;
+			}
+		}
+
+		$data->id_feedback = form_dropdown('', $idsFeedback, '');
+
 		echo json_encode($data);
 	}
 
@@ -822,8 +845,13 @@ class Apontamento extends MY_Controller
 	public function editarFeedback()
 	{
 		$data = $this->alocados
-			->select('id AS id_alocado, nome_usuario AS nome_usuario_orientado')
+			->select('id_alocacao, id_usuario, nome_usuario AS nome_usuario_orientado')
 			->find($this->input->post('id_alocado'));
+
+		$alocacao = $this->db->select('id, ano')
+			->where('id', $data->id_alocacao)
+			->get('icom_alocacao')
+			->row();
 
 		if (empty($data)) {
 			exit(json_encode(['erro' => 'Nenhum colaborador alocado encontrado.']));
@@ -832,7 +860,8 @@ class Apontamento extends MY_Controller
 		$feedbacks = $this->feedback
 			->select('id, nome_usuario_orientador')
 			->select(["DATE_FORMAT(data, '%d/%m/%Y') AS data"], false)
-			->where('id_alocado', $data->id_alocado)
+			->where('id_usuario', $data->id_usuario)
+			->where('YEAR(data)', $alocacao->ano)
 			->order_by('nome_usuario_orientador', 'asc')
 			->order_by('data', 'asc')
 			->findAll();
@@ -869,16 +898,39 @@ class Apontamento extends MY_Controller
 		$data = $this->input->post();
 
 		$id = $data['id'];
+		$idFeedback = $data['id_feedback'];
+		$nomeUsuarioOrientador = $data['nome_usuario_orientador'];
+		$dataFeedback = $data['data_feedback'];
+		$descricao = $data['descricao'];
 		unset($data['id']);
+		unset($data['tipo_feedback']);
+		unset($data['id_feedback']);
+		unset($data['nome_usuario_orientador']);
+		unset($data['data_feedback']);
+		unset($data['descricao']);
 
-		foreach ($data as &$row) {
-			if (strlen($row) == 0) {
-				$row = null;
-			}
+		$this->load->library('entities');
+
+		$data = $this->entities->create('icomAlocados', $data);
+
+		if ($idFeedback) {
+			$data2 = $this->feedback->find($idFeedback);
+			$data2->descricao = $descricao;
+		} else {
+			$feedback = [
+				'id' => $idFeedback,
+				'id_usuario' => $data->id_usuario,
+				'nome_usuario_orientador' => $nomeUsuarioOrientador,
+				'data' => $dataFeedback,
+				'descricao' => $descricao
+			];
+			$data2 = $this->entities->create('icomAlocadosFeedback', $feedback);
 		}
 
+
 		$this->db->trans_start();
-		$this->db->update('icom_alocados', $data, ['id' => $id]);
+		$this->alocados->update($id, $data) or exit(json_encode(['erro' => $this->alocados->errors()]));
+		$this->feedback->save($data2) or exit(json_encode(['erro' => $this->feedback->errors()]));
 		$this->db->trans_complete();
 
 		if ($this->db->trans_status() == false) {
@@ -1087,9 +1139,14 @@ class Apontamento extends MY_Controller
 		$data['descricao'] = $feedback->descricao;
 		$data['resultado'] = $feedback->resultado;
 
-		$alocado = $this->alocados->find($feedback->id_alocado ?? '');
+		$usuario = $this->db
+			->select('nome')
+			->where('id', $feedback->id_usuario)
+			->get('usuarios')
+			->row();
+//		$alocado = $this->alocados->find($feedback->id_usuario ?? '');
 
-		$data['nome_usuario_orientado'] = $alocado->nome_usuario;
+		$data['nome_usuario_orientado'] = $usuario->nome;
 
 		$this->load->library('m_pdf');
 
@@ -1102,7 +1159,7 @@ class Apontamento extends MY_Controller
 		$this->m_pdf->pdf->writeHTML($stylesheet, 1);
 		$this->m_pdf->pdf->writeHTML($this->load->view('icom/pdf_alocado_feedback', $data, true));
 
-		$this->m_pdf->pdf->Output('Relatório de Feedback Interpretes ICOM - ' . $alocado->nome_usuario . '.pdf', 'D');
+		$this->m_pdf->pdf->Output('Relatório de Feedback Interpretes ICOM - ' . $usuario->nome . '.pdf', 'D');
 	}
 
 }

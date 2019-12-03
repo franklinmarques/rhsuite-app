@@ -97,6 +97,18 @@
 	<sethtmlpageheader name="myHeader" value="on" show-this-page="1"></sethtmlpageheader>
 
 	<div>
+		<div class="row">
+			<div class="col-sm-12 form-inline">
+				<div class="form-group">
+					<span style="font-weight: bold;">Qtde. de colaboradores calculados:</span>&emsp;&emsp;
+					<label>Mínimo:</label> <span><?= $fator_divisor['min']; ?>;</span>&emsp;&emsp;
+					<label>Máximo:</label> <span><?= $fator_divisor['max']; ?>;</span>&emsp;&emsp;
+					<label>Média:</label> <span><?= $fator_divisor['avg']; ?>;</span>&emsp;&emsp;
+					<label>Fator divisor:</label> <span><?= $fator_divisor['base']; ?>.</span>
+				</div>
+			</div>
+		</div>
+
 		<table id="relatorio_producao" class="table table-bordered table-condensed">
 			<thead>
 			<tr class="active">
@@ -111,11 +123,15 @@
 			</tr>
 			</thead>
 			<tbody>
-			<?php foreach ($data as $linha): ?>
+			<?php foreach ($data as $k => $linha): ?>
 				<?php $className = ''; ?>
 				<tr>
 					<?php foreach ($linha as $coluna): ?>
-						<td class="<?= $className; ?>"><?= $coluna; ?></td>
+						<?php if ($k === (count($data) - 1)): ?>
+							<td style="font-weight: bold;" class="<?= $className; ?>"><?= $coluna; ?></td>
+						<?php else: ?>
+							<td class="<?= $className; ?>"><?= $coluna; ?></td>
+						<?php endif; ?>
 						<?php $className = 'text-center'; ?>
 					<?php endforeach; ?>
 				</tr>

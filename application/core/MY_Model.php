@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class MY_Model extends CI_Model
+abstract class MY_Model extends CI_Model
 {
 
 	protected static $table = '';
@@ -116,9 +116,8 @@ class MY_Model extends CI_Model
 				switch ($type) {
 					case 'date':
 					case 'datetime':
-						$value = substr($value, 0, strrchr($value, ' '));
-						if (strpos($value, '/') !== false) {
-							$value = preg_replace('/^(\d+)\-(\d+)\-(\d+)/', '$3/$2/$1', $value);
+						if (strpos($value, '-') !== false) {
+							$value = preg_replace('/^(\d+)-(\d+)-(\d+)( (\d+):(\d+))?/', '$3/$2/$1 $4$5', $value);
 						}
 						break;
 					case 'time':
@@ -385,6 +384,8 @@ class MY_Model extends CI_Model
 
 		if ($data instanceof Entity) {
 			$data = $data->toArray();
+		} elseif (is_object($data)) {
+			$data = (array)$data;
 		}
 
 		$this->form_validation->set_data($data);

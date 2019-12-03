@@ -1058,19 +1058,23 @@ class Apontamento_relatorios extends MY_Controller
 			->result();
 
 		$alocacaoAtual = $this->db
-			->select('contrato, setor')
-			->where('id_empresa', $this->session->userdata('empresa'))
-			->where('depto', $this->input->get('depto'))
-			->where('area', $this->input->get('area'))
-			->where('setor', $this->input->get('setor'))
-			->where("DATE_FORMAT(data, '%Y-%m') = '{$mesAnoAtual}'")
-			->get('alocacao')
+			->select('a.contrato, a.setor, b.cnpj')
+			->join('empresa_setores b', 'b.nome = a.setor', 'left')
+			->where('a.id_empresa', $this->session->userdata('empresa'))
+			->where('a.depto', $this->input->get('depto'))
+			->where('a.area', $this->input->get('area'))
+			->where('a.setor', $this->input->get('setor'))
+			->where("DATE_FORMAT(a.data, '%Y-%m') = '{$mesAnoAtual}'")
+			->get('alocacao a')
 			->row();
+
 
 		$contrato = $this->db
 			->select('a.contrato, b.setor')
+			->select('c.nome AS nome_usuario, c.depto AS depto_usuario, c.email')
 			->select('(SELECT MAX(c.valor_indice) FROM alocacao_reajuste c WHERE c.id_cliente = a.id ORDER BY c.data_reajuste DESC) AS valor_indice', false)
 			->join('alocacao_unidades b', 'b.id_contrato = a.id')
+			->join('usuarios c', 'c.id = a.id_usuario', 'left')
 			->where('a.id_empresa', $this->session->userdata('empresa'))
 			->where('a.depto', $this->input->get('depto'))
 			->where('a.area', $this->input->get('area'))
@@ -1095,6 +1099,8 @@ class Apontamento_relatorios extends MY_Controller
 				->row(),
 			'contrato' => $alocacaoAtual->contrato ?? $contrato->contrato,
 			'setor' => $alocacaoAtual->setor ?? $contrato->setor,
+			'cnpj' => $alocacaoAtual->cnpj ?? null,
+			'coordenador' => $contrato,
 			'mostrarColaboradores' => $mostrarColaboradores,
 			'valor_unitario' => number_format($contrato->valor_indice * 100, 2, ',', '.'),
 			'query_string' => http_build_query($this->input->get() + ['mostrar_colaborador' => $mostrarColaboradores]),

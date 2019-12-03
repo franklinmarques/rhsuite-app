@@ -367,30 +367,33 @@
 										</th>
 										<th rowspan="2" class="warning" style="vertical-align: middle;">Função
 										</th>
-										<th colspan="6" class="text-center">Profissional principal</th>
-										<th colspan="6" class="text-center">Profissional substituto(a) do semestre</th>
-										<th colspan="6" class="text-center">Profissional substituto(a) 2</th>
+										<th colspan="7" class="text-center">Profissional principal</th>
+										<th colspan="7" class="text-center">Profissional substituto(a) do semestre</th>
+										<th colspan="7" class="text-center">Profissional substituto(a) 2</th>
 									</tr>
 									<tr>
 										<th>Qtde. dias</th>
 										<th>Desc. Fatur.</th>
 										<th>Qtde. horas</th>
 										<th>Total horas</th>
-										<th>Desc. Pres.</th>
+										<th>Desc. faltas</th>
+										<th>Desc. horas</th>
 										<th>Pgto. Pserv.</th>
 
 										<th>Qtde. dias</th>
 										<th>Desc. Fatur.</th>
 										<th>Qtde. horas</th>
 										<th>Total horas</th>
-										<th>Desc. Pres.</th>
+										<th>Desc. faltas</th>
+										<th>Desc. horas</th>
 										<th>Pgto. Pserv.</th>
 
 										<th>Qtde. dias</th>
 										<th>Desc. Fatur.</th>
 										<th>Qtde. horas</th>
 										<th>Total horas</th>
-										<th>Desc. Pres.</th>
+										<th>Desc. faltas</th>
+										<th>Desc. horas</th>
 										<th>Pgto. Pserv.</th>
 									</tr>
 									</thead>
@@ -684,7 +687,23 @@
 							<input type="hidden" name="diretoria" value="">
 							<input type="hidden" name="supervisor" value="">
 							<input type="hidden" name="ano" value="">
+							<input type="hidden" name="ano_os" value="">
 							<input type="hidden" name="semestre" value="">
+							<input type="hidden" name="semestre_os" value="">
+							<div class="row form-group">
+								<div class="col-md-8 col-md-offset-3">
+									<label class="radio-inline">
+										<input type="radio" name="semestre_anterior" id="semestre_anterior_0" value="0"
+											   onchange="montar_os_semestre_anterior()" checked>
+										Semestre atual
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="semestre_anterior" id="semestre_anterior_1" value="1"
+											   onchange="montar_os_semestre_anterior(1)">
+										Semestre anterior
+									</label>
+								</div>
+							</div>
 							<div class="row form-group">
 								<label class="control-label col-md-3">Ordem de serviço</label>
 								<div class="col-md-8">
@@ -1079,8 +1098,15 @@
 							<input type="hidden" value="" name="id"/>
 							<input type="hidden" value="" name="mes"/>
 							<input type="hidden" value="" name="substituto"/>
+							<input type="hidden" value="" name="endosso_original"/>
 							<div class="row form-group">
-								<label class="control-label col-md-4">Desconto mensal</label>
+								<label class="control-label col-md-5">Desconto mensal</label>
+								<div class="col-md-3">
+									<input name="endosso" type="text" value="" class="form-control text-right">
+								</div>
+							</div>
+							<div class="row form-group">
+								<label class="control-label col-md-5">Desconto mensal (original)</label>
 								<div class="col-md-3">
 									<input name="desconto" type="text" value="" class="form-control text-right">
 								</div>
@@ -1586,7 +1612,7 @@
 							</tr>
 							<tr style="border: 2px solid #fff;">
 								<td class="text-center"
-									style="padding: 4px; color: #000; background-color: #f0ad4e;">FA
+									style="padding: 4px; color: #000; background-color: #f0ad4e;">PV
 								</td>
 								<td style="padding-left: 8px;"> Posto vago</td>
 							</tr>
@@ -2331,13 +2357,13 @@
             'columnDefs': [
                 {
                     'visible': false,
-                    'targets': [0, 18, 19, 20, 21, 22, 23]
+                    'targets': [0, 20, 21, 22, 23, 24, 25, 26]
                 },
                 {
                     'createdCell': function (td, cellData, rowData, row, col) {
                         if (rowData[col] !== null) {
                             $(td).addClass('desconto_mes').css('cursor', 'pointer').on('click', function () {
-                                edit_faturamento(rowData[24], table_faturamento.context[0].json.mes, null); // id, desconto
+                                edit_faturamento(rowData[27], table_faturamento.context[0].json.mes, null); // id, desconto
                             });
                         }
                     },
@@ -2348,27 +2374,27 @@
                     'createdCell': function (td, cellData, rowData, row, col) {
                         if (rowData[col] !== null) {
                             $(td).addClass('desconto_mes').css('cursor', 'pointer').on('click', function () {
-                                edit_faturamento(rowData[24], table_faturamento.context[0].json.mes, 1); // id, desconto sub 1
+                                edit_faturamento(rowData[27], table_faturamento.context[0].json.mes, 1); // id, desconto sub 1
                             });
                         }
                     },
                     'className': 'text-center',
-                    'targets': [13]
+                    'targets': [14]
                 },
                 {
                     'createdCell': function (td, cellData, rowData, row, col) {
                         if (rowData[col] !== null) {
                             $(td).addClass('desconto_mes').css('cursor', 'pointer').on('click', function () {
-                                edit_faturamento(rowData[24], table_faturamento.context[0].json.mes, 2); // id, desconto sub 2
+                                edit_faturamento(rowData[27], table_faturamento.context[0].json.mes, 2); // id, desconto sub 2
                             });
                         }
                     },
                     'className': 'text-center',
-                    'targets': [19]
+                    'targets': [21]
                 },
                 {
                     'className': 'text-center',
-                    'targets': [3, 6, 8, 12, 14, 18, 20]
+                    'targets': [3, 6, 8, 13, 15, 20, 21]
                 },
                 {
                     'createdCell': function (td, cellData, rowData, row, col) {
@@ -2376,21 +2402,21 @@
                             $(td).css('background-color', '#ff0');
                         }
                         $(td).css('cursor', 'pointer').on('click', function () {
-                            edit_horario(rowData[24], table_faturamento.context[0].json.mes);
+                            edit_horario(rowData[27], table_faturamento.context[0].json.mes);
                         }).html('<a>' + cellData + '</a>');
                     },
                     'targets': [2]
                 },
                 {
                     'createdCell': function (td, cellData, rowData, row, col) {
-                        if ((rowData[27] !== null && rowData[29] <= table_faturamento.context[0].json.mes) || (rowData[30] !== null && rowData[32] <= table_faturamento.context[0].json.mes)) {
+                        if ((rowData[30] !== null && rowData[31] <= table_faturamento.context[0].json.mes) || (rowData[33] !== null && rowData[35] <= table_faturamento.context[0].json.mes)) {
                             $(td).css({'background-color': '#ff0', 'color': '#000'});
                             // $(td).html(rowData[61] < ((col + 4) / 8) ? rowData[60] : rowData[col]);
                         } else {
                             // $(td).html(rowData[col]);
                         }
                         $(td).css('cursor', 'pointer').on('click', function () {
-                            edit_substituto(rowData[24], table_faturamento.context[0].json.mes);
+                            edit_substituto(rowData[27], table_faturamento.context[0].json.mes);
                         });
 
                     },
@@ -2407,16 +2433,20 @@
                     'targets': [5]
                 },
                 {
+                    'className': 'text-center total_horas',
+                    'targets': [10, 16, 22]
+                },
+                {
                     'createdCell': function (td, cellData, rowData, row, col) {
                         $(td).addClass('total_horas_mes');
                         if (rowData[col] !== null) {
-                            if (rowData[26] !== null) {
+                            if (rowData[29] !== null) {
                                 $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
                             } else {
                                 $(td).css({'background-color': '#ff0', 'color': '#000'});
                             }
                             $(td).css('cursor', 'pointer').on('click', function () {
-                                edit_totalizacao(rowData[25], table_faturamento.context[0].json.mes, rowData[34], null);
+                                edit_totalizacao(rowData[28], table_faturamento.context[0].json.mes, rowData[37], null);
                             });
                         }
                         $(td).html(rowData[col]);
@@ -2428,54 +2458,51 @@
                     'createdCell': function (td, cellData, rowData, row, col) {
                         $(td).addClass('total_horas_mes');
                         if (rowData[col] !== null) {
-                            if (rowData[26] !== null) {
+                            if (rowData[29] !== null) {
                                 $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
                             } else {
                                 $(td).css({'background-color': '#ff0', 'color': '#000'});
                             }
-                            $(td).css('cursor', 'pointer').on('click', function () {
-                                edit_totalizacao(rowData[25], table_faturamento.context[0].json.mes, rowData[34], 1);
-                            });
+                            // $(td).css('cursor', 'pointer').on('click', function () {
+                            //     edit_totalizacao(rowData[25], table_faturamento.context[0].json.mes, rowData[34], 1);
+                            // });
                         }
                         $(td).html(rowData[col]);
                     },
                     'className': 'text-center total_horas',
-                    'targets': [15]
+                    'targets': [16]
                 },
                 {
                     'createdCell': function (td, cellData, rowData, row, col) {
                         $(td).addClass('total_horas_mes');
                         if (rowData[col] !== null) {
-                            if (rowData[26] !== null) {
+                            if (rowData[29] !== null) {
                                 $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
                             } else {
                                 $(td).css({'background-color': '#ff0', 'color': '#000'});
                             }
-                            $(td).css('cursor', 'pointer').on('click', function () {
-                                edit_totalizacao(rowData[25], table_faturamento.context[0].json.mes, rowData[34], 2);
-                            });
+                            // $(td).css('cursor', 'pointer').on('click', function () {
+                            //     edit_totalizacao(rowData[25], table_faturamento.context[0].json.mes, rowData[34], 2);
+                            // });
                         }
                         $(td).html(rowData[col]);
                     },
                     'className': 'text-center total_horas',
-                    'targets': [21]
+                    'targets': [24]
                 },
                 {
                     'createdCell': function (td, cellData, rowData, row, col) {
                         $(td).addClass('total_horas_mes');
-                        if (rowData[col] !== null || rowData[26] !== null) {
+                        if (rowData[col] !== null || rowData[29] !== null) {
                             if (rowData[col] !== null) {
                                 if (rowData[col].indexOf('-') === 0) {
                                     $(td).css({'background-color': '#f00', 'color': '#000'});
                                 } else if (rowData[col].length > 0) {
                                     $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
                                 }
-                            } else if (rowData[col] === null && rowData[26] !== null) {
+                            } else if (rowData[col] === null && rowData[29] !== null) {
                                 $(td).css({'background-color': '#ff0', 'color': '#000'});
                             }
-                            $(td).css('cursor', 'pointer').on('click', function () {
-                                edit_ajuste_mensal(rowData[25], table_faturamento.context[0].json.mes, rowData[34], 0);
-                            });
                         }
                         $(td).html(rowData[col] !== null ? rowData[col] : '00:00');
                     },
@@ -2485,67 +2512,21 @@
                 {
                     'createdCell': function (td, cellData, rowData, row, col) {
                         $(td).addClass('total_horas_mes');
-                        if (rowData[col] !== null || rowData[26] !== null) {
+                        if (rowData[col] !== null || rowData[29] !== null) {
                             if (rowData[col] !== null) {
                                 if (rowData[col].indexOf('-') === 0) {
                                     $(td).css({'background-color': '#f00', 'color': '#000'});
                                 } else if (rowData[col].length > 0) {
                                     $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
                                 }
-                            } else if (rowData[col] === null && rowData[26] !== null) {
+                            } else if (rowData[col] === null && rowData[29] !== null) {
                                 $(td).css({'background-color': '#ff0', 'color': '#000'});
                             }
                             $(td).css('cursor', 'pointer').on('click', function () {
-                                edit_ajuste_mensal(rowData[25], table_faturamento.context[0].json.mes, rowData[34], 1);
+                                edit_ajuste_mensal(rowData[28], table_faturamento.context[0].json.mes, rowData[37], 0);
                             });
                         }
                         $(td).html(rowData[col] !== null ? rowData[col] : '00:00');
-                    },
-                    'className': 'text-center total_horas',
-                    'targets': [16]
-                },
-                {
-                    'createdCell': function (td, cellData, rowData, row, col) {
-                        $(td).addClass('total_horas_mes');
-                        if (rowData[col] !== null || rowData[26] !== null) {
-                            if (rowData[col] !== null) {
-                                if (rowData[col].indexOf('-') === 0) {
-                                    $(td).css({'background-color': '#f00', 'color': '#000'});
-                                } else if (rowData[col].length > 0) {
-                                    $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
-                                }
-                            } else if (rowData[col] === null && rowData[26] !== null) {
-                                $(td).css({'background-color': '#ff0', 'color': '#000'});
-                            }
-                            $(td).css('cursor', 'pointer').on('click', function () {
-                                edit_ajuste_mensal(rowData[25], table_faturamento.context[0].json.mes, rowData[34], 2);
-                            });
-                        }
-                        $(td).html(rowData[col] !== null ? rowData[col] : '00:00');
-                    },
-                    'className': 'text-center total_horas',
-                    'targets': [22]
-                },
-                {
-                    'createdCell': function (td, cellData, rowData, row, col) {
-                        $(td).addClass('total_horas_mes');
-                        if (rowData[col] !== null || rowData[26] !== null || rowData[9] !== null || rowData[10] !== null) {
-                            if (rowData[col] !== null) {
-                                $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
-                                rowData[col] = 'Pago';
-                            } else if (rowData[col] === null && (rowData[26] !== null || rowData[9] !== null || rowData[10] !== null)) {
-                                $(td).css({'background-color': '#ff0', 'color': '#000'});
-                                rowData[col] = 'Pagar';
-                            }
-
-                        } else if (!(rowData[9] !== null || rowData[10] !== null)) {
-                            $(td).css({'background-color': '#ff0', 'color': '#000'});
-                            rowData[col] = 'Pagar';
-                        }
-                        $(td).css('cursor', 'pointer').on('click', function () {
-                            edit_pagamento_prestador(rowData[24], table_faturamento.context[0].json.mes, null);
-                        });
-                        $(td).html(rowData[col]);
                     },
                     'className': 'text-center total_horas',
                     'targets': [11]
@@ -2553,23 +2534,18 @@
                 {
                     'createdCell': function (td, cellData, rowData, row, col) {
                         $(td).addClass('total_horas_mes');
-                        if (rowData[col] !== null || rowData[26] !== null && rowData[27] || rowData[15] !== null || rowData[16] !== null) {
+                        if (rowData[col] !== null || rowData[29] !== null) {
                             if (rowData[col] !== null) {
-                                $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
-                                rowData[col] = 'Pago';
-                            } else if (rowData[col] === null && (rowData[26] !== null || rowData[15] !== null || rowData[16] !== null)) {
+                                if (rowData[col].indexOf('-') === 0) {
+                                    $(td).css({'background-color': '#f00', 'color': '#000'});
+                                } else if (rowData[col].length > 0) {
+                                    $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
+                                }
+                            } else if (rowData[col] === null && rowData[29] !== null) {
                                 $(td).css({'background-color': '#ff0', 'color': '#000'});
-                                rowData[col] = 'Pagar';
                             }
-
-                        } else if (rowData[15] !== null || rowData[16] !== null) {
-                            $(td).css({'background-color': '#ff0', 'color': '#000'});
-                            rowData[col] = 'Pagar';
                         }
-                        $(td).css('cursor', 'pointer').on('click', function () {
-                            edit_pagamento_prestador(rowData[24], table_faturamento.context[0].json.mes, 1);
-                        });
-                        $(td).html(rowData[col]);
+                        $(td).html(rowData[col] !== null ? rowData[col] : '00:00');
                     },
                     'className': 'text-center total_horas',
                     'targets': [17]
@@ -2577,26 +2553,137 @@
                 {
                     'createdCell': function (td, cellData, rowData, row, col) {
                         $(td).addClass('total_horas_mes');
-                        if (rowData[col] !== null || rowData[26] !== null && rowData[30] || rowData[21] !== null || rowData[22] !== null) {
+                        if (rowData[col] !== null || rowData[29] !== null) {
+                            if (rowData[col] !== null) {
+                                if (rowData[col].indexOf('-') === 0) {
+                                    $(td).css({'background-color': '#f00', 'color': '#000'});
+                                } else if (rowData[col].length > 0) {
+                                    $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
+                                }
+                            } else if (rowData[col] === null && rowData[29] !== null) {
+                                $(td).css({'background-color': '#ff0', 'color': '#000'});
+                            }
+                            $(td).css('cursor', 'pointer').on('click', function () {
+                                edit_ajuste_mensal(rowData[28], table_faturamento.context[0].json.mes, rowData[37], 1);
+                            });
+                        }
+                        $(td).html(rowData[col] !== null ? rowData[col] : '00:00');
+                    },
+                    'className': 'text-center total_horas',
+                    'targets': [18]
+                },
+                {
+                    'createdCell': function (td, cellData, rowData, row, col) {
+                        $(td).addClass('total_horas_mes');
+                        if (rowData[col] !== null || rowData[29] !== null) {
+                            if (rowData[col] !== null) {
+                                if (rowData[col].indexOf('-') === 0) {
+                                    $(td).css({'background-color': '#f00', 'color': '#000'});
+                                } else if (rowData[col].length > 0) {
+                                    $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
+                                }
+                            } else if (rowData[col] === null && rowData[29] !== null) {
+                                $(td).css({'background-color': '#ff0', 'color': '#000'});
+                            }
+                        }
+                        $(td).html(rowData[col] !== null ? rowData[col] : '00:00');
+                    },
+                    'className': 'text-center total_horas',
+                    'targets': [24]
+                },
+                {
+                    'createdCell': function (td, cellData, rowData, row, col) {
+                        $(td).addClass('total_horas_mes');
+                        if (rowData[col] !== null || rowData[29] !== null) {
+                            if (rowData[col] !== null) {
+                                if (rowData[col].indexOf('-') === 0) {
+                                    $(td).css({'background-color': '#f00', 'color': '#000'});
+                                } else if (rowData[col].length > 0) {
+                                    $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
+                                }
+                            } else if (rowData[col] === null && rowData[29] !== null) {
+                                $(td).css({'background-color': '#ff0', 'color': '#000'});
+                            }
+                            $(td).css('cursor', 'pointer').on('click', function () {
+                                edit_ajuste_mensal(rowData[28], table_faturamento.context[0].json.mes, rowData[37], 2);
+                            });
+                        }
+                        $(td).html(rowData[col] !== null ? rowData[col] : '00:00');
+                    },
+                    'className': 'text-center total_horas',
+                    'targets': [25]
+                },
+                {
+                    'createdCell': function (td, cellData, rowData, row, col) {
+                        $(td).addClass('total_horas_mes');
+                        if (rowData[col] !== null || rowData[29] !== null || rowData[9] !== null || rowData[11] !== null) {
                             if (rowData[col] !== null) {
                                 $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
                                 rowData[col] = 'Pago';
-                            } else if (rowData[col] === null && (rowData[26] !== null || rowData[21] !== null || rowData[22] !== null)) {
+                            } else if (rowData[col] === null && (rowData[29] !== null || rowData[9] !== null || rowData[11] !== null)) {
                                 $(td).css({'background-color': '#ff0', 'color': '#000'});
                                 rowData[col] = 'Pagar';
                             }
 
-                        } else if (rowData[21] !== null || rowData[22] !== null) {
+                        } else if (!(rowData[9] !== null || rowData[11] !== null)) {
                             $(td).css({'background-color': '#ff0', 'color': '#000'});
                             rowData[col] = 'Pagar';
                         }
                         $(td).css('cursor', 'pointer').on('click', function () {
-                            edit_pagamento_prestador(rowData[24], table_faturamento.context[0].json.mes, 2);
+                            edit_pagamento_prestador(rowData[27], table_faturamento.context[0].json.mes, null);
                         });
                         $(td).html(rowData[col]);
                     },
                     'className': 'text-center total_horas',
-                    'targets': [23]
+                    'targets': [12]
+                },
+                {
+                    'createdCell': function (td, cellData, rowData, row, col) {
+                        $(td).addClass('total_horas_mes');
+                        if (rowData[col] !== null || rowData[29] !== null && rowData[30] || rowData[16] !== null || rowData[18] !== null) {
+                            if (rowData[col] !== null) {
+                                $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
+                                rowData[col] = 'Pago';
+                            } else if (rowData[col] === null && (rowData[29] !== null || rowData[16] !== null || rowData[18] !== null)) {
+                                $(td).css({'background-color': '#ff0', 'color': '#000'});
+                                rowData[col] = 'Pagar';
+                            }
+
+                        } else if (rowData[16] !== null || rowData[18] !== null) {
+                            $(td).css({'background-color': '#ff0', 'color': '#000'});
+                            rowData[col] = 'Pagar';
+                        }
+                        $(td).css('cursor', 'pointer').on('click', function () {
+                            edit_pagamento_prestador(rowData[27], table_faturamento.context[0].json.mes, 1);
+                        });
+                        $(td).html(rowData[col]);
+                    },
+                    'className': 'text-center total_horas',
+                    'targets': [19]
+                },
+                {
+                    'createdCell': function (td, cellData, rowData, row, col) {
+                        $(td).addClass('total_horas_mes');
+                        if (rowData[col] !== null || rowData[29] !== null && rowData[33] || rowData[23] !== null || rowData[25] !== null) {
+                            if (rowData[col] !== null) {
+                                $(td).css({'background-color': '#5cb85c', 'color': '#fff'});
+                                rowData[col] = 'Pago';
+                            } else if (rowData[col] === null && (rowData[29] !== null || rowData[23] !== null || rowData[25] !== null)) {
+                                $(td).css({'background-color': '#ff0', 'color': '#000'});
+                                rowData[col] = 'Pagar';
+                            }
+
+                        } else if (rowData[23] !== null || rowData[25] !== null) {
+                            $(td).css({'background-color': '#ff0', 'color': '#000'});
+                            rowData[col] = 'Pagar';
+                        }
+                        $(td).css('cursor', 'pointer').on('click', function () {
+                            edit_pagamento_prestador(rowData[27], table_faturamento.context[0].json.mes, 2);
+                        });
+                        $(td).html(rowData[col]);
+                    },
+                    'className': 'text-center total_horas',
+                    'targets': [26]
                 },
                 {
                     'orderable': false,
@@ -3283,8 +3370,11 @@
                 $('#form_os_individual [name="diretoria"]').val(json.diretoria);
                 $('#form_os_individual [name="supervisor"]').val(json.supervisor);
                 $('#form_os_individual [name="ano"]').val(json.ano);
+                $('#form_os_individual [name="ano_os"]').val(json.ano_os);
                 $('#form_os_individual [name="semestre"]').val(json.semestre);
+                $('#form_os_individual [name="semestre_os"]').val(json.semestre_os);
 
+                $('#form_os_individual [name="semestre_anterior"][value="0"]').prop('checked', true);
                 $('#form_os_individual [name="ordem_servico"]').html($(json.ordem_servico).html());
                 $('#form_os_individual [name="escola"]').html($(json.escola).html());
                 $('#form_os_individual [name="aluno"]').html($(json.aluno).html());
@@ -3292,6 +3382,41 @@
             }
         });
     }
+
+
+    function montar_os_semestre_anterior(semestre_anterior = 0) {
+        $.ajax({
+            'url': '<?php echo site_url('ei/apontamento/montarOSRestantes') ?>',
+            'type': 'POST',
+            'dataType': 'json',
+            'data': busca + '&semestre_anterior=' + semestre_anterior,
+            'beforeSend': function () {
+                $('#form_os_individual select').prop('disabled', true);
+            },
+            'success': function (json) {
+                if (json.erro) {
+                    alert(json.erro);
+                    return false;
+                }
+                $('#form_os_individual [name="depto"]').val(json.depto);
+                $('#form_os_individual [name="diretoria"]').val(json.diretoria);
+                $('#form_os_individual [name="supervisor"]').val(json.supervisor);
+                $('#form_os_individual [name="ano"]').val(json.ano);
+                $('#form_os_individual [name="ano_os"]').val(json.ano_os);
+                $('#form_os_individual [name="semestre"]').val(json.semestre);
+                $('#form_os_individual [name="semestre_os"]').val(json.semestre_os);
+
+                $('#form_os_individual [name="semestre_anterior"][value="' + semestre_anterior + '"]').prop('checked', true);
+                $('#form_os_individual [name="ordem_servico"]').html($(json.ordem_servico).html());
+                $('#form_os_individual [name="escola"]').html($(json.escola).html());
+                $('#form_os_individual [name="aluno"]').html($(json.aluno).html());
+            },
+            'complete': function () {
+                $('#form_os_individual select').prop('disabled', false);
+            }
+        });
+    }
+
 
     function preparar_os_escola_individual(elem) {
         $.ajax({
@@ -3548,6 +3673,8 @@
                 $('#form_faturamento [name="mes"]').val(json.mes);
                 $('#form_faturamento [name="substituto"]').val(substituto);
                 $('#form_faturamento [name="desconto"]').val(json.desconto);
+                $('#form_faturamento [name="endosso"]').val(json.endosso);
+                $('#form_faturamento [name="endosso_original"]').val(json.endosso_original);
 
                 $('#modal_faturamento').modal('show');
             }

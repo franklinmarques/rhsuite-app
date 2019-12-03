@@ -25,21 +25,21 @@ class Icom_alocados_model extends MY_Model
 		'horario_retorno' => 'valid_time',
 		'horario_saida' => 'valid_time',
 		'desconto_folha' => 'max_length[10]',
-		'comprometimento' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'pontualidade' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'script' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'simpatia' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'empatia' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'postura' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'ferramenta' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'tradutorio' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'linguistico' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'neutralidade' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'discricao' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'fidelidade' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'extra_1' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'extra_2' => 'is_natural_no_zero|less_than_equal_to[4]',
-		'extra_3' => 'is_natural_no_zero|less_than_equal_to[4]'
+		'comprometimento' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'pontualidade' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'script' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'simpatia' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'empatia' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'postura' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'ferramenta' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'tradutorio' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'linguistico' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'neutralidade' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'discricao' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'fidelidade' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'extra_1' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'extra_2' => 'is_natural_no_zero|less_than_equal_to[5]',
+		'extra_3' => 'is_natural_no_zero|less_than_equal_to[5]'
 	];
 
 	protected $beforeDelete = ['restaurarSaldoBancoHoras'];
@@ -49,10 +49,11 @@ class Icom_alocados_model extends MY_Model
 	protected static $categoria = ['CLT' => 'CLT', 'MEI' => 'MEI'];
 
 	protected static $nivelPerformance = [
-		'1' => 'Não condiz com as expectativas',
-		'2' => 'Atinge as expectativas, mas precisa melhorar',
-		'3' => 'Atinge as expectativas',
-		'4' => 'Acima das expectativas'
+		'1' => 'Muito abaixo do necessário',
+		'2' => 'Um pouco abaixo do necessário',
+		'3' => 'Dentro da média e do necessário',
+		'4' => 'Um pouco acima do necessário',
+		'5' => 'Muito acima do necessário'
 	];
 
 	//==========================================================================
