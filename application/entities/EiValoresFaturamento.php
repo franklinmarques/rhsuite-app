@@ -10,6 +10,7 @@ class EiValoresFaturamento extends Entity
 	protected $semestre;
 	protected $id_cargo;
 	protected $id_funcao;
+	protected $qtde_horas;
 	protected $valor;
 	protected $valor_pagamento;
 	protected $valor2;
@@ -22,6 +23,7 @@ class EiValoresFaturamento extends Entity
 		'semestre' => 'int',
 		'id_cargo' => '?int',
 		'id_funcao' => 'int',
+		'qtde_horas' => '?float',
 		'valor' => '?float',
 		'valor_pagamento' => '?float',
 		'valor2' => '?float',

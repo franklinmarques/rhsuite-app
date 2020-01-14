@@ -52,9 +52,15 @@ class Auth
 	//==========================================================================
 	public function getUsuario($email, $senha = null)
 	{
+		if ($senha) {
+			$this->_CI->db->start_cache();
+			$this->_CI->db->where('a.senha', $senha);
+			$this->_CI->db->stop_cache();
+		}
+
 		$row = $this->_CI->db
-			->where(['email' => $email, 'senha' => $senha])
-			->get('usuarios')
+			->where('a.email', $email)
+			->get('usuarios a')
 			->row();
 
 		if (empty($row)) {
@@ -63,7 +69,7 @@ class Auth
 				->select("IF(a.nivel_acesso = 'E', 'candidato_externo', 'candidato') AS tipo", false)
 				->select('NULL AS hash_acesso', false)
 				->join('usuarios b', 'b.id = a.empresa')
-				->where(['a.email' => $email, 'a.senha' => $senha])
+				->where('a.email', $email)
 				->get('recrutamento_usuarios a')
 				->row();
 		}
@@ -73,7 +79,7 @@ class Auth
 				->select('a.*, b.id AS empresa, b.url, b.cabecalho', false)
 				->select("'cliente' AS tipo, NULL AS nivel_acesso, NULL AS hash_acesso", false)
 				->join('usuarios b', 'b.id = a.id_empresa')
-				->where(['a.email' => $email, 'a.senha' => $senha])
+				->where('a.email', $email)
 				->get('cursos_clientes a')
 				->row();
 		}
@@ -83,10 +89,12 @@ class Auth
 				->select('a.*, b.id AS empresa, b.url, b.cabecalho', false)
 				->select("'candidato_externo' AS tipo, NULL AS nivel_acesso, NULL AS hash_acesso", false)
 				->join('usuarios b', 'b.id = a.empresa')
-				->where(['a.email' => $email, 'a.senha' => $senha])
+				->where('a.email', $email)
 				->get('candidatos a')
 				->row();
 		}
+
+		$this->_CI->db->flush_cache();
 
 		if ($row) {
 			return $row;

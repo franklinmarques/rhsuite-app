@@ -14,7 +14,7 @@ require_once APPPATH . 'views/header.php';
                 <div class="col-lg-12">
                     <section class="panel">
                         <header class="panel-heading">
-                            <span><i class="fa fa-plus"></i><strong>&nbsp;Cadastrar página do treinamento - <?php echo $row->nome; ?></strong></span>
+                            <span><i class="fa fa-file-text-o"></i><strong>&nbsp;Cadastrar página do treinamento - <?php echo $row->nome; ?></strong></span>
                             <a class="btn btn-default btn-sm"
                                href="<?php echo site_url('ead/pagina_curso/index/' . $row->id); ?>"
                                style="float: right; margin-top: -0.6%;">
@@ -725,6 +725,9 @@ require_once APPPATH . 'views/end_js.php';
                 'processing': true, //Feature control the processing indicator.
                 'serverSide': true, //Feature control DataTables' server-side processing mode.
                 'iDisplayLength': 25,
+                'language': {
+                    'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+                },
                 // Load data for the table's content from an Ajax source
                 'ajax': {
                     'url': '<?php echo site_url('ead/pagina_curso/ajax_questoes/' . $row->id) ?>',
@@ -854,6 +857,9 @@ require_once APPPATH . 'views/end_js.php';
                     $('#modal_questao').modal('show');
                     $('#modal_questao .modal-title').text('Editar questão'); // Set title to Bootstrap modal title
                     $('#btnSaveQuestao').text('Atualizar lista'); // Set title to Bootstrap modal footer
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
                 }
             });
         }
@@ -917,6 +923,9 @@ require_once APPPATH . 'views/end_js.php';
                     $('#form_conteudo [name="id"]').val(json.id);
                     $('#form_conteudo [name="conteudo"]').val(json.conteudo);
                     $('#modal_conteudo').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
                 }
             });
         }
@@ -969,6 +978,9 @@ require_once APPPATH . 'views/end_js.php';
                         $('#form_respostas .alternativa:eq(' + index + ') input[name="peso[]"]').val(field.peso);
                     });
                     $('#modal_respostas').modal('show');
+                },
+                'error': function (jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
                 }
             });
         }

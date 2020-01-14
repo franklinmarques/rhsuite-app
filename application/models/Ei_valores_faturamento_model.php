@@ -13,6 +13,7 @@ class Ei_valores_faturamento_model extends MY_Model
 		'semestre' => 'required|numeric|max_length[1]',
 		'id_cargo' => 'integer|max_length[11]',
 		'id_funcao' => 'required|integer|max_length[11]',
+		'qtde_horas' => 'decimal|max_length[11]',
 		'valor' => 'decimal|max_length[11]',
 		'valor_pagamento' => 'decimal|max_length[11]',
 		'valor2' => 'decimal|max_length[11]',

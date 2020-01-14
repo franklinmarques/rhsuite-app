@@ -59,7 +59,7 @@ class Recrutamento_candidatos extends MY_Controller
 		foreach ($escolaridade as $nivel) {
 			$data['escolaridades'][$nivel->id] = $nivel->nome;
 		}
-		$deficiencias = $this->db->get('deficiencias')->result();
+		$deficiencias = $this->db->order_by('tipo', 'asc')->get('deficiencias')->result();
 		foreach ($deficiencias as $deficiencia) {
 			$data['deficiencias'][$deficiencia->id] = $deficiencia->tipo;
 		}
@@ -121,7 +121,7 @@ class Recrutamento_candidatos extends MY_Controller
 		foreach ($escolaridade as $nivel) {
 			$data['escolaridades'][$nivel->id] = $nivel->nome;
 		}
-		$deficiencias = $this->db->get('deficiencias')->result();
+		$deficiencias = $this->db->order_by('tipo', 'asc')->get('deficiencias')->result();
 		foreach ($deficiencias as $deficiencia) {
 			$data['deficiencias'][$deficiencia->id] = $deficiencia->tipo;
 		}

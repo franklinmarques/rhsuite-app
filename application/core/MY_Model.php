@@ -332,47 +332,52 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function setValidationLabels(array $validationLabels)
+	public
+	function setValidationLabels(array $validationLabels)
 	{
 		$this->validationLabels = $validationLabels;
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function setValidationLabel(string $field, string $label)
+	public
+	function setValidationLabel(string $field, string $label)
 	{
 		unset($this->validationLabels[$field]);
 		$this->validationLabels[$field] = $label;
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function setValidationMessages(array $validationMessages)
+	public
+	function setValidationMessages(array $validationMessages)
 	{
 		$this->validationMessages = $validationMessages;
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function setValidationMessage(string $field, array $fieldMessages)
+	public
+	function setValidationMessage(string $field, array $fieldMessages)
 	{
 		$this->validationMessages[$field] = $fieldMessages;
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function validate($data): bool
+	public
+	function validate($data): bool
 	{
 		if ($this->skipValidation === true || empty($this->validationRules)) {
 			return true;
@@ -420,10 +425,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function save($data)
+	public
+	function save($data)
 	{
 		if (empty($data)) {
 			return true;
@@ -445,10 +451,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function insert($data = null, bool $returnID = true)
+	public
+	function insert($data = null, bool $returnID = true)
 	{
 		if (empty($data)) {
 			$class = get_called_class();
@@ -509,10 +516,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function insertBatch(array $set = null, bool $escape = null, int $batchSize = 100)
+	public
+	function insertBatch(array $set = null, bool $escape = null, int $batchSize = 100)
 	{
 		if (is_array($set) && $this->skipValidation === false) {
 			if (count($set) > $batchSize and $batchSize > 0) {
@@ -530,10 +538,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function update($id = null, $data = null): bool
+	public
+	function update($id = null, $data = null): bool
 	{
 		if (empty($data)) {
 			$class = get_called_class();
@@ -592,10 +601,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function updateBatch(array $set = null, string $index = null, int $batchSize = 100)
+	public
+	function updateBatch(array $set = null, string $index = null, int $batchSize = 100)
 	{
 		if (is_array($set) && $this->skipValidation === false) {
 			if (count($set) > $batchSize and $batchSize > 0) {
@@ -613,10 +623,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function replace($data = null)
+	public
+	function replace($data = null)
 	{
 		if (!empty($data) && $this->skipValidation === false) {
 			if ($this->validate($data) === false) {
@@ -628,10 +639,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function delete($id = null)
+	public
+	function delete($id = null)
 	{
 		if (!empty($id) && is_numeric($id)) {
 			$id = [$id];
@@ -661,10 +673,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	protected function uploadFiles(&$data): bool
+	protected
+	function uploadFiles(&$data): bool
 	{
 		$files = [];
 
@@ -705,10 +718,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	protected function deleteFiles(&$data): bool
+	protected
+	function deleteFiles(&$data): bool
 	{
 		if (empty($data) or empty($this->uploadConfig)) {
 			return true;
@@ -764,10 +778,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	protected function trigger(string $event, array $data)
+	protected
+	function trigger(string $event, array $data)
 	{
 		if (!isset($this->{$event}) || empty($this->{$event})) {
 			return $data;
@@ -786,10 +801,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function errors(bool $forceDB = false)
+	public
+	function errors(bool $forceDB = false)
 	{
 		if ($forceDB === false && $this->skipValidation === false) {
 			$errors = '';
@@ -811,10 +827,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public function __call(string $name, array $params)
+	public
+	function __call(string $name, array $params)
 	{
 		$result = null;
 
@@ -830,10 +847,11 @@ abstract class MY_Model extends CI_Model
 	}
 
 
-	//==========================================================================
+//==========================================================================
 
 
-	public static function __callStatic(string $name, array $params = [])
+	public
+	static function __callStatic(string $name, array $params = [])
 	{
 		$class = get_called_class();
 

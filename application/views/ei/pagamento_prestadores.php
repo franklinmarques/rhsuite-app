@@ -108,6 +108,22 @@
 		<tr>
 			<td colspan="3"><h4 class="text-center">Supervisor(a): <?= $nomeSupervisor; ?></h4></td>
 		</tr>
+		<?php if ($is_pdf == false): ?>
+			<tr>
+				<td colspan="3">
+					<div class="row">
+						<label class="control-label col-sm-2 text-right">Filtrar por supervisor(a)</label>
+						<div class="col-sm-4">
+							<?php echo form_dropdown('supervisor', $supervisores, $supervisor, 'class="form-control input-sm" onchange="reload_page();"'); ?>
+						</div>
+						<label class="control-label col-sm-2 text-right">Filtrar por função</label>
+						<div class="col-sm-4">
+							<?php echo form_dropdown('funcao', $funcoes, $funcao, 'class="form-control input-sm" onchange="reload_page();"'); ?>
+						</div>
+					</div>
+				</td>
+			</tr>
+		<?php endif; ?>
 		</tbody>
 	</table>
 
@@ -115,10 +131,10 @@
 		<table id="pagamento_prestadores" class="table table-condensed table-bordered">
 			<thead>
 			<tr class="active">
-				<th width="20%">Nome prestador(a)</th>
-				<th width="20%">Função</th>
+				<th>Nome prestador(a)</th>
+				<th>Função</th>
 				<th>CNPJ</th>
-				<th width="20%">Unidade Ensino</th>
+				<th>Unidade Ensino</th>
 				<th class="text-nowrap">Liberação pagamento</th>
 				<th>Observações</th>
 				<th class="text-center">Horas<br>(<?= $total['horas'] ?>)</th>
@@ -145,6 +161,17 @@
 </div>
 
 <?php //if ($is_pdf == false): ?>
+
+<script>
+	function reload_page() {
+		var search = '<?= $query_string; ?>';
+		var supervisor = $('[name="supervisor"]').val();
+		var funcao = $('[name="funcao"]').val();
+		search = search + '&supervisor=' + supervisor + '&funcao=' + funcao;
+		window.location.href = '<?= site_url('ei/relatorios/pagamentoPrestadores'); ?>/q?' + search;
+	}
+</script>
+
 </body>
 </html>
 <?php //endif; ?>

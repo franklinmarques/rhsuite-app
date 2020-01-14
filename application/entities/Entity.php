@@ -75,7 +75,6 @@ abstract class Entity
 	public function fill(array $data = null)
 	{
 		if (!is_array($data)) {
-
 			return $this;
 		}
 
@@ -440,7 +439,12 @@ abstract class Entity
 
 	protected function castAs($value, string $type)
 	{
-		if ($value === null or strlen($value) === 0) {
+		if (is_array($value)) {
+			foreach ($value as $k => $row) {
+				$value[$k] = $this->castAS($row, $type);
+			}
+			return $value;
+		} elseif ($value === null or strlen($value) === 0) {
 			return null;
 		}
 

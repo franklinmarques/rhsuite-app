@@ -24,6 +24,7 @@ $(function() {
         $.ajax({
             url: $(this).attr('action'),
             type: 'POST',
+			dataType: 'json',
             data: $(this).serialize(),
             beforeSend: function() {
                 $('html, body').animate({scrollTop: 0}, 1500);                

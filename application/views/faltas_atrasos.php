@@ -192,7 +192,7 @@
 								<i class="glyphicon glyphicon-arrow-left"></i> <span class="hidden-xs hidden-sm">Mês anterior</span>
 							</button>
 							<?php if ($this->session->userdata('nivel') != 11): ?>
-								<div class="btn-group">
+								<!--<div class="btn-group">
 									<button id="btnOpcoesMes" type="button"
 											class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"
 											aria-haspopup="true" aria-expanded="false">Opções do mês <span
@@ -213,7 +213,7 @@
 													class="glyphicon glyphicon-minus text-danger"></i> Desalocar
 												colaborador</a></li>
 									</ul>
-								</div>
+								</div>-->
 							<?php endif; ?>
 							<button id="mes_seguinte" title="Mês seguinte" id="mes_seguinte"
 									class="btn btn-primary btn-sm" onclick="avancar_mes()">

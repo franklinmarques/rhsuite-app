@@ -22,6 +22,11 @@
 		max-width: 100%;
 		/*white-space: nowrap;*/
 	}
+
+	th.active h3 {
+		margin-top: 2px;
+		margin-bottom: 2px;
+	}
 </style>
 <body style="color: #000;">
 <div class="container-fluid">
@@ -79,25 +84,25 @@
 	<table class="table table-condensed dados">
 		<tbody>
 		<tr>
-			<th class="active"><h4>Indicadores:</h4></th>
+			<th class="active"><h3><strong>Indicadores</strong></h3></th>
 		</tr>
 		<tr>
 			<td><p><?= nl2br($indicadores); ?></p><br></td>
 		</tr>
 		<tr>
-			<th class="active"><h4>Riscos/oportunidades:</h4></th>
+			<th class="active"><h3><strong>Riscos/oportunidades</strong></h3></th>
 		</tr>
 		<tr>
 			<td><p><?= nl2br($riscos_oportunidades); ?></p><br></td>
 		</tr>
 		<tr>
-			<th class="active"><h4>Ocorrências:</h4></th>
+			<th class="active"><h3><strong>Ocorrências</strong></h3></th>
 		</tr>
 		<tr>
 			<td><p><?= nl2br($ocorrencias); ?></p><br></td>
 		</tr>
 		<tr>
-			<th class="active"><h4>Necessidades/investimentos:</h4></th>
+			<th class="active"><h3><strong>Necessidades/investimentos</strong></h3></th>
 		</tr>
 		<tr>
 			<td><p><?= nl2br($necessidades_investimentos); ?></p></td>

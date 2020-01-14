@@ -221,6 +221,9 @@
 									<li><a href="#" data-toggle="modal" data-target="#modal_colaborador"><i
 													class="glyphicon glyphicon-plus text-info"></i> Alocar
 											novo colaborador</a></li>-->
+									<li><a href="javascript:void(0)" onclick="relatorio_feedback_mensal();"><i
+												class="glyphicon glyphicon-list text-info"></i>
+											Relatório de Feedback</a></li>
 									<li><a href="javascript:void(0)" onclick="mapaCarregamentoDeOS();"><i
 												class="glyphicon glyphicon-list text-info"></i>
 											Rel. Mapa de Carregamento de O.S.</a></li>
@@ -1211,6 +1214,73 @@
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
 
+		<!-- Bootstrap modal -->
+		<div class="modal fade" id="modal_feedback_mensal" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+								aria-hidden="true">&times;</span></button>
+						<h3 class="modal-title">Relatório de Feedback</h3>
+					</div>
+					<div class="modal-body form">
+						<div>
+							<ul class="nav nav-tabs" role="tablist">
+								<li role="presentation" class="active"><a href="#feedback_folha_assinaturas"
+																		  aria-controls="home" role="tab"
+																		  data-toggle="tab">Folha de assinaturas</a>
+								</li>
+								<li role="presentation"><a href="#feedback_coleta_assinatura" aria-controls="profile"
+														   role="tab" data-toggle="tab">Folha coleta assinaturas</a>
+								</li>
+							</ul>
+							<div class="tab-content">
+								<div role="tabpanel" class="tab-pane active" id="feedback_folha_assinaturas">
+									<hr style="margin-top: 0px;">
+									<div id="relatorio_feedback_mensal" class="row">
+
+									</div>
+								</div>
+								<div role="tabpanel" class="tab-pane" id="feedback_coleta_assinatura">
+									<form action="#" id="form_feedback_mensal" class="form-horizontal">
+										<div class="form-body">
+											<div class="row form-group">
+												<label class="control-label col-sm-4">Arquivo de
+													assinatura (<span id="mes_ano_arquivo_feedback"></span>)</label>
+												<div class="col-sm-6 controls">
+													<div class="fileinput fileinput-new input-group"
+														 data-provides="fileinput">
+														<div class="form-control" data-trigger="fileinput">
+															<i class="glyphicon glyphicon-file fileinput-exists"></i>
+															<span class="fileinput-filename"></span>
+														</div>
+														<div class="input-group-addon btn btn-default btn-file">
+															<span class="fileinput-new">Selecionar arquivo</span>
+															<span class="fileinput-exists">Alterar</span>
+															<input type="file" name="nome_arquivo" accept=".pdf"/>
+														</div>
+														<a href="#"
+														   class="input-group-addon btn btn-default fileinput-exists"
+														   data-dismiss="fileinput">Remover</a>
+													</div>
+													<i class="help-block">Somente arquivos .pdf</i>
+												</div>
+												<div class="col-sm-2">
+													<button type="button" class="btn btn-success">
+														<i class="fa fa-upload"></i> Importar
+													</button>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
 	</section>
 </section>
 <!--main content end-->
@@ -1218,6 +1288,7 @@
 <?php require_once APPPATH . 'views/end_js.php'; ?>
 <!-- Css -->
 <link href="<?php echo base_url('assets/datatables/css/dataTables.bootstrap.css') ?>" rel="stylesheet">
+<link rel="stylesheet" href="<?php echo base_url("assets/js/bootstrap-fileinput/bootstrap-fileinput.css"); ?>">
 <link href="<?php echo base_url('assets/bootstrap-duallistbox/bootstrap-duallistbox.css') ?>" rel="stylesheet">
 
 <!-- Js -->
@@ -1228,6 +1299,9 @@
 </script>
 <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js'); ?>"></script>
 <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js'); ?>"></script>
+<script src="<?php echo base_url("assets/js/bootstrap-fileinput/bootstrap-fileinput.js"); ?>"></script>
+<script
+	src="<?php echo base_url('assets/js/jquery.fileDownload-master/src/Scripts/jquery.fileDownload.js'); ?>"></script>
 <script src="<?php echo base_url('assets/js/ckeditor/ckeditor.js'); ?>"></script>
 <script src="<?php echo base_url('assets/js/ckeditor/adapters/jquery.js'); ?>"></script>
 <script src="<?php echo base_url('assets/bootstrap-duallistbox/jquery.bootstrap-duallistbox.js') ?>"></script>
@@ -2435,6 +2509,27 @@
 				}
 			});
 		}
+	}
+
+	function relatorio_feedback_mensal() {
+		$.ajax({
+			'url': '<?php echo site_url('icom/apontamento/relatorioDeFeedbackMensal') ?>',
+			'type': 'POST',
+			'dataType': 'json',
+			'data': {
+				'busca': busca
+			},
+			'success': function (json) {
+				if (json.erro) {
+					alert(json.erro);
+					return false;
+				}
+				$('#relatorio_feedback_mensal').html(json.folha);
+				$('#mes_ano_arquivo_feedback').html(json.mes_ano);
+
+				$('#modal_feedback_mensal').modal('show');
+			}
+		});
 	}
 
 </script>

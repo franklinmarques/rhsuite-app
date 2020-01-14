@@ -106,7 +106,9 @@ class Usuarios_model extends MY_Model
 		'1' => 'CLT',
 		'2' => 'MEI',
 		'3' => 'PJ',
-		'4' => 'Autônomo'
+		'4' => 'Autônomo',
+		'5' => 'ME',
+		'6' => 'LTDA'
 	];
 
 	protected static $tipoDemissao = [
@@ -134,7 +136,9 @@ class Usuarios_model extends MY_Model
 		'12' => 'Líder',
 		'4' => 'Colaborador CLT',
 		'16' => 'Colaborador MEI',
+		'20' => 'Colaborador ME',
 		'14' => 'Colaborador PJ',
+		'21' => 'Colaborador LTDA',
 		'13' => 'Cuidador Comunitário',
 		'3' => 'Gestor',
 		'2' => 'Multiplicador',

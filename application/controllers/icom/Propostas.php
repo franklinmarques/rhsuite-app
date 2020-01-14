@@ -235,6 +235,7 @@ class Propostas extends MY_Controller
         $this->propostas->setValidationLabel('id_area', 'Área');
         $this->propostas->setValidationLabel('id_setor', 'Setor');
         $this->propostas->setValidationLabel('id_cliente', 'Cliente');
+        $this->propostas->setValidationLabel('tipo', 'Tipo Proposta');
         $this->propostas->setValidationLabel('data_entrega', 'Data Entrega');
         $this->propostas->setValidationLabel('probabilidade_fechamento', 'Probabilidade Fechamento');
         $this->propostas->setValidationLabel('valor', 'Valor');
@@ -249,7 +250,7 @@ class Propostas extends MY_Controller
 
         $this->propostas->validate($data) or exit(json_encode(['erro' => $this->propostas->errors()]));
 
-        unset($data->id_depto, $data->id_area, $data->id_setor);
+        unset($data->id_depto, $data->id_area);
 
         $this->propostas->skipValidation();
 

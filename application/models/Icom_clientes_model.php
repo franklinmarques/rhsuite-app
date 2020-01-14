@@ -10,6 +10,8 @@ class Icom_clientes_model extends MY_Model
 		'id' => 'required|is_natural_no_zero|max_length[11]',
 		'id_empresa' => 'required|is_natural_no_zero|max_length[11]',
 		'nome' => 'required|max_length[255]',
+		'cnpj' => 'max_length[18]',
+		'endereco' => 'max_length[255]',
 		'observacoes' => 'max_length[65535]',
 		'contato_principal' => 'max_length[255]',
 		'telefone_contato_principal' => 'max_length[255]',

@@ -65,7 +65,7 @@ $processo = GestaoProcessos::getProcesso($url ?? []);
 							<div class="row">
 								<div class="col-xs-12">
 									<br>
-									<p style="text-indent: 30px;">
+									<p style="text-indent: 30px; color: #000; font-weight: normal;">
 										<?php echo nl2br($processo->orientacoes_gerais); ?>
 									</p>
 								</div>

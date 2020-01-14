@@ -7,6 +7,8 @@ class IcomClientes extends Entity
 	protected $id;
 	protected $id_empresa;
 	protected $nome;
+	protected $cnpj;
+	protected $endereco;
 	protected $observacoes;
 	protected $contato_principal;
 	protected $telefone_contato_principal;
@@ -21,6 +23,8 @@ class IcomClientes extends Entity
 		'id' => 'int',
 		'id_empresa' => 'int',
 		'nome' => 'string',
+		'cnpj' => '?string',
+		'endereco' => '?string',
 		'observacoes' => '?string',
 		'contato_principal' => '?string',
 		'telefone_contato_principal' => '?string',

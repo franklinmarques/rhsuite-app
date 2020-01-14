@@ -282,6 +282,7 @@ class Funcionario extends MY_Controller
 		$data['nivel_acesso'] = $_POST['nivel_acesso'];
 		$data['tipo'] = $data['nivel_acesso'] === '6' ? 'selecionador' : 'funcionario';
 		$data['status'] = $_POST['status'];
+		$data['possui_apontamento_horas'] = $_POST['possui_apontamento_horas'] ?? null;
 		$data['token'] = uniqid();
 		$data['observacoes_historico'] = $this->input->post('observacoes_historico');
 		if (strlen($data['observacoes_historico']) == 0) {
@@ -449,6 +450,7 @@ class Funcionario extends MY_Controller
 			}
 		}
 
+		$data['possui_apontamento_horas'] = $funcionario->possui_apontamento_horas;
 		$data['nivel_acesso'] = array(
 			'1' => 'Administrador',
 			'7' => 'Presidente',
@@ -462,7 +464,9 @@ class Funcionario extends MY_Controller
 			'12' => 'Líder',
 			'4' => 'Colaborador CLT',
 			'16' => 'Colaborador MEI',
+			'20' => 'Colaborador ME',
 			'14' => 'Colaborador PJ',
+			'21' => 'Colaborador LTDA',
 			'13' => 'Cuidador Comunitário',
 			'3' => 'Gestor',
 			'2' => 'Multiplicador',
@@ -470,7 +474,14 @@ class Funcionario extends MY_Controller
 			'5' => 'Cliente',
 			'17' => 'Vistoriador'
 		);
-		$data['tipo_vinculo'] = array('1' => 'CLT', '2' => 'MEI', '3' => 'PJ', '4' => 'Autônomo');
+		$data['tipo_vinculo'] = [
+			'1' => 'CLT',
+			'2' => 'MEI',
+			'3' => 'PJ',
+			'4' => 'Autônomo',
+			'5' => 'ME',
+			'6' => 'LTDA'
+		];
 		$data['status'] = array(
 			'1' => 'Ativo',
 //            '2' => 'Inativo',
@@ -698,6 +709,7 @@ class Funcionario extends MY_Controller
 		$data['nivel_acesso'] = $_POST['nivel_acesso'];
 		$data['tipo'] = $data['nivel_acesso'] === '6' ? 'selecionador' : 'funcionario';
 		$data['status'] = $_POST['status'];
+		$data['possui_apontamento_horas'] = $_POST['possui_apontamento_horas'] ?? null;
 		if (strlen($_POST['matricula']) > 0) {
 			$data['matricula'] = $_POST['matricula'];
 		} else {

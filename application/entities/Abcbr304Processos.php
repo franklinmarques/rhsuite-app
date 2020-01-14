@@ -9,10 +9,14 @@ class Abcbr304Processos extends Entity
 	protected $id_menu;
 	protected $url_pagina;
 	protected $orientacoes_gerais;
-	protected $processo_1;
-	protected $processo_2;
-	protected $documentacao_1;
-	protected $documentacao_2;
+	protected $nome_processo_1;
+	protected $nome_processo_2;
+	protected $arquivo_processo_1;
+	protected $arquivo_processo_2;
+	protected $nome_documentacao_1;
+	protected $nome_documentacao_2;
+	protected $arquivo_documentacao_1;
+	protected $arquivo_documentacao_2;
 
 	protected $casts = [
 		'id' => 'int',
@@ -20,10 +24,14 @@ class Abcbr304Processos extends Entity
 		'id_menu' => '?int',
 		'url_pagina' => 'string',
 		'orientacoes_gerais' => 'string',
-		'processo_1' => '?string',
-		'processo_2' => '?string',
-		'documentacao_1' => '?string',
-		'documentacao_2' => '?string'
+		'nome_processo_1' => '?string',
+		'nome_processo_2' => '?string',
+		'arquivo_processo_1' => '?string',
+		'arquivo_processo_2' => '?string',
+		'nome_documentacao_1' => '?string',
+		'nome_documentacao_2' => '?string',
+		'arquivo_documentacao_1' => '?string',
+		'arquivo_documentacao_2' => '?string'
 	];
 
 }

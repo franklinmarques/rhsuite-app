@@ -190,26 +190,26 @@
 
 <!-- Js -->
 <script>
-    $(document).ready(function () {
-        document.title = 'CORPORATE RH - LMS - Edição de Gestão de Processo';
-    });
+	$(document).ready(function () {
+		document.title = 'CORPORATE RH - LMS - Edição de Gestão de Processo';
+	});
 </script>
 
 <script src="<?php echo base_url("assets/js/bootstrap-fileinput/bootstrap-fileinput.js"); ?>"></script>
 
 <script>
-    $(document).ready(function () {
-        $('#arquivo_processo_1').fileinput({'name': 'arquivo_processo_1'}).find('[type="hidden"]').val('<?= $arquivo_processo_1; ?>');
-        $('#arquivo_processo_1 .fileinput-preview').html('<?= $arquivo_processo_1; ?>');
+	$(document).ready(function () {
+		$('#arquivo_processo_1').fileinput({'name': 'arquivo_processo_1'}).find('[type="hidden"]').val('<?= $arquivo_processo_1; ?>');
+		$('#arquivo_processo_1 .fileinput-preview').html('<?= $arquivo_processo_1; ?>');
 
-        $('#arquivo_processo_2').fileinput({'name': 'arquivo_processo_2'}).find('[type="hidden"]').val('<?= $arquivo_processo_2; ?>');
-        $('#arquivo_processo_2 .fileinput-preview').html('<?= $arquivo_processo_2; ?>');
+		$('#arquivo_processo_2').fileinput({'name': 'arquivo_processo_2'}).find('[type="hidden"]').val('<?= $arquivo_processo_2; ?>');
+		$('#arquivo_processo_2 .fileinput-preview').html('<?= $arquivo_processo_2; ?>');
 
-        $('#arquivo_documentacao_1').fileinput({'name': 'arquivo_documentacao_1'}).find('[type="hidden"]').val('<?= $arquivo_documentacao_1; ?>');
-        $('#arquivo_documentacao_1 .fileinput-preview').html('<?= $arquivo_documentacao_1; ?>');
+		$('#arquivo_documentacao_1').fileinput({'name': 'arquivo_documentacao_1'}).find('[type="hidden"]').val('<?= $arquivo_documentacao_1; ?>');
+		$('#arquivo_documentacao_1 .fileinput-preview').html('<?= $arquivo_documentacao_1; ?>');
 
-        $('#arquivo_documentacao_2').fileinput({'name': 'arquivo_documentacao_2'}).find('[type="hidden"]').val('<?= $arquivo_documentacao_2; ?>');
-        $('#arquivo_documentacao_2 .fileinput-preview').html('<?= $arquivo_documentacao_2; ?>');
-    });
+		$('#arquivo_documentacao_2').fileinput({'name': 'arquivo_documentacao_2'}).find('[type="hidden"]').val('<?= $arquivo_documentacao_2; ?>');
+		$('#arquivo_documentacao_2 .fileinput-preview').html('<?= $arquivo_documentacao_2; ?>');
+	});
 </script>
 <?php require_once 'end_html.php'; ?>

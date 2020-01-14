@@ -841,78 +841,62 @@ class Relatorios extends MY_Controller
 		$data['query_string'] = http_build_query($this->input->get());
 
 
-		$this->db->select(["GROUP_CONCAT(DISTINCT a.id ORDER BY a.id ASC SEPARATOR ', ') AS id"], false);
-		$this->db->select('COUNT(DISTINCT(escola)) AS total_escolas', false);
-		$this->db->select('COUNT(DISTINCT(aluno)) AS total_alunos', false);
-		$this->db->join('ei_alocacao_escolas b', 'b.id_alocacao = a.id');
-		$this->db->join('ei_matriculados c', 'c.id_alocacao_escola = b.id', 'left');
-		$this->db->where('a.id_empresa', $this->session->userdata('empresa'));
-		$this->db->where('a.ano', $this->input->get('ano'));
-		$this->db->where('a.semestre', $this->input->get('semestre'));
-		$data['alocacao'] = $this->db->get('ei_alocacao a')->row();
+		$data['alocacao'] = $this->db
+			->select(["GROUP_CONCAT(DISTINCT a.id ORDER BY a.id ASC SEPARATOR ',') AS id"], false)
+			->select('COUNT(DISTINCT(escola)) AS total_escolas', false)
+			->select('COUNT(DISTINCT(aluno)) AS total_alunos', false)
+			->join('ei_alocacao_escolas b', 'b.id_alocacao = a.id')
+			->join('ei_matriculados c', 'c.id_alocacao_escola = b.id', 'left')
+			->where('a.id_empresa', $this->session->userdata('empresa'))
+			->where('a.ano', $this->input->get('ano'))
+			->where('a.semestre', $this->input->get('semestre'))
+			->get('ei_alocacao a')
+			->row();
 
 
-		$idAlocacoes = isset($data['alocacao']->id) ? $data['alocacao']->id : 0;
+		$idAlocacoes = explode(',', $data['alocacao']->id ?? '0');
 
 
-		$sql = "SELECT t.id, 
-                       s.id_alocacao,
-                       s.cargo, 
-                       s.funcao AS nome, 
-                       COUNT(DISTINCT(s.cuidador)) AS total_pessoas,
-                       SUM(s.total_mes{$idMes}) AS total_secs_projetados,
-                       t.total_horas_mes{$idMes} AS total_horas_mes,
-                       IFNULL(SUM(TIME_TO_SEC(s.total_horas_mes{$idMes}) + TIME_TO_SEC(s.horas_descontadas_mes{$idMes})), SUM(s.total_mes{$idMes})) AS total_secs_realizados2,
-                       SUM(IFNULL(TIME_TO_SEC(s.total_horas_mes{$idMes}), s.total_mes{$idMes})) AS total_secs_realizados,
-                       IFNULL(t.valor_hora_mes{$idMes}, SUM(s.valor_hora_funcao)) AS valor_hora,
-                       FORMAT(t.valor_faturado_mes{$idMes}, 2, 'de_DE') AS receita_projetada,
-                       FORMAT(IFNULL(t.valor_hora_mes{$idMes}, s.valor_hora_funcao) * (SUM(IFNULL(TIME_TO_SEC(s.total_horas_mes{$idMes}), s.total_mes{$idMes})) / 3600), 2, 'de_DE') AS receita_efetuada,
-                       SUM(s.pagamentos_efetuados) AS pagamentos_efetuados,
-                       FORMAT((IFNULL(t.valor_hora_mes{$idMes}, s.valor_hora_funcao) * (SUM(IFNULL(TIME_TO_SEC(s.total_horas_mes{$idMes}), s.total_mes{$idMes})) / 3600)) - SUM(s.pagamentos_efetuados), 2, 'de_DE') AS resultado,
-                       NULL AS resultado_percentual
-                FROM (SELECT c.id_alocacao, 
-                             b.cuidador,
-                             SUM(TIME_TO_SEC(IFNULL(d.total_mes{$idMes}, 0))) AS total_mes{$idMes},
-                             IF(e.data_aprovacao_mes{$idMes}, a.total_horas_mes{$idMes}, NULL) AS total_horas_mes{$idMes}, 
-                             IF(e.data_aprovacao_mes{$idMes}, a.horas_descontadas_mes{$idMes}, NULL) AS horas_descontadas_mes{$idMes}, 
-                             IFNULL(a.valor_total_mes{$idMes}, d.valor_hora_operacional * ((IFNULL(TIME_TO_SEC(d.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(a.horas_descontadas_mes{$idMes}), 0)) / 3600)) AS pagamentos_efetuados,
-                             d.cargo, d.funcao, d.valor_hora_funcao
-                      FROM ei_alocados_totalizacao a
-                      INNER JOIN ei_alocados b ON b.id = a.id_alocado
-                      INNER JOIN ei_alocacao_escolas c ON c.id = b.id_alocacao_escola
-                      LEFT JOIN ei_alocados_horarios d ON d.id_alocado = b.id AND d.periodo = a.periodo
-                      LEFT JOIN ei_faturamento e ON e.id_alocacao = c.id_alocacao AND e.id_escola = c.id_escola
-                      WHERE c.id_alocacao IN ({$idAlocacoes})
-                            AND d.cargo IS NOT NULL 
-                            AND d.funcao IS NOT NULL
-                      GROUP BY b.id, a.periodo, d.cargo, d.funcao) s
-                LEFT JOIN ei_faturamento_consolidado t ON
-                          t.id_alocacao = s.id_alocacao AND t.cargo = s.cargo AND t.funcao = s.funcao
-                GROUP BY s.cargo, s.funcao";
-
-		$data['funcoes'] = $this->db->query($sql)->result();
+		$subquery = $this->db
+			->select('d.id_alocacao, a.cuidador, j.cargo, j.funcao, j.valor_hora_funcao')
+			->select(["GREATEST(  SUM(IFNULL(TIME_TO_SEC(a.total_horas_mes{$idMes}), 0) - IFNULL(TIME_TO_SEC(i.total_horas_mes{$idMes}), 0))  , 0) AS segundos_projetados_mes{$idMes}"], false)
+			->select(["GREATEST(  SUM(IFNULL(TIME_TO_SEC(a.total_horas_mes{$idMes}), 0) - IFNULL(TIME_TO_SEC(i.total_horas_mes{$idMes}), 0))  , 0) AS segundos_realizados_mes{$idMes}"], false)
+			->select(["IFNULL(a.valor_total_mes{$idMes}, j.valor_hora_operacional * ((IFNULL(TIME_TO_SEC(j.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(a.horas_descontadas_mes{$idMes}), 0)) / 3600)) AS pagamentos_efetuados2"], false)
+			->select(["IFNULL(a.valor_total_mes{$idMes}, 0) - IFNULL(i.valor_total_mes{$idMes}, 0) AS pagamentos_efetuados"], false)
+			->join('usuarios b', 'b.id = a.id_cuidador')
+			->join('ei_alocados c', 'c.id = a.id_alocado')
+			->join('ei_alocacao_escolas d', 'd.id = c.id_alocacao_escola')
+			->join('ei_alocacao e', 'e.id = d.id_alocacao')
+			->join('ei_ordem_servico e2', 'e2.nome = d.ordem_servico AND e2.ano = e.ano AND e2.semestre = e.semestre')
+			->join('(SELECT j2.* FROM ei_alocados_horarios j2 GROUP BY j2.id_alocado, j2.periodo) j', 'j.id_alocado = c.id AND j.periodo = a.periodo', 'left', false)
+			->join('ei_alocados_totalizacao i', 'i.id_alocado = a.id_alocado AND i.periodo = a.periodo AND i.substituicao_semestral IS NOT NULL AND a.substituicao_semestral IS NULL AND i.substituicao_eventual IS NULL', 'left')
+			->join('ei_faturamento h', 'h.id_alocacao = e.id AND h.id_escola = d.id_escola AND h.cargo = j.cargo AND h.funcao = j.funcao', 'left')
+			->where_in('e.id', $idAlocacoes, false)
+			->where('a.substituicao_eventual IS NULL')
+			->group_by(['d.id_escola', 'a.id_cuidador', 'j.cargo', 'j.funcao', 'c.id', 'a.periodo'])
+			->order_by('j.funcao', 'asc')
+			->get_compiled_select('ei_alocados_totalizacao a');
 
 
-		$this->db->select('c.cuidador, d2.funcao, d.cnpj, b.escola');
-		$this->db->select(["DATE_FORMAT(e.data_liberacao_pagto_mes{$idMes}, '%d/%m/%Y') AS data_liberacao_pagto"], false);
-		$this->db->select(["TIME_FORMAT(IFNULL(c2.total_horas_faturadas_mes{$idMes}, SEC_TO_TIME(TIME_TO_SEC(d2.horas_mensais_custo) + IFNULL(TIME_TO_SEC(c2.horas_descontadas_mes{$idMes}), 0))), '%H:%i') AS total_horas"], false);
-		$this->db->select(["FORMAT(IFNULL(c2.valor_total_mes{$idMes}, d2.valor_hora_operacional * ((IFNULL(TIME_TO_SEC(d2.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(c2.horas_descontadas_mes{$idMes}), 0)) / 3600)), 2, 'de_DE') AS valor_total"], false);
-		$this->db->join('ei_alocacao_escolas b', 'b.id_alocacao = a.id');
-		$this->db->join('ei_alocados c', 'c.id_alocacao_escola = b.id');
-		$this->db->join('usuarios d', 'd.id = c.id_cuidador');
-		$this->db->join('ei_alocados_horarios d2', 'd2.id_alocado = c.id');
-		$this->db->join('ei_alocados_totalizacao c2', 'c2.id_alocado = c.id AND c2.periodo = d2.periodo AND (c2.id_cuidador = c.id_cuidador OR c2.id_cuidador = d2.id_cuidador_sub1 OR c2.id_cuidador = d2.id_cuidador_sub2)', 'left');
-		$this->db->join('ei_pagamento_prestador e', 'e.id_alocacao = a.id AND e.id_cuidador = c2.id_cuidador', 'left');
-		$this->db->where('a.id_empresa', $this->session->userdata('empresa'));
-		$this->db->where('a.depto', $this->input->get_post('depto'));
-		$this->db->where('a.id_diretoria', $this->input->get_post('diretoria'));
-		$this->db->where('a.id_supervisor', $this->input->get_post('supervisor'));
-		$this->db->where('a.ano', $this->input->get_post('ano'));
-		$this->db->where('a.semestre', $this->input->get_post('semestre'));
-		$this->db->group_by(['c2.id_cuidador', 'b.id_escola']);
-		$this->db->order_by('c.cuidador', 'asc');
-		$this->db->order_by('b.escola', 'asc');
-		$data['rows'] = $this->db->get('ei_alocacao a')->result();
+		$data['funcoes'] = $this->db
+			->select('t.id, s.id_alocacao, s.cargo, s.funcao AS nome')
+			->select('COUNT(DISTINCT(s.cuidador)) AS total_pessoas', false)
+			->select('NULL AS total_secs_projetados', false)
+			->select('NULL AS total_secs_realizados', false)
+			->select("SUM(s.segundos_realizados_mes{$idMes}) AS total_segundos_mes", false)
+			->select('NULL AS resultado', false)
+			->select(["IFNULL(t.valor_hora_mes{$idMes}, SUM(s.valor_hora_funcao)) AS valor_hora"], false)
+			->select(["FORMAT(t.valor_faturado_mes{$idMes}, 2, 'de_DE') AS receita_projetada"], false)
+			->select(["FORMAT(s.valor_hora_funcao * (SUM(s.segundos_realizados_mes{$idMes}) / 3600), 2, 'de_DE') AS receita_efetuada"], false)
+			->select(["SUM(IFNULL(s.pagamentos_efetuados, 0)) AS pagamentos_efetuados"], false)
+			->select(["FORMAT((s.valor_hora_funcao * (SUM(s.segundos_realizados_mes{$idMes}) / 3600)) - SUM(IFNULL(s.pagamentos_efetuados, 0)), 2, 'de_DE') AS resultado"], false)
+			->select(["((s.valor_hora_funcao * (SUM(s.segundos_realizados_mes{$idMes}) / 3600)) - SUM(IFNULL(s.pagamentos_efetuados, 0))) / GREATEST(s.valor_hora_funcao * (SUM(s.segundos_realizados_mes{$idMes}) / 3600), 1) * 100 AS resultado_percentual"], false)
+			->from("({$subquery}) s")
+			->join('ei_faturamento_consolidado t', 't.id_alocacao = s.id_alocacao AND t.cargo = s.cargo AND t.funcao = s.funcao', 'left')
+			->group_by(['s.cargo', 's.funcao'])
+			->order_by('s.funcao', 'asc')
+			->get()
+			->result();
 
 
 		$this->load->helper('time');
@@ -922,6 +906,150 @@ class Relatorios extends MY_Controller
 		}
 
 		$this->load->view('ei/relatorio_medicao', $data);
+	}
+
+
+	//==========================================================================
+
+
+	public function medicoesConsolidadas($isPdf = false)
+	{
+		$this->db->select('foto, foto_descricao');
+		$this->db->where('id', $this->session->userdata('empresa'));
+		$data['empresa'] = $this->db->get('usuarios')->row();
+		$data['is_pdf'] = $isPdf === true;
+
+		$ano = $this->input->get('ano');
+		if (strlen($ano) == 0 or strlen($ano) !== 4) {
+			$ano = date('Y');
+		}
+
+		$data['depto'] = $this->input->get('depto');
+		$data['diretoria'] = $this->input->get('diretoria');
+		$data['ano'] = $ano;
+		$data['query_string'] = http_build_query($this->input->get());
+
+		$data['alocacao'] = new stdClass();
+		$data['funcoes'] = [];
+
+		$totalPessoasMes = [];
+		$totalHorasUtilizadas = [];
+		$totalReceita = [];
+		$totalPagamentos = [];
+		$totalResultado = [];
+		$totalResultadoPercentual = [];
+
+		for ($i = 1; $i <= 13; $i++) {
+			$semestre = $i > 7 ? 2 : 1;
+			$idMes = $i - ($semestre > 1 ? 7 : 0);
+			$mes = $i === 7 ? '7_1' : ($i === 8 ? '7_2' : ($i - ($semestre > 1 ? 1 : 0)));
+
+			$alocacao = $this->db
+				->select(["GROUP_CONCAT(DISTINCT a.id ORDER BY a.id ASC SEPARATOR ',') AS id, diretoria"], false)
+				->select(["GROUP_CONCAT(DISTINCT b.escola SEPARATOR ',') AS total_escolas_mes"], false)
+				->select(["GROUP_CONCAT(DISTINCT c.aluno SEPARATOR ',') AS total_alunos_mes"], false)
+				->join('ei_alocacao_escolas b', 'b.id_alocacao = a.id')
+				->join('ei_matriculados c', 'c.id_alocacao_escola = b.id', 'left')
+				->where('a.id_empresa', $this->session->userdata('empresa'))
+				->where('a.ano', $this->input->get('ano'))
+				->where('a.semestre', $semestre)
+				->get('ei_alocacao a')
+				->row();
+
+			$idEscolas = array_unique(explode(',', $alocacao->total_escolas_mes));
+			$idAlunos = array_unique(explode(',', $alocacao->total_alunos_mes));
+
+			$data['alocacao']->diretoria = $alocacao->diretoria;
+			$data['alocacao']->{'total_escolas_mes' . $mes} = count($idEscolas);
+			$data['alocacao']->{'total_alunos_mes' . $mes} = count($idAlunos);
+
+
+			$idAlocacoes = explode(',', $alocacao->id ?? '0');
+
+
+			$subquery = $this->db
+				->select('d.id_alocacao, a.cuidador, j.cargo, j.funcao, j.valor_hora_funcao, m.qtde_horas')
+				->select(["GREATEST(  SUM(IFNULL(TIME_TO_SEC(a.total_horas_mes{$idMes}), 0) - IFNULL(TIME_TO_SEC(i.total_horas_mes{$idMes}), 0))  , 0) AS segundos_projetados_mes{$idMes}"], false)
+				->select(["GREATEST(  SUM(IFNULL(TIME_TO_SEC(a.total_horas_mes{$idMes}), 0) - IFNULL(TIME_TO_SEC(i.total_horas_mes{$idMes}), 0))  , 0) AS segundos_realizados_mes{$idMes}"], false)
+				->select(["IFNULL(a.valor_total_mes{$idMes}, j.valor_hora_operacional * ((IFNULL(TIME_TO_SEC(j.horas_mensais_custo), 0) + IFNULL(TIME_TO_SEC(a.horas_descontadas_mes{$idMes}), 0)) / 3600)) AS pagamentos_efetuados2"], false)
+				->select(["IFNULL(a.valor_total_mes{$idMes}, 0) - IFNULL(i.valor_total_mes{$idMes}, 0) AS pagamentos_efetuados"], false)
+				->join('usuarios b', 'b.id = a.id_cuidador')
+				->join('ei_alocados c', 'c.id = a.id_alocado')
+				->join('ei_alocacao_escolas d', 'd.id = c.id_alocacao_escola')
+				->join('ei_alocacao e', 'e.id = d.id_alocacao')
+				->join('ei_ordem_servico e2', 'e2.nome = d.ordem_servico AND e2.ano = e.ano AND e2.semestre = e.semestre')
+				->join('(SELECT j2.* FROM ei_alocados_horarios j2 GROUP BY j2.id_alocado, j2.periodo) j', 'j.id_alocado = c.id AND j.periodo = a.periodo', 'left', false)
+				->join('ei_alocados_totalizacao i', 'i.id_alocado = a.id_alocado AND i.periodo = a.periodo AND i.substituicao_semestral IS NOT NULL AND a.substituicao_semestral IS NULL AND i.substituicao_eventual IS NULL', 'left')
+				->join('ei_faturamento h', 'h.id_alocacao = e.id AND h.id_escola = d.id_escola AND h.cargo = j.cargo AND h.funcao = j.funcao', 'left')
+				->join('empresa_cargos k', 'k.nome = h.cargo')
+				->join('empresa_funcoes l', 'l.id_cargo = k.id AND l.nome = h.funcao')
+				->join('ei_valores_faturamento m', 'm.id_contrato = e2.id_contrato AND m.ano = e2.ano AND m.semestre = e2.semestre AND m.id_cargo = k.id AND m.id_funcao = l.id', 'left')
+				->where_in('e.id', $idAlocacoes, false)
+				->where('a.substituicao_eventual IS NULL')
+				->group_by(['d.id_escola', 'a.id_cuidador', 'j.cargo', 'j.funcao', 'c.id', 'a.periodo'])
+				->order_by('j.funcao', 'asc')
+				->get_compiled_select('ei_alocados_totalizacao a');
+
+
+			$funcoes = $this->db
+				->select('s.funcao AS nome, s.qtde_horas AS total_horas_alocadas')
+				->select("GROUP_CONCAT(DISTINCT s.cuidador SEPARATOR ',') AS total_pessoas_mes", false)
+				->select("COUNT(DISTINCT(s.cuidador)) AS total_pessoas_mes{$mes}", false)
+				->select("NULL AS total_secs_projetados_mes{$mes}", false)
+				->select("NULL AS total_secs_realizados_mes{$mes}", false)
+				->select("SUM(s.segundos_realizados_mes{$idMes}) AS total_segundos_mes{$mes}", false)
+				->select(["IFNULL(t.valor_hora_mes{$idMes}, SUM(s.valor_hora_funcao)) AS valor_hora_mes{$mes}"], false)
+				->select(["t.valor_faturado_mes{$idMes} AS receita_projetada_mes{$mes}"], false)
+				->select(["s.valor_hora_funcao * (SUM(s.segundos_realizados_mes{$idMes}) / 3600) AS receita_efetuada_mes{$mes}"], false)
+				->select(["SUM(IFNULL(s.pagamentos_efetuados, 0)) AS pagamentos_efetuados_mes{$mes}"], false)
+				->select(["(s.valor_hora_funcao * (SUM(s.segundos_realizados_mes{$idMes}) / 3600)) - SUM(IFNULL(s.pagamentos_efetuados, 0)) AS resultado_mes{$mes}"], false)
+				->select(["((s.valor_hora_funcao * (SUM(s.segundos_realizados_mes{$idMes}) / 3600)) - SUM(IFNULL(s.pagamentos_efetuados, 0))) / GREATEST(s.valor_hora_funcao * (SUM(s.segundos_realizados_mes{$idMes}) / 3600), 1) * 100 AS resultado_percentual_mes{$mes}"], false)
+				->from("({$subquery}) s")
+				->join('ei_faturamento_consolidado t', 't.id_alocacao = s.id_alocacao AND t.cargo = s.cargo AND t.funcao = s.funcao', 'left')
+				->group_by(['s.cargo', 's.funcao'])
+				->order_by('s.funcao', 'asc')
+				->get()
+				->result();
+
+
+			foreach ($funcoes as $funcao) {
+				$totalPessoasMes[$funcao->nome] = array_unique(explode(',', $funcao->total_pessoas_mes));
+				$funcao->total_pessoas_mes = count($totalPessoasMes[$funcao->nome]);
+
+				$totalHorasUtilizadas[$funcao->nome][] = $funcao->{'total_segundos_mes' . $mes};
+				$funcao->total_horas_utilizadas = array_sum($totalHorasUtilizadas[$funcao->nome]);
+
+				$totalReceita[$funcao->nome][] = $funcao->{'receita_efetuada_mes' . $mes};
+				$funcao->total_receita = array_sum($totalReceita[$funcao->nome]);
+
+				$totalPagamentos[$funcao->nome][] = $funcao->{'pagamentos_efetuados_mes' . $mes};
+				$funcao->total_pagamentos = array_sum($totalPagamentos[$funcao->nome]);
+
+				$totalResultado[$funcao->nome][] = $funcao->{'resultado_mes' . $mes};
+				$funcao->total_resultado = array_sum($totalResultado[$funcao->nome]);
+
+				$totalResultadoPercentual[$funcao->nome][] = $funcao->{'resultado_percentual_mes' . $mes};
+				$totalResultadoPercentual[$funcao->nome] = array_filter($totalResultadoPercentual[$funcao->nome], function ($value) {
+					return strlen($value) > 0;
+				});
+				$funcao->total_resultado_percentual = array_sum($totalResultadoPercentual[$funcao->nome]) / count($totalResultadoPercentual[$funcao->nome]);
+
+				if (array_key_exists($funcao->nome, $data['funcoes'])) {
+					$data['funcoes'][$funcao->nome] = (object)array_merge((array)$data['funcoes'][$funcao->nome], (array)$funcao);
+				} else {
+					$data['funcoes'][$funcao->nome] = $funcao;
+				}
+			}
+		}
+
+
+		$this->load->helper('time');
+
+		if ($data['is_pdf']) {
+			return $this->load->view('ei/relatorio_medicoes_consolidadas', $data, true);
+		}
+
+		$this->load->view('ei/relatorio_medicoes_consolidadas', $data);
 	}
 
 
@@ -984,6 +1112,32 @@ class Relatorios extends MY_Controller
 		$this->load->library('Calendar');
 		$this->calendar->month_type = 'short';
 		$nome = 'Relatório de Medição Mensal de Educação Inclusiva - ' . $this->calendar->get_month_name($data['mes']) . '_' . $data['ano'];
+
+		$this->m_pdf->pdf->Output($nome . '.pdf', 'D');
+	}
+
+
+	//==========================================================================
+
+
+	public function pdfMedicoesConsolidadas()
+	{
+		$this->load->library('m_pdf');
+
+		$stylesheet = '#table thead tr th { border-top: 4px solid #ddd; padding-top: 8px; } ';
+		$stylesheet .= 'table.medicoes_consolidadas {  border: 1px solid #333; margin-bottom: 0px; } ';
+		$stylesheet .= 'table.medicoes_consolidadas thead tr th { font-size: 11px; padding: 4px; background-color: #f5f5f5; border: 1px solid #333;  } ';
+		$stylesheet .= 'table.medicoes_consolidadas tbody tr td { font-size: 10px; padding: 4px; vertical-align: top; border: 1px solid #333;  } ';
+
+
+		$this->m_pdf->pdf->setTopMargin(72);
+		$this->m_pdf->pdf->AddPage('L');
+		$this->m_pdf->pdf->writeHTML($stylesheet, 1);
+		$this->m_pdf->pdf->writeHTML($this->medicoesConsolidadas(true));
+
+		$data = $this->input->get();
+
+		$nome = 'Relatório de Medições Consolidadas de Educação Inclusiva - ' . $data['ano'];
 
 		$this->m_pdf->pdf->Output($nome . '.pdf', 'D');
 	}
@@ -2235,23 +2389,26 @@ class Relatorios extends MY_Controller
 		$where = [
 			'depto' => $this->input->get_post('depto'),
 			'diretoria' => $this->input->get_post('diretoria'),
-			'supervisor' => $this->input->get_post('supervisor'),
 			'ano' => $this->input->get_post('ano'),
 			'semestre' => $this->input->get_post('semestre'),
 			'mes' => $this->input->get_post('mes')
 		];
 
-		$supervisor = $this->db->select('nome')->where('id', $where['supervisor'])->get('usuarios')->row();
+		$supervisor = $this->input->get_post('supervisor');
+		$funcao = $this->input->get_post('funcao');
+
+		$usuario = $this->db->select('nome')->where('id', $supervisor)->get('usuarios')->row();
 
 		$this->load->library('Calendar');
 
 		$data = [
-			'nomeSupervisor' => $supervisor->nome ?? '',
+			'nomeSupervisor' => $usuario->nome ?? '',
 			'query_string' => http_build_query($where),
 			'nomeMes' => $this->calendar->get_month_name($where['mes']),
 			'ano' => $where['ano'],
 			'is_pdf' => $isPdf
 		];
+
 
 		$idMes = intval($where['mes']) - ($where['semestre'] > 1 ? 6 : 0);
 
@@ -2265,37 +2422,78 @@ class Relatorios extends MY_Controller
 		$dataTerminoContrato = date('Y-m-t', mktime(0, 0, 0, (int)$where['mes'], 1, (int)$where['ano']));
 
 
-		$this->db
-			->select('b.id, a.cuidador, b1.nome AS funcao, b.cnpj, d.escola')
+		$subquery = $this->db
+			->select('b.id, a.cuidador, j.funcao, b.cnpj, d.escola')
 			->select(["DATE_FORMAT(h.data_liberacao_pagto_mes{$idMes}, '%d/%m/%Y') AS data_liberacao_pagto"], false)
 			->select("h.observacoes_mes{$idMes} AS observacoes", false)
-			->select(["IFNULL(TIME_TO_SEC(a.total_horas_faturadas_mes{$idMes}), 0) AS total_horas"], false)
-			->select(["IFNULL(a.valor_total_mes{$idMes}, 0) AS valor_total"], false)
+			->select(["IFNULL(TIME_TO_SEC(a.total_horas_faturadas_mes{$idMes}), 0) - IFNULL(TIME_TO_SEC(i.total_horas_faturadas_mes{$idMes}), 0) AS total_horas"], false)
+			->select(["IFNULL(a.valor_total_mes{$idMes}, 0) - IFNULL(i.valor_total_mes{$idMes}, 0) AS valor_total"], false)
 			->join('usuarios b', 'b.id = a.id_cuidador')
 			->join('ei_alocados c', 'c.id = a.id_alocado')
 			->join('ei_alocacao_escolas d', 'd.id = c.id_alocacao_escola')
 			->join('ei_alocacao e', 'e.id = d.id_alocacao')
-			->join('empresa_funcoes b1', 'b1.id = b.id_funcao OR b1.nome = b.funcao', 'left')
+			->join('(SELECT j2.* FROM ei_alocados_horarios j2 GROUP BY j2.id_alocado, j2.periodo) j', 'j.id_alocado = c.id AND j.periodo = a.periodo', 'left', false)
+			->join('ei_alocados_totalizacao i', 'i.id_alocado = a.id_alocado AND i.periodo = a.periodo AND i.substituicao_semestral IS NOT NULL AND a.substituicao_semestral IS NULL AND i.substituicao_eventual IS NULL', 'left')
 			->join('ei_pagamento_prestador h', 'h.id_alocacao = e.id AND h.id_cuidador = a.id_cuidador', 'left')
 			->where('e.id_empresa', $this->session->userdata('empresa'))
 			->where('e.depto', $this->input->get_post('depto'))
 			->where('e.id_diretoria', $this->input->get_post('diretoria'))
-			->where('e.id_supervisor', $this->input->get_post('supervisor'))
+			->group_start()
+			->where("e.id_supervisor = '{$supervisor}' OR CHAR_LENGTH('{$supervisor}') = 0", null, false)
+			->group_end()
 			->where('e.ano', $this->input->get_post('ano'))
 			->where('e.semestre', $this->input->get_post('semestre'))
+			->group_start()
+			->where("j.funcao = '{$funcao}' OR CHAR_LENGTH('{$funcao}') = 0", null, false)
+			->where('a.substituicao_eventual IS NULL')
+			->group_end()
 			->group_by(['d.id_escola', 'a.id_cuidador', 'a.periodo'])
 			->order_by('a.cuidador', 'asc')
 			->order_by('d.escola', 'asc')
-			->get('ei_alocados_totalizacao a');
+			->get_compiled_select('ei_alocados_totalizacao a');
+
 		$sql = "SELECT s.cuidador, s.funcao, s.cnpj, s.escola, s.data_liberacao_pagto, s.observacoes,
                        SUM(s.total_horas) / 3600 AS total_horas,
                        TIME_FORMAT(SEC_TO_TIME(SUM(s.total_horas)), '%H:%i') AS total_horas_temp,
                        FORMAT(SUM(s.valor_total), 2, 'de_DE') AS valor_total,
                        SUM(s.valor_total) AS valor_total_real
-                FROM ({$this->db->last_query()}) s
+                FROM ({$subquery}) s
                 GROUP BY s.id
                 ORDER BY s.cuidador ASC";
 		$data['rows'] = $this->db->query($sql)->result();
+
+		$supervisores = $this->db
+			->select('id_supervisor AS id, supervisor AS nome')
+			->where('id_empresa', $this->session->userdata('empresa'))
+			->where('depto', $this->input->get_post('depto'))
+			->where('id_diretoria', $this->input->get_post('diretoria'))
+			->where('ano', $this->input->get_post('ano'))
+			->where('semestre', $this->input->get_post('semestre'))
+			->group_by('id_supervisor')
+			->order_by('supervisor', 'asc')
+			->get('ei_alocacao')
+			->result();
+
+		$funcoes = $this->db
+			->select('e.funcao')
+			->join('ei_alocados b', 'b.id = a.id_alocado')
+			->join('ei_alocacao_escolas c', 'c.id = b.id_alocacao_escola')
+			->join('ei_alocacao d', 'd.id = c.id_alocacao')
+			->join('ei_alocados_horarios e', 'e.id_alocado = b.id AND e.periodo = a.periodo', 'left')
+			->where('d.id_empresa', $this->session->userdata('empresa'))
+			->where('d.depto', $this->input->get_post('depto'))
+			->where('d.id_diretoria', $this->input->get_post('diretoria'))
+			->group_start()
+			->where("d.id_supervisor = '{$supervisor}' OR CHAR_LENGTH('{$supervisor}') = 0", null, false)
+			->group_end()
+			->where('d.ano', $this->input->get_post('ano'))
+			->where('d.semestre', $this->input->get_post('semestre'))
+			->where('e.funcao IS NOT NULL')
+			->where('a.substituicao_eventual IS NULL')
+			->group_by('e.funcao')
+			->order_by('e.funcao', 'asc')
+			->get('ei_alocados_totalizacao a')
+			->result();
 
 		$totalHoras = 0;
 		$valorTotal = 0;
@@ -2308,9 +2506,15 @@ class Relatorios extends MY_Controller
 		}
 
 		$data['total'] = [
-			'horas' => round($totalHoras, 1),
+			'horas' => number_format($totalHoras, 1, ',', ''),
 			'valor' => number_format($valorTotal, 2, ',', '.')
 		];
+
+		$data['supervisores'] = ['' => 'Todos'] + array_column($supervisores, 'nome', 'id');
+		$data['supervisor'] = $supervisor;
+
+		$data['funcoes'] = ['' => 'Todas'] + array_column($funcoes, 'funcao', 'funcao');
+		$data['funcao'] = $funcao;
 
 		return $data;
 	}
@@ -2503,7 +2707,6 @@ class Relatorios extends MY_Controller
 		$where = [
 			'depto' => $this->input->get_post('depto'),
 			'diretoria' => $this->input->get_post('diretoria'),
-			'supervisor' => $this->input->get_post('supervisor'),
 			'ano' => $this->input->get_post('ano'),
 			'semestre' => $this->input->get_post('semestre'),
 			'mes' => $this->input->get_post('mes')
@@ -2518,6 +2721,9 @@ class Relatorios extends MY_Controller
 			'is_pdf' => $isPdf
 		];
 
+		$supervisor = $this->input->get_post('supervisor');
+		$funcao = $this->input->get_post('funcao');
+
 		$idMes = $where['mes'] - ($where['semestre'] > 1 ? 6 : 0);
 
 
@@ -2527,32 +2733,70 @@ class Relatorios extends MY_Controller
 
 
 		$data['rows'] = $this->db
-			->select('a.cuidador, b2.nome AS funcao, d.municipio')
+			->select('a.cuidador, j.funcao, d.municipio')
 			->select(["CONCAT_WS(' - ', d.codigo, d.escola) AS escola"], false)
 			->select(["DATE_FORMAT(h.data_aprovacao_mes{$idMes}, '%d/%m/%Y') AS data_aprovacao"], false)
-//			->select(["ROUND(IFNULL(a.total_dias_mes{$idMes}, 0)) AS total_dias"], false)
-			->select(["ROUND(IFNULL(a.total_dias_mes{$idMes}, 0) - IFNULL(i.total_dias_mes{$idMes}, 0)) AS total_dias"], false)
-//			->select(["TIME_FORMAT(IFNULL(a.total_horas_mes{$idMes}, 0), '%H:%i') AS total_horas"], false)
-			->select(["TIME_FORMAT(SEC_TO_TIME(SUM(IFNULL(TIME_TO_SEC(a.total_horas_mes{$idMes}), 0) - IFNULL(TIME_TO_SEC(i.total_horas_mes{$idMes}), 0))), '%H:%i') AS total_horas"], false)
+			->select(["ROUND(GREATEST(IFNULL(a.total_dias_mes{$idMes}, 0) - IFNULL(i.total_dias_mes{$idMes}, 0), 0)) AS total_dias"], false)
+//			->select(["GREATEST(  SUM(IFNULL(TIME_TO_SEC(a.total_horas_mes{$idMes}), 0) - IFNULL(TIME_TO_SEC(i.total_horas_mes{$idMes}), 0))  , 0) / 3600 AS total_horas"], false)
+			->select(["TIME_FORMAT(SEC_TO_TIME(GREATEST(  SUM(IFNULL(TIME_TO_SEC(a.total_horas_mes{$idMes}), 0) - IFNULL(TIME_TO_SEC(i.total_horas_mes{$idMes}), 0))  , 0)), '%H:%i') AS total_horas"], false)
 			->join('usuarios b', 'b.id = a.id_cuidador')
 			->join('ei_alocados c', 'c.id = a.id_alocado')
 			->join('ei_alocacao_escolas d', 'd.id = c.id_alocacao_escola')
 			->join('ei_alocacao e', 'e.id = d.id_alocacao')
 			->join('ei_ordem_servico e2', 'e2.nome = d.ordem_servico AND e2.ano = e.ano AND e2.semestre = e.semestre')
-			->join('empresa_cargos b1', 'b1.id = b.id_cargo OR b1.nome = b.cargo', 'left')
-			->join('empresa_funcoes b2', 'b2.id = b.id_funcao OR b2.nome = b.funcao', 'left')
+			->join('(SELECT j2.* FROM ei_alocados_horarios j2 GROUP BY j2.id_alocado, j2.periodo) j', 'j.id_alocado = c.id AND j.periodo = a.periodo', 'left', false)
+//			->join('empresa_cargos b1', 'b1.id = b.id_cargo OR b1.nome = b.cargo', 'left')
+//			->join('empresa_funcoes b2', 'b2.id = b.id_funcao OR b2.nome = b.funcao', 'left')
 			->join('ei_alocados_totalizacao i', 'i.id_alocado = a.id_alocado AND i.periodo = a.periodo AND i.substituicao_semestral IS NOT NULL AND a.substituicao_semestral IS NULL AND i.substituicao_eventual IS NULL', 'left')
-			->join('ei_faturamento h', 'h.id_alocacao = e.id AND h.id_escola = d.id_escola AND h.cargo = b1.nome AND h.funcao = b2.nome', 'left')
+			->join('ei_faturamento h', 'h.id_alocacao = e.id AND h.id_escola = d.id_escola AND h.cargo = j.cargo AND h.funcao = j.funcao', 'left')
 			->where('e.id_empresa', $this->session->userdata('empresa'))
 			->where('e.depto', $this->input->get_post('depto'))
 			->where('e.id_diretoria', $this->input->get_post('diretoria'))
-			->where('e.id_supervisor', $this->input->get_post('supervisor'))
+			->group_start()
+			->where("e.id_supervisor = '{$supervisor}' OR CHAR_LENGTH('{$supervisor}') = 0", null, false)
+			->group_end()
 			->where('e.ano', $this->input->get_post('ano'))
 			->where('e.semestre', $this->input->get_post('semestre'))
+			->group_start()
+			->where("j.funcao = '{$funcao}' OR CHAR_LENGTH('{$funcao}') = 0", null, false)
+			->group_end()
 			->where('a.substituicao_eventual IS NULL')
-			->group_by(['d.id_escola', 'a.id_cuidador', 'b1.nome', 'b2.nome', 'c.id', 'a.periodo'])
+			->group_by(['d.id_escola', 'a.id_cuidador', 'j.cargo', 'j.funcao', 'c.id', 'a.periodo'])
 			->order_by('a.cuidador', 'asc')
-			->order_by('b2.nome', 'asc')
+			->order_by('j.funcao', 'asc')
+			->get('ei_alocados_totalizacao a')
+			->result();
+
+		$supervisores = $this->db
+			->select('id_supervisor AS id, supervisor AS nome')
+			->where('id_empresa', $this->session->userdata('empresa'))
+			->where('depto', $this->input->get_post('depto'))
+			->where('id_diretoria', $this->input->get_post('diretoria'))
+			->where('ano', $this->input->get_post('ano'))
+			->where('semestre', $this->input->get_post('semestre'))
+			->group_by('id_supervisor')
+			->order_by('supervisor', 'asc')
+			->get('ei_alocacao')
+			->result();
+
+		$funcoes = $this->db
+			->select('e.funcao')
+			->join('ei_alocados b', 'b.id = a.id_alocado')
+			->join('ei_alocacao_escolas c', 'c.id = b.id_alocacao_escola')
+			->join('ei_alocacao d', 'd.id = c.id_alocacao')
+			->join('ei_alocados_horarios e', 'e.id_alocado = b.id AND e.periodo = a.periodo', 'left')
+			->where('d.id_empresa', $this->session->userdata('empresa'))
+			->where('d.depto', $this->input->get_post('depto'))
+			->where('d.id_diretoria', $this->input->get_post('diretoria'))
+			->group_start()
+			->where("d.id_supervisor = '{$supervisor}' OR CHAR_LENGTH('{$supervisor}') = 0", null, false)
+			->group_end()
+			->where('d.ano', $this->input->get_post('ano'))
+			->where('d.semestre', $this->input->get_post('semestre'))
+			->where('e.funcao IS NOT NULL')
+			->where('a.substituicao_eventual IS NULL')
+			->group_by('e.funcao')
+			->order_by('e.funcao', 'asc')
 			->get('ei_alocados_totalizacao a')
 			->result();
 
@@ -2566,6 +2810,12 @@ class Relatorios extends MY_Controller
 		}
 
 		$data['total_horas'] = secToTime($totalHoras, false);
+
+		$data['supervisores'] = ['' => 'Todos'] + array_column($supervisores, 'nome', 'id');
+		$data['supervisor'] = $supervisor;
+
+		$data['funcoes'] = ['' => 'Todas'] + array_column($funcoes, 'funcao', 'funcao');
+		$data['funcao'] = $funcao;
 
 
 		return $data;

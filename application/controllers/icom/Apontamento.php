@@ -1162,4 +1162,99 @@ class Apontamento extends MY_Controller
 		$this->m_pdf->pdf->Output('Relatório de Feedback Interpretes ICOM - ' . $usuario->nome . '.pdf', 'D');
 	}
 
+
+	public function relatorioDeFeedbackMensal()
+	{
+		parse_str($this->input->post('busca'), $busca);
+
+		$this->load->library('calendar');
+
+		$data = [
+			'mes' => $busca['mes'],
+			'ano' => $busca['ano'],
+			'mes_ano' => lcfirst($this->calendar->get_month_name($busca['mes'])) . ' de ' . $busca['ano'],
+			'folha' => $this->montarRelatorioDeFeedbackMensal($busca['mes'], $busca['ano'])
+		];
+
+		echo json_encode($data);
+	}
+
+
+	private function montarRelatorioDeFeedbackMensal($mes, $ano, $isPdf = false)
+	{
+		$empresa = $this->db
+			->select('foto, foto_descricao')
+			->where('id', $this->session->userdata('empresa'))
+			->get('usuarios')
+			->row();
+
+		$usuario = $this->db
+			->select('nome, email')
+			->where('id', $this->session->userdata('id'))
+			->get('usuarios')
+			->row();
+
+		$feedbacks = $this->db
+			->select('b.nome_usuario, a.nome_usuario_orientador')
+			->select(["DATE_FORMAT(a.data, '%d/%m/%Y') AS data"], false)
+			->select("CONCAT(TIME_FORMAT(b.horario_entrada, '%H:%i'), ' - ', TIME_FORMAT(b.horario_saida, '%H:%i')) AS horario", false)
+			->select('b.categoria')
+			->join('icom_alocados b', 'b.id_usuario = a.id_usuario')
+			->join('icom_alocacao c', 'c.id = b.id_alocacao')
+			->join('usuarios d', 'd.id = b.id_usuario')
+			->where('c.mes', $mes)
+			->where('c.ano', $ano)
+			->where('MONTH(data)', $mes)
+			->where('YEAR(data)', $ano)
+			->order_by('b.nome_usuario', 'asc')
+			->order_by('a.data', 'asc')
+			->order_by('a.nome_usuario_orientador', 'asc')
+			->get('icom_alocados_feedback a')
+			->result();
+
+//		$feedbacks = $this->feedback
+//			->where('MONTH(data)', $mes)
+//			->where('YEAR(data)', $ano)
+//			->findAll();
+
+		$data = [
+			'empresa' => $empresa,
+			'usuario' => $usuario,
+			'feedbacks' => $feedbacks,
+			'nomeMes' => $this->calendar->get_month_name($mes),
+			'ano' => $ano,
+			'query_string' => "mes={$mes}&ano={$ano}",
+			'is_pdf' => $isPdf
+		];
+
+		return $this->load->view('icom/pdf_feedback_mensal', $data, true);
+	}
+
+
+	public function pdfFeedbackMensal()
+	{
+		$this->load->library('m_pdf');
+
+		$stylesheet = '#table thead tr th { border-top: 4px solid #ddd; padding-top: 8px; } ';
+		$stylesheet .= 'table.feedback {  border: 1px solid #333; margin-bottom: 0px; } ';
+		$stylesheet .= 'table.feedback thead tr th { font-size: 13px; padding: 4px; background-color: #f5f5f5; border: 1px solid #333;  } ';
+		$stylesheet .= 'table.feedback tbody tr td { font-size: 12px; padding: 4px; vertical-align: top; border: 1px solid #333;  } ';
+
+		$mes = $this->input->get('mes');
+		$ano = $this->input->get('ano');
+
+		$this->m_pdf->pdf->setTopMargin(12);
+		$this->m_pdf->pdf->AddPage('L');
+		$this->m_pdf->pdf->writeHTML($stylesheet, 1);
+
+		$this->load->library('Calendar');
+		$this->m_pdf->pdf->writeHTML($this->montarRelatorioDeFeedbackMensal($mes, $ano, true));
+
+		$this->calendar->month_type = 'short';
+
+		$nome = 'Folha de Controle e Recebimento de Feedback - ' . $this->calendar->get_month_name($mes) . '_' . $ano;
+
+		$this->m_pdf->pdf->Output($nome . '.pdf', 'D');
+	}
+
 }

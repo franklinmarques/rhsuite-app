@@ -371,9 +371,9 @@ require_once "end_js.php";
 
 <!-- Js -->
 <script>
-    $(document).ready(function () {
-        document.title = 'CORPORATE RH - LMS - Gerenciar Relatórios de Gestão';
-    });
+	$(document).ready(function () {
+		document.title = 'CORPORATE RH - LMS - Gerenciar Relatórios de Gestão';
+	});
 </script>
 <script src="<?php echo base_url('assets/datatables/js/jquery.dataTables.min.js') ?>"></script>
 <script src="<?php echo base_url('assets/datatables/js/dataTables.bootstrap.js') ?>"></script>
@@ -383,254 +383,254 @@ require_once "end_js.php";
 <script src="<?php echo base_url('assets/JQuery-Mask/jquery.mask.js'); ?>"></script>
 <script>
 
-    var save_method;
-    var table;
+	var save_method;
+	var table;
 
-    $(document).ready(function () {
+	$(document).ready(function () {
 
-        $('.date').mask('00/00/0000');
-        $('.ano').mask('0000');
+		$('.date').mask('00/00/0000');
+		$('.ano').mask('0000');
 
-        $('.descritivo').ckeditor({
-            'height': '600',
+		$('.descritivo').ckeditor({
+			'height': '600',
 			'filebrowserBrowseUrl': '<?= base_url('browser/browse.php'); ?>',
-            'toolbarGroups': [{
-                'name': 'basicstyles',
-                'groups': ['basicstyles']
-            },
-                {
-                    'name': 'links',
-                    'groups': ['links']
-                },
-                {
-                    'name': 'paragraph',
-                    'groups': ['list']
-                },
-                {
-                    'name': 'document',
-                    'groups': ['mode']
-                },
-                {
-                    'name': 'insert',
-                    'groups': ['insert']
-                },
-                {
-                    'name': 'styles',
-                    'groups': ['styles']
-                },
-                {
-                    'name': 'about',
-                    'groups': ['about']
-                }
-            ],
-            // Remove the redundant buttons from toolbar groups defined above.
-            'removeButtons': 'Underline,Strike,Subscript,Superscript,NewPage,Preview,Save,Anchor,Styles,Specialchar,Flash,PageBreak,Slideshow'
-        });
+			'toolbarGroups': [{
+				'name': 'basicstyles',
+				'groups': ['basicstyles']
+			},
+				{
+					'name': 'links',
+					'groups': ['links']
+				},
+				{
+					'name': 'paragraph',
+					'groups': ['list']
+				},
+				{
+					'name': 'document',
+					'groups': ['mode']
+				},
+				{
+					'name': 'insert',
+					'groups': ['insert']
+				},
+				{
+					'name': 'styles',
+					'groups': ['styles']
+				},
+				{
+					'name': 'about',
+					'groups': ['about']
+				}
+			],
+			// Remove the redundant buttons from toolbar groups defined above.
+			'removeButtons': 'Underline,Strike,Subscript,Superscript,NewPage,Preview,Save,Anchor,Styles,Specialchar,Flash,PageBreak,Slideshow'
+		});
 
-        table = $('#table').DataTable({
-            'processing': true,
-            'serverSide': true,
-            'order': [],
-            'iDisplayLength': -1,
-            'lengthChange': false,
-            'searching': false,
-            'language': {
-                'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
-            },
-            'ajax': {
-                'url': '<?php echo site_url('relatoriosGestao/ajaxList/') ?>',
-                'type': 'POST',
-                'data': function (d) {
-                    d.busca = $('#form_filtro').serialize();
-                    return d;
-                }
-            },
-            'columnDefs': [
-                {
-                    'className': 'text-center',
-                    'targets': [0, 1]
-                },
-                {
-                    'createdCell': function (td, cellData, rowData, row, col) {
-                        switch (rowData[6]) {
-                            case 'E':
-                                $(td).css({'background-color': '#f5c6cb', 'border-color': '#ed969e'});
-                                break;
-                            case 'A':
-                                $(td).css({'background-color': '#b8daff', 'border-color': '#7abaff'});
-                                break;
-                            case 'P':
-                                $(td).css({'background-color': '#ffeeba', 'border-color': '#ffdf7e'});
-                                break;
-                            case 'C':
-                                $(td).css({'background-color': '#c3e6cb', 'border-color': '#8fd19e'});
-                                break;
-                        }
-                    },
-                    'className': 'text-center',
-                    'targets': [3]
-                },
-                {
-                    'width': '30%',
-                    'targets': [2]
-                },
-                {
-                    'width': '70%',
-                    'targets': [4]
-                },
-                {
-                    'className': 'text-center text-nowrap',
-                    'targets': [-1],
-                    'orderable': false
-                }
-            ]
-        });
+		table = $('#table').DataTable({
+			'processing': true,
+			'serverSide': true,
+			'order': [],
+			'iDisplayLength': -1,
+			'lengthChange': false,
+			'searching': false,
+			'language': {
+				'url': '<?php echo base_url('assets/datatables/lang_pt-br.json'); ?>'
+			},
+			'ajax': {
+				'url': '<?php echo site_url('relatoriosGestao/ajaxList/') ?>',
+				'type': 'POST',
+				'data': function (d) {
+					d.busca = $('#form_filtro').serialize();
+					return d;
+				}
+			},
+			'columnDefs': [
+				{
+					'className': 'text-center',
+					'targets': [0, 1]
+				},
+				{
+					'createdCell': function (td, cellData, rowData, row, col) {
+						switch (rowData[6]) {
+							case 'E':
+								$(td).css({'background-color': '#f5c6cb', 'border-color': '#ed969e'});
+								break;
+							case 'A':
+								$(td).css({'background-color': '#b8daff', 'border-color': '#7abaff'});
+								break;
+							case 'P':
+								$(td).css({'background-color': '#ffeeba', 'border-color': '#ffdf7e'});
+								break;
+							case 'C':
+								$(td).css({'background-color': '#c3e6cb', 'border-color': '#8fd19e'});
+								break;
+						}
+					},
+					'className': 'text-center text-nowrap',
+					'targets': [3]
+				},
+				{
+					'width': '30%',
+					'targets': [2]
+				},
+				{
+					'width': '50%',
+					'targets': [4]
+				},
+				{
+					'className': 'text-center text-nowrap',
+					'targets': [-1],
+					'orderable': false
+				}
+			]
+		});
 
-    });
+	});
 
-    function atualizar_filtro() {
-        $.ajax({
-            'url': '<?php echo site_url('relatoriosGestao/atualizarFiltro') ?>',
-            'dataType': 'json',
-            'data': $('#form_filtro').serialize(),
-            'success': function (json) {
-                $('#form_filtro [name="id_area"]').html($(json.area).html());
-                $('#form_filtro [name="id_setor"]').html($(json.setor).html());
-                $('#form_filtro [name="id_usuario"]').html($(json.usuario).html());
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            }
-        });
-    }
-
-
-    function add_relatorio() {
-        save_method = 'add';
-        $('#form')[0].reset();
-        $('.form-group').removeClass('has-error');
-        $('.help-block').empty();
-
-        var date = moment('<?= date('d/m/Y'); ?>', 'DD/MM/YYYY');
-
-        $('#form [name="status"]').val('M');
-        $('#form [name="data_fechamento"]').val(date.format('DD/MM/YYYY'));
-        $('#form [name="mes_referencia"]').val(date.format('MM'));
-        $('#form [name="ano_referencia"]').val(date.get('year'));
-
-        $('#modal_form').modal('show');
-        $('#modal_form .modal-title').text('Adicionar Relatório de Gestão');
-        $('.combo_nivel1').hide();
-    }
+	function atualizar_filtro() {
+		$.ajax({
+			'url': '<?php echo site_url('relatoriosGestao/atualizarFiltro') ?>',
+			'dataType': 'json',
+			'data': $('#form_filtro').serialize(),
+			'success': function (json) {
+				$('#form_filtro [name="id_area"]').html($(json.area).html());
+				$('#form_filtro [name="id_setor"]').html($(json.setor).html());
+				$('#form_filtro [name="id_usuario"]').html($(json.usuario).html());
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			}
+		});
+	}
 
 
-    function edit_relatorio(id) {
-        save_method = 'update';
-        $('#form')[0].reset();
-        $('.form-group').removeClass('has-error');
-        $('.help-block').empty();
+	function add_relatorio() {
+		save_method = 'add';
+		$('#form')[0].reset();
+		$('.form-group').removeClass('has-error');
+		$('.help-block').empty();
+
+		var date = moment('<?= date('d/m/Y'); ?>', 'DD/MM/YYYY');
+
+		$('#form [name="status"]').val('M');
+		$('#form [name="data_fechamento"]').val(date.format('DD/MM/YYYY'));
+		$('#form [name="mes_referencia"]').val(date.format('MM'));
+		$('#form [name="ano_referencia"]').val(date.get('year'));
+
+		$('#modal_form').modal('show');
+		$('#modal_form .modal-title').text('Adicionar Relatório de Gestão');
+		$('.combo_nivel1').hide();
+	}
 
 
-        $.ajax({
-            'url': '<?php echo site_url('relatoriosGestao/ajaxEdit') ?>',
-            'dataType': 'json',
-            'data': {'id': id},
-            'success': function (json) {
-                $.each(json, function (key, value) {
-                    $('[name="' + key + '"]').val(value);
-                });
-
-                $('#modal_form .modal-title').text('Editar Relatório de Gestão');
-                $('#modal_form').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error get data from ajax');
-            }
-        });
-    }
+	function edit_relatorio(id) {
+		save_method = 'update';
+		$('#form')[0].reset();
+		$('.form-group').removeClass('has-error');
+		$('.help-block').empty();
 
 
-    function reload_table() {
-        table.ajax.reload(null, false);
-    }
+		$.ajax({
+			'url': '<?php echo site_url('relatoriosGestao/ajaxEdit') ?>',
+			'dataType': 'json',
+			'data': {'id': id},
+			'success': function (json) {
+				$.each(json, function (key, value) {
+					$('[name="' + key + '"]').val(value);
+				});
+
+				$('#modal_form .modal-title').text('Editar Relatório de Gestão');
+				$('#modal_form').modal('show');
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error get data from ajax');
+			}
+		});
+	}
 
 
-    function limpar_filtro() {
-        $('#form_filtro')[0].reset();
-        reload_table();
-    }
+	function reload_table() {
+		table.ajax.reload(null, false);
+	}
 
 
-    function save() {
-        $('.btnSave').text('Salvando...').attr('disabled', true);
-        var url;
-
-        if (save_method === 'add') {
-            url = '<?php echo site_url('relatoriosGestao/ajaxAdd') ?>';
-        } else {
-            url = '<?php echo site_url('relatoriosGestao/ajaxUpdate') ?>';
-        }
-
-        $.ajax({
-            'url': url,
-            'type': 'POST',
-            'data': $('#form').serialize(),
-            'dataType': 'json',
-            'success': function (json) {
-                if (json.status) {
-                    $('#modal_form').modal('hide');
-                    reload_table();
-                } else if (json.erro) {
-                    alert(json.erro);
-                }
-
-                $('.btnSave').text('Salvar').attr('disabled', false);
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                alert('Error adding / update data');
-                $('.btnSave').text('Salvar').attr('disabled', false);
-            }
-        });
-    }
+	function limpar_filtro() {
+		$('#form_filtro')[0].reset();
+		reload_table();
+	}
 
 
-    function delete_relatorio(id) {
-        if (confirm('Deseja remover?')) {
+	function save() {
+		$('.btnSave').text('Salvando...').attr('disabled', true);
+		var url;
 
-            $.ajax({
-                'url': '<?php echo site_url('relatoriosGestao/ajaxDelete') ?>',
-                'type': 'POST',
-                'dataType': 'json',
-                'data': {'id': id},
-                'success': function () {
-                    reload_table();
-                },
-                'error': function (jqXHR, textStatus, errorThrown) {
-                    $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-                }
-            });
+		if (save_method === 'add') {
+			url = '<?php echo site_url('relatoriosGestao/ajaxAdd') ?>';
+		} else {
+			url = '<?php echo site_url('relatoriosGestao/ajaxUpdate') ?>';
+		}
 
-        }
-    }
+		$.ajax({
+			'url': url,
+			'type': 'POST',
+			'data': $('#form').serialize(),
+			'dataType': 'json',
+			'success': function (json) {
+				if (json.status) {
+					$('#modal_form').modal('hide');
+					reload_table();
+				} else if (json.erro) {
+					alert(json.erro);
+				}
+
+				$('.btnSave').text('Salvar').attr('disabled', false);
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				alert('Error adding / update data');
+				$('.btnSave').text('Salvar').attr('disabled', false);
+			}
+		});
+	}
 
 
-    function visualizar(id) {
-        $.ajax({
-            'url': '<?php echo site_url('relatoriosGestao/visualizar') ?>',
-            'dataType': 'html',
-            'data': {'id': id},
-            'beforeSend': function () {
-                $('#alert').html('');
-            },
-            'success': function (data) {
-                $('#modal_visualizacao .modal-body').html(data);
-                $('#modal_visualizacao').modal('show');
-            },
-            'error': function (jqXHR, textStatus, errorThrown) {
-                $('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
-            }
-        });
-    }
+	function delete_relatorio(id) {
+		if (confirm('Deseja remover?')) {
+
+			$.ajax({
+				'url': '<?php echo site_url('relatoriosGestao/ajaxDelete') ?>',
+				'type': 'POST',
+				'dataType': 'json',
+				'data': {'id': id},
+				'success': function () {
+					reload_table();
+				},
+				'error': function (jqXHR, textStatus, errorThrown) {
+					$('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
+				}
+			});
+
+		}
+	}
+
+
+	function visualizar(id) {
+		$.ajax({
+			'url': '<?php echo site_url('relatoriosGestao/visualizar') ?>',
+			'dataType': 'html',
+			'data': {'id': id},
+			'beforeSend': function () {
+				$('#alert').html('');
+			},
+			'success': function (data) {
+				$('#modal_visualizacao .modal-body').html(data);
+				$('#modal_visualizacao').modal('show');
+			},
+			'error': function (jqXHR, textStatus, errorThrown) {
+				$('#alert').html('<div class="alert alert-danger">Erro, tente novamente!</div>').hide().fadeIn('slow');
+			}
+		});
+	}
 
 
 </script>

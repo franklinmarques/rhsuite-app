@@ -62,12 +62,14 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 					</a>
 					<ul class="sub">
 						<li>
-							<a href="<?php echo site_url('documento/organizacao/gerenciar'); ?>"<?= (in_array($this->uri->rsegment(1), array('documento')) && in_array($this->uri->rsegment(2), array('organizacao')) && in_array($this->uri->rsegment(3), array('gerenciar')) ? ' class="active"' : ''); ?>>
+							<a href="<?php echo site_url('documento/organizacao/gerenciar'); ?>"
+							   <?= (in_array($this->uri->rsegment(1), array('documento')) && in_array($this->uri->rsegment(2), array('organizacao')) && in_array($this->uri->rsegment(3), array('gerenciar')) ? ' class="active"' : ''); ?>>
 								Documentos Organizacionais
 							</a>
 						</li>
 						<li>
-							<a href="<?php echo site_url('documento/colaborador/gerenciar/' . $this->session->userdata('id')); ?>"<?= (in_array($this->uri->rsegment(1), array('documento')) && in_array($this->uri->rsegment(2), array('colaborador')) && in_array($this->uri->rsegment(3), array('gerenciar')) ? ' class="active"' : ''); ?>>
+							<a href="<?php echo site_url('documento/colaborador/gerenciar/' . $this->session->userdata('id')); ?>"
+							   <?= (in_array($this->uri->rsegment(1), array('documento')) && in_array($this->uri->rsegment(2), array('colaborador')) && in_array($this->uri->rsegment(3), array('gerenciar')) ? ' class="active"' : ''); ?>>
 								Meus Documentos
 							</a>
 						</li>
@@ -103,7 +105,7 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
                     </a>
                 </li>-->
 
-				<li<?= (in_array($this->uri->rsegment(2), array('jobDescriptorRespondente')) ? ' class="active"' : ''); ?>>
+				<li <?= (in_array($this->uri->rsegment(2), array('jobDescriptorRespondente')) ? ' class="active"' : ''); ?>>
 					<a href="<?php echo site_url('jobDescriptorRespondente'); ?>">
 						<i class="glyphicons glyphicons-nameplate"> </i>
 						<span>Job Descriptor</span>
@@ -111,7 +113,8 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 				</li>
 
 				<li class="sub-menu">
-					<a href="javascript:void(0);"<?= (in_array($this->uri->rsegment(2), array('home', 'funcionarios', 'cursosfuncionario', 'novocursofuncionario', 'novofuncionario', 'editarfuncionario')) ? ' class="active"' : ''); ?>>
+					<a href="javascript:void(0);"
+					   <?= (in_array($this->uri->rsegment(2), array('home', 'funcionarios', 'cursosfuncionario', 'novocursofuncionario', 'novofuncionario', 'editarfuncionario')) ? ' class="active"' : ''); ?>>
 						<i class="glyphicons glyphicons-charts"> </i>
 						<span>Ferramentas de Assessment</span>
 					</a>
@@ -143,7 +146,8 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 						</li>
 						<?php if (in_array($this->session->userdata('nivel'), array(7, 8, 9, 10, 11))): ?>
 							<li>
-								<a href="<?php echo site_url('avaliacaoexp_avaliados/status/2'); ?>">Status Avaliações
+								<a href="<?php echo site_url('avaliacaoexp_avaliados/status/2'); ?>">Status
+									Avaliações
 									Experiência</a>
 							</li>
 						<?php endif; ?>
@@ -159,14 +163,16 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 						</li>
 						<?php if (in_array($this->session->userdata('nivel'), array(7, 8, 9, 10, 11))): ?>
 							<li style="border-bottom: solid 1px rgba(255,255,255,0.2);">
-								<a href="<?php echo site_url('avaliacaoexp_avaliados/status/1'); ?>">Status Avaliações
+								<a href="<?php echo site_url('avaliacaoexp_avaliados/status/1'); ?>">Status
+									Avaliações
 									Periódicas</a>
 							</li>
 						<?php endif; ?>
 					</ul>
 					<ul class="sub">
 						<li>
-							<a href="<?php echo site_url('competencias/avaliador'); ?>">Avaliação Por Competências</a>
+							<a href="<?php echo site_url('competencias/avaliador'); ?>">Avaliação Por
+								Competências</a>
 						</li>
 					</ul>
 				</li>
@@ -205,14 +211,16 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 							<?php endif; ?>
 							<?php if (in_array($this->session->userdata('nivel'), array(7, 8, 17, 18))): ?>
 								<li>
-									<a href="<?php echo site_url('facilities/estruturas'); ?>">Cadastro Estrutural</a>
+									<a href="<?php echo site_url('facilities/estruturas'); ?>">Cadastro
+										Estrutural</a>
 								</li>
 								<li>
 									<a href="<?php echo site_url('facilities/modelos'); ?>">Modelos de
 										Vistorias/Manutenções</a>
 								</li>
 								<li>
-									<a href="<?php echo site_url('facilities/vistorias'); ?>">Gerenciar Vistorias</a>
+									<a href="<?php echo site_url('facilities/vistorias'); ?>">Gerenciar
+										Vistorias</a>
 								</li>
 								<li>
 									<a href="<?php echo site_url('facilities/manutencoes'); ?>">Gerenciar
@@ -244,7 +252,6 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 					</li>
 				<?php endif; ?>
 
-				<!-- coordenador, gerente, diretor e presidente -->
 				<?php if (in_array($this->session->userdata('nivel'), [7, 8, 9, 18])): ?>
 					<li class="sub-menu">
 						<a href="javascript:;">
@@ -268,15 +275,38 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 					</li>
 				<?php endif; ?>
 
+				<!-- coordenador, gerente, diretor e presidente -->
+				<?php if (in_array($this->session->userdata('nivel'), [7, 8, 9, 18])): ?>
+<!--					--><?php //if (isset($hash_acesso['RG'])): ?>
+						<li>
+							<a href="<?php echo site_url('relatoriosGestao'); ?>">
+								<i class="glyphicons glyphicons-list"> </i>
+								<span>Relatórios de Gestão</span>
+							</a>
+						</li>
+<!--					--><?php //endif; ?>
+				<?php endif; ?>
+
+				<!-- coordenador, gerente, diretor, supervisor e presidente -->
+				<?php if (in_array($this->session->userdata('nivel'), [7, 8, 9, 10, 18])): ?>
+					<li>
+						<a href="<?php echo site_url('pj/colaboradores'); ?>">
+							<i class="fa fa-user-plus"> </i>
+							<span>Gestão de PJs</span>
+						</a>
+					</li>
+				<?php endif; ?>
+
 				<?php if (in_array($this->uri->rsegment(2), array('acessarcurso'))): ?>
 					<li class="sub-menu" id="menu-curso">
-						<a href="javascript:;"<?= (in_array($this->uri->rsegment(2), array('acessarcurso')) ? ' class="active"' : ''); ?>>
+						<a href="javascript:;"
+						   <?= (in_array($this->uri->rsegment(2), array('acessarcurso')) ? ' class="active"' : ''); ?>>
 							<i class="fa fa-book"></i>
 							<span><?php echo $curso->curso; ?></span>
 						</a>
 						<ul class="sub">
 							<?php foreach ($paginas->result() as $p => $rowpagina): ?>
-								<li<?= (in_array($p, array($this->uri->rsegment(4))) ? ' class="active"' : ''); ?>>
+								<li <?= (in_array($p, array($this->uri->rsegment(4))) ? ' class="active"' : ''); ?>>
 									<a target="_blank"
 									   href="<?php echo site_url('home/acessarcurso/' . $this->uri->rsegment(3) . '/' . $p); ?>">
 										<?php echo $rowpagina->titulo; ?>
@@ -322,7 +352,8 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 							<ul class="sub">
 								<?php if (in_array(610, $hash_acesso['CD'])): ?>
 									<li>
-										<a href="<?php echo site_url('cd/apontamento'); ?>">Gerenciar apontamentos</a>
+										<a href="<?php echo site_url('cd/apontamento'); ?>">Gerenciar
+											apontamentos</a>
 									</li>
 									<!--<li><a href="<?php /*echo site_url('requisicaoPessoal/cd'); */ ?>">Requisição de
                                             pessoal</a>
@@ -341,7 +372,8 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 							<ul class="sub">
 								<?php if (in_array(710, $hash_acesso['EI'])): ?>
 									<li>
-										<a href="<?php echo site_url('ei/apontamento'); ?>">Gerenciar apontamentos</a>
+										<a href="<?php echo site_url('ei/apontamento'); ?>">Gerenciar
+											apontamentos</a>
 									</li>
 									<li><a href="<?php echo site_url('requisicaoPessoal/ei'); ?>">Requisição de
 											pessoal</a>
@@ -377,7 +409,8 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 								<?php endif; ?>
 								<?php if (in_array(503, $hash_acesso['PAPD'])): ?>
 									<li<?php echo($this->uri->ruri_string() == 'papd/relatorios/medicao_mensal' ? ' class="active"' : ''); ?>>
-										<a href="<?php echo site_url('papd/relatorios/medicao_mensal'); ?>">Relatório de
+										<a href="<?php echo site_url('papd/relatorios/medicao_mensal'); ?>">Relatório
+											de
 											medição
 											(individual)</a>
 									</li>
@@ -387,12 +420,14 @@ $toggleMenu = $uri === 'acessarcurso' ? 'hide-left-bar' : '';
 											(equipe)</a>
 									</li>
 									<li<?php echo($this->uri->ruri_string() == 'papd/relatorios/medicao_anual' ? ' class="active"' : ''); ?>>
-										<a href="<?php echo site_url('papd/relatorios/medicao_anual'); ?>">Relatório de
+										<a href="<?php echo site_url('papd/relatorios/medicao_anual'); ?>">Relatório
+											de
 											medição
 											(consolidado)</a>
 									</li>
 								<?php endif; ?>
-								<li><a href="<?php echo site_url('requisicaoPessoal/papd'); ?>">Gerenciar Requisição de
+								<li><a href="<?php echo site_url('requisicaoPessoal/papd'); ?>">Gerenciar Requisição
+										de
 										Pessoal</a>
 								</li>
 							</ul>

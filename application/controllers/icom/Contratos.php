@@ -26,6 +26,7 @@ class Contratos extends MY_Controller
 
         $data = [
             'empresa' => $empresa,
+            'tipoContrato' => $this->contratos::tipoContrato(),
             'statusAtivo' => $this->contratos::status(),
             'deptos' => ['' => 'Todos'] + array_column($deptos, 'nome', 'id'),
             'areas' => ['' => 'Todas'],
@@ -243,6 +244,8 @@ class Contratos extends MY_Controller
         $this->contratos->setValidationRule('id_setor', 'required|is_natural_no_zero|max_length[11]');
         $this->contratos->setValidationRule('id_cliente', 'required|is_natural_no_zero|max_length[11]');
 
+        $this->contratos->setValidationLabel('tipo_contrato', 'Tipo Contrato');
+        $this->contratos->setValidationLabel('status_ativo', 'Status');
         $this->contratos->setValidationLabel('id_depto', 'Departamento');
         $this->contratos->setValidationLabel('id_area', 'Área');
         $this->contratos->setValidationLabel('id_setor', 'Setor');
@@ -253,6 +256,7 @@ class Contratos extends MY_Controller
         $this->contratos->setValidationLabel('centro_custo', 'Centro de Custo');
         $this->contratos->setValidationLabel('data_vencimento', 'Vencimento Contrato');
         $this->contratos->setValidationLabel('arquivo', 'Anexar Contrato');
+        $this->contratos->setValidationLabel('condicoes_pagamento', 'Condições de Pagamewnto');
 
         $this->contratos->validate($data) or exit(json_encode(['erro' => $this->contratos->errors()]));
 

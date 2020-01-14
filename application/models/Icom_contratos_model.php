@@ -12,13 +12,17 @@ class Icom_contratos_model extends MY_Model
 		'codigo' => 'required|is_natural_no_zero|max_length[11]',
 		'id_empresa' => 'required|is_natural_no_zero|max_length[11]',
 		'codigo_proposta' => 'required|is_natural_no_zero|max_length[11]',
+		'tipo_contrato' => 'required|in_list[P,C]',
 		'centro_custo' => 'max_length[255]',
+		'condicoes_pagamento' => 'max_length[255]',
 		'data_vencimento' => 'required|valid_date',
 		'status_ativo' => 'required|is_natural|less_than_equal_to[1]',
 		'arquivo' => 'uploaded[arquivo]|mime_in[arquivo.pdf]|max_length[255]'
 	];
 
 	protected $uploadConfig = ['arquivo' => ['upload_path' => './arquivos/icom/contratos/', 'allowed_types' => 'pdf']];
+
+	protected static $tipoContrato = ['P' => 'Padrão', 'C' => 'Customizado'];
 
 	protected static $status = ['1' => 'Ativo', '0' => 'Inativo'];
 

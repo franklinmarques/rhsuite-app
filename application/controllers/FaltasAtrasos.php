@@ -138,7 +138,7 @@ class FaltasAtrasos extends CI_Controller
 		$output->calendar = [
 			'mes' => $mes,
 			'ano' => $ano,
-			'mes_ano' => $this->calendar->get_month_name($mes) . ' ' . $ano,
+			'mes_ano' => $this->calendar->get_month_name(str_pad($mes, 2, '0', 0)) . ' ' . $ano,
 			'qtde_dias' => date('t', mktime(0, 0, 0, (int)$mes, 1, (int)$ano)),
 			'semana' => $semana
 		];

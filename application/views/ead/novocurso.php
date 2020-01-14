@@ -11,7 +11,7 @@ require_once APPPATH . 'views/header.php';
                 <div id="alert"></div>
                 <section class="panel">
                     <header class="panel-heading">
-                        <i class="fa fa-plus-square"></i> Criar um novo treinamento
+                        <i class="fa fa-graduation-cap"></i> Criar um novo treinamento
                     </header>
                     <div class="panel-body">
                         <?php echo form_open('ead/cursos/ajax_add', 'data-aviso="alert" class="form-horizontal ajax-upload"'); ?>

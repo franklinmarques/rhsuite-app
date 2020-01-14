@@ -1348,7 +1348,7 @@ PIS (2)';
 		if (isset($rows['id_indicado']) == false) {
 			return;
 		}
-
+		
 		$indicadosAExcluir = $this->db
 			->select('a.id, a.id_usuario')
 			->join('recrutamento_usuarios b', 'b.id = a.id_usuario')
@@ -1930,6 +1930,8 @@ PIS (2)';
 		$this->db->select('a.id AS id_requisicao_pessoal');
 		$this->db->select('a.id_cargo');
 		$this->db->select('a.id_funcao');
+		$this->db->select('a.id_funcao');
+		$this->db->select('a.cargo_funcao_alternativo');
 //        $this->db->select('formacao_minima');
 //        $this->db->select('formacao_especifica_minima');
 //        $this->db->select('perfil_profissional_desejado');

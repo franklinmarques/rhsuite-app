@@ -8,6 +8,7 @@ class IcomPropostas extends Entity
 	protected $id_cliente;
 	protected $id_setor;
 	protected $descricao;
+	protected $tipo;
 	protected $data_entrega;
 	protected $probabilidade_fechamento;
 	protected $valor;
@@ -25,6 +26,7 @@ class IcomPropostas extends Entity
 		'id_cliente' => 'int',
 		'id_setor' => 'int',
 		'descricao' => 'string',
+		'tipo' => '?string',
 		'data_entrega' => 'date',
 		'probabilidade_fechamento' => '?int',
 		'valor' => 'float',
